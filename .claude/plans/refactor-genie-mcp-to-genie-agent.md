@@ -32,10 +32,22 @@
 │   ├── flux/flux_index.json
 │   └── spline/scisoft/<version>/<tune>/gxspl-NUsmall.xml   # download cache
 └── genie-runs/                          # all per-run artifacts + JSON logs
-    └── <run-type>-YYYY-MM-DD/<runtype>-r###-<random8hex>.{log,xml|ghep.root|gst.root|png,stdout,stderr}
+    └── <run-type>-YYYY-MM-DD/
+        ├── xml/<tune>-<YYYYMMDD-HHMMSS>.xml          # gmkspl output
+        ├── ghep/<tune>-<YYYYMMDD-HHMMSS>.ghep.root   # gevgen output
+        ├── gst/<tune>-<YYYYMMDD-HHMMSS>.gst.root     # gntpc output (or rootracker/, etc.)
+        ├── log/<tune>-<YYYYMMDD-HHMMSS>.log          # RunLog JSON (metadata)
+        ├── stdout/<tune>-<YYYYMMDD-HHMMSS>.stdout
+        └── stderr/<tune>-<YYYYMMDD-HHMMSS>.stderr
 ```
 
-**Why co-locate artifact + .log + stdout in the same per-day folder:** one `ls` reveals everything about a run; `jq genie-runs/*/*.log` is the discovery story; eliminates `_GEVGEN_PATH_RE` (`genie_mcp/tools/gntpc_tool.py:49`). Run ID is **`r###-<random8hex>`** — sequential counter for human handle, 8-hex for concurrency safety. SciSoft downloads stay in `data/spline/scisoft/` (inputs, not artifacts).
+**Layout rationale:**
+- One per-day folder per run-type (`gmkspl-2026-05-28/`, `gevgen-2026-05-28/`, …).
+- Inside, type subdirs (`xml/`, `ghep/`, `gst/`, `log/`, `stdout/`, `stderr/`) keep one `ls` per artifact kind.
+- Stem is **`<full-tune-name>-<YYYYMMDD-HHMMSS>`** (e.g. `G18_02a_00_000-20260528-143012`) shared across the run's artifact + log + stdout + stderr. Tune name is human-readable at a glance; timestamp guarantees ordering. The `log/<stem>.log` JSON ties them together via stored paths.
+- Discovery: `jq genie-runs/*/log/*.log` — eliminates `_GEVGEN_PATH_RE` (`genie_mcp/tools/gntpc_tool.py:49`).
+- Concurrency note: if two invocations of the same binary + tune start in the same second, append `-<2hex>` to the stem to disambiguate. SciSoft downloads stay in `data/spline/scisoft/` (inputs, not artifacts).
+- Plot outputs are produced separately (manual workflow) — no `png/` subdir in the per-day folder.
 
 ## Wrapper template (used by all three GENIE binaries)
 
