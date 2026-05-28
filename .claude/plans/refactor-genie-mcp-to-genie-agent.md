@@ -10,7 +10,9 @@
 
 ```
 /exp/dune/data/users/liangliu/genie-dev/genie-agent/
-├── config.json                          # active_installation + installations
+├── config.json                          # active_installation + global defaults (versioned)
+├── config/
+│   └── genie-env.json                   # installations registry (paths, may be machine-local)
 ├── .claude/
 │   ├── skills/{genie-sim,genie-pdg,genie-tunes,genie-generator-lists,
 │   │           genie-flux,genie-splines,genie-runlog}/SKILL.md
@@ -101,7 +103,156 @@ Slash command: `.claude/commands/genie-sim.md` is the same as the skill body so 
 
 ## Config
 
-`genie-agent/config.json` — multi-installation shape from `genie_mcp_config.json`, stripped of `jobsub_*`, `condor_*`, `default_output_dir`, `default_log_dir`, `cli_timeout_seconds`, `gmkspl_timeout_seconds`, `job_template_dir`, `python_exec`, `default_group`. Each installation entry keeps `genie_bin_dir`, `genie_setup_script`, `default_tune`. Top-level keeps `active_installation`, `default_tune`, `default_generator_list`. `lib/config.py` resolves `--installation` flag → `GENIE_AGENT_INSTALLATION` env → `active_installation`.
+Two files, split by stability:
+
+- **`config.json`** (top-level, stable, version-controlled). Defaults that rarely change:
+  ```json
+  {
+    "active_installation":     "genie_rc",
+    "default_tune":            "G18_02a_00_000",
+    "default_generator_list":  "CCQE"
+  }
+  ```
+  `active_installation` names the entry in `config/genie-env.json`. `lib/config.py` resolves precedence: `--installation` flag → `GENIE_AGENT_INSTALLATION` env → `active_installation`.
+
+- **`config/genie-env.json`** (installation registry, machine-specific, may live on `.gitignore` if paths differ per user). Same multi-installation shape as `genie_mcp_config.json` but stripped of grid/jobsub fields:
+  ```json
+  {
+    "installations": {
+      "genie_rc": {
+        "genie_bin_dir":      "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/Generator/bin",
+        "genie_lib_dir":      "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/Generator/lib",
+        "genie_setup_script": "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/setup_env.sh"
+      },
+      "genie_v3_6_0":   { "...": "..." },
+      "genie_incl_dev": { "...": "..." },
+      "genie_v3_4_2":   { "...": "..." }
+    }
+  }
+  ```
+  Stripped fields (vs `genie_mcp_config.json`): `jobsub_bin`, `condor_q_bin`, `jobsub_q_bin`, `jobsub_rm_bin`, `jobsub_fetchlog_bin`, `default_output_dir`, `default_log_dir`, `default_group`, `python_exec`, `job_template_dir`, `cli_timeout_seconds`, `gmkspl_timeout_seconds`, `xsec_spline_dir`. Per-installation `default_tune` is dropped (lives once in top-level `config.json`).
+
+`lib/config.py` is ~40 lines:
+```python
+# lib/config.py
+import json, os
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parents[1]   # genie-agent/
+
+def load_config(installation: str | None = None) -> dict:
+    main = json.loads((_ROOT / "config.json").read_text())
+    envs = json.loads((_ROOT / "config" / "genie-env.json").read_text())
+
+    name = installation or os.environ.get("GENIE_AGENT_INSTALLATION") or main["active_installation"]
+    if name not in envs["installations"]:
+        raise KeyError(f"installation '{name}' not found in config/genie-env.json")
+
+    return {
+        **main,                          # default_tune, default_generator_list
+        **envs["installations"][name],   # genie_bin_dir, genie_setup_script, ...
+        "installation_name": name,
+    }
+```
+
+## Detailed: `lib/genie_env.py` — GENIE environment sourcing
+
+**What it does.** GENIE's runtime environment is set up by `setup-env.sh` (per installation), which itself sources `nuisance` and `nusystematics` sub-scripts. We can't parse line-by-line. Instead we run `bash -c "source <setup-env.sh> && env"` once per installation, parse the full `env` dump into a dict, and pass it as `env=` to every `subprocess.run` that invokes a GENIE binary. Without this, `gevgen`/`gmkspl`/`gntpc` cannot resolve their shared libraries or data files.
+
+**Ported from.** `genie-fsi-prd/genie-mcp/genie_mcp/environment.py` (128 lines) — the logic is correct and well-tested; we keep it almost verbatim. Two changes:
+1. Drop the `GenieMCPConfig` dataclass dependency — accept `setup_script: str` directly. Caller passes `cfg["genie_setup_script"]` from `load_config()`.
+2. Cache key by `setup_script` path (dict, not single global) so switching `--installation` mid-process re-sources correctly.
+
+**API**:
+```python
+# lib/genie_env.py
+import os, subprocess, logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+_CACHE: dict[str, dict[str, str]] = {}     # setup_script_path -> env dict
+
+def build_genie_env(setup_script: Optional[str]) -> dict[str, str]:
+    """Source setup-env.sh in a subshell and capture the env dict.
+    Falls back to os.environ if setup_script is None/missing/fails.
+    Result is cached per setup_script path."""
+    if not setup_script:
+        logger.warning("No genie_setup_script — using current environment.")
+        return dict(os.environ)
+
+    if setup_script in _CACHE:
+        return _CACHE[setup_script]
+
+    try:
+        result = subprocess.run(
+            ["bash", "-c", f"source {setup_script} && env"],
+            capture_output=True, text=True, timeout=30,
+        )
+    except (subprocess.TimeoutExpired, Exception) as e:
+        logger.error(f"Sourcing {setup_script} failed: {e} — falling back to os.environ.")
+        return dict(os.environ)
+
+    if result.returncode != 0:
+        logger.warning(f"setup-env.sh exit {result.returncode}; stderr: {result.stderr[:500]}")
+
+    env = _parse_env_dump(result.stdout)
+    if "GENIE" not in env:
+        logger.warning(f"$GENIE not set after sourcing {setup_script} — falling back.")
+        return dict(os.environ)
+
+    logger.info(f"GENIE env loaded: GENIE={env['GENIE']}")
+    _CACHE[setup_script] = env
+    return env
+
+
+def reset_env_cache() -> None:
+    """Clear cache — useful in tests or after config edits."""
+    _CACHE.clear()
+
+
+def _parse_env_dump(env_output: str) -> dict[str, str]:
+    """Parse 'env' command output. Handles multi-line exported function values
+    correctly (a new entry starts only when a line matches KEY= where KEY is
+    a valid identifier; everything else is appended to the current value)."""
+    env: dict[str, str] = {}
+    current_key, current_lines = None, []
+    for line in env_output.splitlines():
+        eq = line.find("=")
+        if eq > 0 and line[:eq].replace("_", "").replace("-", "").isalnum():
+            if current_key is not None:
+                env[current_key] = "\n".join(current_lines)
+            current_key, current_lines = line[:eq], [line[eq+1:]]
+        elif current_key is not None:
+            current_lines.append(line)
+    if current_key is not None:
+        env[current_key] = "\n".join(current_lines)
+    return env
+```
+
+**Caller pattern** (used in every wrapper):
+```python
+from lib.config import load_config
+from lib.genie_env import build_genie_env
+
+cfg = load_config(args.installation)            # merged dict
+env = build_genie_env(cfg["genie_setup_script"]) # cached per path
+subprocess.run([cfg["genie_bin_dir"] + "/gmkspl", ...], env=env, ...)
+```
+
+**Cost.** Sourcing `setup-env.sh` takes ~50–500 ms depending on what nuisance/nusystematics do. The cache makes per-process re-use free; each script invocation pays the cost exactly once.
+
+**Verification.** Smoke test after porting:
+```bash
+pixi run python -c "
+from lib.config import load_config
+from lib.genie_env import build_genie_env
+env = build_genie_env(load_config()['genie_setup_script'])
+print('GENIE         =', env['GENIE'])
+print('XSECSPLINEDIR =', env.get('XSECSPLINEDIR', '<unset>'))
+print('PATH head     =', env['PATH'].split(':')[0])
+"
+```
+Expected: `GENIE` matches the active installation's `genie_bin_dir/..`, `PATH` starts with the GENIE bin dir, `LD_LIBRARY_PATH` contains the GENIE lib dir.
 
 ## runlog_tools — minimal patches
 
