@@ -29,8 +29,7 @@
 │   ├── flux_index.py   # ported flux_tools (CRUD on flux_index.json)
 │   └── splines/{downloader,reader,plotter}.py  # ported ~verbatim
 ├── data/
-│   ├── flux/flux_index.json
-│   └── spline/scisoft/<version>/<tune>/gxspl-NUsmall.xml   # download cache
+│   └── flux/flux_index.json
 └── genie-runs/                          # all per-run artifacts + JSON logs
     └── <run-type>-YYYY-MM-DD/
         ├── xml/<tune>-<YYYYMMDD-HHMMSS>.xml          # gmkspl output
@@ -46,7 +45,7 @@
 - Inside, type subdirs (`xml/`, `ghep/`, `gst/`, `log/`, `stdout/`, `stderr/`) keep one `ls` per artifact kind.
 - Stem is **`<full-tune-name>-<YYYYMMDD-HHMMSS>`** (e.g. `G18_02a_00_000-20260528-143012`) shared across the run's artifact + log + stdout + stderr. Tune name is human-readable at a glance; timestamp guarantees ordering. The `log/<stem>.log` JSON ties them together via stored paths.
 - Discovery: `jq genie-runs/*/log/*.log` — eliminates `_GEVGEN_PATH_RE` (`genie_mcp/tools/gntpc_tool.py:49`).
-- Concurrency note: if two invocations of the same binary + tune start in the same second, append `-<2hex>` to the stem to disambiguate. SciSoft downloads stay in `data/spline/scisoft/` (inputs, not artifacts).
+- Concurrency note: if two invocations of the same binary + tune start in the same second, append `-<2hex>` to the stem to disambiguate. SciSoft spline downloads are configured separately (path resolved at download time, not bundled into the repo tree).
 - Plot outputs are produced separately (manual workflow) — no `png/` subdir in the per-day folder.
 
 ## Wrapper template (used by all three GENIE binaries)
@@ -129,14 +128,14 @@ Slash command: `.claude/commands/genie-sim.md` is the same as the skill body so 
 ```bash
 pixi run python scripts/download_spline.py --tune G18_02a_00_000 --version latest
 pixi run python scripts/run_gevgen.py --probe numu --target C12 -n 100 -e 3.0 \
-    --cross-sections data/spline/scisoft/v3_06_00/G18_02a_00_000/gxspl-NUsmall.xml \
+    --cross-sections <downloaded-spline-xml-path> \
     --tune G18_02a_00_000 --genlist CCQE
 pixi run python scripts/run_gntpc.py -i <ghep_path> -f gst        # no --tune / --probe / --target
 pixi run python scripts/plot_spline.py --plot-mode channels --neutrino numu --target C12
-jq -r '[.script, .outputs.returncode, .duration_s] | @tsv' genie-runs/*/*.log
+jq -r '[.script, .outputs.returncode, .duration_s] | @tsv' genie-runs/*/log/*.log
 ```
 
-Expect four `.log` files, four artifacts (xml in `data/`, ghep + gst + png in `genie-runs/`), each independently `jq`-queryable. Parity check vs MCP: pick a past gmkspl/gevgen/gntpc invocation, re-run via the new wrapper, `diff` event counts and ROOT file sizes — should match bit-for-bit.
+Expect four `.log` files plus matching ghep + gst artifacts under `genie-runs/`, each independently `jq`-queryable. Parity check vs MCP: pick a past gmkspl/gevgen/gntpc invocation, re-run via the new wrapper, `diff` event counts and ROOT file sizes — should match bit-for-bit.
 
 ## Critical files
 
