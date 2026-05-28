@@ -1,0 +1,10 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# excluded from this repo (tracked elsewhere)
+input_log/
+runlog_tools/
+
+# local Claude Code settings
+.claude/settings.local.json

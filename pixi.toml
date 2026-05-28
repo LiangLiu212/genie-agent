@@ -1,0 +1,12 @@
+[workspace]
+authors = ["Liang Liu <liangliu@fnal.gov>"]
+channels = ["conda-forge"]
+name = "genie-dev"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "3.14.*"
+jq = ">=1.8.1,<2"
