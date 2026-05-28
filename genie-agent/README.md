@@ -1,6 +1,6 @@
 # genie-agent
 
-CLI runners for GENIE binaries (`gmkspl`, `gevgen`, future `gntpc`). Runs under
+CLI runners for GENIE binaries (`gmkspl`, `gevgen`, `gntpc`). Runs under
 **pixi** and shells out to GENIE binaries that live in a **spack** environment,
 keeping the two envs cleanly separated. Each run writes a single mutable
 `<stem>.log` JSON next to its artefacts.
@@ -17,6 +17,7 @@ genie-agent/
 ├── scripts/                    # CLI entry points
 │   ├── run_gmkspl.py           # generate cross-section splines
 │   ├── run_gevgen.py           # generate neutrino events (mono-energetic)
+│   ├── run_gntpc.py            # convert GHEP events to gst / other formats
 │   ├── refresh_genie_env.py    # snapshot a setup_env.sh to config/env/
 │   └── job.py                  # status / cancel / list background jobs
 └── genie-runs/                 # output: genie-runs/<tune>-YYYY-MM-DD/
@@ -120,6 +121,47 @@ Artefacts per run, under `genie-runs/<tune>-YYYY-MM-DD/`:
 <probe>_<target>_<YYYYMMDD-HHMMSS>.stderr      # gevgen stderr
 <probe>_<target>_<YYYYMMDD-HHMMSS>.ghep.root   # the event file
 ```
+
+### `run_gntpc.py` — run `gntpc`
+
+Converts a GENIE GHEP event file (gevgen output) into a flat analysis format —
+`gst` by default. Same background-by-default model as the other runners.
+
+```
+pixi run python genie-agent/scripts/run_gntpc.py \
+    -i genie-runs/G18_02a_00_000-2026-05-28/numu_C12_20260528-140326.ghep.root \
+    -f gst
+```
+
+Required: `-i / --input` (the GHEP file). There is **no `--tune/--probe/--target`**
+— the output filename is derived from the input filename, and tune / probe /
+target / source-jobid are inherited from the input's sibling `<stem>.log` when
+it exists (recorded under `inputs.source_log`, etc.). If the sibling log is
+missing, gntpc still runs; only the inherited metadata is omitted.
+
+Common options:
+
+| Flag                  | Purpose                                                  |
+|-----------------------|----------------------------------------------------------|
+| `-f / --format FMT`   | Output format (default `gst`). One of: `gst`, `gxml`, `rootracker`, `rootracker_mock_data`, `t2k_rootracker`, `numi_rootracker`, `t2k_tracker`, `nuance_tracker`, `ghad`, `ginuke`. |
+| `-o / --output-file F`| Override output path (else derived from input + format). |
+| `-n / --n-events N`   | Convert only the first N events (default: all).          |
+| `--seed N`            | RNG seed.                                                |
+| `--installation NAME` | Override active installation (else env / config).        |
+| `--foreground`        | Block until done instead of detaching.                   |
+| `--label STR`         | Free-text label saved into the runlog.                   |
+
+Output lands in the **same folder as the input GHEP**. Job artefacts carry a
+`.<fmt>` infix so they never clobber the source run's `<stem>.log`:
+
+```
+<src_stem>.gst.root      # converted output (primary_output)
+<src_stem>.gst.log       # gntpc job log (distinct from the source <src_stem>.log)
+<src_stem>.gst.stdout    # gntpc stdout
+<src_stem>.gst.stderr    # gntpc stderr
+```
+
+(gntpc also drops a small transient `<src_stem>.ghep.status` progress file.)
 
 ### `job.py` — track and control background jobs
 
