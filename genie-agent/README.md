@@ -211,6 +211,70 @@ the supervisor (running → finished) and by `job.py status` / `cancel`.
 `true`/`false` as the run progresses. `returncode` is `null` until the
 process exits.
 
+## Querying run logs with `jq`
+
+Every run is one self-contained JSON file, so `jq` over `genie-runs/*/*.log` is
+the discovery story — no database, no index. The examples below assume you run
+from the `genie-agent/` directory.
+
+**One line per run** (`-c` keeps each record on its own line; `select` filters):
+
+```bash
+# everything, newest fields summarised
+jq -r '[.jobid, .runtype, .returncode, .duration_s] | @tsv' genie-runs/*/*.log
+
+# successful runs (exited 0, not still running / failed / canceled)
+jq -r 'select(.returncode==0 and .running==false and (.failed|not) and (.canceled|not))
+       | [.jobid, .duration_s, .outputs.primary_output] | @tsv' genie-runs/*/*.log
+
+# failed runs (show the reason if present)
+jq -r 'select(.failed==true) | [.jobid, .returncode, (.error // "-")] | @tsv' genie-runs/*/*.log
+
+# still running
+jq -r 'select(.running==true) | [.jobid, .pid, .started] | @tsv' genie-runs/*/*.log
+
+# pending (launched but supervisor hasn't started the binary yet)
+jq -r 'select(.running==null) | .jobid' genie-runs/*/*.log
+```
+
+**Filter by metadata** (resolved values live under `.inputs`):
+
+```bash
+# by runtype
+jq -r 'select(.runtype=="gevgen") | .jobid' genie-runs/*/*.log
+
+# by tune / generator list
+jq -r 'select(.inputs.tune_resolved=="G18_02a_00_000") | .jobid' genie-runs/*/*.log
+jq -r 'select(.inputs.genlist_resolved=="CCQE")        | .jobid' genie-runs/*/*.log
+
+# by installation or label
+jq -r 'select(.inputs.installation=="genie_rc") | .jobid' genie-runs/*/*.log
+jq -r 'select(.inputs.label=="myrun")           | .jobid' genie-runs/*/*.log
+
+# by probe/target — runners differ (gmkspl uses arrays, gevgen scalars), so
+# match the stem, which always contains <probe>_<target>:
+jq -r 'select(.outputs.stem | test("numu_C12")) | .jobid' genie-runs/*/*.log
+
+# by date — the per-day folder name encodes the tune + date; or filter on .timestamp
+jq -r 'select(.timestamp | startswith("2026-05-28")) | .jobid' genie-runs/*/*.log
+```
+
+**Pull out a single field or the whole record:**
+
+```bash
+# the exact GENIE command that ran
+jq -r '.outputs.genie_command' genie-runs/G18_02a_00_000-2026-05-28/numu_C12_*.log
+
+# output path + content hash for one run
+jq -r '{out: .outputs.primary_output, sha: .output_sha256}' genie-runs/*/numu_C12_20260528-140326.log
+
+# full record for a jobid (across all folders)
+jq 'select(.jobid=="gevgen-numu_C12_20260528-140326-c98dcb")' genie-runs/*/*.log
+```
+
+**Tip:** pipe `@tsv` output through `column -t` for aligned tables:
+`… | @tsv' genie-runs/*/*.log | column -t`.
+
 ## Config
 
 `config/genie_env.json` holds installations and defaults:
