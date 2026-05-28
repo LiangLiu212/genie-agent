@@ -1,6 +1,6 @@
 # genie-agent
 
-CLI runners for GENIE binaries (`gmkspl`, future `gevgen`/`gntpc`). Runs under
+CLI runners for GENIE binaries (`gmkspl`, `gevgen`, future `gntpc`). Runs under
 **pixi** and shells out to GENIE binaries that live in a **spack** environment,
 keeping the two envs cleanly separated. Each run writes a single mutable
 `<stem>.log` JSON next to its artefacts.
@@ -16,6 +16,7 @@ genie-agent/
 ├── lib/                        # shared modules (imported by scripts)
 ├── scripts/                    # CLI entry points
 │   ├── run_gmkspl.py           # generate cross-section splines
+│   ├── run_gevgen.py           # generate neutrino events (mono-energetic)
 │   ├── refresh_genie_env.py    # snapshot a setup_env.sh to config/env/
 │   └── job.py                  # status / cancel / list background jobs
 └── genie-runs/                 # output: genie-runs/<tune>-YYYY-MM-DD/
@@ -74,6 +75,51 @@ Artefacts per run, under `genie-runs/<tune>-YYYY-MM-DD/`:
 
 Hidden flag `--supervise --log-path … --env-path …` is the supervisor entry
 point invoked by the detach mechanism — don't call directly.
+
+### `run_gevgen.py` — run `gevgen`
+
+Generates GENIE neutrino events at a **single, fixed energy** (mono-energetic;
+flux / energy-range mode is not wired up yet). Same background-by-default model
+as `run_gmkspl.py`.
+
+```
+pixi run python genie-agent/scripts/run_gevgen.py \
+    --probe numu --target C12 -n 100 -e 3.0 \
+    --cross-sections /abs/path/to/spline.xml \
+    --tune G18_02a_00_000 --genlist CCQE
+```
+
+Required: `--probe`, `--target` (single PDG/alias each), `-n / --n-events`,
+`-e / --energy` (GeV), and `--cross-sections` (a spline XML — usually the
+output of a prior `run_gmkspl.py`). The cross-sections path is resolved to
+absolute before launch, since the binary runs with `cwd` set to the run folder.
+
+Common options:
+
+| Flag                    | Purpose                                                 |
+|-------------------------|---------------------------------------------------------|
+| `--tune NAME`           | GENIE tune (default: `config.default_tune`).            |
+| `--genlist NAME`        | Event-generator list (default: `config.default_generator_list`). |
+| `-r / --run-number N`   | MC run number (`-r`).                                   |
+| `--seed N`              | RNG seed.                                               |
+| `--output-file F`       | Override output GHEP path.                              |
+| `--installation NAME`   | Override active installation (else env / config).       |
+| `--foreground`          | Block until done instead of detaching.                  |
+| `--label STR`           | Free-text label saved into the runlog.                  |
+
+The spline must cover the requested probe/target/genlist. Note that neutrino
+CCQE needs a bound neutron, so e.g. `numu` CCQE on free `H1` yields no
+cross-section and gevgen will have nothing to generate — use a target with
+neutrons (`C12`, `Ar40`, …) or `H2`.
+
+Artefacts per run, under `genie-runs/<tune>-YYYY-MM-DD/`:
+
+```
+<probe>_<target>_<YYYYMMDD-HHMMSS>.log         # mutable job-state JSON
+<probe>_<target>_<YYYYMMDD-HHMMSS>.stdout      # gevgen stdout
+<probe>_<target>_<YYYYMMDD-HHMMSS>.stderr      # gevgen stderr
+<probe>_<target>_<YYYYMMDD-HHMMSS>.ghep.root   # the event file
+```
 
 ### `job.py` — track and control background jobs
 
@@ -144,8 +190,8 @@ the supervisor (running → finished) and by `job.py status` / `cancel`.
   "command":       ["…/gmkspl", "-p", "14", "-t", "1000010010", …],
   "description":   "gmkspl numu on H1 [G18_02a_00_000/CCQE]",
   "inputs":        { "probes": "numu", "targets": "H1", … },
-  "outputs":       { "output_xml": "…", "stdout_log": "…",
-                     "stderr_log": "…", "run_dir": "…",
+  "outputs":       { "output_xml": "…", "primary_output": "…",
+                     "stdout_log": "…", "stderr_log": "…", "run_dir": "…",
                      "stem": "numu_H1_20260528-133027",
                      "genie_command": "…", "warnings": [] },
   "timestamp":     "2026-05-28T18:30:27Z",
@@ -157,7 +203,7 @@ the supervisor (running → finished) and by `job.py status` / `cancel`.
   "failed":        false,
   "canceled":      null,
   "returncode":    0,
-  "output_xml_sha256": "…"
+  "output_sha256": "…"
 }
 ```
 
@@ -201,17 +247,23 @@ pixi run python genie-agent/scripts/refresh_genie_env.py --installation genie_rc
 
 # kick off a background spline run
 pixi run python genie-agent/scripts/run_gmkspl.py \
-    --probes eminus --targets C12 \
-    --tune GEM21_11a_00_000 --genlist EMQE -n 30 -e 10
-# -> jobid: gmkspl-eminus_C12_20260528-131038-ab12cd
+    --probes numu --targets C12 \
+    --tune G18_02a_00_000 --genlist CCQE -n 30 -e 5
+# -> jobid: gmkspl-numu_C12_20260528-135944-8df18d
 
 # check status (running / done / failed / canceled)
 pixi run python genie-agent/scripts/job.py status \
-    gmkspl-eminus_C12_20260528-131038-ab12cd
+    gmkspl-numu_C12_20260528-135944-8df18d
+
+# once the spline is done, generate events against it
+pixi run python genie-agent/scripts/run_gevgen.py \
+    --probe numu --target C12 -n 100 -e 3.0 \
+    --cross-sections genie-agent/genie-runs/G18_02a_00_000-2026-05-28/numu_C12_20260528-135944.xml \
+    --tune G18_02a_00_000 --genlist CCQE
 
 # cancel if needed
 pixi run python genie-agent/scripts/job.py cancel \
-    gmkspl-eminus_C12_20260528-131038-ab12cd
+    gmkspl-numu_C12_20260528-135944-8df18d
 
 # see everything
 pixi run python genie-agent/scripts/job.py list

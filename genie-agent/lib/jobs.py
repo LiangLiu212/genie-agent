@@ -289,7 +289,7 @@ def _supervise_impl(*, log_path: Path, env: dict[str, str]) -> int:
 
     finished_iso = _utc_now_iso()
     duration_s   = round(time.monotonic() - started_mono, 3)
-    output_xml   = outputs.get("output_xml")
+    primary_output = outputs.get("primary_output")
 
     update_log(
         log_path,
@@ -299,7 +299,7 @@ def _supervise_impl(*, log_path: Path, env: dict[str, str]) -> int:
         returncode=rc,
         finished=finished_iso,
         duration_s=duration_s,
-        output_xml_sha256=sha256_short(output_xml) if output_xml else None,
+        output_sha256=sha256_short(primary_output) if primary_output else None,
     )
     return rc
 

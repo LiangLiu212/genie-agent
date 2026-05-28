@@ -91,3 +91,52 @@ def validate_gmkspl_inputs(
             )
 
     return errors, warnings
+
+
+_BARE_NUCLEONS = frozenset({2112, 2212})
+
+
+def validate_gevgen_inputs(
+    nu_pdg: int,
+    tgt_pdg: int,
+    n_events: int,
+    energy: float,
+    cross_sections: str,
+    tune: str,
+    genie_bin_dir: str,
+) -> tuple[list[str], list[str]]:
+    """Validate mono-energetic gevgen inputs. Returns (errors, warnings).
+
+    Flux / energy-range mode is intentionally not handled here.
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    if nu_pdg not in NEUTRINO_PDGS:
+        warnings.append(
+            f"probe PDG {nu_pdg} is not a neutrino; gevgen expects a neutrino probe"
+        )
+
+    if tgt_pdg not in _BARE_NUCLEONS and not (1_000_000_000 <= tgt_pdg <= 1_999_999_999):
+        errors.append(f"PDG {tgt_pdg} does not look like a valid nuclear target")
+
+    if n_events is None or n_events <= 0:
+        errors.append(f"n_events must be > 0, got {n_events}")
+
+    if energy is None or energy <= 0:
+        errors.append(f"energy must be > 0 GeV for mono-energetic mode, got {energy}")
+
+    if not cross_sections:
+        errors.append("--cross-sections is required (path to spline XML)")
+    elif not Path(cross_sections).exists():
+        errors.append(f"cross_sections file not found: {cross_sections}")
+
+    if not TUNE_RE.match(tune):
+        errors.append(f"Invalid tune '{tune}': expected 4-part form, e.g. G18_02a_00_000")
+    else:
+        tune_base = "_".join(tune.split("_")[:2])
+        config_dir = Path(genie_bin_dir).parent / "config" / tune_base
+        if not config_dir.is_dir():
+            errors.append(f"Tune config dir not found: {config_dir}")
+
+    return errors, warnings

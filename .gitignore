@@ -15,3 +15,6 @@ __pycache__/
 
 # local GENIE config (machine-specific paths + snapshotted spack envs)
 genie-agent/config/
+
+# generated run artefacts (splines, events, job logs)
+genie-agent/genie-runs/
