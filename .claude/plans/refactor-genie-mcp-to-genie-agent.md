@@ -45,6 +45,24 @@
 - One per-day folder per tune (`G18_02a_00_000-2026-05-28/`, `AR23_20i_00_000-2026-05-28/`, …). All artifacts for a given tune on a given day live in one place — easy to delete/archive.
 - Inside, type subdirs (`xml/`, `ghep/`, `gst/`, `log/`, `stdout/`, `stderr/`) keep one `ls` per artifact kind.
 - Stem is **`<probe>_<target>_<YYYYMMDD-HHMMSS>`** (e.g. `numu_Ar40_20260528-143012`) shared across the run's artifact + log + stdout + stderr. Probe/target are human-readable at a glance; timestamp guarantees ordering. The `log/<stem>.log` JSON ties them together via stored paths and adds full metadata (genlist, n_events, seed, etc.).
+- **Probe name scheme** (used in filenames AND `lib/pdg.py` aliases) — filename-safe ASCII, no `+`/`-`:
+
+  | Probe | PDG | Alias |
+  |---|---|---|
+  | electron | 11 | `eminus` |
+  | positron | -11 | `eplus` |
+  | muon | 13 | `muminus` |
+  | antimuon | -13 | `muplus` |
+  | tau | 15 | `tauminus` |
+  | tau+ | -15 | `tauplus` |
+  | ν_e | 12 | `nue` |
+  | ν̄_e | -12 | `nuebar` |
+  | ν_μ | 14 | `numu` |
+  | ν̄_μ | -14 | `numubar` |
+  | ν_τ | 16 | `nutau` |
+  | ν̄_τ | -16 | `nutaubar` |
+
+  `lib/pdg.py` accepts these aliases AND legacy ones (`e-`, `e+`, `mu-`, `mu+`, `tau-`, `tau+`, `electron`, `muon`, etc., from `gmkspl_tool.py:123-141`) but always **normalises to the canonical alias** above when writing paths. Charged-lepton GEM tunes need `eminus`/`eplus`-style names because `+`/`-` would break filenames on some tools.
 - Discovery: `jq genie-runs/*/log/*.log` — eliminates `_GEVGEN_PATH_RE` (`genie_mcp/tools/gntpc_tool.py:49`).
 - Concurrency note: if two invocations on the same probe+target start in the same second, append `-<2hex>` to the stem to disambiguate. For gmkspl runs covering **multiple** probes/targets, use the first values joined by `+` or fall back to `multi_multi`. SciSoft spline downloads are configured separately (path resolved at download time, not bundled into the repo tree).
 - Plot outputs are produced separately (manual workflow) — no `png/` subdir in the per-day folder.
