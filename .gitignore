@@ -8,3 +8,10 @@ runlog_tools/
 
 # local Claude Code settings
 .claude/settings.local.json
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# local GENIE config (machine-specific paths + snapshotted spack envs)
+genie-agent/config/
