@@ -10,9 +10,8 @@
 
 ```
 /exp/dune/data/users/liangliu/genie-dev/genie-agent/
-├── config.json                          # active_installation + global defaults (versioned)
 ├── config/
-│   └── genie-env.json                   # installations registry (paths, may be machine-local)
+│   └── genie-env.json                   # active_installation + defaults + installations registry
 ├── .claude/
 │   ├── skills/{genie-sim,genie-pdg,genie-tunes,genie-generator-lists,
 │   │           genie-flux,genie-splines,genie-runlog}/SKILL.md
@@ -33,22 +32,23 @@
 ├── data/
 │   └── flux/flux_index.json
 └── genie-runs/                          # all per-run artifacts + JSON logs
-    └── <run-type>-YYYY-MM-DD/
-        ├── xml/<tune>-<YYYYMMDD-HHMMSS>.xml          # gmkspl output
-        ├── ghep/<tune>-<YYYYMMDD-HHMMSS>.ghep.root   # gevgen output
-        ├── gst/<tune>-<YYYYMMDD-HHMMSS>.gst.root     # gntpc output (or rootracker/, etc.)
-        ├── log/<tune>-<YYYYMMDD-HHMMSS>.log          # RunLog JSON (metadata)
-        ├── stdout/<tune>-<YYYYMMDD-HHMMSS>.stdout
-        └── stderr/<tune>-<YYYYMMDD-HHMMSS>.stderr
+    └── <tune>-YYYY-MM-DD/
+        ├── xml/<probe>_<target>_<YYYYMMDD-HHMMSS>.xml          # gmkspl output
+        ├── ghep/<probe>_<target>_<YYYYMMDD-HHMMSS>.ghep.root   # gevgen output
+        ├── gst/<probe>_<target>_<YYYYMMDD-HHMMSS>.gst.root     # gntpc output (or rootracker/, etc.)
+        ├── log/<probe>_<target>_<YYYYMMDD-HHMMSS>.log          # RunLog JSON (metadata)
+        ├── stdout/<probe>_<target>_<YYYYMMDD-HHMMSS>.stdout
+        └── stderr/<probe>_<target>_<YYYYMMDD-HHMMSS>.stderr
 ```
 
 **Layout rationale:**
-- One per-day folder per run-type (`gmkspl-2026-05-28/`, `gevgen-2026-05-28/`, …).
+- One per-day folder per tune (`G18_02a_00_000-2026-05-28/`, `AR23_20i_00_000-2026-05-28/`, …). All artifacts for a given tune on a given day live in one place — easy to delete/archive.
 - Inside, type subdirs (`xml/`, `ghep/`, `gst/`, `log/`, `stdout/`, `stderr/`) keep one `ls` per artifact kind.
-- Stem is **`<full-tune-name>-<YYYYMMDD-HHMMSS>`** (e.g. `G18_02a_00_000-20260528-143012`) shared across the run's artifact + log + stdout + stderr. Tune name is human-readable at a glance; timestamp guarantees ordering. The `log/<stem>.log` JSON ties them together via stored paths.
+- Stem is **`<probe>_<target>_<YYYYMMDD-HHMMSS>`** (e.g. `numu_Ar40_20260528-143012`) shared across the run's artifact + log + stdout + stderr. Probe/target are human-readable at a glance; timestamp guarantees ordering. The `log/<stem>.log` JSON ties them together via stored paths and adds full metadata (genlist, n_events, seed, etc.).
 - Discovery: `jq genie-runs/*/log/*.log` — eliminates `_GEVGEN_PATH_RE` (`genie_mcp/tools/gntpc_tool.py:49`).
-- Concurrency note: if two invocations of the same binary + tune start in the same second, append `-<2hex>` to the stem to disambiguate. SciSoft spline downloads are configured separately (path resolved at download time, not bundled into the repo tree).
+- Concurrency note: if two invocations on the same probe+target start in the same second, append `-<2hex>` to the stem to disambiguate. For gmkspl runs covering **multiple** probes/targets, use the first values joined by `+` or fall back to `multi_multi`. SciSoft spline downloads are configured separately (path resolved at download time, not bundled into the repo tree).
 - Plot outputs are produced separately (manual workflow) — no `png/` subdir in the per-day folder.
+- For gntpc converting a GHEP into GST format, the wrapper inherits the source GHEP's tune (read from its sibling `.log`) and writes the GST under the same `<tune>-YYYY-MM-DD/gst/` folder.
 
 ## Wrapper template (used by all three GENIE binaries)
 
@@ -103,36 +103,29 @@ Slash command: `.claude/commands/genie-sim.md` is the same as the skill body so 
 
 ## Config
 
-Two files, split by stability:
+Single file: **`config/genie-env.json`** — multi-installation registry plus global defaults. Same shape as `genie_mcp_config.json` but stripped of grid/jobsub fields:
 
-- **`config.json`** (top-level, stable, version-controlled). Defaults that rarely change:
-  ```json
-  {
-    "active_installation":     "genie_rc",
-    "default_tune":            "G18_02a_00_000",
-    "default_generator_list":  "CCQE"
+```json
+{
+  "active_installation":    "genie_rc",
+  "default_tune":           "G18_02a_00_000",
+  "default_generator_list": "CCQE",
+  "installations": {
+    "genie_rc": {
+      "genie_bin_dir":      "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/Generator/bin",
+      "genie_lib_dir":      "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/Generator/lib",
+      "genie_setup_script": "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/setup_env.sh"
+    },
+    "genie_v3_6_0":   { "...": "..." },
+    "genie_incl_dev": { "...": "..." },
+    "genie_v3_4_2":   { "...": "..." }
   }
-  ```
-  `active_installation` names the entry in `config/genie-env.json`. `lib/config.py` resolves precedence: `--installation` flag → `GENIE_AGENT_INSTALLATION` env → `active_installation`.
+}
+```
 
-- **`config/genie-env.json`** (installation registry, machine-specific, may live on `.gitignore` if paths differ per user). Same multi-installation shape as `genie_mcp_config.json` but stripped of grid/jobsub fields:
-  ```json
-  {
-    "installations": {
-      "genie_rc": {
-        "genie_bin_dir":      "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/Generator/bin",
-        "genie_lib_dir":      "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/Generator/lib",
-        "genie_setup_script": "/exp/dune/app/users/liangliu/GENIEINCLXX/GENIE_RC/setup_env.sh"
-      },
-      "genie_v3_6_0":   { "...": "..." },
-      "genie_incl_dev": { "...": "..." },
-      "genie_v3_4_2":   { "...": "..." }
-    }
-  }
-  ```
-  Stripped fields (vs `genie_mcp_config.json`): `jobsub_bin`, `condor_q_bin`, `jobsub_q_bin`, `jobsub_rm_bin`, `jobsub_fetchlog_bin`, `default_output_dir`, `default_log_dir`, `default_group`, `python_exec`, `job_template_dir`, `cli_timeout_seconds`, `gmkspl_timeout_seconds`, `xsec_spline_dir`. Per-installation `default_tune` is dropped (lives once in top-level `config.json`).
+Stripped fields (vs `genie_mcp_config.json`): `jobsub_bin`, `condor_q_bin`, `jobsub_q_bin`, `jobsub_rm_bin`, `jobsub_fetchlog_bin`, `default_output_dir`, `default_log_dir`, `default_group`, `python_exec`, `job_template_dir`, `cli_timeout_seconds`, `gmkspl_timeout_seconds`, `xsec_spline_dir`. Per-installation `default_tune` is dropped (lives once at the top level).
 
-`lib/config.py` is ~40 lines:
+`lib/config.py` is ~30 lines:
 ```python
 # lib/config.py
 import json, os
@@ -141,19 +134,20 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]   # genie-agent/
 
 def load_config(installation: str | None = None) -> dict:
-    main = json.loads((_ROOT / "config.json").read_text())
-    envs = json.loads((_ROOT / "config" / "genie-env.json").read_text())
+    cfg = json.loads((_ROOT / "config" / "genie-env.json").read_text())
 
-    name = installation or os.environ.get("GENIE_AGENT_INSTALLATION") or main["active_installation"]
-    if name not in envs["installations"]:
+    name = installation or os.environ.get("GENIE_AGENT_INSTALLATION") or cfg["active_installation"]
+    if name not in cfg["installations"]:
         raise KeyError(f"installation '{name}' not found in config/genie-env.json")
 
-    return {
-        **main,                          # default_tune, default_generator_list
-        **envs["installations"][name],   # genie_bin_dir, genie_setup_script, ...
-        "installation_name": name,
-    }
+    # merge: install-specific paths override globals if any keys collide
+    merged = {k: v for k, v in cfg.items() if k != "installations"}
+    merged.update(cfg["installations"][name])
+    merged["installation_name"] = name
+    return merged
 ```
+
+Precedence for `active_installation`: `--installation` flag → `GENIE_AGENT_INSTALLATION` env → top-level `active_installation` in `config/genie-env.json`.
 
 ## Detailed: `lib/genie_env.py` — GENIE environment sourcing
 
@@ -263,7 +257,7 @@ Expected: `GENIE` matches the active installation's `genie_bin_dir/..`, `PATH` s
 
 ## Migration order (smallest vertical slice first)
 
-1. Scaffold directory tree; copy + strip `config.json` from `genie_mcp/config/genie_mcp_config.json`.
+1. Scaffold directory tree; copy + strip `genie_mcp/config/genie_mcp_config.json` into `config/genie-env.json`.
 2. Port `lib/genie_env.py`, `lib/config.py`, `lib/paths.py`, `lib/pdg.py`, `lib/validation.py`. Smoke-test: `print(build_genie_env(load_config()["genie_setup_script"])["GENIE"])`.
 3. **`scripts/run_gmkspl.py`** first (slowest binary → timing field meaningful, richest validation, output feeds next two). Verify with `--probes numu --targets H1 --tune G18_02a_00_000 --genlist CCQE -n 30 -e 5`.
 4. `.claude/skills/genie-runlog/SKILL.md` — `jq` recipes so Claude can query the first wrapper's outputs.
