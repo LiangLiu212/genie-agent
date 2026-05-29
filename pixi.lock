@@ -5,6 +5,8 @@ environments:
   default:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
+    indexes:
+    - https://pypi.org/simple
     packages:
       linux-64:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
@@ -30,6 +32,10 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.5.20-hbd8a1cb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.14-8_cp314.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025c-hc9c84f9_1.conda
+      - pypi: https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/31/26/ef168b184a25701f9995e8fb7e503fafd7a99c1c77cda1bc1a26ea2ed486/sqlalchemy-2.0.50-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/77/96/4efd6fa5c62c85426a0c19077a586258ebc3a2a146ff2493e4312a697a22/greenlet-3.5.1-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/f0/98/1160c1f1da2304c2e475891932bae2723fd3a9aa8e872efa9b873f461d37/pdg-0.2.3-py3-none-any.whl
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -42,6 +48,7 @@ packages:
   - openmp_impl <0.0a0
   license: BSD-3-Clause
   license_family: BSD
+  purls: []
   size: 28948
   timestamp: 1770939786096
 - conda: https://conda.anaconda.org/conda-forge/linux-64/bzip2-1.0.8-hda65f42_9.conda
@@ -52,6 +59,7 @@ packages:
   - libgcc >=14
   license: bzip2-1.0.6
   license_family: BSD
+  purls: []
   size: 260182
   timestamp: 1771350215188
 - conda: https://conda.anaconda.org/conda-forge/linux-64/jq-1.8.1-h73b1eb8_0.conda
@@ -64,6 +72,7 @@ packages:
   - oniguruma >=6.9.10,<6.10.0a0
   license: MIT
   license_family: MIT
+  purls: []
   size: 313184
   timestamp: 1751447310552
 - conda: https://conda.anaconda.org/conda-forge/linux-64/ld_impl_linux-64-2.45.1-default_hbd61a6d_102.conda
@@ -76,6 +85,7 @@ packages:
   - binutils_impl_linux-64 2.45.1
   license: GPL-3.0-only
   license_family: GPL
+  purls: []
   size: 728002
   timestamp: 1774197446916
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libexpat-2.8.1-hecca717_0.conda
@@ -88,6 +98,7 @@ packages:
   - expat 2.8.1.*
   license: MIT
   license_family: MIT
+  purls: []
   size: 77294
   timestamp: 1779278686680
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libffi-3.5.2-h3435931_0.conda
@@ -98,6 +109,7 @@ packages:
   - libgcc >=14
   license: MIT
   license_family: MIT
+  purls: []
   size: 58592
   timestamp: 1769456073053
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-15.2.0-he0feb66_19.conda
@@ -111,6 +123,7 @@ packages:
   - libgomp 15.2.0 he0feb66_19
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
+  purls: []
   size: 1041084
   timestamp: 1778269013026
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-15.2.0-he0feb66_19.conda
@@ -120,6 +133,7 @@ packages:
   - __glibc >=2.17,<3.0.a0
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
+  purls: []
   size: 603817
   timestamp: 1778268942614
 - conda: https://conda.anaconda.org/conda-forge/linux-64/liblzma-5.8.3-hb03c661_0.conda
@@ -131,6 +145,7 @@ packages:
   constrains:
   - xz 5.8.3.*
   license: 0BSD
+  purls: []
   size: 113478
   timestamp: 1775825492909
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libmpdec-4.0.0-hb03c661_1.conda
@@ -141,6 +156,7 @@ packages:
   - libgcc >=14
   license: BSD-2-Clause
   license_family: BSD
+  purls: []
   size: 92400
   timestamp: 1769482286018
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libsqlite-3.53.1-h0c1763c_0.conda
@@ -151,6 +167,7 @@ packages:
   - libgcc >=14
   - libzlib >=1.3.2,<2.0a0
   license: blessing
+  purls: []
   size: 954962
   timestamp: 1777986471789
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libuuid-2.42.1-h5347b49_0.conda
@@ -161,6 +178,7 @@ packages:
   - libgcc >=14
   license: BSD-3-Clause
   license_family: BSD
+  purls: []
   size: 40163
   timestamp: 1779118517630
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libzlib-1.3.2-h25fd6f3_2.conda
@@ -172,6 +190,7 @@ packages:
   - zlib 1.3.2 *_2
   license: Zlib
   license_family: Other
+  purls: []
   size: 63629
   timestamp: 1774072609062
 - conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_0.conda
@@ -181,6 +200,7 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=14
   license: X11 AND BSD-3-Clause
+  purls: []
   size: 918956
   timestamp: 1777422145199
 - conda: https://conda.anaconda.org/conda-forge/linux-64/oniguruma-6.9.10-hb9d3cd8_0.conda
@@ -191,6 +211,7 @@ packages:
   - libgcc >=13
   license: BSD-2-Clause
   license_family: BSD
+  purls: []
   size: 248670
   timestamp: 1735727084819
 - conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.2-h35e630c_0.conda
@@ -202,6 +223,7 @@ packages:
   - libgcc >=14
   license: Apache-2.0
   license_family: Apache
+  purls: []
   size: 3167099
   timestamp: 1775587756857
 - conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.14.5-habeac84_100_cp314.conda
@@ -228,6 +250,7 @@ packages:
   - tzdata
   - zstd >=1.5.7,<1.6.0a0
   license: Python-2.0
+  purls: []
   size: 36745188
   timestamp: 1779236923603
   python_site_packages_path: lib/python3.14/site-packages
@@ -240,6 +263,7 @@ packages:
   - ncurses >=6.5,<7.0a0
   license: GPL-3.0-only
   license_family: GPL
+  purls: []
   size: 345073
   timestamp: 1765813471974
 - conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h366c992_103.conda
@@ -253,6 +277,7 @@ packages:
   - xorg-libx11 >=1.8.12,<2.0a0
   license: TCL
   license_family: BSD
+  purls: []
   size: 3301196
   timestamp: 1769460227866
 - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_6.conda
@@ -263,6 +288,7 @@ packages:
   - libzlib >=1.3.1,<2.0a0
   license: BSD-3-Clause
   license_family: BSD
+  purls: []
   size: 601375
   timestamp: 1764777111296
 - conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.5.20-hbd8a1cb_0.conda
@@ -271,6 +297,7 @@ packages:
   depends:
   - __unix
   license: ISC
+  purls: []
   size: 129868
   timestamp: 1779289852439
 - conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.14-8_cp314.conda
@@ -281,11 +308,75 @@ packages:
   - python 3.14.* *_cp314
   license: BSD-3-Clause
   license_family: BSD
+  purls: []
   size: 6989
   timestamp: 1752805904792
 - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025c-hc9c84f9_1.conda
   sha256: 1d30098909076af33a35017eed6f2953af1c769e273a0626a04722ac4acaba3c
   md5: ad659d0a2b3e47e38d829aa8cad2d610
   license: LicenseRef-Public-Domain
+  purls: []
   size: 119135
   timestamp: 1767016325805
+- pypi: https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
+  name: typing-extensions
+  version: 4.15.0
+  sha256: f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
+  requires_python: '>=3.9'
+- pypi: https://files.pythonhosted.org/packages/31/26/ef168b184a25701f9995e8fb7e503fafd7a99c1c77cda1bc1a26ea2ed486/sqlalchemy-2.0.50-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+  name: sqlalchemy
+  version: 2.0.50
+  sha256: 6c206aec519a2e7bd08abbfb33436e325fd22c632d9c21a9047e376ce241646e
+  requires_dist:
+  - importlib-metadata ; python_full_version < '3.8'
+  - greenlet>=1 ; platform_machine == 'AMD64' or platform_machine == 'WIN32' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'ppc64le' or platform_machine == 'win32' or platform_machine == 'x86_64'
+  - typing-extensions>=4.6.0
+  - greenlet>=1 ; extra == 'asyncio'
+  - mypy>=0.910 ; extra == 'mypy'
+  - pyodbc ; extra == 'mssql'
+  - pymssql ; extra == 'mssql-pymssql'
+  - pyodbc ; extra == 'mssql-pyodbc'
+  - mysqlclient>=1.4.0 ; extra == 'mysql'
+  - mysql-connector-python ; extra == 'mysql-connector'
+  - mariadb>=1.0.1,!=1.1.2,!=1.1.5,!=1.1.10 ; extra == 'mariadb-connector'
+  - cx-oracle>=8 ; extra == 'oracle'
+  - oracledb>=1.0.1 ; extra == 'oracle-oracledb'
+  - psycopg2>=2.7 ; extra == 'postgresql'
+  - pg8000>=1.29.1 ; extra == 'postgresql-pg8000'
+  - greenlet>=1 ; extra == 'postgresql-asyncpg'
+  - asyncpg ; extra == 'postgresql-asyncpg'
+  - psycopg2-binary ; extra == 'postgresql-psycopg2binary'
+  - psycopg2cffi ; extra == 'postgresql-psycopg2cffi'
+  - psycopg>=3.0.7 ; extra == 'postgresql-psycopg'
+  - psycopg[binary]>=3.0.7 ; extra == 'postgresql-psycopgbinary'
+  - pymysql ; extra == 'pymysql'
+  - greenlet>=1 ; extra == 'aiomysql'
+  - aiomysql>=0.2.0 ; extra == 'aiomysql'
+  - greenlet>=1 ; extra == 'aioodbc'
+  - aioodbc ; extra == 'aioodbc'
+  - greenlet>=1 ; extra == 'asyncmy'
+  - asyncmy>=0.2.3,!=0.2.4,!=0.2.6 ; extra == 'asyncmy'
+  - greenlet>=1 ; extra == 'aiosqlite'
+  - aiosqlite ; extra == 'aiosqlite'
+  - typing-extensions!=3.10.0.1 ; extra == 'aiosqlite'
+  - sqlcipher3-binary ; extra == 'sqlcipher'
+  requires_python: '>=3.7'
+- pypi: https://files.pythonhosted.org/packages/77/96/4efd6fa5c62c85426a0c19077a586258ebc3a2a146ff2493e4312a697a22/greenlet-3.5.1-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
+  name: greenlet
+  version: 3.5.1
+  sha256: 2f82b3597e9d83b63408affed0b48fd0f54935edac4302237b9a837be0dae33c
+  requires_dist:
+  - sphinx ; extra == 'docs'
+  - furo ; extra == 'docs'
+  - objgraph ; extra == 'test'
+  - psutil ; extra == 'test'
+  - setuptools ; extra == 'test'
+  requires_python: '>=3.10'
+- pypi: https://files.pythonhosted.org/packages/f0/98/1160c1f1da2304c2e475891932bae2723fd3a9aa8e872efa9b873f461d37/pdg-0.2.3-py3-none-any.whl
+  name: pdg
+  version: 0.2.3
+  sha256: 80297b3abc7eb76f9f85c0f74cc94aac685601529f7534976d96d6378e914ff3
+  requires_dist:
+  - sqlalchemy>=1.4
+  - typing-extensions>=4.15
+  requires_python: '>=3.10'

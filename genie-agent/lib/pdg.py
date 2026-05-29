@@ -1,175 +1,98 @@
-"""PDG alias tables for nuclei, neutrinos, and charged leptons.
+"""PDG resolution backed by the shared `shared/pdg.json` snapshot.
 
-`resolve_pdg(value)` returns the integer PDG code from an alias string,
-integer, or numeric string.
+The data (probe/nucleon names+codes, the element->Z table) is generated once by
+`shared/build_pdg.py` from GENIE's PDG table + the PDG API, and read here at
+runtime with no `pdg` dependency. jobsub-agent reads the *same* file via its own
+thin loader, so both agents resolve PDGs identically.
 
-`canonical_probe(value)` returns the filename-safe alias for a probe
-(eminus/eplus/muminus/muplus/tauminus/tauplus + nue/nuebar/numu/numubar/
-nutau/nutaubar). Used when building directory paths so filenames never
-contain '+' or '-'.
+Public API (unchanged for callers):
+  resolve_pdg(value)       -> int PDG code from alias / int / numeric string /
+                              "<Sym><A>" nucleus (e.g. "Ar40").
+  canonical_probe(value)   -> filename-safe probe alias (numu, eminus, ...).
+  canonical_target(value)  -> filename-safe nucleus alias (Ar40), proton/neutron,
+                              else str(code).
+  CHARGED_LEPTON_PDGS, NEUTRINO_PDGS -> frozensets of int codes.
 """
 from __future__ import annotations
 
+import json
+import re
+from pathlib import Path
 
-NUCLEUS_PDG: dict[str, int] = {
-    # Hydrogen / light
-    "H1":    1000010010,
-    "H2":    1000010020,
-    "H3":    1000010030,
-    "He3":   1000020030,
-    "He4":   1000020040,
-    # p-shell
-    "Li6":   1000030060,
-    "Li7":   1000030070,
-    "Be9":   1000040090,
-    "B10":   1000050100,
-    "B11":   1000050110,
-    "C12":   1000060120,
-    "C13":   1000060130,
-    "N14":   1000070140,
-    "O16":   1000080160,
-    "O18":   1000080180,
-    # sd-shell
-    "Ne20":  1000100200,
-    "Na23":  1000110230,
-    "Mg24":  1000120240,
-    "Al27":  1000130270,
-    "Si28":  1000140280,
-    "Si29":  1000140290,
-    "Si30":  1000140300,
-    "P31":   1000150310,
-    "S32":   1000160320,
-    "Cl35":  1000170350,
-    "Cl37":  1000170370,
-    "Ar36":  1000180360,
-    "Ar38":  1000180380,
-    "Ar40":  1000180400,
-    "K39":   1000190390,
-    "Ca40":  1000200400,
-    "Ca44":  1000200440,
-    "Ca48":  1000200480,
-    # fp-shell
-    "Ti48":  1000220480,
-    "Cr52":  1000240520,
-    "Fe54":  1000260540,
-    "Fe56":  1000260560,
-    "Fe58":  1000260580,
-    "Ni58":  1000280580,
-    "Ni60":  1000280600,
-    "Cu63":  1000290630,
-    "Cu65":  1000290650,
-    "Zn64":  1000300640,
-    # medium-heavy
-    "Ge76":  1000320760,
-    "Se82":  1000340820,
-    "Kr83":  1000360830,
-    "Kr86":  1000360860,
-    "Sr88":  1000380880,
-    "Zr90":  1000400900,
-    "Mo98":  1000420980,
-    "Ag108": 1000471080,
-    "Cd114": 1000481140,
-    "In115": 1000491150,
-    "Sn120": 1000501200,
-    "Te130": 1000521300,
-    "I127":  1000531270,
-    "Xe131": 1000541310,
-    "Cs133": 1000551330,
-    "Ba138": 1000561380,
-    # heavy
-    "La139": 1000571390,
-    "Ce140": 1000581400,
-    "Nd142": 1000601420,
-    "Sm152": 1000621520,
-    "Gd158": 1000641580,
-    "W184":  1000741840,
-    "Au197": 1000791970,
-    "Hg202": 1000802020,
-    "Pb204": 1000822040,
-    "Pb206": 1000822060,
-    "Pb207": 1000822070,
-    "Pb208": 1000822080,
-    "Bi209": 1000832090,
-    "U235":  1000922350,
-    "U238":  1000922380,
-}
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_PDG_JSON = _REPO_ROOT / "shared" / "pdg.json"
 
-# Canonical neutrino aliases (filename-safe).
-NEUTRINO_PDG: dict[str, int] = {
-    "nue":      12,
-    "nuebar":  -12,
-    "numu":     14,
-    "numubar": -14,
-    "nutau":    16,
-    "nutaubar":-16,
-}
+_data = json.loads(_PDG_JSON.read_text())
 
-# Canonical charged-lepton aliases (filename-safe; no '+' or '-').
-LEPTON_PDG: dict[str, int] = {
-    "eminus":     11,
-    "eplus":     -11,
-    "muminus":    13,
-    "muplus":    -13,
-    "tauminus":   15,
-    "tauplus":   -15,
-}
+_PROBES:   dict[str, dict] = _data["probes"]
+_NUCLEONS: dict[str, dict] = _data["nucleons"]
+ELEMENTS:  dict[str, int]  = _data["elements"]          # symbol -> Z
+_Z_TO_SYMBOL: dict[int, str] = {z: s for s, z in ELEMENTS.items()}
 
-# Legacy aliases — accepted on input, normalised to canonical on output.
-_LEGACY_LEPTON_ALIASES: dict[str, int] = {
-    "e-":       11,   "e+":      -11,
-    "mu-":      13,   "mu+":     -13,
-    "tau-":     15,   "tau+":    -15,
-    "electron": 11,   "positron": -11,
-    "muon":     13,   "antimuon": -13,
-    "tau":      15,   "antitau":  -15,
-}
+# alias (lowercased) -> code, across probes + nucleons
+ALIAS_TO_PDG: dict[str, int] = {}
+# code -> canonical filename-safe alias (probes + nucleons)
+_CODE_TO_CANONICAL: dict[int, str] = {}
+for _entry in (*_PROBES.values(), *_NUCLEONS.values()):
+    _code = _entry["code"]
+    _CODE_TO_CANONICAL[_code] = _entry["canonical"]
+    for _a in _entry["aliases"]:
+        ALIAS_TO_PDG[_a.lower()] = _code
 
-ALL_PDG_ALIASES: dict[str, int] = {
-    **NUCLEUS_PDG,
-    **NEUTRINO_PDG,
-    **LEPTON_PDG,
-    **_LEGACY_LEPTON_ALIASES,
-}
+CHARGED_LEPTON_PDGS = frozenset(
+    e["code"] for e in _PROBES.values() if e["kind"] == "charged_lepton"
+)
+NEUTRINO_PDGS = frozenset(
+    e["code"] for e in _PROBES.values() if e["kind"] == "neutrino"
+)
 
-# Reverse maps for canonical_probe / canonical_target.
-_PDG_TO_NEUTRINO: dict[int, str] = {v: k for k, v in NEUTRINO_PDG.items()}
-_PDG_TO_LEPTON:   dict[int, str] = {v: k for k, v in LEPTON_PDG.items()}
-_PDG_TO_NUCLEUS:  dict[int, str] = {v: k for k, v in NUCLEUS_PDG.items()}
+_NUCLEUS_RE = re.compile(r"^([A-Z][a-z]?)(\d+)$")   # e.g. "Ar40", "C12", "H1"
+_NUCLEUS_CODE_MIN = 1_000_000_000
 
-CHARGED_LEPTON_PDGS = frozenset({11, -11, 13, -13, 15, -15})
-NEUTRINO_PDGS       = frozenset({12, -12, 14, -14, 16, -16})
+
+def _nucleus_code(symbol: str, mass_number: int) -> int:
+    return _NUCLEUS_CODE_MIN + ELEMENTS[symbol] * 10_000 + mass_number * 10
 
 
 def resolve_pdg(value: str | int) -> int:
-    """Resolve a PDG integer from an alias string, integer, or numeric string."""
+    """Resolve a PDG integer from an alias, int, numeric string, or nucleus name."""
     if isinstance(value, int):
         return value
     v = str(value).strip()
-    if v in ALL_PDG_ALIASES:
-        return ALL_PDG_ALIASES[v]
+    if v.lower() in ALIAS_TO_PDG:
+        return ALIAS_TO_PDG[v.lower()]
+    m = _NUCLEUS_RE.match(v)
+    if m and m.group(1) in ELEMENTS:
+        return _nucleus_code(m.group(1), int(m.group(2)))
     try:
         return int(v)
     except ValueError:
-        known = ", ".join(sorted(ALL_PDG_ALIASES.keys()))
-        raise ValueError(f"Unknown PDG alias '{v}'. Known: {known}")
+        known = ", ".join(sorted(ALIAS_TO_PDG))
+        raise ValueError(
+            f"Unknown PDG alias '{v}'. Known particle aliases: {known}. "
+            f"Nuclei use '<Symbol><A>' (e.g. 'Ar40', 'C12')."
+        )
 
 
 def canonical_probe(value: str | int) -> str:
-    """Return the filename-safe alias for a probe (neutrino or charged lepton).
+    """Filename-safe alias for a probe (neutrino / charged lepton / nucleon).
 
-    Falls back to str(pdg) if no canonical alias exists.
+    Falls back to str(code) when no canonical alias exists.
     """
-    pdg = resolve_pdg(value)
-    if pdg in _PDG_TO_NEUTRINO:
-        return _PDG_TO_NEUTRINO[pdg]
-    if pdg in _PDG_TO_LEPTON:
-        return _PDG_TO_LEPTON[pdg]
-    return str(pdg)
+    code = resolve_pdg(value)
+    return _CODE_TO_CANONICAL.get(code, str(code))
 
 
 def canonical_target(value: str | int) -> str:
-    """Return the filename-safe alias for a nuclear target (e.g. 'Ar40')."""
-    pdg = resolve_pdg(value)
-    if pdg in _PDG_TO_NUCLEUS:
-        return _PDG_TO_NUCLEUS[pdg]
-    return str(pdg)
+    """Filename-safe alias for a target: 'Ar40' for nuclei, proton/neutron for
+    free nucleons, else str(code)."""
+    code = resolve_pdg(value)
+    if code in _CODE_TO_CANONICAL:
+        return _CODE_TO_CANONICAL[code]
+    if code >= _NUCLEUS_CODE_MIN:
+        z = (code // 10_000) % 1_000
+        a = (code // 10) % 1_000
+        sym = _Z_TO_SYMBOL.get(z)
+        if sym:
+            return f"{sym}{a}"
+    return str(code)

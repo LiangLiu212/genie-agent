@@ -10,7 +10,7 @@ and `tools/{gevgen_grid,gmkspl_grid,grid_admin}_tool.py`) with the note:
 > general-purpose submission tool, not GENIE-specific**.
 
 This is that redesign. `jobsub-agent/` becomes a **sibling** of `genie-agent/`:
-a generic `jobsub_lite` submission core (`jlib/`) plus a thin **GENIE adapter**
+a generic `jobsub_lite` submission core (`lib/`) plus a thin **GENIE adapter**
 (`adapters/genie/`). genie-agent produces local artefacts (splines, GHEPs);
 jobsub-agent submits the *grid-scale* versions of the same work and pulls the
 outputs back. The two stay decoupled — jobsub-agent has zero GENIE knowledge in
@@ -34,8 +34,8 @@ Source of truth for grid behaviour to port/redesign:
 | genie-mcp (old) | jobsub-agent (new) | Why |
 |---|---|---|
 | Single central registry `~/.genie_mcp_grid_jobs.json` | **Registry-free** per-job JSON record under `jobsub-runs/`, discovered by glob, jq-queryable | Matches genie-agent's "metadata lives in the log, no registry" model |
-| GENIE baked into submit/status/tarball | **Generic `jlib/` core** + `adapters/genie/` | The deferred-grid mandate: reusable for any worker script |
-| Inherited ambient shell env for `jobsub_*` | **Scrubbed submit env** (`jlib/submit_env.py`) | Under pixi, `PYTHONHOME`/`PYTHONPATH`/`PIXI_*` poison jobsub_lite's own python — the grid analog of genie-agent's two-environments problem |
+| GENIE baked into submit/status/tarball | **Generic `lib/` core** + `adapters/genie/` | The deferred-grid mandate: reusable for any worker script |
+| Inherited ambient shell env for `jobsub_*` | **Scrubbed submit env** (`lib/submit_env.py`) | Under pixi, `PYTHONHOME`/`PYTHONPATH`/`PIXI_*` poison jobsub_lite's own python — the grid analog of genie-agent's two-environments problem |
 | `GridJob` dataclass + `asdict` into registry | per-job record dict written via `atomic_write_json` (same helper shape as `genie-agent/lib/jobs.py`) | One serialization story across both agents |
 | status only via `update_grid_status(job_id, cfg)` | `status`/`list` re-query `jobsub_q` on demand and persist into the record | No supervisor exists for grid jobs (work runs remotely) — polling is the only truth |
 
@@ -53,7 +53,7 @@ cache key; the `dropbox://` vs `/cvmfs/` `-R` override branch.
 jobsub-agent/
 ├── config/
 │   └── jobsub.json                 # jobsub_lite bins + group/role + pnfs scratch base + defaults
-├── jlib/                           # GENERIC core — NO genie imports
+├── lib/                           # GENERIC core — NO genie imports
 │   ├── __init__.py
 │   ├── config.py                   # load config/jobsub.json (precedence like genie-agent/lib/config.py)
 │   ├── submit_env.py               # scrubbed env for jobsub_* (auth pass-through, pixi strip)
@@ -74,7 +74,7 @@ jobsub-agent/
 │   └── genie/                      # GENIE-specific layer (the ONLY place GENIE lives)
 │       ├── __init__.py
 │       ├── pnfs.py                 # PNFS path scheme + channel-from-genlist
-│       ├── run_gmkspl_grid.py      # resolve PDGs/validate → build worker args → jlib.submit
+│       ├── run_gmkspl_grid.py      # resolve PDGs/validate → build worker args → lib.submit
 │       ├── run_gevgen_grid.py
 │       └── templates/
 │           ├── gmkspl_grid.sh      # ported worker scripts
@@ -91,18 +91,20 @@ jobsub-agent/
 .claude/plans/jobsub-agent.md       # this file
 ```
 
-**Package name is `jlib`, not `lib`, on purpose.** The GENIE adapter must
-`sys.path.insert(genie-agent root)` and `from lib.pdg import resolve_pdg` to
-reuse genie-agent's PDG/tune logic. If jobsub-agent's core were also named
-`lib`, the two would shadow each other on `sys.path`. `jlib` sidesteps the
-collision; the adapter then imports `jlib.submit` (own core) and `lib.pdg`
-(sibling) unambiguously.
+**No cross-import into genie-agent.** Earlier drafts had the adapter
+`sys.path.insert(genie-agent root)` + `from lib.pdg import …`, which forced a
+`jlib`-vs-`lib` rename to avoid package shadowing. That coupling is gone: PDG
+data now lives in the repo-shared **`shared/pdg.json`** (see "Shared PDG data"),
+which the adapter reads via its **own** thin `pdg.py` loader — identical to
+`genie-agent/lib/pdg.py`. So jobsub-agent's core is plainly `lib/`, no sys.path
+juggling, and the agents resolve PDGs from one source without importing each
+other.
 
 ---
 
-## Generic core (`jlib/`) — what each module owns
+## Generic core (`lib/`) — what each module owns
 
-### `jlib/config.py`
+### `lib/config.py`
 Loads `config/jobsub.json`; precedence `--installation`/explicit → env →
 top-level default, same 30-line shape as `genie-agent/lib/config.py`. Config
 holds the **stripped grid fields** the refactor removed from genie_env.json:
@@ -122,7 +124,7 @@ holds the **stripped grid fields** the refactor removed from genie_env.json:
 `jobsub_rm` is derived from `jobsub_q_bin`'s parent at call time (genie-mcp's
 `_resolve_jobsub_rm` trick) to avoid a stale config entry.
 
-### `jlib/submit_env.py`  ← **new, the likely first failure point**
+### `lib/submit_env.py`  ← **new, the likely first failure point**
 jobsub_lite is its own python venv invoked by absolute path; but
 `PYTHONHOME`/`PYTHONPATH`/`PIXI_*`/`CONDA_*` leaking from the pixi shell can
 still break it (exactly the bug genie-agent's `env -i` snapshot solved for
@@ -135,7 +137,7 @@ Every `subprocess.run([cfg.jobsub_*…])` passes `env=build_submit_env()`.
 Unlike GENIE we do **not** snapshot to JSON — auth (kerberos/token) is live and
 per-session, so we scrub at call time instead of caching.
 
-### `jlib/records.py`  ← replaces the central registry
+### `lib/records.py`  ← replaces the central registry
 Registry-free, mirroring `genie-agent/lib/jobs.py`:
 - `make_jobid(runtype, stem) -> "<runtype>-<stem>-<6hex>"`; `parse_jobid`.
 - record dir/stem helpers → `jobsub-runs/<runtype>-YYYY-MM-DD/<stem>.gridlog`.
@@ -150,7 +152,7 @@ Registry-free, mirroring `genie-agent/lib/jobs.py`:
   `status` ∈ `pending|submitted|running|held|done|partial|failed|cancelled`
   (same model as `grid_manager.py` header).
 
-### `jlib/submit.py`
+### `lib/submit.py`
 `submit(cfg, *, runtype, stem, submit_cmd, n_jobs, worker_script, inputs,
 outputs, extra, dry_run=False) -> record`. Writes `<stem>.command.json` first,
 runs `jobsub_submit` (`+ --no_submit` if `dry_run`) with the scrubbed env,
@@ -160,7 +162,7 @@ sets `status` (`pending`/`submitted`/`failed`), writes the `.gridlog`. **Knows
 nothing about GENIE** — the caller hands it a finished `submit_cmd` and the
 worker-args.
 
-### `jlib/monitor.py`
+### `lib/monitor.py`
 Port `_parse_classad_blocks`, `_HTC_STATE_MAP`, `query_jobsub_status`,
 `update_grid_status` → `refresh_status(record_path, cfg)`. Reads the `.gridlog`,
 re-queries `jobsub_q --long`, aggregates per-process states, applies the
@@ -168,20 +170,20 @@ empty-queue → DONE-sentinel/PNFS-count → `done`/`partial`/`failed` logic, an
 persists. Terminal states short-circuit. `list_jobs(active_only)` refreshes
 non-terminal records.
 
-### `jlib/control.py`
+### `lib/control.py`
 `cancel(record, cfg)` → `jobsub_rm --jobid <cluster> -G <group>`, mark
 `cancelled`. `fetch_log(record, cfg, dest_dir=None)` → `jobsub_fetchlog
 --unzipdir <stem>.fetched/`. `count_done_sentinel(dest_dir)` → number of
 `*.out` whose body contains a standalone `DONE` line (authoritative completion).
 
-### `jlib/outputs.py`
+### `lib/outputs.py`
 `pull(record, cfg, *, suffix, name_template, overwrite=False)` — the genie-mcp
 `grid_outputs_pull` generalized: `suffix` (`.ghep.root` / `.xml` / anything) and
 the local filename template are **parameters**, not a `job_kind` switch. Walks
 `ifdh ls` of `pnfs_output_dir`, copies matching files into `local_output_dir`,
 updates `processes_done` + `status`.
 
-### `jlib/tarball.py`
+### `lib/tarball.py`
 Port `grid_tarball.py`'s build half, generalized: `build_tarball(*, build_dir,
 toplevel_candidates, exclude_components, exclude_prefixes, exclude_suffixes,
 output_path=None, force=False, background=False)`. Keeps the sha1(build_dir +
@@ -191,22 +193,23 @@ detached-`Popen` rebuild, and the >8 GB warning. GENIE's specific
 Tune-tarball build (`build_tune_tarball`, xml/md-only) stays generic too:
 `build_overlay_tarball(*, source_dir, members, label)`.
 
-### `jlib/publish.py`
+### `lib/publish.py`
 Port `_publish_to_cvmfs`, `parse_rcds_hash`, the CVMFS catalog
 (`load_catalog`/`save_catalog`/`add_to_catalog`/`lookup_catalog`),
 `verify_cvmfs` (staleness 21d warn / 28d fail), `label_from_job`. Catalog moves
 from genie-mcp's `genie-data/grid/tarballs/catalog.json` to
 `jobsub-agent/config/catalog.json` (committed? no — gitignore it; it stores
-machine/CVMFS state). The sentinel worker is `jlib/templates/publish_only.sh`.
+machine/CVMFS state). The sentinel worker is `lib/templates/publish_only.sh`.
 
 ---
 
 ## GENIE adapter (`adapters/genie/`) — the only GENIE-aware code
 
-Reuses genie-agent via `sys.path.insert(<genie-agent root>)`:
-`from lib.pdg import resolve_pdg, canonical_probe, canonical_target` and
-`from lib.validation import _TUNE_RE` (+ the tune-family dir check). Adds the
-**grid-specific** validation the local validators lack (ported from
+PDG resolution comes from `adapters/genie/pdg.py` — a thin loader of the
+repo-shared `shared/pdg.json` (same code as `genie-agent/lib/pdg.py`); the
+one-line tune regex + tune-family dir check are restated locally (trivial), so
+the adapter does **not** import genie-agent. Adds the **grid-specific**
+validation the local validators lack (ported from
 `gevgen_grid_tool._validate` / `gmkspl_grid_tool`):
 - `generator_list == "Default"` is rejected (PYTHIA6 charm).
 - cross-sections must be **absolute**; if `/pnfs/...`, assert via `ifdh ls`;
@@ -227,13 +230,33 @@ tarball label (and optional tune-tarball label) → build the `jobsub_submit`
 argv (`-G/--role/--disk/-N/--append_condor_requirements`, `--tar_file_name
 dropbox://` **or** `-R /cvmfs/...` override, `-f file://<spline>` or schemeless
 `/pnfs/...`) → build the worker args (`file://<worker.sh> -p -t -e -n -T -L -S
--j -P -O [-R] [-X]`) → `jlib.submit(...)`. The adapter resolves the GENIE
-**build_dir** (for tarball builds) by reading genie-agent's `load_config()`
-`genie_setup_script`'s parent — no path duplication.
+-j -P -O [-R] [-X]`) → `lib.submit(...)`. The adapter resolves the GENIE
+**build_dir** (for tarball builds) by **reading genie-agent's
+`config/genie_env.json`** (a plain JSON file read, not a python import) for the
+active install's `genie_setup_script`, then using its parent — no code coupling.
+
+## Shared PDG data (`shared/pdg.json`) — already implemented
+
+Both agents resolve PDGs from one repo-shared file so probe/target codes never
+diverge. `shared/build_pdg.py` (build-time; needs the `pdg` PyPI package, added
+to `pixi.toml` under `[pypi-dependencies]`) **combines** two authorities and
+snapshots them to JSON, mirroring the `refresh_genie_env.py → config/env/*.json`
+pattern:
+- **GENIE's `genie_pdg_table*.txt`** → the names + codes GENIE itself uses
+  (`nu_mu`, `mu-`, `proton`).
+- **the PDG Python API** (`pdg.connect()`) → validates each code and supplies
+  the canonical particle name + mass (neutrinos: null).
+- **nuclei by formula** — neither source enumerates ions, so nuclei resolve at
+  runtime from the embedded element→Z table via `1000000000+Z*10000+A*10`
+  (any `<Sym><A>` like `Ar40`; reverse for `canonical_target`).
+
+Runtime loaders read **only** the JSON (no `pdg` dependency). `genie-agent/lib/pdg.py`
+already does this; the jobsub-agent adapter ships the same ~60-line loader.
+This is what retires the cross-import entirely.
 
 Worker scripts `gmkspl_grid.sh` / `gevgen_grid.sh` ported verbatim (they
 already inline the spack env and skip nusystematics) into
-`adapters/genie/templates/`. `publish_only.sh` is generic → `jlib/templates/`.
+`adapters/genie/templates/`. `publish_only.sh` is generic → `lib/templates/`.
 
 ---
 
@@ -292,17 +315,17 @@ jq -r '[.jobid,.runtype,.status,.cluster_id,.processes_done]|@tsv' jobsub-agent/
    (`jobsub-agent/config/catalog.json`, `jobsub-agent/jobsub-runs/`). Decide
    whether `config/jobsub.json` is tracked (paths are machine-specific → likely
    gitignore the whole `jobsub-agent/config/`, like genie-agent).
-2. `jlib/{config,submit_env,records}.py` — the registry-free + scrubbed-env
+2. `lib/{config,submit_env,records}.py` — the registry-free + scrubbed-env
    foundation. Smoke: `build_submit_env()` shows no `PIXI_*`/`PYTHONHOME`;
    `jobsub_q --help` runs under it.
-3. `jlib/submit.py` + `scripts/submit.py`. **Verify with `--dry-run`**
+3. `lib/submit.py` + `scripts/submit.py`. **Verify with `--dry-run`**
    (`--no_submit`): a `.command.json` + `.gridlog` (`status=pending`) appear and
    the printed argv is correct — no real submission, no auth needed.
-4. `jlib/monitor.py` + `jlib/control.py` + `scripts/job.py`
+4. `lib/monitor.py` + `lib/control.py` + `scripts/job.py`
    (status/list/cancel/fetchlog). Verify against a real 1-job submit on a
    grid-capable node.
-5. `jlib/outputs.py` (ifdh pull).
-6. `jlib/tarball.py` + `jlib/publish.py` + `scripts/tarball.py` +
+5. `lib/outputs.py` (ifdh pull).
+6. `lib/tarball.py` + `lib/publish.py` + `scripts/tarball.py` +
    `templates/publish_only.sh`. Verify build (cache hit/miss), then publish
    (sentinel job → catalog entry with `cvmfs_dir`).
 7. GENIE adapter: `pnfs.py`, worker scripts, `run_gmkspl_grid.py`,
@@ -323,9 +346,11 @@ jq -r '[.jobid,.runtype,.status,.cluster_id,.processes_done]|@tsv' jobsub-agent/
 - **Host requirement.** jobsub/ifdh only work on a node with jobsub_lite + a
   valid token; all non-dry-run verification must happen there. Dry-run +
   command-shape checks are CI-able anywhere.
-- **Cross-dir import** (`adapters/genie` → genie-agent `lib`). The `jlib` vs
-  `lib` split avoids shadowing, but confirm the sibling path resolves when
-  invoked via `pixi run python jobsub-agent/adapters/genie/run_*.py`.
+- **Two PDG loaders in sync.** The cross-import is retired (shared
+  `shared/pdg.json`), but the adapter duplicates the ~60-line loader. Risk is
+  low (same data file; loader rarely changes) — revisit a shared package only
+  if a third consumer appears. Re-run `shared/build_pdg.py` after any GENIE
+  table change.
 - **Catalog location & tracking.** genie-mcp kept it under `genie-data/`; here
   it holds CVMFS hashes + publish timestamps (machine state) → gitignore.
 
