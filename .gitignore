@@ -18,3 +18,9 @@ genie-agent/config/
 
 # generated run artefacts (splines, events, job logs)
 genie-agent/genie-runs/
+
+# jobsub-agent: machine-specific jobsub config + CVMFS publish catalog
+jobsub-agent/config/
+
+# jobsub-agent: per-job grid records + submit/fetched logs
+jobsub-agent/jobsub-runs/
