@@ -132,6 +132,34 @@ def reset_env_cache() -> None:
     _CACHE.clear()
 
 
+def resolve_gxmlpath(values: Optional[list[str]]) -> list[str]:
+    """Flatten repeated and/or colon-joined --gxmlpath values to absolute dirs.
+
+    e.g. ["a:b", "~/c"] -> ["/abs/a", "/abs/b", "/abs/c"]. Order is preserved
+    (callers treat earlier entries as higher priority).
+    """
+    out: list[str] = []
+    for value in values or []:
+        for part in value.split(":"):
+            part = part.strip()
+            if part:
+                out.append(str(Path(part).expanduser().resolve()))
+    return out
+
+
+def with_gxmlpath(env: dict[str, str], dirs: list[str]) -> dict[str, str]:
+    """Return a COPY of env with dirs prepended to GXMLPATH (highest priority first).
+
+    Copies rather than mutating: load_genie_env hands back a cached dict shared
+    across the process, so editing it in place would leak into other runs.
+    """
+    if not dirs:
+        return env
+    existing = env.get("GXMLPATH", "")
+    parts = list(dirs) + ([existing] if existing else [])
+    return {**env, "GXMLPATH": ":".join(parts)}
+
+
 def _parse_env0(blob: bytes) -> dict[str, str]:
     env: dict[str, str] = {}
     text = blob.decode("utf-8", errors="replace")

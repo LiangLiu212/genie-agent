@@ -16,6 +16,24 @@ TUNE_RE = re.compile(r"^[A-Z]+\d{2}_\d{2}[a-z]_\d{2}_[0-9a-z]+$")
 _EM_LISTS = frozenset({"EM", "EMQE", "EMMEC"})
 
 
+def _tune_family_dir(
+    tune_base: str,
+    genie_bin_dir: str,
+    gxmlpath_dirs: Optional[list[str]],
+) -> Optional[Path]:
+    """Find the tune family dir <base>/ on GXMLPATH then $GENIE/config.
+
+    Mirrors GENIE's XML resolution order: each --gxmlpath dir is searched
+    before the installed config tree. Returns the first match, or None.
+    """
+    for d in (gxmlpath_dirs or []):
+        cand = Path(d) / tune_base
+        if cand.is_dir():
+            return cand
+    install_cfg = Path(genie_bin_dir).parent / "config" / tune_base
+    return install_cfg if install_cfg.is_dir() else None
+
+
 def validate_gmkspl_inputs(
     nu_pdgs: list[int],
     tgt_pdgs: list[int],
@@ -24,6 +42,7 @@ def validate_gmkspl_inputs(
     max_energy: Optional[float],
     n_knots: Optional[int],
     genie_bin_dir: str,
+    gxmlpath_dirs: Optional[list[str]] = None,
 ) -> tuple[list[str], list[str]]:
     """Return (errors, warnings). errors block launch; warnings are advisory."""
     errors: list[str] = []
@@ -51,9 +70,11 @@ def validate_gmkspl_inputs(
         errors.append(f"Invalid tune '{tune}': expected 4-part form, e.g. G18_02a_00_000")
     else:
         tune_base = "_".join(tune.split("_")[:2])
-        config_dir = Path(genie_bin_dir).parent / "config" / tune_base
-        if not config_dir.is_dir():
-            errors.append(f"Tune config dir not found: {config_dir}")
+        if _tune_family_dir(tune_base, genie_bin_dir, gxmlpath_dirs) is None:
+            errors.append(
+                f"Tune family '{tune_base}' not found in $GENIE/config "
+                f"or any --gxmlpath dir ({gxmlpath_dirs or 'none given'})"
+            )
 
         tune_prefix = re.match(r"^([A-Z]+)", tune).group(1)
         is_gem_tune = tune_prefix == "GEM"
@@ -104,6 +125,7 @@ def validate_gevgen_inputs(
     cross_sections: str,
     tune: str,
     genie_bin_dir: str,
+    gxmlpath_dirs: Optional[list[str]] = None,
 ) -> tuple[list[str], list[str]]:
     """Validate mono-energetic gevgen inputs. Returns (errors, warnings).
 
@@ -135,8 +157,10 @@ def validate_gevgen_inputs(
         errors.append(f"Invalid tune '{tune}': expected 4-part form, e.g. G18_02a_00_000")
     else:
         tune_base = "_".join(tune.split("_")[:2])
-        config_dir = Path(genie_bin_dir).parent / "config" / tune_base
-        if not config_dir.is_dir():
-            errors.append(f"Tune config dir not found: {config_dir}")
+        if _tune_family_dir(tune_base, genie_bin_dir, gxmlpath_dirs) is None:
+            errors.append(
+                f"Tune family '{tune_base}' not found in $GENIE/config "
+                f"or any --gxmlpath dir ({gxmlpath_dirs or 'none given'})"
+            )
 
     return errors, warnings

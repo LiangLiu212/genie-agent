@@ -20,6 +20,7 @@ genie-agent/
 │   ├── run_gntpc.py            # convert GHEP events to gst / other formats
 │   ├── refresh_genie_env.py    # snapshot a setup_env.sh to config/env/
 │   └── job.py                  # status / cancel / list background jobs
+├── tunes/                      # custom tune families (pass via --gxmlpath)
 └── genie-runs/                 # output: genie-runs/<tune>-YYYY-MM-DD/
 ```
 
@@ -214,6 +215,41 @@ env -0"`) and drops `PIXI_*`, `CONDA_*`, `MAMBA_*`, `_CE_*`, `VIRTUAL_ENV*`,
 per installation, and again whenever the installation's `setup_env.sh`
 changes — `lib/genie_env.py::load_genie_env` warns if the cache file is older
 than the script.
+
+## Custom tunes (`--gxmlpath`)
+
+GENIE resolves a tune by **directory name** (`G18_02a` for tune
+`G18_02a_00_000`), searching each `GXMLPATH` entry first, then `$GENIE/config`.
+The lookup is per-file, so you can override a single XML and inherit the rest.
+
+To use a custom tune: copy a tune family out of `$GENIE/config/` into
+`genie-agent/tunes/`, edit the XMLs, then pass the parent dir with
+`--gxmlpath` on any runner:
+
+```bash
+# clone a family to edit (one-time, do it yourself)
+cp -r "$GENIE/config/G18_02a" genie-agent/tunes/G18_02a
+$EDITOR genie-agent/tunes/G18_02a/ModelConfiguration.xml
+
+# run against the edited copy — GXMLPATH puts tunes/ ahead of $GENIE/config
+pixi run python genie-agent/scripts/run_gmkspl.py \
+    --probes numu --targets C12 --tune G18_02a_00_000 \
+    --genlist CCQE -n 30 -e 3 --gxmlpath genie-agent/tunes
+```
+
+- `--gxmlpath` is repeatable and accepts colon-separated lists; all entries are
+  resolved to absolute paths and **prepended** to `GXMLPATH` (earlier =
+  higher priority) in the env handed to the binary. The cached env on disk is
+  not modified.
+- Available on `run_gmkspl.py`, `run_gevgen.py`, and `run_gntpc.py`. The
+  resolved dirs are recorded in the run log under `inputs.gxmlpath`.
+- Tune validation (gmkspl/gevgen) searches `--gxmlpath` dirs before
+  `$GENIE/config`, so a family that exists only under `tunes/` validates fine;
+  an unknown family is still rejected.
+- Confirm GENIE picked up your copy: gmkspl/gevgen stdout prints
+  `Tune directory ....... : …/tunes/G18_02a`.
+
+`tunes/` is tracked in git so tune edits are versioned alongside the code.
 
 ## `<stem>.log` schema
 

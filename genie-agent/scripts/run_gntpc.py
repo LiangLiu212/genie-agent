@@ -30,7 +30,8 @@ sys.path.insert(0, str(_DEV_ROOT / "runlog_tools"))
 from runlog_tools import make_parser, args_to_inputs              # noqa: E402
 
 from lib.config import load_config                                # noqa: E402
-from lib.genie_env import load_genie_env                          # noqa: E402
+from lib.genie_env import (load_genie_env, resolve_gxmlpath,      # noqa: E402
+                           with_gxmlpath)
 from lib.jobs import launch_background, run_foreground, supervise # noqa: E402
 from lib.paths import sha256_short                                # noqa: E402
 
@@ -97,6 +98,11 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=None, help="Random seed")
     parser.add_argument("--installation", default=None,
                         help="Override active installation (else env / config)")
+    parser.add_argument("--gxmlpath", action="append", default=None,
+                        metavar="DIR",
+                        help="Custom-tune dir prepended to GXMLPATH (repeatable "
+                             "or colon-separated). GENIE searches it before "
+                             "$GENIE/config.")
     parser.add_argument("--label", default=None,
                         help="Free-text label saved into the runlog")
     parser.add_argument("--foreground", action="store_true",
@@ -131,6 +137,13 @@ def main() -> int:
     cfg = load_config(args.installation)
     env = load_genie_env(cfg)
 
+    gxmlpath_dirs = resolve_gxmlpath(args.gxmlpath)
+    for d in gxmlpath_dirs:
+        if not Path(d).is_dir():
+            sys.stderr.write(f"error: --gxmlpath dir not found: {d}\n")
+            return 2
+    env = with_gxmlpath(env, gxmlpath_dirs)
+
     source_stem = _source_stem(input_path)
     src_meta    = _read_source_meta(input_path, source_stem)
 
@@ -156,6 +169,7 @@ def main() -> int:
     inputs = args_to_inputs(args, exclude=("supervise", "log_path",
                                           "env_path", "foreground")) | {
         "installation":  cfg["installation_name"],
+        "gxmlpath":      gxmlpath_dirs,
         "input":         str(input_path),
         "input_sha256":  sha256_short(input_path),
         "source_stem":   source_stem,
