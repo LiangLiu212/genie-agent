@@ -311,6 +311,17 @@ jq -r '[.jobid,.runtype,.status,.cluster_id,.processes_done]|@tsv' jobsub-agent/
 
 ## Migration order (smallest vertical slice first)
 
+**Status:** steps **1–8 are done** and on `main` (commits 28ad4c5, f1ee7c1,
+5cde10b, eef7f23, f5ce977, e05d0f3, fbbde19, 12854d2). Everything verifiable
+without a live grid was verified deterministically (env scrub, records, submit
+dry-run, ClassAd aggregation, status short-circuits, pull walk/filter, tarball
+build+cache, catalog/verify, adapter dry-runs + GEM/EM validation). **Step 9
+(live end-to-end on a dunegpvm) is the only remaining item** — it needs
+jobsub_lite + a valid token, so it runs on a grid node, not from the agent host.
+First-contact watch items: whether the scrubbed submit env suffices for a real
+`jobsub_submit` (token/dropbox), and the worker scripts' hardcoded spack hashes
+matching the published tarball's toolchain.
+
 1. Scaffold `jobsub-agent/`; write `config/jobsub.json`; add gitignore lines
    (`jobsub-agent/config/catalog.json`, `jobsub-agent/jobsub-runs/`). Decide
    whether `config/jobsub.json` is tracked (paths are machine-specific → likely
