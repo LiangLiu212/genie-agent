@@ -14,7 +14,11 @@ builds the worker args + PNFS output path, and submits.
 1. A grid node with jobsub_lite + a valid token (`htgettoken … -i dune`) — see
    the **jobsub-submit** skill for the auth notes.
 2. A **published GENIE tarball** in the catalog — see the **jobsub-tarball**
-   skill. You pass its label as `--tarball-label`.
+   skill. You pass its label as `--tarball-label`. The tarball can come from any
+   genie-agent install, including one built by the **genie-install** skill (e.g.
+   `genie_master`); non-INCL installs are supported — the worker scripts now
+   guard the INCL `thisinclxx.sh` source, so a tarball without `inclxx_genie/`
+   runs fine.
 3. For gevgen: a cross-section spline reachable by the grid. Stage it to
    `/pnfs/dune/scratch/users/$USER/...` and pass the `/pnfs/...` path — the grid
    file-transfer host **cannot** read `/exp/dune/data`. A local path still works
