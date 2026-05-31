@@ -145,6 +145,29 @@ def verify_cvmfs(entry: dict) -> dict:
 
 # ── publish via sentinel grid job ──────────────────────────────────────────────
 
+def grep_sentinel_cvmfs(fetch_dir: Path) -> Optional[str]:
+    """Return the PUBLISH_SENTINEL_CVMFS_DIR path from any fetched log, or None."""
+    for f in sorted(Path(fetch_dir).rglob("*")):
+        if not f.is_file():
+            continue
+        m = _RE_SENTINEL_CVMFS.search(f.read_text(errors="replace"))
+        if m:
+            return m.group(1).rstrip("/")
+    return None
+
+
+def locate_cvmfs_by_hash(rcds_hash: str) -> Optional[str]:
+    """RCDS unpacks each upload to /cvmfs/fifeuserN/sw/dune/<hash>/. Return that
+    dir if present on this host, else None — a fetchlog-independent fallback."""
+    if not rcds_hash:
+        return None
+    for root in _CVMFS_RCDS_ROOTS:
+        cand = f"{root}/{rcds_hash}"
+        if Path(cand).is_dir():
+            return cand
+    return None
+
+
 def publish_to_cvmfs(
     cfg: dict,
     *,
@@ -154,6 +177,8 @@ def publish_to_cvmfs(
     log_prefix: str = "",
     poll_timeout_s: int = 1800,
     poll_interval_s: int = 30,
+    fetch_attempts: int = 3,
+    fetch_interval_s: int = 30,
 ) -> dict:
     """Upload `tarball_path` to RCDS by running one sentinel grid job; return
     {rcds_hash, cluster_id, cvmfs_dir, publish_log, fetched_dir, command_str}
@@ -215,28 +240,39 @@ def publish_to_cvmfs(
                     "publish_log": str(log_path), "rcds_hash": rcds_hash, "cluster_id": cluster_id}
         time.sleep(poll_interval_s)
 
-    # Fetch worker log + grep the real CVMFS dir.
+    # Fetch worker log + grep the real CVMFS dir. The sentinel's logs are not
+    # always retrievable the instant the job drains, so retry the fetch+grep a
+    # few times; and since we already parsed the RCDS hash, fall back to locating
+    # the unpacked /cvmfs/.../<hash> dir directly (fetchlog-independent).
     fetch_dir = _PUBLISH_LOGS_DIR / f"{log_prefix}{label}_{ts}_fetched"
     fetch_dir.mkdir(parents=True, exist_ok=True)
     fetch_cmd = [cfg["jobsub_fetchlog_bin"], "--jobid", cluster_id,
                  "-G", cfg["default_group"], "--unzipdir", str(fetch_dir)]
-    try:
-        subprocess.run(fetch_cmd, capture_output=True, text=True,
-                       timeout=600, env=build_submit_env())
-    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-        return {"error": f"jobsub_fetchlog failed: {e}", "publish_log": str(log_path),
-                "rcds_hash": rcds_hash, "cluster_id": cluster_id}
 
     cvmfs_dir = None
-    for f in sorted(fetch_dir.rglob("*")):
-        if not f.is_file():
+    fetch_err = ""
+    for attempt in range(max(1, fetch_attempts)):
+        if attempt:
+            time.sleep(fetch_interval_s)
+        try:
+            subprocess.run(fetch_cmd, capture_output=True, text=True,
+                           timeout=600, env=build_submit_env())
+        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+            fetch_err = f"jobsub_fetchlog failed: {e}"
             continue
-        m = _RE_SENTINEL_CVMFS.search(f.read_text(errors="replace"))
-        if m:
-            cvmfs_dir = m.group(1).rstrip("/")
+        cvmfs_dir = grep_sentinel_cvmfs(fetch_dir)
+        if cvmfs_dir:
             break
+
     if not cvmfs_dir:
-        return {"error": f"PUBLISH_SENTINEL_CVMFS_DIR not found in fetched logs under {fetch_dir}",
+        # Fallback: the RCDS publish already happened; find the unpacked dir.
+        cvmfs_dir = locate_cvmfs_by_hash(rcds_hash)
+
+    if not cvmfs_dir:
+        detail = f" ({fetch_err})" if fetch_err else ""
+        return {"error": f"PUBLISH_SENTINEL_CVMFS_DIR not found in fetched logs under "
+                         f"{fetch_dir} after {max(1, fetch_attempts)} attempt(s){detail}, and "
+                         f"/cvmfs/fifeuser{{1..4}}/sw/dune/{rcds_hash} not visible on this host yet",
                 "publish_log": str(log_path), "rcds_hash": rcds_hash,
                 "cluster_id": cluster_id, "fetched_dir": str(fetch_dir)}
 
@@ -301,12 +337,7 @@ def label_from_job(cfg: dict, *, label: str, jobid: str,
     tarball_path = record.get("tarball_path", "")
     # RCDS unpacks the upload, so CVMFS holds the extracted <hash>/ dir, not the
     # .tar — locate the dir, not a file inside it.
-    cvmfs_dir = ""
-    for root in _CVMFS_RCDS_ROOTS:
-        cand = f"{root}/{rcds_hash}"
-        if Path(cand).is_dir():
-            cvmfs_dir = cand
-            break
+    cvmfs_dir = locate_cvmfs_by_hash(rcds_hash)
     if not cvmfs_dir:
         return {"error": f"could not locate fifeuser{{1..4}}/sw/dune/{rcds_hash} "
                          f"on this host; re-publish via publish_and_catalog instead"}
