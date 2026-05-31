@@ -51,7 +51,7 @@ def cmd_publish(args, cfg) -> int:
     if "error" in res:
         sys.stderr.write(f"error: {res['error']}\n")
         return 1
-    print(f"published '{args.label}' -> {res['cvmfs_tar_file']}")
+    print(f"published '{args.label}' -> {res['cvmfs_dir']}")
     return 0
 
 
@@ -63,7 +63,7 @@ def cmd_list(args, _cfg) -> int:
         print("(catalog empty)")
         return 0
     for e in entries:
-        line = f"{e['label']:<28} {e.get('published','')[:19]:<20} {e.get('cvmfs_tar_file','')}"
+        line = f"{e['label']:<28} {e.get('published','')[:19]:<20} {e.get('cvmfs_dir','')}"
         if args.verify:
             v = publish.verify_cvmfs(e)
             line += f"   [{v['status']}/{v['recommendation']} age={v['age_days']}d]"
@@ -92,7 +92,7 @@ def cmd_label_from_job(args, cfg) -> int:
     if "error" in res:
         sys.stderr.write(f"error: {res['error']}\n")
         return 1
-    print(f"adopted '{args.label}' -> {res['cvmfs_tar_file']}")
+    print(f"adopted '{args.label}' -> {res['cvmfs_dir']}")
     return 0
 
 
