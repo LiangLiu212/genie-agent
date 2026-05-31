@@ -30,7 +30,10 @@ _PUBLISH_LOGS_DIR = _AGENT_ROOT / "jobsub-runs" / "_publish"
 _DEFAULT_SENTINEL = _AGENT_ROOT / "lib" / "templates" / "publish_only.sh"
 
 _RE_RCDS_HASH = re.compile(r"Publishing hash dune/([0-9a-f]+)")
-_RE_SENTINEL_CVMFS = re.compile(r"PUBLISH_SENTINEL_CVMFS_DIR=(\S+)")
+# Require an absolute path so we match the sentinel's *stdout* (the expanded
+# /cvmfs/... path), not the fetched copy of the worker script's own source line
+# (`PUBLISH_SENTINEL_CVMFS_DIR=${INPUT_TAR_FILE%/}`).
+_RE_SENTINEL_CVMFS = re.compile(r"PUBLISH_SENTINEL_CVMFS_DIR=(/\S+)")
 _CVMFS_RCDS_ROOTS = tuple(
     f"/cvmfs/fifeuser{i}.opensciencegrid.org/sw/dune" for i in (1, 2, 3, 4)
 )
@@ -110,18 +113,20 @@ def _parse_iso(s: str) -> Optional[datetime]:
 
 
 def verify_cvmfs(entry: dict) -> dict:
-    """Best-effort existence + age check for a catalog entry's cvmfs_tar_file."""
-    cvmfs_tar = entry.get("cvmfs_tar_file", "")
+    """Best-effort existence + age check for a catalog entry's cvmfs_dir."""
+    cvmfs_dir = entry.get("cvmfs_dir", "")
     published = _parse_iso(entry.get("published", ""))
     now = datetime.now(timezone.utc)
     age_days = (now - published).days if published else -1
 
-    if cvmfs_tar and Path(cvmfs_tar).exists():
+    # RCDS unpacks the tarball on upload, so the published <hash>/ dir holds the
+    # extracted tree — there is no .tar on CVMFS. Verify the dir exists.
+    if cvmfs_dir and Path(cvmfs_dir).is_dir():
         status, reason = "exists", "stat ok"
     elif not any(Path(r).exists() for r in _CVMFS_RCDS_ROOTS):
         status, reason = "unknown", "no CVMFS fifeuserN repo mounted on this host"
     else:
-        status, reason = "missing", f"path not present in CVMFS: {cvmfs_tar}"
+        status, reason = "missing", f"path not present in CVMFS: {cvmfs_dir}"
 
     if age_days < 0:
         rec = "warn"
@@ -190,12 +195,21 @@ def publish_to_cvmfs(
         return {"error": "cluster id not found in jobsub_submit output",
                 "publish_log": str(log_path), "rcds_hash": rcds_hash}
 
-    # Poll until the sentinel cluster leaves the queue.
+    # Poll until the sentinel cluster leaves the queue. A just-submitted job is
+    # not yet registered with the schedd, so jobsub_q reports `empty` for a few
+    # seconds — treat `empty` as "drained" only after we've seen the job appear
+    # (or after an appearance grace window, in case it ran and drained between
+    # polls).
     deadline = time.monotonic() + poll_timeout_s
+    appear_deadline = time.monotonic() + max(poll_interval_s * 4, 120)
+    seen = False
     while True:
         q = monitor.query_jobsub_status(cluster_id, cfg)
         if q.get("empty"):
-            break
+            if seen or time.monotonic() > appear_deadline:
+                break
+        else:
+            seen = True
         if time.monotonic() > deadline:
             return {"error": f"sentinel {cluster_id} did not leave queue in {poll_timeout_s}s",
                     "publish_log": str(log_path), "rcds_hash": rcds_hash, "cluster_id": cluster_id}
@@ -256,7 +270,7 @@ def publish_and_catalog(
     entry = {
         "label": label, "local_path": tarball_path, "local_sha": local_sha,
         "size_mb": size_mb, "rcds_hash": pub["rcds_hash"], "cluster_id": pub.get("cluster_id", ""),
-        "cvmfs_dir": pub["cvmfs_dir"], "cvmfs_tar_file": f"{pub['cvmfs_dir']}/{Path(tarball_path).name}",
+        "cvmfs_dir": pub["cvmfs_dir"],
         "published": _now_iso(), "last_verified": "", "last_verified_result": {},
         "description": description, "publish_log": pub["publish_log"],
         "fetched_dir": pub.get("fetched_dir", ""), **(extra or {}),
@@ -285,19 +299,20 @@ def label_from_job(cfg: dict, *, label: str, jobid: str,
     if not rcds_hash:
         return {"error": f"no 'Publishing hash dune/<hex>' line in submit log for '{jobid}'"}
     tarball_path = record.get("tarball_path", "")
-    basename = Path(tarball_path).name if tarball_path else ""
-    cvmfs_dir = cvmfs_tar = ""
+    # RCDS unpacks the upload, so CVMFS holds the extracted <hash>/ dir, not the
+    # .tar — locate the dir, not a file inside it.
+    cvmfs_dir = ""
     for root in _CVMFS_RCDS_ROOTS:
-        cand = f"{root}/{rcds_hash}/{basename}"
-        if basename and Path(cand).exists():
-            cvmfs_dir, cvmfs_tar = f"{root}/{rcds_hash}", cand
+        cand = f"{root}/{rcds_hash}"
+        if Path(cand).is_dir():
+            cvmfs_dir = cand
             break
     if not cvmfs_dir:
-        return {"error": f"could not locate fifeuser{{1..4}}/sw/dune/{rcds_hash}/{basename} "
+        return {"error": f"could not locate fifeuser{{1..4}}/sw/dune/{rcds_hash} "
                          f"on this host; re-publish via publish_and_catalog instead"}
     entry = {
         "label": label, "local_path": tarball_path, "local_sha": "",
-        "rcds_hash": rcds_hash, "cvmfs_dir": cvmfs_dir, "cvmfs_tar_file": cvmfs_tar,
+        "rcds_hash": rcds_hash, "cvmfs_dir": cvmfs_dir,
         "published": record.get("submitted", _now_iso()), "last_verified": "",
         "last_verified_result": {}, "description": description, "adopted_from_job": jobid,
     }
