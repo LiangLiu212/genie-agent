@@ -91,7 +91,10 @@ done < <(spack find --loaded --format "{name} {prefix}")
 
 export PYTHIA6_LIB_DIR=${PYTHIA6_PKG_DIR}/lib
 source ${ROOT_PKG_DIR}/bin/thisroot.sh
-source ${RCDS_DIR}/inclxx_genie/install/bin/thisinclxx.sh
+# INCL++ is only present in INCL builds; a non-INCL install has no inclxx_genie/.
+# Guard so the unconditional source does not abort the job under `set -e`.
+INCLXX_SETUP="${RCDS_DIR}/inclxx_genie/install/bin/thisinclxx.sh"
+[ -f "${INCLXX_SETUP}" ] && source "${INCLXX_SETUP}"
 export GENIE=${RCDS_DIR}/Generator
 export XSECSPLINEDIR=${RCDS_DIR}/data
 export GENIE_REWEIGHT=${RCDS_DIR}/Reweight
