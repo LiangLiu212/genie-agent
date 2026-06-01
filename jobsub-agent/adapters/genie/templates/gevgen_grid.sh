@@ -67,13 +67,13 @@ else
 fi
 echo "RCDS_DIR=${RCDS_DIR}"
 
-# Inline setup_env.sh, skipping setup.nusystematics.sh (line 12 has a hardcoded
-# cd to /exp/dune/app/...GENIE_INCL/... which is absent on grid workers).
-# gevgen does not need nusystematics or nuisance.
-spack load gcc@12.5.0/jwtfpk6 root@6.28.12/aanuckv pythia6@6.4.28/oxfghfn \
-           log4cpp@1.1.3/j6hsjvy lhapdf@6.5.5/hyycqlx libxml2@2.9.13/n5wbwlp \
-           boost@1.82.0/dad7iqe gsl@2.8/4urojfl xrootd@5.8.4/mqueum7 \
-           eigen@3.4.1/excfmns
+# Inline the install's setup_env.sh spack load. Version-only specs + --first
+# (no hardcoded /<hash>): the worker resolves them against the grid's larsoft
+# CVMFS spack DB, where this install's local hashes do not exist. Keep this list
+# in sync with GENIE_DEV/setup_env.sh.
+spack load --first gcc@12.5.0 root@6.28.12 pythia6@6.4.28 log4cpp@1.1.3 \
+                   lhapdf@6.5.5 libxml2@2.9.13 boost@1.82.0 gsl@2.8 \
+                   xrootd@5.8.4 eigen@3.4.1
 
 while IFS=' ' read -r name prefix; do
   varname="${name^^}_PKG_DIR"

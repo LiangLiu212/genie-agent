@@ -8,6 +8,7 @@ install path (for a best-effort tune-family warning + tarball build_dir).
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Optional
@@ -47,6 +48,31 @@ def local_genie_install() -> Optional[dict]:
     if out:
         out["installation_name"] = name
     return out or None
+
+
+def resolve_installation(flag_value: Optional[str]) -> str:
+    """Return active_installation, rejecting any disagreeing override.
+
+    The grid PNFS layout bakes the installation name into the output path, and
+    the worker tarball (selected by --tarball-label) is the real source of the
+    GENIE binaries. Letting --installation or GENIE_AGENT_INSTALLATION silently
+    shadow active_installation produces a misleading PNFS folder, so on
+    mismatch we raise loudly instead.
+    """
+    cfg = genie_agent_config()
+    active = cfg.get("active_installation")
+    if not active:
+        raise SystemExit("error: no active_installation in genie-agent/config/genie_env.json")
+    env_value = os.environ.get("GENIE_AGENT_INSTALLATION")
+    for src, val in (("--installation", flag_value), ("GENIE_AGENT_INSTALLATION", env_value)):
+        if val and val != active:
+            raise SystemExit(
+                f"error: {src}={val!r} disagrees with active_installation={active!r} "
+                f"in genie-agent/config/genie_env.json. The grid adapter uses "
+                f"active_installation for the PNFS layout; edit the config (or pass "
+                f"--config) instead of overriding via flag/env."
+            )
+    return active
 
 
 def tune_family_present_locally(tune: str) -> Optional[bool]:

@@ -1,0 +1,47 @@
+# Wiki log
+
+Append-only timeline of wiki operations. Each entry begins with
+`## [YYYY-MM-DD] <op> | <title>` so it stays greppable:
+`grep "^## \[" log.md | tail`.
+
+## [2026-06-01] init | wiki scaffolded
+- Created schema (`CLAUDE.md`), `index.md`, `log.md`, and category dirs
+  (source, experiment, target, channel, concept, model, comparison).
+- Ingest pipeline: `paper-extractor` subagent fills `papers/<id>/`, then the
+  wiki ingest step synthesizes across papers. No sources ingested yet.
+
+## [2026-06-01] ingest | A Study of the Quasi-elastic (e,e'p) Reaction on ¹²C, ⁵⁶Fe and ¹⁹⁷Au (nucl-ex/0303011)
+- First source ingested: Dutta et al., JLab Hall C E91-013; (e,e'p) on C/Fe/Au,
+  Q² = 0.64–3.25 (GeV/c)². Created thin node `source/nucl-ex_0303011`.
+- New pages: `experiment/jlab-hall-c`; `target/c12`, `target/fe56`,
+  `target/au197`; `channel/em-qe`; `concept/nuclear-transparency`,
+  `concept/spectral-function`, `concept/missing-energy-momentum`,
+  `concept/longitudinal-transverse-separation`; `model/simc` (11 pages).
+- Headline facts captured: nuclear-transparency table (T falls C>Fe>Au, ~flat in
+  Q²; Table III verbatim), deradiated spectral-function extraction (IPSM/DWEEPY,
+  Perey β=0.85 for Fe/Au), and L–T separations showing excess transverse strength
+  at Q²=0.64 reduced at 1.8 (GeV/c)² (first L–T data on medium/heavy nuclei).
+- Forward-link markers left for not-yet-written pages: [[ccqe]], [[fsi]],
+  [[mec-2p2h]], [[minerva]]. No contradictions (single source).
+
+## [2026-06-01] ingest | A dependence of the ν_μ CCQE-like cross section with TKI (2503.15047)
+- Second source: MINERvA (Kleykamp et al.), NuMI ME beam ⟨E_ν⟩∼6 GeV, 10.61×10²⁰
+  POT; ν_μ CCQE-like on C/CH/H₂O/Fe/Pb measured simultaneously vs transverse
+  kinematic imbalance + muon/proton kinematics. Created `source/2503.15047`.
+- Resolved four forward-link markers from the first ingest by creating the pages
+  they pointed at: `experiment/minerva`, `channel/ccqe`, `concept/fsi`,
+  `concept/mec-2p2h`.
+- New targets: `target/ch` (scintillator reference), `target/o16` (water),
+  `target/pb` (lead). New concept `concept/transverse-kinematic-imbalance` and
+  `concept/unfolding-dagostini`. New models `model/genie` (MINERvA tune),
+  `model/neut`, `model/nuwro`, `model/gibuu`.
+- Updated `target/c12` and `target/fe56` with a neutrino-side CCQE-like section
+  (both now carry electron (e,e'p) + ν_μ data); `concept/fsi` synthesizes the
+  two FSI probes across both sources (transparency vs TKI).
+- Headline facts captured: δP_T shifts to higher values with increasing A
+  (FSI); ratios to CH per neutron ≈1 for C and water, deviate for Fe and Pb
+  (largest for Pb, exceeding the MINERvA-tune prediction); generator ordering
+  NEUT over-predicts > hN-GENIE ≈ NEUT > data > hA-GENIE/NuWro, GiBUU most
+  consistent.
+- 14 new pages + 2 updated; no contradictions with nucl-ex/0303011 (complementary
+  electron vs neutrino probes; FSI grows with A in both).

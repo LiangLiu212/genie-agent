@@ -1,0 +1,603 @@
+\documentclass[aps,prd,twocolumn,showpacs,superscriptaddress,floatfix]{revtex4-2}  % for review and submission
+%\documentclass[aps,preprint,showpacs,superscriptaddress,groupedaddress,linenumbers]{revtex4-2}  % for double-spaced preprint
+\usepackage{graphicx}  % needed for figures
+\usepackage{dcolumn}   % needed for some tables
+\usepackage{longtable}
+\usepackage{bm}        % for math
+\usepackage{amssymb}   % for math
+\usepackage{booktabs}
+\usepackage[caption=false]{subfig}
+\newcommand{\phref}[2]{\href{#2}{#1}}
+\maxdeadcycles=200
+%
+%  add these from pion paper to try and get strike command to work
+%
+\usepackage[caption=false]{subfig}
+\usepackage{xcolor}
+\usepackage{subfig}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{subfiles}
+\usepackage{placeins}
+\usepackage{array}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{todonotes}
+\usepackage{dblfloatfix}
+\usepackage{multirow}
+\usepackage{xspace}
+\newcounter{todocounter}
+\newcommand{\JDK}[1]{\stepcounter{todocounter}
+  {\color{blue!90} (Jeff: \thetodocounter: #1)}}
+\newcommand{\SM}[1]{\stepcounter{todocounter}
+  {\color{red!90} (Steve: \thetodocounter: #1)}}
+
+% Defs from JK
+%\newcommand{\tkialpha}{\ensuremath{\alpha_T}\xspace}
+\newcommand{\tkialpha}{$\delta\alpha_{T}$\xspace}
+%\newcommand{\tkicoplane}{\ensuremath{\theta_{coplanarity}}\xspace}
+\newcommand{\tkicoplanar}{$\theta_{coplanarity}$\xspace}
+%\newcommand{\tkiptmu}{\ensuremath{P^\mu_T}\xspace}
+\newcommand{\tkiptmu}{P$_{\mu T}$\xspace}
+
+\newcommand{\water}{H$_2$0}
+\newcommand{\chisq}{\ensuremath{\chi^2}\xspace}
+\newcommand{\ndf}{\ensuremath{N_{dof}}\xspace}
+
+
+\newcommand{\tkiptproton}{\ensuremath{P^P_T}\xspace}
+%\newcommand{\tkidelta}{\ensuremath{\delta P_T}\xspace}
+\newcommand{\tkidelta}{\ensuremath{\delta P_{T}}\xspace}
+%\newcommand{\tkidptx}{\ensuremath{{\tkidelta}_x}\xspace}
+\newcommand{\tkidptx}{\ensuremath{\delta P_{T}}$_{x}$\xspace}
+%\newcommand{\tkidpty}{\ensuremath{{\tkidelta}_y}\xspace}
+\newcommand{\tkidpty}{\ensuremath{\delta P_{T}}$_{y}$\xspace}
+
+\newcommand{\tkipl}{\ensuremath{\delta P_{L}}\xspace}
+%\newcommand{\tkipn}{\ensuremath{{P}_n}\xspace}
+\newcommand{\tkipn}{\ensuremath{{P}_{n}}\xspace}
+\newcommand{\tkiphi}{\ensuremath{\phi_{T}}\xspace}
+
+
+
+%\documentclass{article}
+%\usepackage[utf8]{inputenc}
+\newcommand{\DAHAdd}[1]{{\bf\color{purple} \protect #1}}
+\newcommand{\DAHStrike}[1]{{\bf\color{purple}\protect \sout{#1}}}
+\newcommand{\DAHComment}[1]{{\noindent \bf\color{purple} \small [DAH: #1]}}
+
+% Define a custom column type with extra space on the left and right
+\newcolumntype{L}[1]{>{\raggedright\hspace{0.5cm}\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\hspace{0.5cm}\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\hspace{0.5cm}\arraybackslash}p{#1}}
+\newcolumntype{P}{>{\hspace{0.3em}}c<{\hspace{0.3em}}}
+\newcolumntype{Q}{l<{\hspace{0.3em}}}
+
+% remove comments
+%\renewcommand{\DAHComment}[1]{}
+
+
+\begin{document}
+
+\title{Measurement of the {\it A} dependence of the $\nu_{\mu}$ charged-current quasielastic-like cross section as a function of muon and proton kinematics at $<$E$_{\nu}>\sim$ 6~GeV}
+%$E_\nu\sim 6~GeV$}
+%\author{Kleykamp et al }
+%\date{July 5, 2024}
+\newcommand{\minerva}{MINERvA}
+
+%% List of institution addresses, in command form.
+\newcommand{\Rutgers}{Rutgers, The State University of New Jersey, Piscataway, New Jersey 08854, USA}
+\newcommand{\Hampton}{Hampton University, Dept. of Physics, Hampton, VA 23668, USA}
+\newcommand{\Dortmund}{Institute of Physics, Dortmund University, 44221, Germany }
+\newcommand{\Otterbein}{Department of Physics, Otterbein University, 1 South Grove Street, Westerville, OH, 43081 USA}
+\newcommand{\JMU}{James Madison University, Harrisonburg, Virginia 22807, USA}
+\newcommand{\Florida}{University of Florida, Department of Physics, Gainesville, FL 32611}
+\newcommand{\UCIrvine}{Department of Physics and Astronomy, University of California, Irvine, Irvine, California 92697-4575, USA}
+\newcommand{\CBPF}{Centro Brasileiro de Pesquisas F\'{i}sicas, Rua Dr. Xavier Sigaud 150, Urca, Rio de Janeiro, Rio de Janeiro, 22290-180, Brazil}
+\newcommand{\PUCP}{Secci\'{o}n F\'{i}sica, Departamento de Ciencias, Pontificia Universidad Cat\'{o}lica del Per\'{u}, Apartado 1761, Lima, Per\'{u}}
+\newcommand{\INRM}{Institute for Nuclear Research of the Russian Academy of Sciences, 117312 Moscow, Russia}
+\newcommand{\Jlab}{Jefferson Lab, 12000 Jefferson Avenue, Newport News, VA 23606, USA}
+\newcommand{\Pittsburgh}{Department of Physics and Astronomy, University of Pittsburgh, Pittsburgh, Pennsylvania 15260, USA}
+\newcommand{\Guanajuato}{Campus Le\'{o}n y Campus Guanajuato, Universidad de Guanajuato, Lascurain de Retana No. 5, Colonia Centro, Guanajuato 36000, Guanajuato M\'{e}xico.}
+\newcommand{\Athens}{Department of Physics, University of Athens, GR-15771 Athens, Greece}
+\newcommand{\Tufts}{Physics Department, Tufts University, Medford, Massachusetts 02155, USA}
+\newcommand{\WM}{Department of Physics, William \& Mary, Williamsburg, Virginia 23187, USA}
+\newcommand{\FNAL}{Fermi National Accelerator Laboratory, Batavia, Illinois 60510, USA}
+\newcommand{\Purdue}{Department of Chemistry and Physics, Purdue University Calumet, Hammond, Indiana 46323, USA}
+\newcommand{\MCLA}{Massachusetts College of Liberal Arts, 375 Church Street, North Adams, MA 01247}
+\newcommand{\UMD}{Department of Physics, University of Minnesota -- Duluth, Duluth, Minnesota 55812, USA}
+\newcommand{\Northwestern}{Northwestern University, Evanston, Illinois 60208}
+\newcommand{\UNI}{Facultad de Ciencias F\'{i}sicas, Universidad Nacional Mayor de San Marcos, CP 15081, Lima, Per\'{u}}
+\newcommand{\Rochester}{Department of Physics and Astronomy, University of Rochester, Rochester, New York 14627 USA}
+\newcommand{\Austin}{Department of Physics, University of Texas, 1 University Station, Austin, Texas 78712, USA}
+\newcommand{\USM}{Departamento de F\'{i}sica, Universidad T\'{e}cnica Federico Santa Mar\'{i}a, Avenida Espa\~{n}a 1680 Casilla 110-V, Valpara\'{i}so, Chile}
+\newcommand{\Geneva}{University of Geneva, 1211 Geneva 4, Switzerland}
+\newcommand{\Chicago}{Enrico Fermi Institute, University of Chicago, Chicago, IL 60637 USA}
+\newcommand{\hired}{}
+\newcommand{\OregonState}{Department of Physics, Oregon State University, Corvallis, Oregon 97331, USA}
+\newcommand{\oxford}{Oxford University, Department of Physics, Oxford, OX1 3PJ United Kingdom}
+\newcommand{\umiss}{University of Mississippi, Oxford, Mississippi 38677, USA}
+\newcommand{\upenn}{Department of Physics and Astronomy, University of Pennsylvania, Philadelphia, PA 19104}
+\newcommand{\AMU}{Department of Physics, Aligarh Muslim University, Aligarh, Uttar Pradesh 202002, India}
+\newcommand{\wroclaw}{University of Wroclaw, plac Uniwersytecki 1, 50-137 Wroa\l{}aw, Poland}
+\newcommand{\Mohali}{Department of Physical Sciences, IISER Mohali, Knowledge City, SAS Nagar, Mohali - 140306, Punjab, India}
+\newcommand{\CINVESTAV}{Departamento de Fisica Col. San Pedro Zacatenco, 07360 Mexico, DF, Av. Instituto PolitÃ©cnico Nacional, Mexico}
+\newcommand{\york}{York University, Department of Physics and Astronomy, Toronto, Ontario, M3J 1P3 Canada}
+\newcommand{\ND}{Department of Physics and Astronomy, University of Notre Dame, Notre Dame, Indiana 46556, USA}
+\newcommand{\ICL}{The Blackett Laboratory,  Imperial College London,  London SW7 2BW, United Kingdom}
+\newcommand{\warwick}{Department of Physics, University of Warwick, Coventry, CV4 7AL, UK}
+\newcommand{\qmul}{G O Jones Building, Queen Mary University of London, 327 Mile End Road, London E1 4NS, UK}
+
+\newcommand{\kleykampThanks}{now at Department of Physics and Astronomy, University of Mississippi, Oxford, MS 38677}
+\newcommand{\mascencioThanks}{Now at Iowa State University, Ames, IA 50011, USA}
+\newcommand{\ricfregianThanks}{now at Department of Physics and Astronomy, University of California at Davis, Davis, CA 95616, USA}
+\newcommand{\finerThanks}{Now at Los Alamos National Laboratory, Los Alamos, New Mexico 87545, USA}
+\newcommand{\adrianThanks}{Now at Department of Physics, Drexel University, Philadelphia, Pennsylvania 19104, USA}
+\newcommand{\bamThanks}{Now at University of Minnesota, Minneapolis, Minnesota 55455, USA}
+\newcommand{\byaeggyThanks}{Now at Department of Physics, University of Cincinnati,  Cincinnati, Ohio 45221, USA}
+\newcommand{\lazazuetareyesThanks}{now at Syracuse University, Syracuse, NY 13244, USA}
+
+% 56 total signatories.
+
+\author{J.~Kleykamp}\thanks{\kleykampThanks}  \affiliation{\Rochester}
+\author{S.~Akhter}                        \affiliation{\AMU}
+\author{Z.~~Ahmad~Dar}                    \affiliation{\WM}  \affiliation{\AMU}
+\author{N.S.~Alex}                        \affiliation{\Rochester}
+\author{V.~Ansari}                        \affiliation{\AMU}
+\author{M.~V.~Ascencio}\thanks{\mascencioThanks}  \affiliation{\PUCP}
+\author{M.~Sajjad~Athar}                  \affiliation{\AMU}
+\author{M.~Betancourt}                    \affiliation{\FNAL}
+\author{J.~L.~Bonilla}                    \affiliation{\Guanajuato}
+\author{A.~Bravar}                        \affiliation{\Geneva}
+\author{G.~Caceres}\thanks{\ricfregianThanks}  \affiliation{\CBPF}
+\author{G.A.~D\'{i}az~}                   \affiliation{\FNAL}  \affiliation{\Rochester}
+\author{H.~da~Motta}                      \affiliation{\CBPF}
+\author{J.~Felix}                         \affiliation{\Guanajuato}
+\author{L.~Fields}                        \affiliation{\ND}
+\author{R.~Fine}\thanks{\finerThanks}     \affiliation{\Rochester}
+\author{A.M.~Gago}                        \affiliation{\PUCP}
+\author{H.~Gallagher}                     \affiliation{\Tufts}
+\author{P.K.Gaur}                         \affiliation{\AMU}
+\author{R.~Gran}                          \affiliation{\UMD}
+\author{E.Granados}                       \affiliation{\Guanajuato}  \affiliation{\Guanajuato}
+\author{D.A.~Harris}                      \affiliation{\york}  \affiliation{\FNAL}
+\author{A.L.~Hart}                        \affiliation{\qmul}
+\author{A.~Klustov\'{a}}                  \affiliation{\ICL}
+\author{M.~Kordosky}                      \affiliation{\WM}
+\author{D.~Last}                           \affiliation{\Rochester} \affiliation{\upenn}
+\author{A.~Lozano}\thanks{\adrianThanks}  \affiliation{\CBPF}
+\author{X.-G.~Lu}                         \affiliation{\warwick}  \affiliation{\oxford}
+\author{S.~Manly}                         \affiliation{\Rochester}
+\author{W.A.~Mann}                        \affiliation{\Tufts}
+\author{C.~Mauger}                        \affiliation{\upenn}
+\author{K.S.~McFarland}                   \affiliation{\Rochester}
+\author{M.~Mehmood}                       \affiliation{\york}
+\author{B.~Messerly}\thanks{\bamThanks}   \affiliation{\Pittsburgh}
+\author{O.~Moreno}                        \affiliation{\WM}  \affiliation{\Guanajuato}
+\author{J.G.~Morf\'{i}n}                  \affiliation{\FNAL}
+\author{J.K.~Nelson}                      \affiliation{\WM}
+\author{C.~Nguyen}                        \affiliation{\Florida}
+\author{A.~Olivier}                       \affiliation{\ND}  \affiliation{\Rochester}
+\author{V.~Paolone}                       \affiliation{\Pittsburgh}
+\author{G.N.~Perdue}                      \affiliation{\FNAL}  \affiliation{\Rochester}
+\author{C.~Pernas}                        \affiliation{\WM}
+\author{K.-J.~Plows}                      \affiliation{\oxford}
+\author{M.A.~Ram\'{i}rez}                 \affiliation{\upenn}  \affiliation{\Guanajuato}
+\author{R.D.~Ransome}                     \affiliation{\Rutgers}
+\author{N.~Roy}                           \affiliation{\york}
+\author{D.~Ruterbories}                   \affiliation{\Rochester}
+\author{H.~Schellman}                     \affiliation{\OregonState}
+\author{C.~J.~Solano~Salinas}             \affiliation{\UNI}
+\author{D.~S.~Correia}                    \affiliation{\CBPF}
+\author{M.~Sultana}                       \affiliation{\Rochester}
+\author{V.S.~Syrotenko}                   \affiliation{\Tufts}
+\author{E.~Valencia}                      \affiliation{\Guanajuato}  \affiliation{\WM}
+\author{N.H.~Vaughan}                     \affiliation{\OregonState}
+\author{A.V.~Waldron}                     \affiliation{\qmul}  \affiliation{\ICL}
+\author{B.~Yaeggy}\thanks{\byaeggyThanks}  \affiliation{\USM}
+\author{L.~Zazueta}\thanks{\lazazuetareyesThanks}  \affiliation{\WM}
+
+\collaboration{The MINERvA Collaboration}
+\noaffiliation
+
+\begin{abstract} 
+The first simultaneous measurements of the $\nu_{\mu}$ quasielastic-like cross section on C, CH, H$_2$0, Fe, and Pb targets as a function of kinematic imbalance variables in the plane transverse to the incoming neutrino direction are presented.  These variables combine the muon and proton information to provide a new way to disentangle the effects of the nucleus in quasielastic-like processes.  The data were obtained using a wide-band $\nu_{\mu}$ beam with $<$E$_{\nu}>\sim$ 6~GeV.  Cross-section ratios of the different target materials to CH are also shown.  These measurements are used to explore the nature of the cross-section $A$-scaling, as well as initial and final state interaction effects.  Comparisons are made to predictions from a number of commonly used neutrino Monte Carlo event generators.  The range of predictions of the different models tends to cover the data but the degree and consistency of the agreement suffers in regions, and on higher $A$ targets, where the final state interactions are expected to be more pronounced.
+
+\end{abstract}
+
+%\pacs{FIX THIS }
+\maketitle
+
+%\item[PACS numbers]***
+
+\section{Introduction}
+
+In neutrino charged current quasielastic scattering (CCQE), $\nu_\mu + n \to \mu^- + p$, the interaction occurs on a nucleon neutron within a nucleus. Often an estimate of the neutrino energy is made under the assumption that the neutron is free, or bound with no Fermi smearing, and with no final state nuclear effects.
+Under this assumption, the energy can be estimated simply from the final state muon and proton energies, or from the final state muon momentum and angle with respect to the neutrino direction.  
+ However,  initial and final state nuclear effects can occur which can add additional smearing to 
+ %affect 
+ the neutrino energy reconstruction.  Such interactions are not true CCQE but are often indistinguishable from CCQE interactions experimentally.  In fact, any interaction without pions in the final state is characterized as 
+ quasielastic-like (CCQE-like). Measurements of nuclear effects in CCQE-like scattering provide important tests of nuclear models, which are needed to be able to predict the effect that the nucleus has on neutrino energy reconstruction.   
+
+
+This work presents the simultaneous measurement of the $\nu_{\mu}$ quasielastic-like (CCQE-like) cross section across different nuclear target materials.  These results are based on events with both a reconstructed muon and a reconstructed proton in the final state. The sample used is a subset of the one used in a more inclusive muon-only analysis \cite{jk_1trk_prl}, and includes the addition of the reconstructed proton requirement. 
+The added proton information allows the reconstruction of kinematic information in the plane transverse to the incoming neutrino direction. 
+ Momentum imbalance in this plane gives hints to the effects that keep this from being a simple elastic scattering process.  Transverse kinematic imbalance (TKI) variables
+ exhibit enhanced sensitivity to nuclear effects \cite{Lu:2015tcr}.  The results here are presented differentially as a function of TKI variables, and in terms of the individual muon and proton momenta and angles with respect to the neutrino beam direction. 
+
+Figure~\ref{fig:TKI} 
+illustrates the definitions of most of the TKI variables used in this work. These variables are based on transverse momentum conservation and are easy to interpret in the limit of CCQE interactions without nuclear effects, i.e., no Fermi motion for the target nucleon and no final state interactions or initial state nuclear effects. The transverse momenta with respect to the beam direction of the proton and muon tracks are P$_{p T}$ and \tkiptmu , respectively. The missing transverse momentum in the plane transverse to the beam axis is \tkidelta .   The components of \tkidelta \ perpendicular and parallel to the muon direction are \tkidptx \ and \tkidpty , respectively. The angle between the negative transverse muon momentum and \tkidelta \ is \tkialpha . %The measure of the degree to which the 
+The extent to which the proton and muon transverse momenta are not colinear is expressed as \tkiphi . An additional variable of interest not shown in Fig.~\ref{fig:TKI}, but included in the analysis, is the initial state neutron momentum, \tkipn, which can be inferred from assuming conservation of momentum, given the final state muon and proton momenta and angles.
+ 
+ 
+ 
+ Deviations from free-nucleon behavior probe the nature of the nuclear effects.  For example, for scattering off a free nucleon at rest in the lab frame,
+the final state muon and proton transverse momenta would sum to zero, so \tkidelta\ would be zero. 
+These variables have been discussed extensively in recent years and used by the T2K, MINERvA, and MicroBooNE experiments to probe nuclear effects in neutrino interactions~\cite{Lu:2015tcr,Furmanski:2016wqo,Abe:2018pwo,Dolan:2018sbb,MINERvA:2018hba,Dolan:2018zye,Lu:2019nmf,Harewood:2019rzy,Cai:2019jzk,Cai:2019hpx,Coplowe:2020yea,MicroBooNE:2023wzy}.
+This work expands on the earlier MINERvA results using these variables by systematically surveying  CCQE-like interactions on targets of C, CH, H$_2$0, Fe, and Pb.  The results are also compared to predictions from several widely used Monte Carlo generators.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.48\textwidth]{Figures/TKI_var.eps}
+\caption{Schematic of transverse kinematic imbalance variables used by this analysis.   The variables represent directions and magnitudes of momentum vectors that lie in the plane transverse to the beam direction.
+}
+\label{fig:TKI}
+\end{figure}
+
+The large number of variables and wide range of target nucleus sizes explored in this work comprise a significant and systematic survey sensitive to {\it A}-dependent nuclear effects.  Due to the sheer volume of results, the analysis is described in detail for a single variable, $\delta P_{T}$, which represents the transverse momentum imbalance (or the residual transverse momentum) of the muon-proton system.  For all other variables, the analysis is similar and only the results are presented.  
+The results for each variable will be presented in such a way that comparison of behavior across several target nuclei is possible.
+
+
+%The sheer
+%volume of results makes both the presentation and the consumption of the work challenging. Because of this, after a description of the experiment and base simulation, the analysis will be described in detail for a single variable, \tkidelta , 
+
+
+\section{Experiment}
+
+The  Main Injector Experiment for $\nu$-A (MINERvA)~\cite{minervaweb, MINERvA:2013zvz} 
+%was an experiment sited 
+took data in the Neutrino Main Injector (NuMI) neutrino beam at Fermilab~\cite{numibeam}. The NuMI beam is formed by colliding 120~GeV protons from the Main Injector on a graphite target.  The charged pions and kaons resulting from those collisions are focused by two magnetic horns towards a 675~m decay region, and the neutrinos in the beam come primarily from the decays of these mesons.  The polarity of the two horn currents selects the charge sign of the focused mesons which, in turn, determines whether the beam is enriched in  neutrinos or antineutrinos (predominately muon flavor). The work here makes use of data recorded between 2012 and 2019, with the horn polarity optimized for neutrinos (with $\sim$3.8\%  contamination of antineutrinos).
+
+MINERvA accumulated data sets corresponding to 5.4$\times$10$^{20}$ protons-on-target (POT) in the low energy (LE) beam, with $<$E$_\nu$$>$$\sim$3~GeV, and 24.5$\times$10$^{20}$ POT in the medium energy (ME) beam with $<$E$_\nu$$>$$\sim$6~GeV.  
+The analysis described here is based on a sample corresponding to 10.61$\times$10$^{20}$ POT in the neutrino enhanced ME configuration.
+
+The MINERvA detector, described in detail in Ref.~\cite{MINERvA:2013zvz}, consists of 208 hexagonal planes each consisting of 127 polystyrene scintillator strips.   The strips run perpendicular to the neutrino beam with three different angular orientations that vary across adjacent planes enabling three-dimensional track reconstruction. The strips are triangular in cross section with a height of $\sim$1.7~cm and a width of $\sim$3.3~cm.  In the upstream part of the detector (closer to the decay region), there is a $\sim$1.25~m-long region with layers of passive nuclear targets interspersed with scintillator planes.  This portion of the detector, the so-called nuclear target region, contains passive targets of carbon, iron, lead, and water.  Data from interactions on these targets are used extensively in this work. The nuclear targets are described in more detail in Refs.~\cite{MINERvA:2013zvz} and~\cite{jk_1trk_prl}.  Downstream of the nuclear target region (along the direction of the beam) is a region of 124 contiguous scintillator planes, called the tracker region of the detector.  Further downstream is a region of the detector with 20 scintillator planes and layers of 2~mm thick Pb placed between every two planes.  This region acts as an electromagnetic calorimeter.  Finally, there is a region where 20 planes of scintillator are interleaved with layers of 2.54~cm thick steel, functioning as a hadronic calorimeter.  The overall length of the detector %(excluding the He target and veto wall) 
+is $\sim$5~m.  The magnetized MINOS near detector \cite{MINOS:2008hdf}, is used as a muon range stack and spectrometer, and its most upstream steel plane lies 2~m downstream of MINERvA.
+%with only air between the two.
+
+
+\section{Simulation}
+\label{sec:simulation}
+
+A GEANT4-based simulation~\cite{GEANT4:2002zbu, *Allison:2006ve} of the NuMI beamline is used to calculate the expected NuMI (anti)neutrino flux at the MINERvA detector as described in~\cite{MINERvA:2016iqn, *fluxaddendum}.  The simulation of the hadron production from the target is reweighted to agree with external measurements of hadron production in proton beams~\cite{MIPP:2014shj, *NA49:2006oyk}. In addition, the flux prediction is constrained by an {\it in situ} measurement of neutrino scattering off atomic electrons\cite{MINERvA:2019mkf,MINERvA:2021mpk}.
+
+Neutrino interactions are simulated for use in the analysis and for comparison purposes by several different neutrino event generators and variations in the generator options.  The comparison of these simulations to data will be discussed later in this paper.  The simulated interactions used in the analysis come from the GENIE version 2.12.6 neutrino event generator~\cite{GEANT4:2002zbu}.  The nucleons inside the nucleus are simulated using a relativistic Fermi gas model with the addition of a Bodek-Ritchie high-momentum tail to account for nucleon-nucleon short range correlations~\cite{Bodek:1981wr}.  The maximum momentum for the Fermi motion is k$_{F}$=0.221 GeV/c. The binding energy and mass density of the nucleus are constrained by electron scattering measurements.  For nuclei smaller than calcium, the mass density is modeled using a Gaussian density parametrization.  For heavier nuclei, the 2-parameter Wood-Saxon density function is used~\cite{DeVries:1987atn}.  Quasielastic interactions are simulated using the
+Llewellyn-Smith formalism~\cite{LlewellynSmith:1971uhs} with the vector form factors modeled using the BBBA05 model~\cite{Bradford:2006yz}. The axial vector form factor uses the dipole form with an axial mass of M$_{A}$ = 0.99 GeV/c$^{2}$.  Scattering off of correlated pairs of nucleons (so-called \lq\lq 2p2h") are simulated using the IFIC Valencia model with events simulated only with a three-momentum transfer less than 1.2 GeV/c~\cite{Gran:2013kda, Nieves:2011pp}.  Resonance production is simulated using the Rein-Sehgal model with an axial mass of M$_{A}^{RES}$ = 1.12 GeV/c$^{2}$~\cite{Rein:1980wg}. Higher invariant mass interactions are simulated using a leading order model for deep inelastic scattering (DIS) with the Bodek-Yang prescription for the modification at low Q$^{2}$~\cite{Bodek:2004pc}.  Hadronic showers are created using the AGKY hadronization model~\cite{Yang:2009zx}.
+The INTRANUKE-hA package within GENIE is used to simulate intranuclear hadron transport~\cite{Dytman:2007zz, *Dytman:2011zz}.  
+
+The base neutrino interaction model described above is modified in order to improve agreement with previously analyzed MINERvA data. The cross section is changed as a function of energy and three momentum transfer based on the random phase approximation (RPA) part
+%Several modifications are done to the neutrino interaction model described above in order to improve agreement with MINERvA data. The cross section is modified as a function of energy and three momentum transfer based on the random phase approximation (RPA) part 
+of the Valencia model~\cite{Nieves:2004wx}\cite{Gran1705} appropriate for a Fermi gas~\cite{Martini:2009uj,*Nieves:2017lij}; the screening effect for carbon is used for heavier nuclei as an approximation. 
+%This improves the model agreement with QE-like events in the MINERvA LE data. 
+The cross section for the 2p2h events simulated by the Valencia Model is increased in specific regions of energy and three momentum transfer space based on empirical fits to MINERvA data in the LE beam configuration~\cite{MINERvA:2015ydy}. Also, based on MINERvA measurements~\cite{MINERvA:2014ogb, *MINERvA:2014ani} and a reanalysis of pion production data in bubble chamber data~\cite{Wilkinson:2014yfa}, the non-resonant pion production is reduced significantly.  A known bug for the elastic hA FSI events is fixed by reweighting those events to be no-FSI events  for the C, O, Fe, and Pb nuclei~\cite{Harewood:2019rzy}. This modified version of the interaction model, "MINERvA tune v1.0.1"  is referred to as the MINERvA tune in the remainder of this manuscript.
+
+The response of the MINERvA detector is simulated using GEANT4 version 4.9.3.p6 with the QGSP{\_}BERT physics list~\cite{Kaidalov:1982xg}.  The performance of the optical elements and the electronics are included in the simulation. The water target configuration, i.e., empty versus filled, is also modeled as a function of time.  Through-going muons are used to set the absolute energy scale of minimum ionizing energy depositions by requiring the average and RMS of energy deposits match between data and simulation as a function of time. Data taken with a small scale version of MINERvA exposed to a charged particle test beam was used to set the absolute scale of hadron energy response~\cite{MINERvA:2015yej}.  Overlapping beam-related activity in the detector, i.e., hits from particles produced in other interactions within or outside the detector, is simulated by overlaying hits in both MINERvA and MINOS from data corresponding to random beam spills appropriate to the time periods in the simulation so as to reflect changes in beam intensity.
+
+The longitudinal and transverse distribution of the different nuclear target materials relative to the beam varies somewhat.  This means that the flux seen by each target species is slightly different.  The presented cross section ratios are corrected for this effect, such that the fluxes used in the numerator and denominator of the ratio are the same and equal to the flux incident on the nuclear target in the numerator.
+
+
+\section{Analysis and results for \tkidelta }
+\label{sec:analysis}
+This analysis  
+selects for CCQE-like interaction candidates on CH, C, H$_2$O, Fe, and Pb targets in NUMI's ME neutrino-enriched beam. The interactions are considered signal if they have a muon with an angle with respect to the beam of $<$17$^{\circ}$ and a momentum within the range 2~GeV/c~$<$~p$_{\mu}$~$<$~20~GeV/c, and a proton with an angle $<$70$^{\circ}$ and a momentum in the range 500~MeV/c~$<$~p$_{p}$~$<$~1100~MeV/c. Additionally, the interaction must not have mesons, baryons heavier than neutrons, 
+or photons above 10~MeV. The muon constraints are due to the requirement that their momentum is reconstructed accurately in MINOS. The proton angular constraint is added because MINERvA is unable to reconstruct high angle protons because of the orientation of  the scintillator strips. 
+The protons need a 
+minimum momentum to penetrate several scintillator planes and form enough energy deposits for a track to be reconstructed.
+High momentum protons are more likely to either leave the sensitive volume of the detector or scatter inelastically, leading to poor momentum reconstruction. 
+For events with more than one  
+proton matching the constraints, the highest momentum 
+matching proton 
+is used.  The presence of a heavy baryon is indicative of a non-CCQE-like interaction, as are the higher energy photons that mostly come from neutral pion or eta decays.  The photons with an energy less than 10~MeV are accepted since they can come from nuclear de-excitations.
+
+Events selected for this analysis have a negatively charged muon candidate reconstructed in MINOS and at least one proton candidate.  
+%The event must have no detected mesons or baryons heavier than neutrons and no photons above 10~MeV.  
+To reject charged pions, the event must have no  
+electron candidates from pion decays (\lq\lq Michel electrons")
+near the vertex or any reconstructed track endpoint.  No more than one isolated cluster of energy is allowed in selected events in order to reduce the neutral pion background.  The muon and the proton, or the highest momentum proton candidate if there is more than one candidate, are the tracks used in the TKI variable calculations.  The calculations are not changed based on the number of protons in the final state since secondary protons may not be reconstructed.
+%and must be good quality tracks.  
+%The reconstructed muon candidate is required to have an angle with respect to the beam of $<$17$^{\circ}$ and a momentum within the range 2$<$p$_{\mu}$/GeV/c$<$20.  These 
+%The angle and momentum constraints on the muon candidate follow from the need for it to be reconstructed well in MINOS.  The angle and momentum constraints on the proton candidate 
+%ensure the selected proton candidate passes through a sufficient number of scintillator strips for the particle identification algorithm to give reasonable results. 
+The proton energy is determined via range.  The algorithm assumes protons that exit the detector or that interact inelastically are not well reconstructed.  The energy of deposited hits near the end of the track is used to flag protons that may have interacted inelastically or exited the detector, as these processes reduce the  end-of-track Bragg peak that is characteristic of stopping protons. Protons exhibiting a hit pattern consistent with the expected Bragg peak are accepted as well-reconstructed tracks. The Bragg peak of charged pions differs from that of protons, and this is used as an additional veto of pions.
+
+%\JDK{There's a difference between the reconstruction cuts and the signal cuts. The signal is proton $<$ 70 deg, 500 $<$ proton p / MeV $<$ 1100. The reconstruction uses a larger fiducial to avoid cutting on the efficiency edge. Uses 90 deg, 400 $<$ proton p / MeV $<$ 1300}
+
+Figure~\ref{fig:tkidelta_evntrate_sig} shows the selected event distributions in the data in each target as a function of \tkidelta. Given the signal definition above, 2p2h interactions can also be identified as quasielastic-like since those may also produce at least one final state proton.  Similarly, a $\Delta$-resonance production followed by $\Delta$ decay and pion absorption in the parent nucleus can also produce a final state proton and no pion.  
+ These plots show that all three processes are predicted to contribute  quasielastic-like events.  
+The data taken on the carbon target are similar to those taken on scintillator and are not shown in select places in the paper, including here, 
+since they primarily serve as a cross-check.  
+%to reduce the number of plots.
+The data are shown as black points along with  statistical error bars.  The corresponding event distributions from the simulation are also shown overlaid with the data on each plot.  The simulated data is broken down in terms of event origin.  Backgrounds on each appropriate target are shown in pink.  These are typically events containing one or more charged or neutral pions escaping the nucleus but which were undetected.  Background events coming from interactions on a different target, generally the  scintillator surrounding one of the passive nuclear targets, are shown in light grey.  This background is called the plastic background.  
+% tki_muon_pt event rate
+%{Figures/Event_rate_plots/TKIdelta/TKI_dpt/event_rate_tki_dpt_fine_tracker_v5.eps}
+\begin{figure}  
+	\centering
+\includegraphics[width=0.48\linewidth]{Figures/Event_rate_plots/event_rate_tki_dpt_fine_tracker.eps}
+\includegraphics[width=0.48\linewidth]{Figures/Event_rate_plots/event_rate_tki_dpt_fine_water.eps}
+   	\includegraphics[width=0.48\linewidth]
+{Figures/Event_rate_plots/event_rate_tki_dpt_fine_iron.eps}
+        \includegraphics[width=0.48\linewidth]
+{Figures/Event_rate_plots/event_rate_tki_dpt_fine_lead.eps}
+	\caption{Event rates as a function of \tkidelta \ for CH, H$_{2}$O, Fe, and Pb targets. As explained in Sec.\ref{water-target-explanation}, the water target includes a measure of its `unsimulated background' estimated from the event rate while empty. }
+	\label{fig:tkidelta_evntrate_sig}
+\end{figure}
+
+The event rate distributions in variable $X$ are converted to differential cross sections using the following equation:
+\begin{equation}
+{d\sigma \over dX}_i = {\sum_{j} U_{ij}(N^{measured}_{j} - N^{background}_{j}) \over \epsilon_i T \Phi_i \Delta X_i}
+\label{equation:cross_section}
+\end{equation}
+where $\sigma$ is the cross section, $N$ is the number of events, $\epsilon_i$ is the efficiency of reconstructing an event in bin i, $\Phi_i$ is the integrated total neutrino flux in bin i, $T$ is the number of targets for the given target type, and $\Delta X_i$ is the bin width.  $U_{ij}$ is the unfolding matrix that takes the observed distributions and removes the reconstruction effects insofar as possible to recover the best estimate of the true distribution. 
+
+\subsubsection{Sideband background tuning}
+
+The analysis backgrounds are tuned using multiple procedures.  The single neutral pion background is constrained using a previous measurement of single neutral pion production by MINERvA \cite{pi0_paper}.  The amount of plastic background in each nuclear target sample is constrained using the interactions on the scintillator near the nuclear target~\cite{jk_1trk_prl}.  
+For neutrino interactions on the correct target, the backgrounds in this analysis are dominated by events with produced charged pions.  The model dependence in backgrounds is reduced through tuning the background level in the simulation to agree with the data in sideband samples that are similar to, but strictly not, signal events.  The sidebands are selected to be rich in background events relative to the signal region.  
+
+
+Two sidebands are used in this analysis.  One sideband is formed by 
+requiring a Michel electron and keeping the other requirements identical to those of the signal sample. 
+This sideband is enriched with charged pions.  The second sideband  
+is formed by requiring
+at least two extra isolated clusters of energy away from the interaction vertex.  This sample is enriched in neutral pions.  Figure~\ref{fig:tkidelta_sdbn_evntrate_untuned} shows the two sidebands as a function of \tkidelta , before tuning the backgrounds, for events interacting on scintillator and events interacting on lead.  In these sidebands, \tkidelta \ is defined using the muon and leading proton just like it is in the signal sample.  Note that here, as well as in 
+Figure~\ref{fig:tkidelta_evntrate_sig}, the agreement of the simulation with the data is significantly worse for the Pb target.  There is a significant signal component in the sideband.  Therefore, the signal region is included in the fit and the signal is allowed to float in the fitting procedure~\cite{jk_1trk_prl}. The fitting is regularized to find smooth tuning parameters as a function of each kinematic variable. %Figure~\ref{fig:tkidelta_sdbn_evntrate_tuned} in the Supplemental shows 
+The same plots after the backgrounds are tuned are shown in the Supplement. 
+
+For the sideband plots and selected other plots in this paper, results for interactions on the scintillator and lead targets are chosen as illustrative examples at the two extremes of target size, i.e., atomic mass A. The plots for the other targets are qualitatively similar to these.  
+
+The sideband tuning and background subtraction are done separately per target material and per each different variable.
+As a check on the tuning procedure, the final total cross section calculated for each variable in the context of a single target nucleus type was determined and checked for consistency with the other variables. The event rate in the signal region after tuning for each target is shown in the Supplement.
+
+
+\begin{figure}  
+	\centering
+	\includegraphics[width=0.48\linewidth]%
+{Figures/Sidebands/Sidebands_dpt/Before/ch_sideband_michel_v5_before.eps}
+ 	\includegraphics[width=0.48\linewidth]
+{Figures/Sidebands/Sidebands_dpt/Before/ch_sideband_energy_clusters_v5_before.eps}
+	\includegraphics[width=0.48\linewidth]
+{Figures/Sidebands/Sidebands_dpt/Before/lead_sideband_michel_v5_before.eps}
+ 	\includegraphics[width=0.48\linewidth]
+{Figures/Sidebands/Sidebands_dpt/Before/lead_sideband_energy_clusters_v5_before.eps}
+	\caption{Event rates as a function of \tkidelta\ for the two sideband samples for CH and Pb targets before background tuning.}
+\label{fig:tkidelta_sdbn_evntrate_untuned}
+\end{figure}
+
+
+\subsubsection{Background subtraction}
+
+
+Table~\ref{tab:statistics} provides the relative numbers of events, purity, and the atomic number and number of neutrons for each nuclear target. 
+The efficiency ranges from 5\% to 8\% for events in the passive targets, according to the simulation, while the efficiency in the tracker is 28\%.  These numbers are substantially lower than what was seen for the analogous single track analysis where there is no requirement for a final state proton~\cite{jk_1trk_prl}. The sample purities, estimated from the simulation, range from approximately 50\% to 60\%.  
+\begin{table}[h]
+\begin{tabular}{ | l | c | c | c | c ||}
+\hline 
+Target & Z & N & Events & Purity \\
+\hline\hline
+Tracker (CH) & 7 & 6 & 218,000 & 60\% \\
+\hline
+Carbon & 6 & 6 & 2,255 & 54\% \\
+\hline
+Water & 10 & 8 & 1,563 & 47\% \\
+\hline
+Iron & 26 & 30 & 8,577 & 47\% \\
+\hline
+Lead & 82 & 124 & 8,660 & 55\% \\ 
+\hline 
+\end{tabular}
+\label{tab:statistics} 
+\caption{Event statistics after all cuts, sample purity and regions of Z and N probed by this measurement.}
+\end{table}
+
+\subsubsection{Unfolding}
+
+The background-subtracted signal distributions are corrected for detector smearing, i.e., unfolded, using the D'Agostini prescription~\cite{DAgostini:1994fjx,DAgostini:2010hil} supported by a series of reweighted (warped) model validation studies.  The binning and the number of unfolding iterations were optimized for each variable.  The unfolded \tkidelta \ event rate distributions are shown in the Supplement.
+
+\subsubsection{Efficiency}
+
+After unfolding, the signal distributions were corrected for the signal event reconstruction efficiency.  The simulation was used to estimate the efficiency.  The efficiency was defined to be the number of true signal events passing the reconstruction cuts divided by the number of true signal events with true muon and proton tracks satisfying the selection criteria.  
+
+The efficiency is a  function of target position and type and muon and proton track angles and momenta.  %Selected 
+Efficiencies as a function of \tkidelta\ for the scintillator region and for lead are shown in the Supplement.
+
+\subsubsection{Flux}
+
+%Another important component to the differential cross section is the integrated neutrino flux.  
+The neutrino flux at MINERvA varies at the few percent level as a function of the longitudinal position along the detector.  It also varies radially around the detector since the detector symmetry axis and the beam axis are not perfectly aligned. In addition, the passive targets themselves are not symmetric with respect to either the beamline or the detector axis. 
+Consequently, the flux varies for each individual nuclear target, in particular for neutrino energies around 8~GeV at the falling edge of the focusing peak, as shown in Fig.~\ref{fig:fluxes}. 
+%, because the target materials are distributed with different longitudinal and radial positions relative to the beam axis.  
+Finally, the water target is filled some of the time and empty some of the time. The data from when the water target was empty is used to subtract any unsimulated background events from data taken with the full water target for the cross section extracted on water. 
+
+In order to provide the most useful cross-section ratio to CH, the same flux should be used for both the numerator and the denominator. Therefore, the CH cross section is extracted with different fluxes for use in each ratio as appropriate depending on the target. This is done by splitting the CH target into twelve equally-spaced angular regions.  Then an appropriately weighted linear combination of these sections is used to combine the event rates and create a CH cross section with a flux equal to each targets' flux~\cite{jk_1trk_prl}.  The fit for the section weights is regularized to retain CH statistics.
+
+\subsubsection{Number of targets}
+\label{water-target-explanation}
+
+The number of targets for each target type was determined from the mass of the target and its known composition.  The mass of each nuclear target was calculated using its known density and measured dimensions. The uncertainties on the fiducial pure carbon, iron and lead masses are estimated to be less than 1\%. The water target shape and dimensions were measured with lasers after data taking was completed. The water target has a fill meter which  
+indicates how much water is contained. The laser measurements were used to create a model to relate fill meter readings to actual water mass. 
+The mass of the water target 
+was determined using the model of the target itself combined with a measurement of how much water was used to fill the target.
+The uncertainty on the water mass is estimated to be 1\%. 
+
+Vertex positions are reconstructed inside the passive nuclear targets based on the point of closest approach of the reconstructed muon and proton tracks. Since a small adjustment can change a reconstructed interaction on iron to an interaction on lead, the fiducial volume of each target is defined with a buffer of 20~mm between targets in the same plane. A data-driven fit is used to accurately position the targets in the simulation. The simulation is then used to maximize the selection efficiency and purity selecting interactions on a particular nuclear target, and minimize the selection of interactions from the surrounding scintillator.
+
+\subsubsection{Cross section}
+
+The differential cross sections were determined using Eq.~\ref{equation:cross_section}. 
+The measured differential cross sections (per nucleon) for each target as a function of \tkidelta \ are shown in Fig.~\ref{fig:dpt_xsec}.  The data is shown as black points with horizontal bars showing the bin and vertical bars showing the estimated 1$\sigma$ uncertainty.  The inner (outer) horizontal hashmarks represent the statistical (statistical+systematic) 1$\sigma$ uncertainty.  The histogram overlayed on the data is the prediction from the central value Monte Carlo simulation (MINERvA Tune) broken down by the original event morphology.  Note that the 2p2h process, which can produce two nucleons in the final state preferentially shows up at high \tkidelta\ because the second nucleon's momentum is not included and therefore contributes to the missing momentum.
+
+
+The cross-section results in \tkidelta , presented in Fig.~\ref{fig:dpt_xsec}, show a shift in the distribution toward higher \tkidelta \ for the higher A targets (Fe and Pb) relative to the lower A targets.  This %seems plausible 
+is expected given the larger chance for Final State Interactions (FSI) that would occur with the larger nucleus.  The simulation describes the data and this evolution reasonably well except for the case of Pb, where the shift to higher \tkidelta\ is even higher in the data than in the prediction.
+
+% tkidelta xsec results
+\begin{figure}  
+	\centering
+ \includegraphics[width=.95\linewidth]{Figures/xsec_five_square/dpt_fine.eps}
+	\caption{The differential cross section per nucleon as a function of \tkidelta \ for CH, C, H$_{2}$O, Fe, and Pb targets.  The predicted contributions as a function of the QE-like interaction process are also shown for each target material.}
+	\label{fig:dpt_xsec}
+\end{figure}
+
+
+\subsubsection{Systematic uncertainties}
+
+The systematic uncertainties on the cross-section measurement were determined using a multi-universe technique where the cross section is re-extracted after varying each source of uncertainty.  The correlations between different bins and nuclear targets are taken into account.  Uncertainties in the flux, neutrino interaction model, and detector effects were considered.  Summary distributions of the uncertainty in the measured cross section in each target as a function of \tkidelta \ are shown in Fig.~\ref{figure:xsec_dpt_uncert}.  The dashed line in each figure is the statistical uncertainty.  Uncertainties in the hadron production from the target and focusing dominate the flux uncertainty.  It is constrained by external hadron production data and neutrino-electron scattering measurements made during the same run period\cite{MINERvA:2019mkf,MINERvA:2021mpk}.  The neutrino interaction uncertainties are dominated by modeling of the backgrounds and  FSI.  The proton reconstruction uncertainty, due to detector effects, dominates the cross-section uncertainty.  The main driver is the uncertainty in the conversion of the scintillator light signal to the absolute energy for the proton hits in the Bragg peak. 
+
+% uncertainties in tki_dpt xsecs
+\begin{figure}
+	\centering
+ \includegraphics[width=\linewidth]{Figures/xsec_errors_all5/errors_dpt_fine.eps}
+	\caption{Contributions to the uncertainties in the differential cross sections as a function of \tkidelta .}
+\label{figure:xsec_dpt_uncert}
+\end{figure}
+
+
+Given the large correlations in the systematic uncertainties between different targets, there is some reduction in the total uncertainty in measurements of the cross-section ratio between targets.  The systematic uncertainties on the cross section ratios as a function of \tkidelta\ are shown in Fig.~\ref{fig:xsec_dpt_uncert_rat}.  In particular, the flux uncertainty and the hadron and muon reconstruction uncertainties largely cancel in the ratio.  The cross-section ratio to that of scintillator for each target are shown in the next section for \tkidelta \ and in Sec.~\ref{sec:appendixA} for the other variables.  The cross section for each target is scaled by the number of neutrons in the target to make comparisons more straightforward.  In the absence of nuclear effects the cross sections would simply scale linearly as a function of the number of neutrons and therefore the ratios presented should simply be unity.  Although the ratio between water and carbon is measured to be consistent with unity there are clear deviations from unity for the iron and lead targets.  
+
+\begin{figure}
+    \centering
+\includegraphics[width=\linewidth]{Figures/xsec_ratio_errors/ratio_errors_dpt_fine.eps}
+    \caption{Contributions to the uncertainties in the cross section ratios to CH as a function of \tkidelta.}
+\label{fig:xsec_dpt_uncert_rat}
+\end{figure}
+
+\subsection{Comparisons to models}
+
+The neutrino interaction model used in the simulation compared to the data in Fig.~\ref{fig:dpt_xsec} is the MINERvA tune version of the GENIE neutrino generator, as described in Sec.~\ref{sec:simulation}. 
+It is interesting to compare the measured results to newer implementations of GENIE and a few other neutrino event generators commonly used. 
+
+Even though the GENIE hA configuration is used in both the GENIE2 MINERvA tune and two of the GENIE3 options, it evolved significantly between the GENIE versions.   
+The hA configuration uses a single mean free path based step to decide first if there was a reinteraction and then uses two tables as a function of kinetic energy to choose which among several reaction fates should occur.  These fates include single nucleon knockout (with and without charge exchange), absorption on multiple nuclei, and pion production.   These tables were tuned to reproduce models and data from nucleon- and pion-nucleus scattering, (similar to the hN tuning) but the one-step feature simplifies how systematics are applied.
+The MINERvA tune GENIE2 applies the elastic scattering bugfix described in Sec.~\ref{sec:simulation} in a similar way to the change made in GENIE3.   Those events produce visible distortions in TKI variables, but are replaced as no-scattering events using a weight.  GENIE3 also introduces changes that decrease the probability of no interaction, the effect is stronger for heavier nuclei.  Finally, the GENIE3 hA interactions modify the fractions of pion fates to be $A$ dependent.  In particular, the absorption component that turns one-pion events into the zero pion signal process becomes a higher fraction of the fates for higher $A$.
+% end new text suggested by Rik
+
+These comparisons  as a function of $A$ are useful in understanding the predictive power of generators, and can give some insight in the modeling process in general, particularly when their use extends to large $A$. Outside of the central value Monte Carlo (MINERvA tune), these comparisons are done in the context of the NUISANCE framework~\cite{Stowell:2016jfr}.
+
+Table~\ref{tab:generators} lists the models shown in comparison to the data, delineated by the names used in the plots. For the four GENIE3 generator comprehensive model configurations, the untuned versions are used G18\_xxx\_00\_000 and hereafter the short form is used e.g. G18\_10a. We have analyzed the changes between GENIE2 and the GENIE3 configurations in detail and in the table summarize the features relevant for these cross sections cross section comparisons.
+
+%\begin{table*} [bp]
+{\footnotesize 
+%\begin{tabular}{p{3cm}|p{13cm}} \hline\hline
+\begin{longtable*}{p{3.5cm}|p{13cm}} \hline\hline
+Name & Description \\ \hline
+   MINERvA tune   &  This is the generator described in Sec.~\ref{sec:simulation} that is used for the central value Monte Carlo in this analysis and shown in Fig.~\ref{fig:dpt_xsec}. \\ \hline
+   GENIE v3 G18\textunderscore 01a      & For this analysis, the hA FSI option is updated in several ways as described in the text, only one of which is part of the MINERvA tune.  Also relevant for this analysis, it uses the so-called empirical 2p2h instead of the MINERvA tuned version of the Valencia model.  
+  \\ \hline
+   GENIE v3 G18\textunderscore 01b  &  This is the same as G18\textunderscore 01a  except the FSI option is hN.  Hadrons from the reaction are stepped through the nucleus and the possibility of interacting is tested at each step.  This often leads to multiple reactions and more variation in the outgoing proton number and angle in hN compared to hA.\\ \hline
+  GENIE v3 G18\textunderscore 10a   & 
+   For the QE model, this version uses the Valencia local Fermi gas with RPA for the initial state~\cite{Nieves:2004wx}, plus the Valencia model for the 2p2h interactions~\cite{Nieves:2011pp,Gran:2013kda,Schwehr:2016pvn}.  Both are ingredients in the MINERvA tune where the 2p2h process is further enhanced and the QE process in GENIE3 produces an intrinsically different proton energy distribution.  For resonances, the form factors are significantly changed from G18\_01 and the MINERvA tune, including the portion that has no pion in the final state and is a signal process in this analysis.   The lepton mass and pion pole effects~\cite{Kuzmin:2003ji}\cite{Berger:2007rq} are not relevant at MINERvA energies, and GENIE’s tune~\cite{GENIE:2021zuu} is not used.   
+  \\ \hline  
+  GENIE v3 G18\textunderscore 10b &  This is the same as G18\textunderscore 10a except the FSI option is hN. \\ \hline
+ NuWro LFG  & This generator is NuWro~\cite{Juszczak:2009qa} version 19.02 with a local Fermi gas as the initial state.  \\ \hline
+ NuWro SF  &  This generator is NuWro~\cite{Juszczak:2009qa} version 19.02 with a  spectral function as the initial state. \\ \hline
+GiBUU T0  & This generator is GiBUU~\cite{Buss:2011mx} release 2019, patch 8 (Sept 8, 2020).  In this version the scaling parameter $T$ that sets the size of the enhancement of 2p2h is set to zero.  \\ \hline
+GiBUU T1 & This generator is similar to the generator above except in this version the enhancement parameter $T$ that sets the size of the 2p2h contribution is set to one. This means it has twice the 2p2h contribution than that in GiBUU $T0$ above.  \\ \hline
+ NEUT LFG & This is the neutrino generator NEUT~\cite{neut} version 5.4.1.  This version uses a local Fermi gas for the initial state, a 2p2h hadron tensor technique based on the Nieves model, coherent $\pi$ production based on the Berger-Sehgal model, and a single $\pi$ production model by Kabirnezhad~\cite{minoo_pi}. \\ 
+ \hline \hline
+%\end{tabular} 
+ \caption{Generators used for comparisons with the data. Additional content on the physics content of generators is available in~\cite{Betancourt:2018bpu} and~\cite{Avanzini:2021qlx}.}
+ \label{tab:generators}
+ \end{longtable*}
+}
+%\end{table*}
+
+Figure~\ref{Figure:Gencompare_dpt} shows the comparison of the measured cross section in the data with different nuclear targets to the ensemble of models above as a function of \tkidelta .  In the top row, the cross-section data on CH, C, and H$_{2}$O targets are shown along with an overlay of each of the models.  
+The bottom two plots show the same for the Fe and Pb targets, respectively.
+ 
+Qualitatively, though there is significant spread and differing trends, the models broadly seem to describe the data.  NEUT broadly overestimates the cross section in all the targets.  The disagreement between NEUT and the iron and lead data sets in particular could be due to the absence of nuclear de-excitation in the model and the assumption that the non-H nucleus is isoscalar\cite{Hayatoprivate}. The hN versions of GENIE show behavior similar to NEUT in shape and normalization for the larger targets.  NuWro and GENIE v3 G18\textunderscore 10 tend to overpredict the data at low \tkidelta .  The \chisq\ between the cross sections and the models can be found in Table~\ref{tab:dpt}.  The ratio between the measured cross section and the MINERvA tune, along with the ratio between the various models and the MINERvA tune can be found in Fig.~\ref{fig:models_dpt_rat}.
+
+% comparisons to generators dpt
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/gencompare/dpt_fine_5square.eps}
+    \caption[The \tkidelta \ cross section comparison for multiple targets. ]{Comparisons of the cross section per number of neutrons in the target ($N_n$) as a function of \tkidelta \ for different targets and for different neutrino event generators.  The ratios of the data and the other generators to the default GENIE prediction can be found in Supplement Sec.~\ref{sec:appendixA}.
+    }
+    \label{Figure:Gencompare_dpt}
+\end{figure}
+
+The cross-section ratio as a function of \tkidelta \ for each nuclear target to scintillator is shown in Fig.~\ref{Figure:Gencompare_dpt_ratio}.  For each target the same cross-section ratio according to the different models is shown.  %The individual contributions to the uncertainties on these ratio measurements are provided in Supplement Sec.~\ref{sec:appendixB}.
+
+The models describe the data in the cross-section ratio plots for the smaller $A$ targets.  For the Fe and Pb targets the model spread is large at high \tkidelta  , where FSI is expected to have the largest effect.  In these regions NuWro and the hA versions of GENIE underpredict the data significantly while NEUT, GiBUU, and the hN versions of GENIE follow the data trend at high \tkidelta \ fairly well.  The \chisq\ between the cross section ratios and the models can be found in Table~\ref{tab:dpt}.
+
+\begin{figure}
+    \centering
+        \includegraphics[width=\linewidth]{Figures/gencompare/dpt_fine_4square.eps}
+    \caption{\tkidelta\ cross-section ratio generator comparison for multiple targets.  Note that changes to the FSI model (GENIE ``a'' to ``b'')
+     in GENIE change the cross section ratio at high \tkidelta\  much more than changes to the 2p2h model (GiBUU T0 to GiBUU T1) or changes to the initial state (GENIE 1 to GENIE 10) or (NuWro LFG to NuWro SF).   }
+    \label{Figure:Gencompare_dpt_ratio}
+\end{figure}
+
+\section{Results and Discussion for other observables as a function of $A$}
+\label{sec:results}
+%Other TKI measurements
+\include{Result_coplanarity.tex}
+\include{Result_alphat.tex}
+\include{Result_dptx.tex}
+\include{Result_dpty.tex}
+\include{Result_pl}
+\include{Result_pn.tex}
+%proton measurements 
+\include{Result_proton_p.tex}
+\include{Result_proton_pt.tex}
+\include{Result_proton_theta.tex}
+%muon measurements
+\include{Result_muon_p.tex}
+\include{Result_muon_pt.tex}
+\include{Result_muon_theta.tex}
+
+\section{Conclusions}
+
+In this paper, MINERvA presents new measurements of the $\nu_{\mu}$ CCQE-like cross section on C, CH, H$_2$0, Fe, and Pb targets at $E_\nu\sim 6~GeV$.  These data were taken simultaneously in the same detector and same flux and are highly suitable for relative comparison and examining variations in behavior with $A$. 
+ The cross sections are presented as a function of assorted transverse kinematic imbalance variables.  These variables are sensitive to both leptonic and hadronic kinematics and are useful for seeing direct evidence of nuclear effects on the final state.  In addition to the numerous differential cross-section results, the ratios  of the different targets to CH per neutron  are shown.  In the ratio, measurements of the total uncertainties are reduced because of the correlation between the dominant systematic uncertainties.  Comparisons are made to  predictions from the GENIE, NuWro, NEUT, and GiBUU neutrino interaction generators.  Tables~\ref{tab:dalphat} to~\ref{tab:protontheta}  provide the $\chi^{2}$ of each comparison.  The number of degrees of freedom is given in the caption for each table.  
+
+The effect of varying the final state interaction model and initial nucleon momentum distributions produce larger effects as Z increase, and the effects from FSI tend to be larger than the effects of changing the initial nucleon momentum distributions at these energies.  While these modifications will change the overall cross section somewhat uniformly as a function of muon momentum, they do make changes in very specific regions in each TKI variable.  The MINERvA data seem to favor more FSI than is currently in its base model, although some modification of the initial state nucleon momenta would also be suggested by these data. 
+
+The behavior of the data on targets up to the size of Fe are reasonably reproduced by the broad range of models.  For interactions on Pb, the model spread is large compared to the data, particularly in regions of the variable where nuclear effects are expected to play an important role.  NEUT tends to over-predict the cross section, particularly for the larger targets.  The hN versions of GENIE approach the NEUT behavior in this respect, particularly for data taken on the Pb target.  In regions where the nuclear effects are important for the larger targets, the hA versions of GENIE and NuWro tend to under-predict the data.  With a few exceptions, GiBUU seems to most consistently model the data reasonably well across targets and variables.
+
+
+Qualitatively, for most variables the  predicted cross-section ratios 
+agree well with the measurements for smaller $A$ targets.  For data taken on Fe and to a greater degree, that on Pb, the ratio of the cross sections are larger than anticipated by the hA versions of GENIE and NuWro in regions where nuclear effects are important and often over-predicted somewhat by NEUT and the hN versions of GENIE.  
+
+These data show clearly that nuclear effects are important and their influence increases with  atomic mass {\it A}.  Simple neutron-number-weighted scaling of the cross section gives a reasonable expectation of the results seen for smaller nuclei.  For data taken on the larger nuclei, FSI effects tend to lead to more complex behavior than simple neutron scaling.  Often that behavior is covered in the spread of models examined here. 
+
+These results have implications for neutrino oscillation experiments because neutrino interaction modeling feeds into experimental oscillation results and systematic uncertainties in various ways.  The modeling is used to project near detector constraints on the data to the far detector analysis and to assess systematic sensitivities.  That may or may not involve different nuclear targets and may be more or less sensitive to final state effects.  The results presented here illustrate the successes and failures of commonly used models in reproducing what is seen for the simplest final state that can correlate the leptonic and hadronic sides of the interaction.  Of some relevance for T2K, the cross-section ratios of data taken on H$_{2}$O to that on scintillator are fairly well described by the models.  For argon-based experiments, such as DUNE, the good news is that the behavior seen on the larger {\it A} targets is described by the broad range seen in the models.  However, the nuclear effects are clearly important and the details in the modeling matter.  These measurements can be used to help constrain model predictions with different nuclear targets.
+
+
+\begin{acknowledgements}
+This document was prepared by members of the MINERvA collaboration using the resources of the Fermi National Accelerator Laboratory (Fermilab), a U.S. Department of Energy, Office of Science, Office of High Energy Physics HEP User Facility. Fermilab is managed by Fermi Forward Discovery Group, LLC, acting under Contract No. 89243024CSC000002.  These resources included support for the MINERvA construction project, and support
+for construction also
+was granted by the United States National Science Foundation under
+Award No. PHY-0619727 and by the University of Rochester. Support for
+participating scientists was provided by NSF and DOE (USA); by CAPES
+and CNPq (Brazil); by CoNaCyT (Mexico); by ANID PIA / APOYO AFB180002, CONICYT PIA ACT1413, and Fondecyt 3170845 and 11130133 (Chile); 
+by CONCYTEC (Consejo Nacional de Ciencia, Tecnolog\'ia e Innovaci\'on Tecnol\'ogica), DGI-PUCP (Direcci\'on de Gesti\'on de la Investigaci\'on  - Pontificia Universidad Cat\'olica del Peru), and VRI-UNI (Vice-Rectorate for Research of National University of Engineering) (Peru); NCN Opus Grant No. 2016/21/B/ST2/01092 (Poland); by Science and Technology Facilities Council (UK); by EU Horizon 2020 Marie Skłodowska-Curie Action; by a Cottrell Postdoctoral Fellowship from the Research Corporation for Scientific Advancement; by an Imperial College London President's PhD Scholarship.  We thank the MINOS Collaboration for use of its near detector data. Finally, we thank the staff of
+Fermilab for support of the beam line, the detector, and computing infrastructure.
+\end{acknowledgements}
+
+\input{references.tex}
+
+\pagebreak
+
+\clearpage
+\FloatBarrier
+\section{Supplemental Material}
+% restart figure and table numbering and start with "Supp-*"
+\renewcommand\thefigure{Supp.\arabic{figure}}
+\setcounter{figure}{0}
+\renewcommand\thetable{Supp.\Roman{table}}
+\setcounter{table}{0}
+\label{sec:supplemental}
+\input{Supplemental.tex}
+
+\end{document}

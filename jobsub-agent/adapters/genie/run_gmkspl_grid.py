@@ -50,6 +50,9 @@ def main() -> int:
     ap.add_argument("--input-cross-sections", default=None, help="pre-existing spline XML to extend")
     ap.add_argument("--tune", default=None, help="GENIE tune (default: genie-agent default_tune)")
     ap.add_argument("--genlist", default=None, help="generator list (default: genie-agent default)")
+    ap.add_argument("--installation", default=None,
+                    help="must match genie-agent active_installation (else rejected); "
+                         "use --config to point at a different genie-agent config")
     ap.add_argument("-N", "--n-jobs", type=int, default=1, help="number of grid processes")
     ap.add_argument("--tune-tarball-label", default=None, help="optional GXMLPATH overlay tarball label")
     ap.add_argument("--project", default=None)
@@ -71,7 +74,7 @@ def main() -> int:
     if not genlist:
         sys.stderr.write("error: --genlist required (no genie-agent default found)\n"); return 2
     project = args.project or cfg.get("default_project", "prd_paper")
-    installation = (common.local_genie_install() or {}).get("installation_name", "unknown")
+    installation = common.resolve_installation(args.installation)
 
     try:
         nu_pdgs = [resolve_pdg(p) for p in _split(args.probes)]

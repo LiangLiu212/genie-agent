@@ -1,0 +1,103 @@
+
+\subsection{Details of Cross Section Extraction Procedure} 
+\label{Sec:supplementalanalysis}
+
+This section provides more detailed description of the cross section extraction procedure for \tkidelta, starting with the sideband tuning procedure, background subtraction, unfolding, and finally efficiency correction. Figure~\ref{fig:tkidelta_sdbn_evntrate_tuned}  shows the sideband sample with a Michel electron after tuning the backgrounds for events interacting on scintillator and events interacting on lead as a function of \tkidelta.  Note that the background fractions vary significantly between scintillator and lead, underscoring the importance of measuring backgrounds for each target nucleus separately wherever possible.  
+
+\begin{figure}  
+	\centering
+	\includegraphics[width=0.48\linewidth]
+{Figures/Sidebands/After/ch_sideband_michel_v5.eps}
+ 	\includegraphics[width=0.48\linewidth]
+{Figures/Sidebands/After/ch_sideband_energy_clusters_v5.eps}
+	\includegraphics[width=0.48\linewidth]
+{Figures/Sidebands/After/lead_sideband_michel_v5.eps}
+ 	\includegraphics[width=0.48\linewidth]
+{Figures/Sidebands/After/lead_sideband_energy_clusters_v5.eps}
+	\caption{Event rates as a function of \tkidelta\ for the two sideband samples for scintillator (CH) and lead targets after background tuning. }
+	\label{fig:tkidelta_sdbn_evntrate_tuned}
+\end{figure}
+
+Figure~\ref{fig:tkidelta_evntrate_tuned} shows the event rate in the signal region after tuning for each target except carbon, before background subtraction.  The predicted contributions from each background after tuning are also shown. 
+
+ %\pagebreak
+
+
+
+% tki_muon_pt event rate before background subtraction
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.49\linewidth]%
+{Figures/Supp_Events/ch_signal_after.eps}
+\includegraphics[width=0.49\linewidth]%
+{Figures/Supp_Events/h2o_signal_after.eps}
+\includegraphics[width=0.49\linewidth]%
+{Figures/Supp_Events/iron_signal_after.eps}
+\includegraphics[width=0.49\linewidth]%
+{Figures/Supp_Events/lead_signal_after.eps}
+	\caption{Signal sample event rates as a function of \tkidelta \ for CH, C, H$_{2}$O, Fe, and Pb targets after background tuning but before background subtraction.}
+	\label{fig:tkidelta_evntrate_tuned}
+\end{figure}
+%\FloatBarrier
+Figure~\ref{fig:tkidelta_evntrate_backgroundsubtr} shows the signal for each target as a function of \tkiptmu\ after the backgrounds are subtracted.  In this procedure, the background removed is that predicted in the simulation after the background tuning.  The figure shows the various signal contributions to the quasielastic-like interaction.  Note that the quasielastic contribution to quasielastic-like events are predicted to be the most important at low \tkidelta\ but are only a small fraction of the event rate at high \tkidelta .  
+
+% tki_muon_pt event rate after background subtraction
+\begin{figure}[h!] 
+	\centering
+\includegraphics[width=0.49\linewidth]
+{Figures/Supp_Events/background_subtracted_tki_dpt_fine_tracker.eps}	\includegraphics[width=0.49\linewidth]
+{Figures/Supp_Events/background_subtracted_tki_dpt_fine_water.eps}
+\includegraphics[width=0.49\linewidth]
+{Figures/Supp_Events/background_subtracted_tki_dpt_fine_iron.eps}
+\includegraphics[width=0.49\linewidth]
+{Figures/Supp_Events/background_subtracted_tki_dpt_fine_lead.eps}
+	\caption{Signal sample event rates as a function of \tkidelta \ for CH, C, H$_{2}$O, Fe, and Pb targets after the tuned background has been subtracted.}
+\label{fig:tkidelta_evntrate_backgroundsubtr}
+\end{figure}
+
+Once the backgrounds have been subtracted, the remaining event distributions can be unfolded as described in section~\ref{sec:analysis}.  The unfolded \tkidelta \ event rate distributions for water, iron, lead and scintillator are shown in Fig.~\ref{fig:tkidelta_evntrate_unfolded}.  
+
+% tki_muon_pt event rate after unfolding
+\begin{figure}  
+	\centering
+\includegraphics[width=0.49\linewidth] {Figures/Supp_Events/unfolded_tki_dpt_fine_tracker.eps}
+  \includegraphics[width=0.49\linewidth]
+{Figures/Supp_Events/unfolded_tki_dpt_fine_water.eps}
+   	\includegraphics[width=0.49\linewidth]
+{Figures/Supp_Events/unfolded_tki_dpt_fine_iron.eps}
+    \includegraphics[width=0.49\linewidth]
+{Figures/Supp_Events/unfolded_tki_dpt_fine_lead.eps}
+	\caption{Signal sample event rates as a function of \tkidelta \ for CH, C, H$_{2}$O, Fe, and Pb targets after unfolding. }
+	\label{fig:tkidelta_evntrate_unfolded}
+\end{figure}
+
+After the distributions have been unfolded, then the analysis divides by the efficiency as a function of \tkidelta\ for each target separately in the detector. 
+ Figure~\ref{fig:tkidelta_efficiency} shows the average efficiency as function of \tkidelta \ for scintillator on the left and for lead on the right. 
+
+% tkidelta efficiency correction for CH and Pb
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.48\linewidth]%{Figures/TKI_muon_pt/tracker_eff_muon_pt.eps}
+ {Figures/Event_rate_plots/TKIdelta/reco_eff/tracker_v5.eps}
+ 	\includegraphics[width=.48\linewidth]%{Figures/TKI_muon_pt/lead_eff_muon_pt.eps}
+   {Figures/Event_rate_plots/TKIdelta/reco_eff/lead_v5.eps}
+	\caption{The signal efficiency as  a function of \tkidelta\ for events from interactions on CH on the left and Pb on the right.}
+	\label{fig:tkidelta_efficiency}
+\end{figure}
+
+As described in Sec.\ref{sec:analysis}, the flux varies somewhat across the face of the detector.  The variations for each individual target are accounted for in the analysis, and the average variation of the flux for each nuclear target type is shown in Fig.~\ref{fig:fluxes}.  Because the lead targets are distributed in locations that are appoximately symmetric around the center of the detector, the net effect for lead is small.  Similarly, the water target itself is also symmetric around the center of the detector so there is no correction needed for the water to scintillator comparisons.  
+\begin{figure}[tb]
+\centering
+\includegraphics[width=\linewidth]{Figures/fluxes.eps}
+\caption{The ratio of the flux in each target material to that in the scintillator target.}
+\label{fig:fluxes}
+\end{figure}
+
+\clearpage
+\input{Ratios_to_GENIE.tex}
+
+\clearpage
+\input{Uncertainties.tex}
+
+\clearpage
+\include{chi2_tables}

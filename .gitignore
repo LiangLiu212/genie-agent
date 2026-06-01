@@ -27,3 +27,6 @@ jobsub-agent/jobsub-runs/
 
 # jobsub-agent: built tarballs (large build artefacts)
 jobsub-agent/tarballs/
+
+# scratch / throwaway
+test-hello/

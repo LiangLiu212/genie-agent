@@ -10,6 +10,10 @@ version = "0.1.0"
 [dependencies]
 python = "3.14.*"
 jq = ">=1.8.1,<2"
+matplotlib = ">=3.10.9,<4"
+uproot = ">=5.7.4,<6"
+numpy = ">=2.4.6,<3"
+awkward = ">=2.9.0,<3"
 
 # Build-time only: shared/build_pdg.py uses the PDG API to validate GENIE
 # codes and enrich shared/pdg.json. Runtime (lib/pdg.py) reads the JSON only.
