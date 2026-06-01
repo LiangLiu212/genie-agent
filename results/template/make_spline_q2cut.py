@@ -41,6 +41,13 @@ for ax, tgt in zip(axes, order):
         ax.plot(E, X, "-o", ms=3, color=COLORS[i % len(COLORS)],
                 label=f"Q2cut={q2[tune]:.2f} ({tune[:2]})")
     style_axis(ax, title=f"{tgt_name[tgt]}  (e- EM-QES)", xlabel="E [GeV]")
+
+# Set the shared y-range from the largest target (Au197) so its curves are not
+# clipped by C12's smaller autoscale.
+au197 = "1000791970"
+ymax = max(x for tune in data for _, x in data[tune][au197])
+axes[0].set_ylim(FLOOR, ymax * 2)   # sharey propagates to all panels
+
 axes[0].set_ylabel("xsec  [GENIE units]", fontsize=FS_LABEL)
 axes[0].legend(title="EM-MinQ2Limit [GeV$^2$]", fontsize=FS_LEGEND,
                title_fontsize=FS_LEGEND_TITLE)
