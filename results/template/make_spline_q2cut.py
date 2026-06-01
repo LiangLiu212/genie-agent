@@ -14,7 +14,8 @@ from plot_style import (apply_style, new_panels, style_axis, COLORS, FLOOR,
 
 # Spline XMLs pulled from the grid (one per tune). Adjust the glob/dir as needed.
 SRC = os.environ.get("SPL_DIR", "/tmp/spl_cmp")
-q2 = {"04_000": 0.54, "05_000": 1.18, "06_000": 1.70, "08_000": 3.15}
+q2 = {"04_000": 0.54, "05_000": 1.18, "06_000": 1.70, "07_000": 1.73,
+      "08_000": 3.15}
 tgt_name = {"1000060120": "C12", "1000260560": "Fe56", "1000791970": "Au197"}
 order = ["1000060120", "1000260560", "1000791970"]
 

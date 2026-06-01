@@ -13,12 +13,11 @@ that differ only in the `EM-MinQ2Limit` (minimum-Q2) parameter.
 | GEM21_11a_04_000 | 0.54 |
 | GEM21_11a_05_000 | 1.18 |
 | GEM21_11a_06_000 | 1.70 |
+| GEM21_11a_07_000 | 1.73 |
 | GEM21_11a_08_000 | 3.15 |
 
 Raising the Q2 floor strips low-Q2 phase space: the cross-section turn-on shifts
 to higher energy and the plateau drops by roughly an order of magnitude per step.
 The 3.15 GeV² tune sits on the plot's 1e-12 floor (effectively no surviving
-EM-QES). Curves are clamped at 1e-12 so the log axis renders zeros.
-
-Tune `GEM21_11a_07_000` (Q2 = 1.73 GeV²) is not yet included — its grid job was
-still running when this figure was made.
+EM-QES). Curves are clamped at 1e-12 so the log axis renders zeros. The 1.70 and
+1.73 GeV² curves nearly overlap (0.03 GeV² apart).
