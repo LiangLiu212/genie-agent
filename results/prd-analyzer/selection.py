@@ -58,7 +58,7 @@ def load_events(path):
     E_miss = omega - Tp
 
     return dict(Ev=Ev, El=El, theta_e=theta_e, has_p=has_p, Tp=Tp, theta_p=theta_p,
-                E_miss=E_miss * 1000.0, p_miss=p_miss * 1000.0,
+                Q2=nz("Q2"), E_miss=E_miss * 1000.0, p_miss=p_miss * 1000.0,
                 qel=ak.to_numpy(a.qel).astype(bool))
 
 
