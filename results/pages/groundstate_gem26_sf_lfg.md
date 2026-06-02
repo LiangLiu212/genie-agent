@@ -7,7 +7,11 @@ all 6 E91-013 points per config (~600k events each). Initial hit-nucleon branche
 `|pₙ|` from `pn`, and the missing/removal energy `E_rm = M_N − Eₙ` (the spectral function's
 removal-energy axis).
 
-![hit-nucleon momentum and missing energy SF vs LFG](../groundstate_gem26_sf_lfg.png)
+![hit-nucleon momentum and missing energy SF vs LFG, log-y](../groundstate_gem26_sf_lfg.png)
+*Log-y view — emphasizes the SF high-momentum tail and removal-energy spread.*
+
+![hit-nucleon momentum and missing energy SF vs LFG, linear](../groundstate_gem26_sf_lfg_linear.png)
+*Linear (normal) axes — the peak shapes and the SF vs LFG sharp-edge difference.*
 
 | Quantity | LFG (`GEM26_11a`) | SF (`GEM26_22a`) |
 |----------|-------------------|------------------|
@@ -20,5 +24,5 @@ hard momentum edge and an essentially fixed removal energy. The total cross-sect
 same for both (see [the spline page](spline_gem26_q2cut.md)); the difference is entirely in these
 per-event initial-state kinematics.
 
-- **Figure:** [`groundstate_gem26_sf_lfg.png`](../groundstate_gem26_sf_lfg.png)
+- **Figures:** [`groundstate_gem26_sf_lfg.png`](../groundstate_gem26_sf_lfg.png) (log-y) · [`groundstate_gem26_sf_lfg_linear.png`](../groundstate_gem26_sf_lfg_linear.png) (linear)
 - **Generator:** [`template/make_groundstate_gem26_sf_lfg.py`](../template/make_groundstate_gem26_sf_lfg.py)

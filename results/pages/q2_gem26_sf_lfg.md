@@ -7,7 +7,11 @@ Per-event Q² for `e-` on C12 from the grid campaign (`gevgen`, 10M events per p
 setting; each overlays **LFG (`GEM26_11a`)** and **SF (`GEM26_22a`)** — identical Rosenbluth
 QEL-EM physics, differing only in the C12 ground-state nuclear model.
 
-![EM-QES Q2 SF vs LFG](../q2_gem26_sf_lfg.png)
+![EM-QES Q2 SF vs LFG, log](../q2_gem26_sf_lfg.png)
+*Log-log view.*
+
+![EM-QES Q2 SF vs LFG, linear](../q2_gem26_sf_lfg_linear.png)
+*Linear (normal) axes — per-panel range scaled to each setting's Q² band.*
 
 | Beam E (GeV) | cut tune | EM-MinQ2Limit (GeV²) |
 |--------------|----------|----------------------|
@@ -23,5 +27,5 @@ closely at every setting: the QE Q² is set by the lepton kinematics and only we
 the initial-nucleon motion, so the ground-state choice barely shifts Q² (the difference lives in
 the struck-nucleon kinematics — see [the ground-state page](groundstate_gem26_sf_lfg.md)).
 
-- **Figure:** [`q2_gem26_sf_lfg.png`](../q2_gem26_sf_lfg.png)
+- **Figures:** [`q2_gem26_sf_lfg.png`](../q2_gem26_sf_lfg.png) (log-log) · [`q2_gem26_sf_lfg_linear.png`](../q2_gem26_sf_lfg_linear.png) (linear)
 - **Generator:** [`template/make_q2_gem26_sf_lfg.py`](../template/make_q2_gem26_sf_lfg.py)
