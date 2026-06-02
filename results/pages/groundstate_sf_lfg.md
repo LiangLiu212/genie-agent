@@ -7,7 +7,12 @@ physics (`XSecModel@QEL-EM = genie::RosenbluthPXSec/Default`) and differ only in
 the **C12 ground-state nuclear model**. Both run `e-` on C12 at a 2.445 GeV beam
 (JLab E91-013 point), 1000 `EMQE` events each.
 
-![SF vs LFG ground state](../groundstate_sf_lfg.png)
+![SF vs LFG ground state, log scale](../groundstate_sf_lfg.png)
+*Log-scale view: `|pₙ|` on log-y, `Q²` log-log — emphasizes the SF high-momentum tail.*
+
+![SF vs LFG ground state, linear axes](../groundstate_sf_lfg_linear.png)
+*Same data, linear x and y on both panels — the LFG peak/sharp edge vs the SF
+broader peak + tail in direct, unscaled comparison.*
 
 | Tune | Ground state (C12) | QEL-EM model | EventGenerator |
 |------|--------------------|--------------|----------------|
@@ -47,7 +52,7 @@ gas lacks — the textbook SF-vs-FG difference (short-range correlations). The
 the QE Q² is set by the elastic kinematics, only mildly smeared by the initial
 nucleon motion.
 
-- **Figure:** [`groundstate_sf_lfg.png`](../groundstate_sf_lfg.png)
+- **Figures:** [`groundstate_sf_lfg.png`](../groundstate_sf_lfg.png) (log scale), [`groundstate_sf_lfg_linear.png`](../groundstate_sf_lfg_linear.png) (linear axes)
 - **Generator:** [`template/make_groundstate_sf_lfg.py`](../template/make_groundstate_sf_lfg.py)
 - **Style:** [`template/plot_style.py`](../template/plot_style.py)
 - **Tunes:** `genie-agent/tunes/GEM26_11a` (LFG), `genie-agent/tunes/GEM26_22a` (SF)

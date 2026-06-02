@@ -12,6 +12,10 @@ kF; the momentum distribution P(k,E) only enters at event generation). So the
 ground-state effect is visible only in the per-event kinematics shown here: the
 struck-nucleon momentum |p_n| (left) and Q^2 (right). Reads the gst ROOT trees
 with uproot; follows the personal plot style (results/template/plot_style.py).
+
+Emits two figures of the same data:
+  - groundstate_sf_lfg.png         log-scale view (|p_n| log-y; Q^2 log-log)
+  - groundstate_sf_lfg_linear.png  linear x and y on both panels
 """
 import sys, glob
 sys.path.insert(0, "results/template")
@@ -41,32 +45,46 @@ def load(tune):
     return np.asarray(d["Q2"], float), pmag
 
 PBINS = np.linspace(0.0, 1000.0, 51)                       # |p_n|  [MeV/c]
-QBINS = np.logspace(np.log10(0.01), np.log10(1.0), 40)     # Q^2  [(GeV/c)^2]
+QBINS_LOG = np.logspace(np.log10(0.01), np.log10(1.0), 40)  # Q^2 log-spaced
+QBINS_LIN = np.linspace(0.0, 0.6, 49)                       # Q^2 linear-spaced
 
-apply_style()
-fig, axes = new_panels(ncols=2, sharey=False)
-axp, axq = axes
-
+# load once
+LOADED = []
 for tune, label, color in SERIES:
     r = load(tune)
-    if r is None:
-        continue
-    q2, pmag = r
-    axp.hist(pmag, bins=PBINS, histtype="step", linewidth=1.8, color=color, label=label)
-    axq.hist(q2, bins=QBINS, histtype="step", linewidth=1.8, color=color, label=label)
+    if r is not None:
+        q2, pmag = r
+        LOADED.append((label, color, q2, pmag))
 
-style_axis(axp, title="struck-nucleon momentum",
-           xlabel=r"|p$_n$|  [MeV/c]", logx=False, logy=True, ymin=0.5)
-style_axis(axq, title="momentum transfer",
-           xlabel=r"Q$^2$  [(GeV/c)$^2$]", logx=True, logy=True, ymin=0.5)
-axp.set_ylabel("events / bin", fontsize=FS_LABEL)
-axq.set_ylabel("events / bin", fontsize=FS_LABEL)
-axp.legend(title="ground state", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
 
-fig.suptitle("Rosenbluth EM-QES ground state: spectral function vs Local Fermi Gas\n"
-             "e⁻ on C12, 2.445 GeV, 1000 EMQE events  (GEM26_11a vs GEM26_22a)",
-             fontsize=FS_SUPTITLE)
-fig.tight_layout()
-out = "results/groundstate_sf_lfg.png"
-fig.savefig(out, dpi=130)
-print("wrote", out)
+def make_fig(out, qbins, p_logy, q_logx, q_logy, suptitle):
+    """One figure: |p_n| (left, always linear-x) + Q^2 (right). Scales per args."""
+    apply_style()
+    fig, axes = new_panels(ncols=2, sharey=False)
+    axp, axq = axes
+    for label, color, q2, pmag in LOADED:
+        axp.hist(pmag, bins=PBINS, histtype="step", linewidth=1.8, color=color, label=label)
+        axq.hist(q2, bins=qbins, histtype="step", linewidth=1.8, color=color, label=label)
+    style_axis(axp, title="struck-nucleon momentum", xlabel=r"|p$_n$|  [MeV/c]",
+               logx=False, logy=p_logy, ymin=(0.5 if p_logy else None))
+    style_axis(axq, title="momentum transfer", xlabel=r"Q$^2$  [(GeV/c)$^2$]",
+               logx=q_logx, logy=q_logy, ymin=(0.5 if q_logy else None))
+    axp.set_ylabel("events / bin", fontsize=FS_LABEL)
+    axq.set_ylabel("events / bin", fontsize=FS_LABEL)
+    axp.legend(title="ground state", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
+    fig.suptitle(suptitle, fontsize=FS_SUPTITLE)
+    fig.tight_layout()
+    fig.savefig(out, dpi=130)
+    print("wrote", out)
+
+
+_TITLE = "Rosenbluth EM-QES ground state: spectral function vs Local Fermi Gas"
+
+# log-scale view (unchanged): |p_n| log-y, Q^2 log-log
+make_fig("results/groundstate_sf_lfg.png", QBINS_LOG,
+         p_logy=True, q_logx=True, q_logy=True,
+         suptitle=_TITLE + "\ne⁻ on C12, 2.445 GeV, 1000 EMQE events  (GEM26_11a vs GEM26_22a)")
+# linear view: linear x and y on both panels
+make_fig("results/groundstate_sf_lfg_linear.png", QBINS_LIN,
+         p_logy=False, q_logx=False, q_logy=False,
+         suptitle=_TITLE + "\ne⁻ on C12, 2.445 GeV, 1000 EMQE events  (linear axes)")
