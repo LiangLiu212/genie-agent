@@ -1,0 +1,65 @@
+"""XRootD-streamed (e,e'p) samples for the prd-analyzer 3-model comparison.
+
+Three quasi-elastic EM models on C12 at E_beam = 2.445 GeV, generation cut `_05`
+(EM-MinQ2Limit = 1.18 GeV^2, so Q^2 >= 1.18 brackets the Q^2 = 1.28 spectrometer
+setting). Each sample is ~10M events; instead of pre-pulling the grid output, we
+**stream the gst files straight off dCache over XRootD** (root://).
+
+    key      tune              QE-EM model                       install        files
+    LFG      GEM26_11a_05_000  Rosenbluth + LocalFGM ground st.  genie_inclxx   100 x 100k
+    SF       GEM26_22a_05_000  Rosenbluth + SpectralFunc g.s.    genie_inclxx   100 x 100k
+    SuSAv2   GEM21_11a_05_000  SuSAv2-QEL (HybridXSecAlgorithm)  genie_dev       20 x 500k
+
+The file *listing* is a local NFS metadata read of the /pnfs dir; the event DATA
+is streamed over XRootD. dCache auth needs a valid bearer token: export
+BEARER_TOKEN_FILE=<token> (refresh with `htgettoken -i dune`).
+
+NB the SuSAv2 sample was generated with the `genie_dev` install, the two Rosenbluth
+samples with `genie_inclxx` — a build difference to keep in mind for the comparison.
+"""
+import glob
+
+DOOR = "fndca1.fnal.gov:1094"        # Fermilab dCache XRootD redirector
+_PNFS_ROOT = "/pnfs/dune/scratch/users/liangliu/jobsub-agent/prd_paper/EM"
+
+# key -> (legend label, color, /pnfs gevgen leaf dir with <proc>/<file>.gst.root)
+SAMPLES = {
+    "LFG": ("LFG  (Rosenbluth)", "C0",
+            f"{_PNFS_ROOT}/genie_inclxx/GEM26_11a_05_000/"
+            "eminus_C12_20260602-131202_gev/11_1000060120_GEM26_11a_05_000"),
+    "SF": ("SF  (Rosenbluth)", "C1",
+           f"{_PNFS_ROOT}/genie_inclxx/GEM26_22a_05_000/"
+           "eminus_C12_20260602-131216_gev/11_1000060120_GEM26_22a_05_000"),
+    "SuSAv2": ("SuSAv2  (Hybrid-QEL)", "C2",
+               f"{_PNFS_ROOT}/genie_dev/GEM21_11a_05_000/"
+               "eminus_C12_20260601-153754_gev/11_1000060120_GEM21_11a_05_000"),
+}
+MODELS = ["LFG", "SF", "SuSAv2"]      # canonical legend / column order
+CACHE_DIR = "results/prd-analyzer/cache"
+
+
+def xrootd_url(pnfs_path, door=DOOR):
+    """/pnfs/dune/...  ->  root://<door>//pnfs/fnal.gov/usr/dune/... (dCache namespace)."""
+    return f"root://{door}/" + pnfs_path.replace("/pnfs/", "/pnfs/fnal.gov/usr/", 1)
+
+
+def gst_urls(model, max_files=None):
+    """XRootD URLs of a model's gst files: NFS-list the /pnfs dir, map each to root://."""
+    files = sorted(glob.glob(SAMPLES[model][2] + "/*/*.gst.root"))
+    if max_files:
+        files = files[:max_files]
+    return [xrootd_url(f) for f in files]
+
+
+def label(model):
+    return SAMPLES[model][0]
+
+
+def color(model):
+    return SAMPLES[model][1]
+
+
+def load_cache(model, cache_dir=CACHE_DIR):
+    """Load the per-model cache built by build_cache.py (dict of numpy arrays)."""
+    import numpy as np
+    return dict(np.load(f"{cache_dir}/{model}.npz"))

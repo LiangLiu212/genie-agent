@@ -1,0 +1,1701 @@
+{
+   "sources" : [
+      {
+         "usage" : "toplevel",
+         "filename" : "NuclTargTKI_PRD.tex"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/alpha/absolute_xsec_alpha_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_alpha.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_alpha.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_dpt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_dpt_fine.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_dptx.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_dpty.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_muon_p.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_muon_pt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_muon_theta.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_phi.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_pl.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_pn.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_proton_p.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_proton_pt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_correlation_proton_theta.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_alpha.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_dpt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_dpt_fine.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_dptx.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_dpty.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_muon_p.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_muon_pt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_muon_theta.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_phi.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_pl.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_pn.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_proton_p.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_proton_pt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_covariance_proton_theta.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_dpt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_dpt_fine.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_dptx.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_dpty.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_muon_p.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_muon_pt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_muon_theta.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_phi.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_pl.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_pn.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_proton_p.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_proton_pt.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/combined/absolute_xsec_combined_proton_theta.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_fine_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpt/absolute_xsec_dpt_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dptx/absolute_xsec_dptx_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/dpty/absolute_xsec_dpty_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_p_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_pt_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/muon/absolute_xsec_muon_theta_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/phi/absolute_xsec_phi_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pl/absolute_xsec_pl_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/pn/absolute_xsec_pn_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_p_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_pt_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_carbon.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_carbon_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_carbon_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_carbon_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_carbon_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_carbon_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_iron_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_iron_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_iron_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_lead_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_lead_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_lead_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_water_flux.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_water_flux_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_ch_water_flux_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_iron.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_iron_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_iron_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_lead.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_lead_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_lead_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_water.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_water_correlation.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/absolute/proton/absolute_xsec_proton_theta_water_covariance.txt"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/tki_release.root"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "anc/tki_release_mnv.root"
+      }
+   ],
+   "spec_version" : 1,
+   "texlive_version" : "2023",
+   "process" : {
+      "compiler" : "latex"
+   }
+}

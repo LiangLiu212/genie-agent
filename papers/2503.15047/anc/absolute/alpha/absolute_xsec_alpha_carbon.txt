@@ -1,0 +1,8 @@
+# X-axis: #delta#alpha_{T} (degrees)
+# Y-axis: d#sigma/d#delta#alpha_{T} (cm^{2}/Degree/nucleon)
+# X	Content	Error
+20	5.768133e-42	1.285013e-42
+60	7.913589e-42	1.519044e-42
+100	1.188617e-41	2.392197e-42
+135	1.689737e-41	3.810094e-42
+165	1.348398e-41	5.554495e-42
