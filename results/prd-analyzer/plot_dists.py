@@ -56,7 +56,7 @@ def make_fig(out, use_stage2, stage_label):
     axes[7].legend(handles, labels, title="QE-EM model", loc="center",
                    fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
     ns = {m: (int(data[m][1].sum()) if use_stage2 else len(data[m][0]["El"])) for m in S.MODELS}
-    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05): LFG / SF / SuSAv2\n"
+    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05): LFG+Rosenbluth, SF+Rosenbluth, LFG+SuSAv2\n"
                  "grey dashed = acceptance window · selected N: "
                  + ",  ".join(f"{m} {ns[m]}" for m in S.MODELS),
                  fontsize=FS_SUPTITLE)

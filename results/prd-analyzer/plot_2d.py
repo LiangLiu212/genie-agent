@@ -29,7 +29,7 @@ for use_stage2, slabel in [(False, "stage 1"), (True, "stage 2")]:
     for m in S.MODELS:
         pm, em, s2 = data[m]
         mask = s2 if use_stage2 else np.ones(len(em), bool)
-        cells.append((f"{slabel} · {m}", pm, em, mask))
+        cells.append((f"{slabel} · {S.label(m)}", pm, em, mask))
 
 for ax, (title, pm, em, mask) in zip(axes, cells):
     h = ax.hist2d(pm[mask], em[mask], bins=[PBINS, EBINS], cmap="viridis", cmin=1)
@@ -39,7 +39,7 @@ for ax, (title, pm, em, mask) in zip(axes, cells):
     ax.tick_params(labelsize=FS_TICK)
     fig.colorbar(h[3], ax=ax, label="events / bin")
 
-fig.suptitle("(e,e'p) 2D missing energy vs momentum — e⁻ on C12, Q²=1.28 (t05): LFG / SF / SuSAv2\n"
+fig.suptitle("(e,e'p) 2D missing energy vs momentum — e⁻ on C12, Q²=1.28 (t05): LFG+Rosenbluth, SF+Rosenbluth, LFG+SuSAv2\n"
              "row 1 = stage 1 (electron cut),  row 2 = stage 2 (full coincidence)",
              fontsize=FS_SUPTITLE)
 fig.tight_layout()

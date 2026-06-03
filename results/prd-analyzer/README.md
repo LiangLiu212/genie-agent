@@ -8,9 +8,13 @@ paper's Figs 9/10 across **three QE-EM models**:
 
 | model | tune | QE-EM cross section + ground state | install |
 |-------|------|------------------------------------|---------|
-| **LFG**    | `GEM26_11a_05_000` | Rosenbluth + Local Fermi Gas         | genie_inclxx |
-| **SF**     | `GEM26_22a_05_000` | Rosenbluth + Benhar Spectral Function | genie_inclxx |
-| **SuSAv2** | `GEM21_11a_05_000` | SuSAv2-QEL (`HybridXSecAlgorithm`)   | genie_dev |
+| **LFG + Rosenbluth** | `GEM26_11a_05_000` | Rosenbluth + Local Fermi Gas          | genie_inclxx |
+| **SF + Rosenbluth**  | `GEM26_22a_05_000` | Rosenbluth + Benhar Spectral Function | genie_inclxx |
+| **LFG + SuSAv2**     | `GEM21_11a_05_000` | SuSAv2-QEL + Local Fermi Gas (`HybridXSecAlgorithm`) | genie_dev |
+
+Two clean axes: **LFG vs SF** (rows 1↔2) isolates the **ground state** at fixed Rosenbluth
+cross section; **LFG+Rosenbluth vs LFG+SuSAv2** (rows 1↔3) isolates the **QE-EM cross section**
+at fixed Local Fermi Gas ground state.
 
 Each is ~10M `e⁻`-on-C12 events at generation cut **t05** (EM-MinQ2Limit = 1.18 GeV², so Q² ≥ 1.18
 brackets the Q² = 1.28 setting). The samples are **streamed straight off dCache over XRootD** — no

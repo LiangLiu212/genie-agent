@@ -45,7 +45,7 @@ style_axis(axP, title="missing momentum", xlabel=r"p$_m$ = |q⃗ − p⃗$_p$|  
 for ax in (axE, axP):
     ax.set_ylabel("normalized / bin", fontsize=FS_LABEL)
 axE.legend(title="QE-EM model", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
-fig.suptitle("(e,e'p) missing energy & momentum at Q²=1.28 — LFG vs SF vs SuSAv2\n"
+fig.suptitle("(e,e'p) missing energy & momentum at Q²=1.28\n"
              "e⁻ on C12, 2.445 GeV · E91-013 Table I row 5 cuts · area-normalized",
              fontsize=FS_SUPTITLE)
 fig.tight_layout()
