@@ -54,7 +54,7 @@ pixi run python jobsub-agent/adapters/genie/run_gevgen_grid.py \
     --tarball-label genie_dev --tune-tarball-label gem21_emq2lim -N 1
 ```
 Read `Approximate processing time/event` from each `.ghep.status` (fetch via the
-`pnfs-fetch` skill recipe). Record real ms/evt per target.
+`pnfs-stream` skill recipe). Record real ms/evt per target.
 
 ### Step 1 — Splines
 Already on /pnfs (see Context). Verify presence; do NOT regenerate.
@@ -86,7 +86,7 @@ Reuse the 2026-06-01 submission loop; swap `-n 1000 -N 1` for per-target
   (and gst) → 18 merged 10M-event files.
 - Watch the false-`failed` caveat: a transient landscape.fnal.gov 500 in fetchlog
   can mark a finished job `failed` even though outputs are on /pnfs (see
-  jobsub-jobs / pnfs-fetch skills). Verify with `find /pnfs/...` before retrying.
+  jobsub-jobs / pnfs-stream skills). Verify with `find /pnfs/...` before retrying.
 
 ## Pre-launch logistics
 - **Disk:** ~180 GB GHEP+gst total (GHEP ≈ 0.6 MB/1000 evt → ~6 GB/setting GHEP +

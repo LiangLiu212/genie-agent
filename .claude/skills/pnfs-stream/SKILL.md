@@ -1,5 +1,5 @@
 ---
-name: pnfs-fetch
+name: pnfs-stream
 description: Stream grid output ROOT files (gst/ghep) off /pnfs dCache over XRootD with uproot — no local copy — via the dCache door root://fndca1.fnal.gov:1094 and the /pnfs->/pnfs/fnal.gov/usr namespace mapping. Use when reading a /pnfs file stalls (NFS hang), when cp/dd/cat/uproot.open on a bare /pnfs path time out, or when you need to read grid job outputs (uproot/ROOT) for analysis/plotting. Needs xrootd+fsspec-xrootd in the pixi env and a valid BEARER_TOKEN_FILE. NOT for steering jobs (use jobsub-jobs).
 ---
 
