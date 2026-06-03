@@ -16,8 +16,11 @@ Q2 = experimental-like; qel/res/dis = mode flags.
 import numpy as np
 import uproot
 import awkward as ak
+import pdg
 
-M_P = 0.938272  # proton mass [GeV]
+# Physics values come from the PDG Python package (pdg.connect()), never hardcoded.
+_PDG = pdg.connect()
+M_P = _PDG.get_particle_by_mcid(2212).mass   # proton mass [GeV]
 
 # Spectrometer acceptance windows: name -> (center, half-width). Q² = 1.28 setting (Table I row 5).
 CUTS = {
