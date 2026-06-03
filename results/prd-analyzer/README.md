@@ -43,6 +43,46 @@ Streaming needs `xrootd` + `fsspec-xrootd` in the pixi env (uproot opens `root:/
 Because the three models have **different total QE cross sections**, the 1D overlays are
 **area-normalized** (shape comparison); the selected count `N` — a rate proxy — is in each legend.
 
+## Selection & cuts
+
+Replicates the E91-013 **Q² = 1.28 GeV²** spectrometer setting (Dutta et al., Table I row 5): the
+narrow HMS/SOS acceptance windows on the scattered electron and the leading proton, reconstructed
+from the GENIE gst. All of this lives in `selection.py`.
+
+**Leading (knocked-out) proton.** The reconstructed proton is the **highest-momentum final-state
+proton** in the event — post-FSI, `pdgf == 2212`, maximal `pf`
+(`lead = ak.argmax(ak.where(isp, pf, -1))`). Its 4-momentum gives the proton kinematic energy
+`T_p = E_p − m_p` (with `m_p` from the PDG module) and angle `θ_p = arccos(p_z/|p⃗|)`. An event with
+**no** final-state proton (`has_p = false`) cannot form the coincidence and is dropped at stage 2.
+
+**Reconstructed per-event kinematics:**
+- `ω = E_beam − E_e′` — energy transfer
+- `q⃗ = p⃗_beam − p⃗_e′` — 3-momentum transfer (`Q²` is read from the gst `Q2` branch)
+- `θ_e′ = arccos(cos θ_l)` — scattered-electron angle
+- `E_m = ω − T_p` — **missing energy** (heavy-recoil approx, `T_{A−1} ≈ 0`)  [MeV]
+- `p_m = |q⃗ − p⃗_p|` — **missing momentum** (unsigned magnitude)  [MeV/c]
+
+**The cuts** — acceptance window = centre ± half-width (`selection.CUTS`):
+
+| cut | variable | window | paper (E91-013) | arm |
+|-----|----------|--------|-----------------|-----|
+| `El`      | scattered e′ energy `E_e′` | 1.725 ± 0.005 GeV | E_e′ = 1.725 GeV         | electron |
+| `theta_e` | scattered e′ angle `θ_e′`  | 32.0 ± 0.5°       | θ_e′ = 32°               | electron |
+| `Tp`      | leading-proton KE `T_p`    | 0.700 ± 0.025 GeV | T_p = 700 MeV            | proton   |
+| `theta_p` | leading-proton angle `θ_p` | 43.0 ± 1.0°       | θ_p ≈ 43.5° (conjugate)  | proton   |
+
+`Q²` is **not** cut directly — it is **pinned** by the electron arm:
+`El ∧ θ_e′ ⇒ Q² = 4 E_beam E_e′ sin²(θ_e′/2) ≈ 1.28 GeV²`.
+
+**Two stages** (`select_electron` → `select`):
+- **Stage 1 — electron arm**: `El ∧ θ_e′`. Tags the scattered electron and fixes Q²; the proton
+  side is still unconstrained. This is what `build_cache.py` caches.
+- **Stage 2 — full (e,e′p) coincidence**: `has_p ∧ El ∧ θ_e′ ∧ T_p ∧ θ_p`. Adds the leading-proton
+  KE and angle windows — the coincidence the HMS/SOS spectrometer pair actually measures.
+
+Acceptance is tight: ~0.4 % of events survive stage 1, ~0.01–0.05 % stage 2 (why the full
+10M/model is needed). `cut_summary(ev)` prints the N−1 cut flow per variable.
+
 ## Figures
 
 ### 1. Missing energy & momentum (full coincidence)
@@ -112,5 +152,4 @@ streamed over XRootD (never copied locally). The narrow spectrometer cuts keep ~
 - 1D overlays are **area-normalized** — the three models have different total σ, so raw counts are
   not a fair overlay; the rate information lives in the legend `N` (and the stage-2 efficiencies).
 - `p_m` is the unsigned magnitude (matches the paper); the p-shell dip at `p_m≈0` is the l=1 node.
-- Q² is pinned by the electron arm: Q² = 4 E_beam E_e′ sin²(θ_e′/2) ≈ 1.28 GeV² for this window.
 - SuSAv2 (`genie_dev`) vs the Rosenbluth pair (`genie_inclxx`) is a cross-build comparison.

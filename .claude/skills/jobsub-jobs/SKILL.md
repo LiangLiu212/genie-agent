@@ -31,6 +31,51 @@ worker logs (a standalone `DONE` line per process) — more reliable than the
 ifdh PNFS count, which is the fallback. `processes_done_source` records which
 was used.
 
+## WARNING — `job.py status` can falsely report `failed` for a RUNNING job
+`job.py status`/`list` decide the queue is drained by parsing their own
+`jobsub_q` subprocess. On this host that poll can come back **empty**: the
+jobsub_lite OpenTelemetry import crashes when `OTEL_EXPORTER_JAEGER_ENDPOINT`
+is unset (`KeyError: 'OTEL_EXPORTER_JAEGER_ENDPOINT'`), so the traced subprocess
+yields no parseable rows. job.py then concludes "no jobs in queue → drained",
+counts 0 PNFS outputs, and stamps **`failed`** — while the job is still
+**running**. It is **not** a token/auth problem (it persists with a fresh token),
+and the `finished` timestamp is merely when job.py detected the (phantom) drain.
+
+**Always cross-check any `failed`/`done`/drained verdict against a manual
+`jobsub_q`**, run directly — it handles the missing tracing gracefully
+(`Note: tracing not available here. Continuing without tracing...`):
+```bash
+jobsub_q -G dune "$USER"
+```
+If the cluster's processes still appear (`ST` = `R`/`I`/`H`), the job is alive no
+matter what `job.py status` says. A job is only really failed when a process is
+**gone from `jobsub_q`** *and* has no PNFS output. (Seen 2026-06-03: four running
+gmkspl jobs all mislabelled `failed` by `job.py` while `jobsub_q` showed `ST=R`;
+running `jobsub_q` also refreshes the bearer token as a side effect.)
+
+## Is a job done? Check the queue, then PNFS
+
+`jobsub_q -G dune <user>` is the raw scheduler — the ground truth. Each row is a
+**per-process subjob** `<cluster_id>.<proc>@jobsubNN.fnal.gov`
+(e.g. `28032030.3@jobsub04.fnal.gov` = process 3 of cluster 28032030). A
+20-process submission appears as up to 20 such rows under one cluster id; rows
+still listed = processes not yet terminated.
+
+**A process gone from `jobsub_q` has terminated — succeeded OR failed — and the
+queue does not say which.** Decide by what landed on PNFS. Outputs go in
+**per-process subdirs**, not the top of `pnfs_output_dir`:
+`<pnfs_output_dir>/0000/…`, `0001/…` — one dir per process. A successful process
+writes a triplet: `*.ghep.root` + `*.ghep.status` + `*.gst.root` (gmkspl: an
+`*.xml`). So count recursively, not at the top level:
+```bash
+d=$(jq -r '.pnfs_output_dir' jobsub-agent/jobsub-runs/*/<stem>.gridlog)
+find "$d" -name '*.ghep.root' | wc -l      # processes that succeeded
+# compare to n_jobs; a process whose subdir has no .ghep.root failed
+```
+`job.py status`/`list` may still report `done=0/N` after outputs exist — its
+count gates on the DONE sentinel in *fetched* logs, so fetch first
+(`job.py fetchlog <jobid>`) or trust the PNFS file count.
+
 ## jq query recipes (over `jobsub-agent/jobsub-runs/*/*.gridlog`)
 ```bash
 # all jobs: id / status / cluster / progress
@@ -48,6 +93,52 @@ jq -r '.command_str' jobsub-agent/jobsub-runs/*/<stem>.gridlog
 ## Useful fields
 Top level: `jobid`, `runtype`, `cluster_id`, `status`, `n_jobs`,
 `processes_done`, `processes_done_source`, `outputs_pulled`, `submitted`,
-`finished`, `submit_log_file`, `command_str`, `pnfs_output_dir`,
-`local_output_dir`, `fetchlog_error`. Adapter metadata under `.extra`
+`finished`, `submit_log_file`, `command_str`, `pnfs_output_dir` (base for the
+per-process subdir sweep above), `local_output_dir`, `fetchlog_error`. Adapter
+metadata under `.extra`
 (`probe`, `target`, `tune`, `genlist`, `channel`, `kind`, `output_suffix`).
+
+## Per-job status table (PROC / DONE / RUN, grouped by target)
+
+The preferred summary for a multi-process batch: one row per submission with
+**PROC** (`n_jobs`), **DONE** (outputs on PNFS, the ground truth), and **RUN**
+(processes still in the live `jobsub_q`). DONE comes from the per-process subdir
+sweep; RUN from the raw scheduler. Filter to the batch you care about (here:
+`gevgen_grid` with `n_jobs==20`), group by `.extra.target`, and print subtotals
++ a grand total. Reads ground truth directly — does not rely on `job.py`'s
+sentinel-gated `processes_done`.
+
+```bash
+cd /exp/dune/data/users/liangliu/genie-dev
+# 1) live running-process count per cluster id (one jobsub_q poll, reused below)
+jobsub_q -G dune "$USER" 2>/dev/null \
+  | grep -oE '^[0-9]+\.' | tr -d '.' | sort | uniq -c \
+  | awk '{print $2"\t"$1}' > /tmp/running.tsv
+
+# 2) one row per matching submission
+printf '%-3s %-6s %-15s %-8s %4s %5s %5s\n' '#' TGT JOBID STATUS PROC DONE RUN
+i=0
+for f in jobsub-agent/jobsub-runs/*/*.gridlog; do
+  n=$(jq -r '.n_jobs' "$f");      [ "$n" = "20" ]            || continue   # batch filter
+  rt=$(jq -r '.runtype' "$f");    [ "$rt" = "gevgen_grid" ]  || continue   # runtype filter
+  i=$((i+1))
+  jid=$(jq -r '.jobid' "$f");  st=$(jq -r '.status' "$f")
+  tgt=$(jq -r '.extra.target' "$f")
+  cl=$(jq -r '.cluster_id // ""' "$f"); clnum=${cl%%.*}
+  suf=$(jq -r '.extra.output_suffix // ".ghep.root"' "$f")
+  d=$(jq -r '.pnfs_output_dir // ""' "$f")
+  run=$(awk -v c="$clnum" '$1==c{print $2}' /tmp/running.tsv); run=${run:-0}
+  ok=0; [ -d "$d" ] && ok=$(find "$d" -name "*${suf}" 2>/dev/null | wc -l)
+  short=$(echo "$jid" | grep -oE '[0-9]{6}-[0-9a-f]{6}$')   # HHMMSS-6hex
+  printf '%-3s %-6s %-15s %-8s %4s %5s %5s\n' "$i" "$tgt" "$short" "$st" "$n" "$ok" "$run"
+done | sort -k2     # group rows by target
+```
+
+Notes:
+- DONE+RUN can briefly exceed PROC for one job — snapshot skew between the
+  `jobsub_q` poll and the PNFS sweep while files are landing; the per-job
+  ceiling is still `n_jobs`.
+- `partial` vs `running` only reflects whether *any* process has drained yet;
+  both are healthy mid-flight states.
+- A terminated process (gone from the queue) with **no** PNFS output is a real
+  failure — `FAIL = PROC − RUN − DONE` when that is > 0.
