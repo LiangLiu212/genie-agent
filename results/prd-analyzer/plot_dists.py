@@ -1,22 +1,21 @@
-"""Cut-stage diagnostics: distributions of 7 variables after the (e,e'p) selection stages.
+"""Cut-stage diagnostics: 7 (e,e'p) variables after each selection stage, 3 QE-EM models.
 
-Two figures over the t05 (Q²=1.28, E=2.445 GeV) GEM26 samples, SF vs LFG:
-  stage 1  — electron arm only (El ∧ θ_e)            -> dists_stage1_electron.png
-  stage 2  — full coincidence (El ∧ θ_e ∧ T_p ∧ θ_p) -> dists_stage2_full.png
-Each shows El, θ_e, T_p, θ_p, Q², E_miss, p_miss. Cut windows drawn as grey dashed lines.
-Uses the shared selection util. Personal plot style.
+Two figures from the XRootD-streamed cache (build_cache.py), C12 t05 (Q²=1.28, 2.445 GeV):
+  stage 1 — electron arm only (El ∧ θ_e)            -> dists_stage1_electron.png
+  stage 2 — full coincidence (El ∧ θ_e ∧ T_p ∧ θ_p) -> dists_stage2_full.png
+Each shows El, θ_e, T_p, θ_p, Q², E_miss, p_miss for LFG, SF and SuSAv2 (area-normalized);
+acceptance windows drawn as grey dashed lines. Personal plot style.
 """
-import sys, glob
+import sys
 sys.path.insert(0, "results/template")
 sys.path.insert(0, "results/prd-analyzer")
 import numpy as np
 from plot_style import (apply_style, new_panels, style_axis,
                         FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE)
 import selection as sel
+import samples as S
 
-SCRATCH = "/exp/dune/data/users/liangliu/prd_scratch/t05"
-KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2", "E_miss", "p_miss"]
-# panel -> (axis label, (lo, hi), nbins, cut-key-in-CUTS-or-None)
+# panel -> (cache key, axis label, (lo, hi), nbins, cut-key-in-CUTS-or-None)
 PANELS = [
     ("El",      r"E$_{e'}$  [GeV]",        (1.70, 1.75),  50, "El"),
     ("theta_e", r"$\theta_{e'}$  [deg]",   (30.5, 33.5),  50, "theta_e"),
@@ -27,46 +26,44 @@ PANELS = [
     ("p_miss",  r"p$_m$  [MeV/c]",         (0., 400.),    50, None),
 ]
 
-def collect(cfg):
-    """Return (vars dict of stage-1 arrays, stage-2 bool mask within stage-1)."""
-    store = {k: [] for k in KEYS}
-    s2 = []
-    for f in sorted(glob.glob(f"{SCRATCH}/*GEM26_{cfg}_05_000*.gst.root")):
-        ev = sel.load_events(f)
-        m1 = sel.select_electron(ev)
-        m2 = sel.select(ev)
-        for k in KEYS:
-            store[k].append(ev[k][m1])
-        s2.append(m2[m1])
-    return {k: np.concatenate(v) for k, v in store.items()}, np.concatenate(s2)
+# cache: each model -> (dict of stage-1 arrays, stage-2 mask within stage-1)
+data = {}
+for m in S.MODELS:
+    c = S.load_cache(m)
+    data[m] = (c, c["stage2"].astype(bool))
 
-dataL = collect("11a")
-dataS = collect("22a")
 
 def make_fig(out, use_stage2, stage_label):
     apply_style()
     fig, axes = new_panels(ncols=4, nrows=2, sharey=False)
     for ax, (key, lab, rng, nb, cutkey) in zip(axes, PANELS):
         bins = np.linspace(rng[0], rng[1], nb)
-        for (vrs, s2), col, name in [(dataL, "C0", "LFG"), (dataS, "C1", "SF")]:
-            x = vrs[key][s2] if use_stage2 else vrs[key]
-            ax.hist(x, bins=bins, histtype="step", linewidth=1.6, color=col, label=name)
+        for m in S.MODELS:
+            c, s2 = data[m]
+            x = c[key][s2] if use_stage2 else c[key]
+            x = x[np.isfinite(x)]
+            ax.hist(x, bins=bins, histtype="step", linewidth=1.6, color=S.color(m),
+                    density=True, label=S.label(m))
         if cutkey:                                   # mark the acceptance window
-            c, hw = sel.CUTS[cutkey]
-            for v in (c - hw, c + hw):
+            cc, hw = sel.CUTS[cutkey]
+            for v in (cc - hw, cc + hw):
                 ax.axvline(v, color="0.5", ls="--", lw=1.0)
         style_axis(ax, title=None, xlabel=lab, logx=False, logy=False, ymin=None)
-        ax.set_ylabel("events / bin", fontsize=FS_LABEL)
+        ax.set_ylabel("normalized / bin", fontsize=FS_LABEL)
+    # use the empty 8th panel for the legend
     axes[7].axis("off")
-    axes[0].legend(title="ground state", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
-    nL = int(dataL[1].sum()) if use_stage2 else len(dataL[0]["El"])
-    nS = int(dataS[1].sum()) if use_stage2 else len(dataS[0]["El"])
-    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05), SF vs LFG\n"
-                 f"grey dashed = acceptance window · selected  LFG N={nL}, SF N={nS}",
+    handles, labels = axes[0].get_legend_handles_labels()
+    axes[7].legend(handles, labels, title="QE-EM model", loc="center",
+                   fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
+    ns = {m: (int(data[m][1].sum()) if use_stage2 else len(data[m][0]["El"])) for m in S.MODELS}
+    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05): LFG / SF / SuSAv2\n"
+                 "grey dashed = acceptance window · selected N: "
+                 + ",  ".join(f"{m} {ns[m]}" for m in S.MODELS),
                  fontsize=FS_SUPTITLE)
     fig.tight_layout()
     fig.savefig(out, dpi=130)
     print("wrote", out)
+
 
 make_fig("results/prd-analyzer/dists_stage1_electron.png", False,
          "stage 1 (electron cut: El ∧ θ_e)")

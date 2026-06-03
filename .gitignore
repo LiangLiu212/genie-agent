@@ -30,3 +30,7 @@ jobsub-agent/tarballs/
 
 # scratch / throwaway
 test-hello/
+
+# prd-analyzer XRootD-streamed selection cache (regenerable via build_cache.py)
+results/prd-analyzer/cache/
+results/**/__pycache__/
