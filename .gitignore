@@ -34,3 +34,9 @@ test-hello/
 # prd-analyzer XRootD-streamed selection cache (regenerable via build_cache.py)
 results/prd-analyzer/cache/
 results/**/__pycache__/
+
+# third-party MINERvA flux/reweight + param data (~3 GB external checkout, not ours)
+minerva/
+
+# fetched cross-section splines (regenerable: pulled from /pnfs or re-run gmkspl)
+genie-agent/splines/
