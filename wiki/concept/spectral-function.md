@@ -2,10 +2,10 @@
 title: Spectral function
 type: concept
 tags: [concept, nuclear-structure, spectral-function, electron-scattering]
-updated: 2026-06-01
-sources: [nucl-ex/0303011]
+updated: 2026-06-02
+sources: [nucl-ex/0303011, 2301.02272]
 targets: [c12, fe56, au197]
-channels: [em-qe]
+channels: [em-qe, ccqe]
 ---
 
 # Spectral function
@@ -55,3 +55,12 @@ functions differ in detail but not in overall shape from most of the theoretical
 models" (nucl-ex/0303011). Carbon shell windows: p-shell 10 < E_m < 25 MeV,
 s-shell 30 < E_m < 50 MeV; Fe and Au integrated over 0 < E_m < 80 MeV
 (nucl-ex/0303011).
+
+## Use in neutrino generators (2301.02272)
+
+The spectral function is also an initial-state nuclear model option in neutrino
+generators. In MINERvA's muon-kinematics ν_μ CCQE-like measurement
+([[source/2301.02272]]), the data **prefer the spectral-function model over a
+local Fermi gas within [[nuwro]]** — a more realistic S(E_m, p_m) improves the
+description of the measured muon kinematics on the heavier nuclei (2301.02272).
+See [[ccqe]], [[fsi]].

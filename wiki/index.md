@@ -1,7 +1,7 @@
 ---
 title: Wiki Index
 type: index
-updated: 2026-06-01
+updated: 2026-06-02
 ---
 
 # Index
@@ -15,6 +15,7 @@ conventions and `log.md` for the chronological timeline.
 
 - [[source/nucl-ex_0303011]] — Quasi-elastic (e,e'p) on ¹²C, ⁵⁶Fe, ¹⁹⁷Au (Dutta et al.) — JLab Hall C, C/Fe/Au, (e,e'p)
 - [[source/2503.15047]] — A-dependence of ν_μ CCQE-like with TKI (Kleykamp et al.) — MINERvA, C/CH/H₂O/Fe/Pb, CCQE-like
+- [[source/2301.02272]] — ν_μ CCQE-like vs muon kinematics on CH/C/H₂O/Fe/Pb (Kleykamp et al.) — MINERvA, C/CH/H₂O/Fe/Pb, CCQE-like
 
 ## Experiments
 <!-- [[experiment/<name>]] — one-line -->

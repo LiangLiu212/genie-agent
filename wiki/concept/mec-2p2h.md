@@ -2,8 +2,8 @@
 title: 2p2h / Meson-exchange currents (MEC)
 type: concept
 tags: [concept, 2p2h, mec, nuclear-effects, neutrino-scattering]
-updated: 2026-06-01
-sources: [2503.15047]
+updated: 2026-06-02
+sources: [2503.15047, 2301.02272]
 channels: [ccqe]
 ---
 
@@ -25,5 +25,11 @@ In MINERvA's central [[genie]] "MINERvA tune" (2503.15047):
   fits to MINERvA low-energy data — the data-driven part of the tune
   (2503.15047).
 
+The companion muon-kinematics analysis (2301.02272) quantifies the same
+empirical enhancement: the MnvGENIEv1 modification **increases the integrated
+2p2h interaction rate by 49%**, applied as the same fractional increase per
+proton–neutron pair for all nuclei (2301.02272). See [[genie]].
+
 Along with Δ-resonance-then-pion-absorption, 2p2h is explicitly included in the
-CCQE-like signal definition (2503.15047). Source: [[source/2503.15047]].
+CCQE-like signal definition (2503.15047, 2301.02272).
+Source: [[source/2503.15047]], [[source/2301.02272]].
