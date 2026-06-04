@@ -21,8 +21,8 @@ for m in S.MODELS:
     data[m] = (c["p_miss"], c["E_miss"], c["stage2"].astype(bool))
 
 apply_style()
-fig, axes = new_panels(ncols=3, nrows=2, sharey=False)
-fig.set_size_inches(16.5, 10)
+fig, axes = new_panels(ncols=len(S.MODELS), nrows=2, sharey=False)
+fig.set_size_inches(5.5 * len(S.MODELS), 10)
 
 cells = []
 for use_stage2, slabel in [(False, "stage 1"), (True, "stage 2")]:
@@ -39,7 +39,8 @@ for ax, (title, pm, em, mask) in zip(axes, cells):
     ax.tick_params(labelsize=FS_TICK)
     fig.colorbar(h[3], ax=ax, label="events / bin")
 
-fig.suptitle("(e,e'p) 2D missing energy vs momentum — e⁻ on C12, Q²=1.28 (t05): LFG+Rosenbluth, SF+Rosenbluth, LFG+SuSAv2\n"
+models_str = ", ".join(S.label(m) for m in S.MODELS)
+fig.suptitle(f"(e,e'p) 2D missing energy vs momentum — e⁻ on C12, Q²=1.28 (t05): {models_str}\n"
              "row 1 = stage 1 (electron cut),  row 2 = stage 2 (full coincidence)",
              fontsize=FS_SUPTITLE)
 fig.tight_layout()

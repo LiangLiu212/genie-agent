@@ -6,7 +6,7 @@ E_beam = 2.445 GeV, cut t05 (Q² ≈ 1.28): LFG and SF (Rosenbluth, GEM26_11a/22
 reconstructed (post-FSI) missing energy E_m = ω − T_p and missing momentum p_m = |q⃗ − p⃗_p| in
 the paper windows (E_m ≤ 80 MeV, |p_m| < 300 MeV/c).
 
-Histograms are AREA-NORMALIZED: the three models have different total QE cross sections, so raw
+Histograms are AREA-NORMALIZED: the four models have different total QE cross sections, so raw
 counts are not a fair overlay — the selected event count N (a rate proxy) is shown in the legend.
 Personal plot style (results/template/plot_style.py).
 """
@@ -34,10 +34,10 @@ fig.set_size_inches(11, 5.5)
 axE, axP = axes
 for m in S.MODELS:
     Em, Pm, n = data[m]
-    axE.hist(Em, bins=EBINS, histtype="step", linewidth=1.8, color=S.color(m),
-             density=True, label=f"{S.label(m)}  (N={n})")
-    axP.hist(Pm, bins=PBINS, histtype="step", linewidth=1.8, color=S.color(m),
-             density=True, label=f"{S.label(m)}  (N={n})")
+    axE.hist(Em, bins=EBINS, histtype="step", linewidth=S.lw(m, base=1.8), color=S.color(m),
+             density=True, label=f"{S.label(m)}  (N={n})", zorder=S.zorder(m))
+    axP.hist(Pm, bins=PBINS, histtype="step", linewidth=S.lw(m, base=1.8), color=S.color(m),
+             density=True, label=f"{S.label(m)}  (N={n})", zorder=S.zorder(m))
 style_axis(axE, title="missing energy", xlabel=r"E$_m$ = ω − T$_p$  [MeV]",
            logx=False, logy=False, ymin=None)
 style_axis(axP, title="missing momentum", xlabel=r"p$_m$ = |q⃗ − p⃗$_p$|  [MeV/c]",
