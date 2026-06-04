@@ -2,8 +2,8 @@
 title: Polystyrene scintillator (CH)
 type: target
 tags: [target, scintillator, hydrocarbon, reference-target]
-updated: 2026-06-01
-sources: [2503.15047]
+updated: 2026-06-02
+sources: [2503.15047, 2301.02272]
 channels: [ccqe]
 ---
 
@@ -14,6 +14,23 @@ detection medium and the high-statistics **reference target** to which passive
 nuclei ([[c12]], [[o16]], [[fe56]], [[pb]]) are compared (2503.15047).
 
 ## Measurements
+
+### ν_μ CCQE-like vs muon kinematics at MINERvA (2301.02272)
+
+- Scintillator tracker reference target at [[minerva]]; **~1,000,000** selected
+  interactions after background subtraction — by far the highest statistics;
+  background ≈ 36% (2301.02272). Channel: [[ccqe]] (muon-only signal, no proton
+  requirement).
+- Denominator for the per-nucleon **ratios to CH** vs muon kinematics. The
+  scintillator cross section is built from a linear combination of 12 transverse
+  detector "wedges" matched to each target's illumination, so the incident flux
+  is the same to better than 1% in numerator and denominator (2301.02272). In
+  these ratios flux and muon-energy-scale uncertainties cancel to first order
+  (2301.02272).
+- Ratios per nucleon: [[c12]] and [[o16]] (water) ≈ unity; [[fe56]] ≈ 1.4–1.5;
+  [[pb]] always above unity with a characteristic P_T shape ([[fsi]])
+  (2301.02272).
+- Source: [[source/2301.02272]].
 
 ### ν_μ CCQE-like at MINERvA (2503.15047)
 

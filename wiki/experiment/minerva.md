@@ -2,8 +2,8 @@
 title: MINERvA
 type: experiment
 tags: [experiment, neutrino-scattering, numi, fermilab]
-updated: 2026-06-01
-sources: [2503.15047]
+updated: 2026-06-02
+sources: [2503.15047, 2301.02272]
 targets: [c12, ch, o16, fe56, pb]
 channels: [ccqe]
 ---
@@ -51,3 +51,9 @@ muon spectrometer (2503.15047).
 - ν_μ CCQE-like ([[ccqe]]) A-dependence on [[c12]], [[ch]], [[o16]], [[fe56]],
   [[pb]] vs [[transverse-kinematic-imbalance]] and muon/proton kinematics,
   ⟨E_ν⟩ ∼ 6 GeV (2503.15047); source [[source/2503.15047]].
+- ν_μ CCQE-like ([[ccqe]]) on the same five targets vs **longitudinal and
+  transverse muon momentum** (P_∥, P_T), peak E_ν ≈ 6.5 GeV, 10.61 × 10²⁰ POT
+  (2301.02272); source [[source/2301.02272]]. The **muon-kinematics companion**
+  to the TKI measurement above — same beam, exposure and targets but a
+  muon-only signal definition (no proton requirement). Headline: Pb/CH ratio
+  always above unity with a P_T shape no generator reproduces ([[fsi]]).

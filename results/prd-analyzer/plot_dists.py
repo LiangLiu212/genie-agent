@@ -42,8 +42,8 @@ def make_fig(out, use_stage2, stage_label):
             c, s2 = data[m]
             x = c[key][s2] if use_stage2 else c[key]
             x = x[np.isfinite(x)]
-            ax.hist(x, bins=bins, histtype="step", linewidth=1.6, color=S.color(m),
-                    density=True, label=S.label(m))
+            ax.hist(x, bins=bins, histtype="step", linewidth=S.lw(m), color=S.color(m),
+                    density=True, label=S.label(m), zorder=S.zorder(m))
         if cutkey:                                   # mark the acceptance window
             cc, hw = sel.CUTS[cutkey]
             for v in (cc - hw, cc + hw):
@@ -56,7 +56,8 @@ def make_fig(out, use_stage2, stage_label):
     axes[7].legend(handles, labels, title="QE-EM model", loc="center",
                    fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
     ns = {m: (int(data[m][1].sum()) if use_stage2 else len(data[m][0]["El"])) for m in S.MODELS}
-    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05): LFG / SF / SuSAv2\n"
+    models_str = ", ".join(S.label(m) for m in S.MODELS)
+    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05): {models_str}\n"
                  "grey dashed = acceptance window · selected N: "
                  + ",  ".join(f"{m} {ns[m]}" for m in S.MODELS),
                  fontsize=FS_SUPTITLE)
