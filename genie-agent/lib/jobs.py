@@ -52,6 +52,26 @@ def _git_sha() -> Optional[str]:
     return None
 
 
+def _git_dirty() -> Optional[bool]:
+    """True if tracked files differ from git_sha, False if clean, None on error.
+
+    Untracked files are excluded (--untracked-files=no): the workspace
+    routinely carries untracked plan/notes files, and what matters for replay
+    is whether the code identified by git_sha is what actually ran.
+    """
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(_AGENT_ROOT), "status", "--porcelain",
+             "--untracked-files=no"],
+            capture_output=True, text=True, check=False, timeout=5,
+        )
+        if out.returncode == 0:
+            return bool(out.stdout.strip())
+    except Exception:
+        pass
+    return None
+
+
 def make_jobid(runtype: str, stem: str) -> str:
     return f"{runtype}-{stem}-{secrets.token_hex(3)}"
 
@@ -121,6 +141,7 @@ def make_initial_log(
         "script_path":   str(script),
         "script_sha256": sha256_short(script),
         "git_sha":       _git_sha(),
+        "git_dirty":     _git_dirty(),
         "cwd":           str(cwd),
         "command":       command,
         "description":   description,
