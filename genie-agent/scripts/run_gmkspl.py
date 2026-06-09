@@ -15,6 +15,7 @@ Track and cancel via `scripts/job.py status <jobid>` / `cancel <jobid>`.
 from __future__ import annotations
 
 import argparse
+import secrets
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -124,6 +125,12 @@ def main() -> int:
         for e in errors:
             sys.stderr.write(f"error: {e}\n")
         return 2
+
+    # Materialize the RNG seed (gmkspl splines are integrals and effectively
+    # seed-insensitive, but recording a concrete seed keeps the runlog uniform
+    # with gevgen and the run replayable bit-for-bit).
+    if args.seed is None:
+        args.seed = secrets.randbelow(2**31)
 
     now     = datetime.now()
     run_dir = new_run_dir(tune, when=now)

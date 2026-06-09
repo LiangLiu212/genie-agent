@@ -18,6 +18,7 @@ Track and cancel via `scripts/job.py status <jobid>` / `cancel <jobid>`.
 from __future__ import annotations
 
 import argparse
+import secrets
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -133,6 +134,12 @@ def main() -> int:
         for e in errors:
             sys.stderr.write(f"error: {e}\n")
         return 2
+
+    # Materialize the RNG seed: GENIE would pick its own if --seed is absent,
+    # but then the runlog records seed: null and the run cannot be replayed.
+    # Drawing it here puts the concrete value in both the argv and inputs.seed.
+    if args.seed is None:
+        args.seed = secrets.randbelow(2**31)
 
     now     = datetime.now()
     run_dir = new_run_dir(tune, when=now)
