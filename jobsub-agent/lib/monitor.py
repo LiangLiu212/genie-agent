@@ -128,8 +128,15 @@ def refresh_status(record_path: Path, cfg: dict) -> dict:
     new_status = record["status"]
     updates: dict = {}
 
-    if q.get("error") and q.get("n_total", 0) == 0 and not q.get("empty", False):
-        pass  # transient query error — keep status, surface q to caller
+    # Only trust the poll if jobsub_q actually succeeded: an exception path sets
+    # q["error"]; a crashed jobsub_q (e.g. the OTEL KeyError) exits nonzero with
+    # empty stdout, which is indistinguishable from a drained queue unless we
+    # check raw_returncode. Draining on an unhealthy poll stamps a terminal
+    # done/partial/failed verdict on a still-running cluster.
+    query_ok = not q.get("error") and q.get("raw_returncode", 0) == 0
+
+    if not query_ok:
+        pass  # transient poll failure — keep status; q surfaced via cluster_state
     elif q["empty"]:
         n_jobs = record["n_jobs"]
         if record.get("outputs_pulled"):

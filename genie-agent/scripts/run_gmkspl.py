@@ -15,6 +15,7 @@ Track and cancel via `scripts/job.py status <jobid>` / `cancel <jobid>`.
 from __future__ import annotations
 
 import argparse
+import secrets
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -27,12 +28,12 @@ sys.path.insert(0, str(_DEV_ROOT / "runlog_tools"))
 from runlog_tools import make_parser, args_to_inputs              # noqa: E402
 
 from lib.config import load_config                                # noqa: E402
-from lib.genie_env import (load_genie_env, resolve_gxmlpath,      # noqa: E402
-                           with_gxmlpath)
+from lib.genie_env import (env_sha256, genie_install_git,         # noqa: E402
+                           load_genie_env, resolve_gxmlpath, with_gxmlpath)
 from lib.jobs import launch_background, run_foreground, supervise # noqa: E402
 from lib.paths import new_run_dir, run_stem, sha256_short         # noqa: E402
 from lib.pdg import resolve_pdg, canonical_probe, canonical_target  # noqa: E402
-from lib.validation import validate_gmkspl_inputs                 # noqa: E402
+from lib.validation import tune_xml_hashes, validate_gmkspl_inputs  # noqa: E402
 
 
 RUNTYPE = "gmkspl"
@@ -88,14 +89,14 @@ def main() -> int:
         return 2
 
     cfg = load_config(args.installation)
-    env = load_genie_env(cfg)
+    base_env = load_genie_env(cfg)
 
     gxmlpath_dirs = resolve_gxmlpath(args.gxmlpath)
     for d in gxmlpath_dirs:
         if not Path(d).is_dir():
             sys.stderr.write(f"error: --gxmlpath dir not found: {d}\n")
             return 2
-    env = with_gxmlpath(env, gxmlpath_dirs)
+    env = with_gxmlpath(base_env, gxmlpath_dirs)
 
     tune    = args.tune    or cfg["default_tune"]
     genlist = args.genlist or cfg["default_generator_list"]
@@ -124,6 +125,12 @@ def main() -> int:
         for e in errors:
             sys.stderr.write(f"error: {e}\n")
         return 2
+
+    # Materialize the RNG seed (gmkspl splines are integrals and effectively
+    # seed-insensitive, but recording a concrete seed keeps the runlog uniform
+    # with gevgen and the run replayable bit-for-bit).
+    if args.seed is None:
+        args.seed = secrets.randbelow(2**31)
 
     now     = datetime.now()
     run_dir = new_run_dir(tune, when=now)
@@ -163,6 +170,11 @@ def main() -> int:
         "canonical_probes":   canonical_probes,
         "canonical_targets":  canonical_targets,
         "gxmlpath":           gxmlpath_dirs,
+        "tune_xml_sha256":    tune_xml_hashes(tune, cfg["genie_bin_dir"],
+                                              gxmlpath_dirs=gxmlpath_dirs),
+        "env_sha256":         env_sha256(base_env),
+        "genie_bin_sha256":   sha256_short(binary),
+        "genie_install_git":  genie_install_git(cfg),
     }
     if input_xsec:
         inputs["input_cross_sections"]        = input_xsec

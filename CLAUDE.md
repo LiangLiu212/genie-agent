@@ -37,7 +37,8 @@ jq -r '[.jobid,.runtype,.returncode,.duration_s]|@tsv' genie-agent/genie-runs/*/
 There is **no test suite, linter, or build step**. "Verification" means a real
 foreground run that exits 0 and produces the expected artefact — e.g. gmkspl on
 `C12` (not free `H1`, which has no bound neutron and writes an empty spline list
-despite `returncode==0`). gevgen needs an existing spline XML; gntpc needs a GHEP.
+despite `returncode==0`; the launcher warns and `outputs.spline_count==0` flags
+it). gevgen needs an existing spline XML; gntpc needs a GHEP.
 
 ## Architecture
 
@@ -78,14 +79,26 @@ identical schema.
 
 ### Metadata lives in the log, not in paths
 The on-disk layout is flat: `genie-runs/<tune>-YYYY-MM-DD/<stem>.{xml,ghep.root,gst.root,log,stdout,stderr}`,
-stem = `<probe>_<target>_<YYYYMMDD-HHMMSS>`. Discovery is `jq` over `*.log` (see
-the `genie-runlog` skill). Resolved facts (tune, genlist, canonical probe/target,
-installation, gxmlpath, input hashes) go in `inputs`; paths + `genie_command` go
-in `outputs`; `outputs.primary_output` is the one file the supervisor hashes into
-`output_sha256`. Crucially, **gntpc reads the input GHEP's sibling `.log`** for
-tune/probe/target instead of parsing the path — this killed the old
-`_GEVGEN_PATH_RE` regex. gntpc's job artefacts use a `.<fmt>` infix
-(`<stem>.gst.log`) so they never clobber the source run's `<stem>.log`.
+stem = `<probe>_<target>_<YYYYMMDD-HHMMSS>-<3hex>` (the 3-hex uniquifier keeps
+same-second runs from clobbering each other; nothing parses the stem back).
+Discovery is `jq` over `*.log` (see the `genie-runlog` skill). Resolved facts
+(tune, genlist, canonical probe/target, installation, gxmlpath, input hashes)
+go in `inputs`, plus the **reproducibility fingerprints**: a materialized
+`seed` (never null), `tune_xml_sha256` (per-file hashes of the resolved tune
+family), `env_sha256`, `genie_bin_sha256`, `genie_install_git`
+({sha,branch,dirty} of the install checkout — captures install-level
+config+data like SpectralFunc param_sets); top level carries `git_sha` +
+`git_dirty`. Paths + `genie_command` go in `outputs`; `outputs.primary_output`
+is the one file the supervisor hashes into `output_sha256`, and successful
+gmkspl runs also record `outputs.spline_count` (0 = empty spline list).
+Replay-without-the-LLM: re-running the logged command with the logged seed
+reproduces the events exactly (compare gst content, not .ghep.root bytes —
+ROOT headers embed timestamps). `scripts/build_run_manifest.py` projects all
+local+grid records into the git-tracked `run-manifest.jsonl`. Crucially,
+**gntpc reads the input GHEP's sibling `.log`** for tune/probe/target instead
+of parsing the path — this killed the old `_GEVGEN_PATH_RE` regex. gntpc's job
+artefacts use a `.<fmt>` infix (`<stem>.gst.log`) so they never clobber the
+source run's `<stem>.log`.
 
 ### Paths handed to GENIE must be absolute
 The supervisor runs the binary with `cwd=run_dir`, so any user-supplied path

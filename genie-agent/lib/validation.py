@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
+from .paths import sha256_short
 from .pdg import CHARGED_LEPTON_PDGS, NEUTRINO_PDGS
 
 # Tune format: <PREFIX><YY>_<NN><x>_<PP>_<FFF>  e.g. G18_02a_00_000, GEM21_11a_00_000
@@ -32,6 +33,31 @@ def _tune_family_dir(
             return cand
     install_cfg = Path(genie_bin_dir).parent / "config" / tune_base
     return install_cfg if install_cfg.is_dir() else None
+
+
+def tune_xml_hashes(
+    tune: str,
+    genie_bin_dir: str,
+    gxmlpath_dirs: Optional[list[str]] = None,
+) -> dict[str, str]:
+    """Hash every XML in the resolved tune family dir: {relpath: sha256_short}.
+
+    The family dir (e.g. GEM26_22a/ for tune GEM26_22a_05_000) holds the bytes
+    that actually set the physics — CommonParam / ModelConfiguration /
+    EventGenerator plus every PP-variant subdir — resolved with the same
+    GXMLPATH-then-$GENIE/config order GENIE uses. Recording their hashes in
+    the runlog makes a run replayable even after the tune files are edited.
+    Returns {} if the family dir cannot be resolved (validation reports that
+    separately).
+    """
+    tune_base = "_".join(tune.split("_")[:2])
+    family = _tune_family_dir(tune_base, genie_bin_dir, gxmlpath_dirs)
+    if family is None:
+        return {}
+    return {
+        p.relative_to(family).as_posix(): sha256_short(p)
+        for p in sorted(family.rglob("*.xml"))
+    }
 
 
 def validate_gmkspl_inputs(
@@ -65,6 +91,17 @@ def validate_gmkspl_inputs(
         for pdg in tgt_pdgs:
             if pdg not in _BARE_NUCLEONS and not (1000000000 <= pdg <= 1999999999):
                 errors.append(f"PDG {pdg} does not look like a valid nuclear target")
+        # Advisory only: gmkspl on a free/single-nucleon target can write an
+        # EMPTY spline list and still exit 0 (e.g. H1 has no bound neutron).
+        # outputs.spline_count is the always-correct detector behind this warn.
+        _FREE_TARGETS = {2112, 2212, 1000010010}
+        free = sorted(p for p in set(tgt_pdgs) if p in _FREE_TARGETS)
+        if free:
+            warnings.append(
+                f"free/single-nucleon target(s) {free} may yield an empty "
+                "spline list for nuclear channels despite returncode 0; "
+                "check outputs.spline_count"
+            )
 
     if not TUNE_RE.match(tune):
         errors.append(f"Invalid tune '{tune}': expected 4-part form, e.g. G18_02a_00_000")

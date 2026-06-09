@@ -20,6 +20,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import secrets
 import signal
 import subprocess
@@ -47,6 +48,26 @@ def _git_sha() -> Optional[str]:
         )
         if out.returncode == 0:
             return out.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+def _git_dirty() -> Optional[bool]:
+    """True if tracked files differ from git_sha, False if clean, None on error.
+
+    Untracked files are excluded (--untracked-files=no): the workspace
+    routinely carries untracked plan/notes files, and what matters for replay
+    is whether the code identified by git_sha is what actually ran.
+    """
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(_AGENT_ROOT), "status", "--porcelain",
+             "--untracked-files=no"],
+            capture_output=True, text=True, check=False, timeout=5,
+        )
+        if out.returncode == 0:
+            return bool(out.stdout.strip())
     except Exception:
         pass
     return None
@@ -121,6 +142,7 @@ def make_initial_log(
         "script_path":   str(script),
         "script_sha256": sha256_short(script),
         "git_sha":       _git_sha(),
+        "git_dirty":     _git_dirty(),
         "cwd":           str(cwd),
         "command":       command,
         "description":   description,
@@ -217,6 +239,20 @@ def supervise(*, log_path: Path, env_path: Path) -> int:
             pass
 
 
+def _count_splines(xml_path: str | Path) -> Optional[int]:
+    """Number of <spline ...> entries in a gmkspl output XML (cheap text scan).
+
+    0 is the robust empty-spline signal: gmkspl on a free/single-nucleon
+    target (e.g. H1) can write an empty spline list and still exit 0.
+    Returns None if the file cannot be read.
+    """
+    try:
+        text = Path(xml_path).read_text(errors="replace")
+    except Exception:
+        return None
+    return len(re.findall(r"<spline[ >]", text))
+
+
 def _supervise_impl(*, log_path: Path, env: dict[str, str]) -> int:
     record = json.loads(log_path.read_text())
     command   = record["command"]
@@ -291,8 +327,7 @@ def _supervise_impl(*, log_path: Path, env: dict[str, str]) -> int:
     duration_s   = round(time.monotonic() - started_mono, 3)
     primary_output = outputs.get("primary_output")
 
-    update_log(
-        log_path,
+    final_fields: dict[str, Any] = dict(
         running=False,
         failed=(rc != 0) and not canceled["flag"],
         canceled=canceled["flag"] or None,
@@ -301,6 +336,15 @@ def _supervise_impl(*, log_path: Path, env: dict[str, str]) -> int:
         duration_s=duration_s,
         output_sha256=sha256_short(primary_output) if primary_output else None,
     )
+
+    # gmkspl can exit 0 with an empty spline list (free-nucleon targets);
+    # outputs.spline_count makes that detectable from the runlog.
+    if record.get("runtype") == "gmkspl" and rc == 0 and primary_output:
+        n_spl = _count_splines(primary_output)
+        if n_spl is not None:
+            final_fields["outputs"] = {**outputs, "spline_count": n_spl}
+
+    update_log(log_path, **final_fields)
     return rc
 
 

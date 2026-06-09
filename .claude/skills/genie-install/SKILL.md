@@ -138,9 +138,10 @@ pixi run python genie-agent/scripts/run_gmkspl.py \
     --probes numu --targets C12 --tune G18_02a_00_000 --genlist CCQE \
     -n 30 -e 5 --installation <name> --foreground
 ```
-Must exit 0 **and** produce a non-empty spline. Use **C12**, not free `H1` (no
-bound neutron → empty spline list despite `returncode==0`). Inspect with the
-`genie-runlog` skill (`jq` over the run `.log`).
+Must exit 0 **and** produce a non-empty spline: check
+`jq '.outputs.spline_count' <run.log>` is > 0. Use **C12**, not free `H1` (no
+bound neutron → empty spline list despite `returncode==0`; the launcher warns
+and records `spline_count: 0`). Inspect with the `genie-runlog` skill.
 
 ## Grid (notes only)
 The grid worker scripts already `spack load` the matching deps and now guard the

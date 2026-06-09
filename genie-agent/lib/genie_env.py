@@ -11,6 +11,7 @@ Refresh the snapshot with `scripts/refresh_genie_env.py`.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -130,6 +131,46 @@ def write_env_file(installation_name: str, env: dict[str, str]) -> Path:
 
 def reset_env_cache() -> None:
     _CACHE.clear()
+
+
+def env_sha256(env: dict[str, str], n: int = 16) -> str:
+    """Fingerprint an env dict: sha256 of its sorted JSON, first n hex chars.
+
+    Hash the BASE load_genie_env() snapshot (before with_gxmlpath) so the value
+    identifies the installation environment itself; gxmlpath dirs and tune-XML
+    bytes are recorded separately in the runlog.
+    """
+    blob = json.dumps(env, sort_keys=True).encode()
+    return hashlib.sha256(blob).hexdigest()[:n]
+
+
+def genie_install_git(cfg: dict) -> Optional[dict]:
+    """Git fingerprint {sha, branch, dirty} of the GENIE install source tree.
+
+    The install (genie_bin_dir/..) is a git checkout whose config/ and data/
+    set physics that no other runlog field captures (e.g. a SpectralFunc
+    param_set + its data table are neither tune-family XML nor env vars nor
+    the binary). dirty counts tracked modifications only
+    (--untracked-files=no). Returns None if the install is not a git repo.
+    """
+    install_dir = Path(cfg["genie_bin_dir"]).parent
+    def _git(*argv: str) -> Optional[str]:
+        try:
+            p = subprocess.run(["git", "-C", str(install_dir), *argv],
+                               capture_output=True, text=True, timeout=30)
+        except Exception:
+            return None
+        return p.stdout.strip() if p.returncode == 0 else None
+
+    sha = _git("rev-parse", "HEAD")
+    if sha is None:
+        return None
+    status = _git("status", "--porcelain", "--untracked-files=no")
+    return {
+        "sha": sha,
+        "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+        "dirty": bool(status) if status is not None else None,
+    }
 
 
 def resolve_gxmlpath(values: Optional[list[str]]) -> list[str]:
