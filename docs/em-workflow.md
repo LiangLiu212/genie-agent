@@ -40,7 +40,8 @@ pixi run python genie-agent/scripts/run_gmkspl.py \
   --probes eminus --targets C12 --genlist EMQE -n 30 -e 10 \
   --tune <TUNE> --gxmlpath genie-agent/tunes --foreground
 ```
-Check: exit 0, non-empty spline, and stdout shows the intended model
+Check: exit 0, non-empty spline (`jq '.outputs.spline_count'` on the run log > 0),
+and stdout shows the intended model
 (`RosenbluthPXSec`, `SpectralFunc` loading the C12 table, the `EM-MinQ2Limit` value, etc.).
 Optionally a small `run_gevgen.py … -n 1000 -e 2.445 --cross-sections <spline>` + `run_gntpc.py -f gst`.
 

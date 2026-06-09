@@ -31,27 +31,28 @@ worker logs (a standalone `DONE` line per process) — more reliable than the
 ifdh PNFS count, which is the fallback. `processes_done_source` records which
 was used.
 
-## WARNING — `job.py status` can falsely report `failed` for a RUNNING job
+## Drain verdicts are gated on a healthy poll (fixed 2026-06-09) — but old records don't self-heal
 `job.py status`/`list` decide the queue is drained by parsing their own
-`jobsub_q` subprocess. On this host that poll can come back **empty**: the
-jobsub_lite OpenTelemetry import crashes when `OTEL_EXPORTER_JAEGER_ENDPOINT`
-is unset (`KeyError: 'OTEL_EXPORTER_JAEGER_ENDPOINT'`), so the traced subprocess
-yields no parseable rows. job.py then concludes "no jobs in queue → drained",
-counts 0 PNFS outputs, and stamps **`failed`** — while the job is still
-**running**. It is **not** a token/auth problem (it persists with a fresh token),
-and the `finished` timestamp is merely when job.py detected the (phantom) drain.
+`jobsub_q` subprocess. On this host that poll can come back **empty** when the
+jobsub_lite OpenTelemetry import crashes (`KeyError:
+'OTEL_EXPORTER_JAEGER_ENDPOINT'`) — indistinguishable from a drained queue by
+output alone. `lib/monitor.py::refresh_status` now **only drains when the poll
+is healthy** (no error AND `raw_returncode == 0`); a crashed/timed-out poll
+keeps the previous status instead of stamping `failed` on a running cluster.
 
-**Always cross-check any `failed`/`done`/drained verdict against a manual
-`jobsub_q`**, run directly — it handles the missing tracing gracefully
-(`Note: tracing not available here. Continuing without tracing...`):
-```bash
-jobsub_q -G dune "$USER"
-```
-If the cluster's processes still appear (`ST` = `R`/`I`/`H`), the job is alive no
-matter what `job.py status` says. A job is only really failed when a process is
-**gone from `jobsub_q`** *and* has no PNFS output. (Seen 2026-06-03: four running
-gmkspl jobs all mislabelled `failed` by `job.py` while `jobsub_q` showed `ST=R`;
-running `jobsub_q` also refreshes the bearer token as a side effect.)
+Two caveats remain:
+- **Records mislabelled before the fix stay wrong** — terminal states
+  short-circuit and are never re-polled. E.g. the 2026-06-03 GEM26_22b spline
+  jobs are stamped `failed` (with the OTEL traceback in `fetchlog_error`) but
+  their splines landed on PNFS hours later. For any *pre-fix* terminal verdict,
+  cross-check by hand:
+  ```bash
+  jobsub_q -G dune "$USER"     # handles missing tracing gracefully; also refreshes the token
+  ```
+  and check PNFS (below). A job is only really failed when its processes are
+  **gone from `jobsub_q`** *and* it has no PNFS output.
+- An unhealthy poll now means status simply doesn't advance — a job can look
+  `running`/`submitted` longer than it really is until a healthy poll lands.
 
 ## Is a job done? Check the queue, then PNFS
 
