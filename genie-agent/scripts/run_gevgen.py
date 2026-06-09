@@ -35,7 +35,7 @@ from lib.genie_env import (load_genie_env, resolve_gxmlpath,      # noqa: E402
 from lib.jobs import launch_background, run_foreground, supervise # noqa: E402
 from lib.paths import new_run_dir, run_stem, sha256_short         # noqa: E402
 from lib.pdg import resolve_pdg, canonical_probe, canonical_target  # noqa: E402
-from lib.validation import validate_gevgen_inputs                 # noqa: E402
+from lib.validation import tune_xml_hashes, validate_gevgen_inputs  # noqa: E402
 
 
 RUNTYPE = "gevgen"
@@ -167,6 +167,8 @@ def main() -> int:
         "canonical_probe":   canon_probe,
         "canonical_target":  canon_target,
         "gxmlpath":          gxmlpath_dirs,
+        "tune_xml_sha256":   tune_xml_hashes(tune, cfg["genie_bin_dir"],
+                                             gxmlpath_dirs=gxmlpath_dirs),
         "cross_sections":        cross_sections,
         "cross_sections_sha256": sha256_short(cross_sections),
     }
