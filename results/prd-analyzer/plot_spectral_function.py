@@ -123,16 +123,18 @@ def main():
     style_axis(axE, title="removal-energy spectrum",
                xlabel="missing energy  E  [MeV]",
                ylabel=r"$f(E)=\int 4\pi k^2 P\,dk$  [MeV$^{-1}$]",
-               logx=False, logy=True)
+               logx=False, logy=False)
     axE.set_xlim(0, Emax_plot)
+    axE.set_ylim(0, None)
 
     # momentum marginal
     axk.step(k, n_k, where="mid", color="C1")
     style_axis(axk, title="momentum distribution",
                xlabel="missing momentum  k  [MeV/c]",
                ylabel=r"$n(k)=\int 4\pi k^2 P\,dE$  [(MeV/c)$^{-1}$]",
-               logx=False, logy=True)
+               logx=False, logy=False)
     axk.set_xlim(0, kmax_plot)
+    axk.set_ylim(0, None)
 
     fig.suptitle("C12 Benhar spectral function  (pke12_tot.data)", fontsize=FS_SUPTITLE)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
