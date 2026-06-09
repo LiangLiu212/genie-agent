@@ -91,6 +91,17 @@ def validate_gmkspl_inputs(
         for pdg in tgt_pdgs:
             if pdg not in _BARE_NUCLEONS and not (1000000000 <= pdg <= 1999999999):
                 errors.append(f"PDG {pdg} does not look like a valid nuclear target")
+        # Advisory only: gmkspl on a free/single-nucleon target can write an
+        # EMPTY spline list and still exit 0 (e.g. H1 has no bound neutron).
+        # outputs.spline_count is the always-correct detector behind this warn.
+        _FREE_TARGETS = {2112, 2212, 1000010010}
+        free = sorted(p for p in set(tgt_pdgs) if p in _FREE_TARGETS)
+        if free:
+            warnings.append(
+                f"free/single-nucleon target(s) {free} may yield an empty "
+                "spline list for nuclear channels despite returncode 0; "
+                "check outputs.spline_count"
+            )
 
     if not TUNE_RE.match(tune):
         errors.append(f"Invalid tune '{tune}': expected 4-part form, e.g. G18_02a_00_000")
