@@ -1,0 +1,28 @@
+{
+  "_comment": [
+    "EXAMPLE registry schema for genie-agent installations.",
+    "The real file lives at config/genie_env.json (gitignored: machine-specific",
+    "paths). Copy this file there and fill in absolute paths for your host.",
+    "Installation selection precedence: --installation flag >",
+    "$GENIE_AGENT_INSTALLATION > active_installation. Env snapshots are cached",
+    "per installation under config/env/<name>.json by scripts/refresh_genie_env.py;",
+    "runlogs additionally fingerprint the snapshot (inputs.env_sha256), the",
+    "binary (inputs.genie_bin_sha256) and the install git state",
+    "(inputs.genie_install_git), so a manifest row pins what these names meant."
+  ],
+  "active_installation": "genie_example",
+  "default_tune": "G18_02a_00_000",
+  "default_generator_list": "CCQE",
+  "installations": {
+    "genie_example": {
+      "genie_bin_dir": "/abs/path/to/GENIE/Generator/bin",
+      "genie_lib_dir": "/abs/path/to/GENIE/Generator/lib",
+      "genie_setup_script": "/abs/path/to/GENIE/setup_env.sh"
+    },
+    "genie_other": {
+      "genie_bin_dir": "/abs/path/to/other/Generator/bin",
+      "genie_lib_dir": "/abs/path/to/other/Generator/lib",
+      "genie_setup_script": "/abs/path/to/other/setup_env.sh"
+    }
+  }
+}
