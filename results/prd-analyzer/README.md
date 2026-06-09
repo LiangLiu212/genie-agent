@@ -88,6 +88,16 @@ Acceptance is tight: ~0.4 % of events survive stage 1, ~0.01–0.05 % stage 2 (w
 
 ## Figures
 
+### 0. Input ground state — Benhar spectral function (see [page](spectral_function_c12.md))
+
+![C12 Benhar spectral function P(k,E)](spectral_function_c12.png)
+
+The **input** both SF models sample from, read straight from `pke12_tot.data`: `P(k,E)` in the
+(missing energy, missing momentum) plane plus its `f(E)`/`n(k)` marginals (`∫4πk²P dk dE = 1.0000`,
+`f(E)` peak 17.5 MeV, `n(k)` peak 150 MeV/c). SF+Rosenbluth (`22a`) carries this `f(E)` through to
+`E_m` unchanged; SF+UnifiedQEL (`22b`) reshapes it lower via its De Forest off-shell weighting. Full
+write-up on the [dedicated page](spectral_function_c12.md).
+
 ### 1. Missing energy & momentum (full coincidence)
 
 ![missing energy and momentum](missing_e_p_q2_1.28.png)
@@ -144,6 +154,7 @@ missing momentum, the `P(k,E)` correlation (the two SF models share the Benhar g
 - **`plot_missing.py`** → `missing_e_p_q2_1.28.png`
 - **`plot_dists.py`** → `dists_stage1_electron.png`, `dists_stage2_full.png`
 - **`plot_2d.py`** → `missing_2d_e_vs_p.png`
+- **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 
 ## Data
 GENIE gst (post-FSI), `e⁻` on C12, E_beam = 2.445 GeV, cut **t05** (EM-MinQ2Limit = 1.18, Q² ≈ 1.28),
