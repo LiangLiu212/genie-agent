@@ -20,6 +20,8 @@
       "genie_setup_script": "/abs/path/to/GENIE/setup_env.sh"
     },
     "genie_other": {
+      "status": "out_of_date",
+      "_note": "optional: 'status': 'out_of_date' makes load_config warn on stderr whenever this installation is selected (entry still usable)",
       "genie_bin_dir": "/abs/path/to/other/Generator/bin",
       "genie_lib_dir": "/abs/path/to/other/Generator/lib",
       "genie_setup_script": "/abs/path/to/other/setup_env.sh"
