@@ -24,7 +24,7 @@ import samples as S
 
 SHELLS = [("p-shell", 10.0, 25.0), ("s-shell", 30.0, 50.0)]
 STAGES = [("stage 1", False), ("stage 2", True)]
-PBINS = np.linspace(0.0, 300.0, 31)   # p_m  [MeV/c] (paper window |p_m| < 300)
+PBINS = np.linspace(0.0, 300.0, 9)    # p_m  [MeV/c] (paper window |p_m| < 300), 8 bins
 MIN_N = 50                            # below this, legend-only (density hist would be spikes)
 
 cache = {m: S.load_cache(m) for m in S.MODELS}
