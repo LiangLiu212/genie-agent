@@ -18,6 +18,7 @@ style live under [`template/`](template/).
 | [prd-analyzer: (e,e′p) missing E/p at Q²=1.28](prd-analyzer/README.md) | Spectrometer-cut (e,e′p) replication of Dutta et al. E91-013 Table I row 5; reconstructed missing energy & momentum, SF vs LFG. |
 | [C12 Benhar spectral function P(k,E)](prd-analyzer/spectral_function_c12.md) | The input ground state from `pke12_tot.data` in (missing energy, missing momentum); `f(E)`/`n(k)` marginals — the baseline SF+Rosenbluth carries and SF+UnifiedQEL reshapes. |
 | [C12 proton SF — Ankowski-Benhar-Sakuda 2024](prd-analyzer/spectral_function_c12_2024.md) | The 2024 `pke12_2024.table` SF fit to high-resolution NIKHEF (e,e′p) data; resolves the p-shell into discrete quasiparticle peaks vs the old broad bump, `n(k)` unchanged. |
+| [EM-QES spline: Benhar vs ABS 2024 SF](pages/spline_22b_vs_33b_q2cut.md) | Grid `gmkspl` σ(E) for the UnifiedQEL-SF Q²-cut tunes t04–t08 on C12: `GEM26_22b` (Benhar SF, solid) vs `GEM26_33b` (ABS 2024 SF, dashed), same color per cut — the SF enters this xsec but shifts σ(E) only mildly. |
 
 ## Conventions
 
