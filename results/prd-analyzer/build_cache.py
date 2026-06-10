@@ -1,13 +1,14 @@
-"""Stream the three (e,e'p) samples off dCache over XRootD, apply the stage-1
+"""Stream the (e,e'p) samples off dCache over XRootD, apply the stage-1
 (electron-arm) selection, and cache the survivors locally so the plot scripts
 never re-stream. Writes one small results/prd-analyzer/cache/<model>.npz per model.
 
 The stage-1 cut (El & theta_e, which fixes Q^2 ~ 1.28) is already very tight, so
 the cache holds only ~1e4-1e5 events/model — re-plotting is then instant. Re-run
-this only when the sample list or the selection changes.
+this only when the sample list or the selection changes (pass model keys to build
+just the new/changed ones).
 
     export BEARER_TOKEN_FILE=<token>        # dCache/XRootD auth (htgettoken -i dune)
-    pixi run python results/prd-analyzer/build_cache.py            # all 3 models
+    pixi run python results/prd-analyzer/build_cache.py            # all models in samples.MODELS
     MAX_FILES=2 pixi run python results/prd-analyzer/build_cache.py SF   # quick test
 
 Cached per model: stage-1 events' {El,theta_e,Tp,theta_p,Q2,E_miss,p_miss,has_p,qel}

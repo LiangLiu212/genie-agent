@@ -1,8 +1,8 @@
-"""2D missing energy vs missing momentum for the (e,e'p) selection — 2 stages x 3 models.
+"""2D missing energy vs missing momentum for the (e,e'p) selection — 2 stages x 5 models.
 
 From the XRootD-streamed cache (build_cache.py), C12 t05 (Q²=1.28, 2.445 GeV):
   rows = stage 1 (electron cut El & θ_e) / stage 2 (full coincidence);
-  cols = LFG / SF / SuSAv2.
+  cols = the five models in samples.MODELS (LFG / SF / SuSAv2 / SF(2024)+UQEL / SF+UQEL).
 Each cell is a 2D histogram p_m (x) vs E_m (y) in the paper windows (raw counts, N per cell).
 """
 import sys

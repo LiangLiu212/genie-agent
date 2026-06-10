@@ -1,10 +1,10 @@
-"""Cut-stage diagnostics: 7 (e,e'p) variables after each selection stage, 3 QE-EM models.
+"""Cut-stage diagnostics: 7 (e,e'p) variables after each selection stage, 5 QE-EM models.
 
 Two figures from the XRootD-streamed cache (build_cache.py), C12 t05 (Q²=1.28, 2.445 GeV):
   stage 1 — electron arm only (El ∧ θ_e)            -> dists_stage1_electron.png
   stage 2 — full coincidence (El ∧ θ_e ∧ T_p ∧ θ_p) -> dists_stage2_full.png
-Each shows El, θ_e, T_p, θ_p, Q², E_miss, p_miss for LFG, SF and SuSAv2 (area-normalized);
-acceptance windows drawn as grey dashed lines. Personal plot style.
+Each shows El, θ_e, T_p, θ_p, Q², E_miss, p_miss for the five models in samples.MODELS
+(area-normalized); acceptance windows drawn as grey dashed lines. Personal plot style.
 """
 import sys
 sys.path.insert(0, "results/template")
@@ -56,8 +56,7 @@ def make_fig(out, use_stage2, stage_label):
     axes[7].legend(handles, labels, title="QE-EM model", loc="center",
                    fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
     ns = {m: (int(data[m][1].sum()) if use_stage2 else len(data[m][0]["El"])) for m in S.MODELS}
-    models_str = ", ".join(S.label(m) for m in S.MODELS)
-    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05): {models_str}\n"
+    fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05)\n"
                  "grey dashed = acceptance window · selected N: "
                  + ",  ".join(f"{m} {ns[m]}" for m in S.MODELS),
                  fontsize=FS_SUPTITLE)
