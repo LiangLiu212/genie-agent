@@ -49,6 +49,7 @@ for r, (stage_lab, stage) in enumerate(STAGES):
                         label=f"{S.label(m)}  (N={len(pm)}, not drawn)")
         style_axis(ax, title=f"{shell_lab} ({lo:g} < E$_m$ < {hi:g} MeV) · {stage_lab}",
                    xlabel=r"p$_m$ = |q⃗ − p⃗$_p$|  [MeV/c]", logx=False, logy=False, ymin=None)
+        ax.set_xlim(PBINS[0], PBINS[-1])   # keep the frame even when no model clears MIN_N
         ax.set_ylabel("normalized / bin", fontsize=FS_LABEL)
         ax.legend(title="QE-EM model", fontsize=FS_LEGEND - 2,
                   title_fontsize=FS_LEGEND_TITLE - 2)

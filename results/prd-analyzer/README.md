@@ -75,12 +75,15 @@ proton** in the event — post-FSI, `pdgf == 2212`, maximal `pf`
 | cut | variable | window | paper (E91-013) | arm |
 |-----|----------|--------|-----------------|-----|
 | `El`      | scattered e′ energy `E_e′` | 1.725 ± 0.005 GeV | E_e′ = 1.725 GeV         | electron |
-| `theta_e` | scattered e′ angle `θ_e′`  | 32.0 ± 0.5°       | θ_e′ = 32°               | electron |
+| `theta_e` | scattered e′ angle `θ_e′`  | 32.0 ± 0.1°       | θ_e′ = 32°               | electron |
 | `Tp`      | leading-proton KE `T_p`    | 0.700 ± 0.025 GeV | T_p = 700 MeV            | proton   |
-| `theta_p` | leading-proton angle `θ_p` | 43.0 ± 1.0°       | θ_p ≈ 43.5° (conjugate)  | proton   |
+| `theta_p` | leading-proton angle `θ_p` | 43.0 ± 0.1°       | θ_p ≈ 43.5° (conjugate)  | proton   |
 
-`Q²` is **not** cut directly — it is **pinned** by the electron arm:
-`El ∧ θ_e′ ⇒ Q² = 4 E_beam E_e′ sin²(θ_e′/2) ≈ 1.28 GeV²`.
+The angular windows are **±0.1° (~±1.7 mrad) pencil cuts** — the tightest variant of this
+analysis (cf. the ±0.5°/±1° baseline on `prd/electron/angle_cut_1_degree` and the ±6°
+acceptance-scale windows on `prd/electron/angle_cut_6_degree`). `Q²` is **not** cut directly —
+it is **pinned** by the electron arm:
+`El ∧ θ_e′ ⇒ Q² = 4 E_beam E_e′ sin²(θ_e′/2) = 1.28 ± 0.01 GeV²`.
 
 **Three stages** (`select_electron` → `select_proton_e` → `select`):
 - **Stage 1 — electron arm**: `El ∧ θ_e′`. Tags the scattered electron and fixes Q²; the proton
@@ -92,8 +95,10 @@ proton** in the event — post-FSI, `pdgf == 2212`, maximal `pf`
 - **Stage 2 — full (e,e′p) coincidence**: `has_p ∧ El ∧ θ_e′ ∧ T_p ∧ θ_p`. Adds the leading-proton
   angle window — the coincidence the HMS/SOS spectrometer pair actually measures.
 
-Acceptance is tight: ~0.4 % of events survive stage 1, ~0.1–0.2 % stage 2.1, ~0.01–0.05 % stage 2
-(why the full 10M/model is needed). `cut_summary(ev)` prints the N−1 cut flow per variable.
+Acceptance is extreme: ~0.08–0.10 % of events survive stage 1, ~0.02–0.04 % stage 2.1, and only
+**25–104 events of 10M** (~3×10⁻⁴ %) survive stage 2 — the ±0.1° pencil windows are
+statistics-starved even at 10M events/model. `cut_summary(ev)` prints the N−1 cut flow per
+variable.
 
 ## Figures
 
@@ -120,35 +125,28 @@ unchanged. Full write-up on the [dedicated page](spectral_function_c12_2024.md).
 
 ![missing energy and momentum](missing_e_p_q2_1.28.png)
 
-Reconstructed `E_m = ω − T_p` and `p_m = |q⃗ − p⃗_p|` after the full (e,e′p) selection
-(N = 5120 LFG / 1332 SF / 3462 SuSAv2 / 2161 SF(2024)+UnifiedQEL / **2180 SF+UnifiedQEL**, from
-10M each). **LFG** is a sharp removal-energy spike (~36 MeV) with a low-`p_m` peak; **SF** is a
-broad removal-energy distribution (~30–50 MeV) reaching out to a high-`p_m` shoulder (~120 MeV/c)
-— the spectral function's `P(k,E)` tail; **SuSAv2** peaks *lower* in `E_m` (~28 MeV) with a soft
-tail to zero, and a low-`p_m` shape closer to LFG. **SF + UnifiedQEL (Variant 05, thick red, on
-top)** peaks markedly *lower* in `E_m` (~15–20 MeV) with a broad low-energy shoulder — the
-SF-consistent (CBF) cross section reshapes the removal-energy distribution relative to factorized
-SF+Rosenbluth at the *same* Benhar ground state, while its `p_m` shape tracks SF (both
-spectral-function). That contrast (`22a` ↔ `22b`) isolates the QE-EM cross-section model at fixed
-SF ground state. **SF(2024) + UnifiedQEL (`33b`, purple)** swaps in the 2024
-Ankowski-Benhar-Sakuda SF at the same cross section: its `E_m` collapses into a sharp ~16 MeV
-spike — the resolved p-shell quasiparticle peak of `pke12_2024`, vs the old SF's broad 5-MeV-wide
-p-shell bump smeared further by De Forest weighting — while its `p_m` shape stays on top of `22b`
-(`n(k)` essentially unchanged). That contrast (`22b` ↔ `33b`) is a pure ground-state-input effect,
-directly visible in the spectrometer window. At fixed luminosity (SF and LFG share the Rosenbluth
-σ) LFG keeps **3.8×** more coincidences than SF — Fermi smearing pushes SF protons out of the
-tight HMS window.
+Reconstructed `E_m = ω − T_p` and `p_m = |q⃗ − p⃗_p|` after the full (e,e′p) selection — with the
+±0.1° pencil windows only **N = 104 LFG / 25 SF / 73 SuSAv2 / 50 SF(2024)+UnifiedQEL /
+36 SF+UnifiedQEL** survive from 10M each, so the shapes are statistically ragged; read only the
+gross features. Those gross features persist: **LFG** spikes at its fixed removal energy
+(~36 MeV), **SF** sits at 30–50 MeV, **SuSAv2** lower (~28 MeV), the two **UnifiedQEL** models
+lowest with the `33b` strength concentrated at the ~16 MeV quasiparticle peak, and `p_m` is
+clipped to low values by the pencil θ_p window. At fixed luminosity LFG keeps **~4×** more
+coincidences than SF (104 vs 25) — Fermi smearing pushes SF protons out of the pencil
+acceptance. For the model-shape discussion use the wider-window branches
+(`prd/electron/angle_cut_1_degree`, `prd/electron/angle_cut_6_degree`).
 
 **Stage 2.1 — the same observables with θ_p free:**
 
 ![missing energy and momentum, stage 2.1](missing_e_p_q2_1.28_stage21.png)
 
-Dropping only the proton-angle window (N = 20840 LFG / 9483 SF / 16260 SuSAv2 /
-14048 SF(2024)+UnifiedQEL / 14002 SF+UnifiedQEL) leaves `E_m` essentially unchanged — the shell
+Dropping only the proton-angle window (N = 4215 LFG / 1872 SF / 3205 SuSAv2 /
+2807 SF(2024)+UnifiedQEL / 2757 SF+UnifiedQEL) leaves `E_m` essentially unchanged — the shell
 structure is set by `ω − T_p`, not by the angle — but transforms `p_m`: the spectral-function
-models now peak broadly at ~120–140 MeV/c (their full momentum content within the `T_p` slice)
-instead of being clipped to low `p_m`. The comparison with the stage-2 figure shows directly that
-the **conjugate θ_p window is what selects low missing momentum** in the spectrometer coincidence.
+models peak broadly at ~120–140 MeV/c (their full momentum content within the `T_p` slice)
+instead of being clipped to low `p_m`. With the ±0.1° pencil θ_p the clipping at stage 2 is
+near-total (only ~1–2.5 % of the `T_p`-selected events survive), so stage 2.1 is where the
+usable statistics live on this branch.
 
 ### 2. Cut-stage distributions
 
@@ -156,27 +154,26 @@ the **conjugate θ_p window is what selects low missing momentum** in the spectr
 
 ![stage 1 distributions](dists_stage1_electron.png)
 
-`El`, `θ_e` sit in their windows and **Q² is pinned at ~1.28** (the electron arm fixes it), while
-`T_p`, `θ_p`, `E_m`, `p_m` are still free/broad (N = 47443 LFG / 39559 SF / 39866 SuSAv2 /
-41164 SF(2024)+UnifiedQEL / 41697 SF+UnifiedQEL). Grey dashed = the acceptance windows (not yet
-applied to `T_p`/`θ_p` here).
+`El`, `θ_e` sit in their (now pencil-thin) windows and **Q² is pinned at 1.28 ± 0.01** (the
+electron arm fixes it), while `T_p`, `θ_p`, `E_m`, `p_m` are still free/broad (N = 9542 LFG /
+7822 SF / 7976 SuSAv2 / 8193 SF(2024)+UnifiedQEL / 8306 SF+UnifiedQEL). Grey dashed = the
+acceptance windows (not yet applied to `T_p`/`θ_p` here).
 
 **Stage 2.1 — + proton KE, θ_p free (`El ∧ θ_e ∧ T_p`):**
 
 ![stage 2.1 distributions](dists_stage21_proton_e.png)
 
-`T_p` is clamped to its window while `θ_p` stays free (N = 20840 / 9483 / 16260 / 14048 / 14002):
+`T_p` is clamped to its window while `θ_p` stays free (N = 4215 / 1872 / 3205 / 2807 / 2757):
 the proton-angle panel shows each model's full conjugate-angle distribution around the dashed
-43 ± 1° window — broadest for the spectral-function models (Fermi motion tilts the proton away
-from the q⃗ direction), narrowest for LFG — and `p_m` is correspondingly broad.
+43 ± 0.1° pencil window — broadest for the spectral-function models (Fermi motion tilts the
+proton away from the q⃗ direction), narrowest for LFG — and `p_m` is correspondingly broad.
 
 **Stage 2 — full coincidence (`El ∧ θ_e ∧ T_p ∧ θ_p`):**
 
 ![stage 2 distributions](dists_stage2_full.png)
 
 All four cut variables are clamped to their windows, leaving the residual `Q²`, `E_m`, `p_m`
-(N = 5120 / 1332 / 3462 / 2161 / 2180) — the model differences surviving the spectrometer bite.
-The `33b` p-shell spike at `E_m` ≈ 16 MeV stands out against the `22b` shoulder.
+(N = 104 / 25 / 73 / 50 / 36) — at pencil-cut statistics these panels are indicative only.
 
 ### 3. 2D missing energy vs momentum (stage × model)
 
@@ -204,19 +201,21 @@ The two columns show the textbook shell signature in the observable: the **p-she
 from a node at `p_m` ≈ 0 to a broad ~100 MeV/c peak** (l = 1), while the **s-shell slice peaks at
 low `p_m`** (l = 0). Which models populate which window is itself the story:
 
-- **LFG** (fixed removal energy ≈ 36 MeV) has essentially **no p-shell strength** (stage-1
-  N = 1, stage-2 N = 0) — everything sits in the 30–50 MeV window with its narrow low-`p_m` peak.
-- **SF + Rosenbluth** is nearly as empty in the p-window (N = 27 / 1): without the De Forest
+- **LFG** (fixed removal energy ≈ 36 MeV) has **no p-shell strength at all** (N = 0 at every
+  stage) — everything sits in the 30–50 MeV window.
+- **SF + Rosenbluth** is nearly as empty in the p-window (stage-1 N = 5): without the De Forest
   reshaping its `E_m` strength stays at 30–50 MeV.
-- **SuSAv2** populates the 10–25 MeV window heavily (stage-1 N = 13543), but as a Fermi-gas model
-  it has no shells — the slice is just the low-`E_m` kinematic tail of its distribution; its
-  s-window content is marginal (stage-2 N = 32, not drawn).
+- **SuSAv2** populates the 10–25 MeV window (stage-1 N = 2664), but as a Fermi-gas model it has
+  no shells — the slice is just the low-`E_m` kinematic tail of its distribution; its s-window
+  content is marginal (stage-1 N = 107).
 - **The two SF + UnifiedQEL models** are the only ones with genuine strength in *both* windows
-  (p: 13625 `33b` / 13929 `22b`; s: 6055 / 5921 at stage 1). Their p-shell `p_m` shapes lie on
+  (p: 2727 `33b` / 2717 `22b`; s: 1186 / 1225 at stage 1). Their p-shell `p_m` shapes lie on
   top of each other — the 2024 SF changes *where* the p-shell sits in `E_m` (the 16-MeV
   quasiparticle peak vs the old broad bump) but not its momentum content (`n(k)` unchanged). In
   the s-window the `33b` slice is the cleaner s-shell sample: its resolved p-shell peaks sit
   below 25 MeV, while the old SF leaks smeared p-shell strength into 30–50 MeV.
+- **Stage 2 is starved by the pencil θ_p**: every model falls below the N = 50 draw threshold in
+  both windows except LFG's s-shell (N = 104) — the bottom row is essentially legend-only.
 
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,

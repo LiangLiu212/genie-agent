@@ -23,11 +23,13 @@ _PDG = pdg.connect()
 M_P = _PDG.get_particle_by_mcid(2212).mass   # proton mass [GeV]
 
 # Spectrometer acceptance windows: name -> (center, half-width). Q² = 1.28 setting (Table I row 5).
+# Angular windows are ±0.1° (~±1.7 mrad) pencil cuts around the paper's central angles —
+# the tightest variant (cf. the ±0.5°/±1° baseline and the ±6° acceptance-scale branch).
 CUTS = {
     "El":      (1.725, 0.005),   # scattered e' energy [GeV]   (paper E_e' = 1.725)
-    "theta_e": (32.0,  0.5),     # e' angle [deg]              (paper θ_e' = 32°)
+    "theta_e": (32.0,  0.1),     # e' angle [deg]              (paper θ_e' = 32°)
     "Tp":      (0.700, 0.025),   # leading-proton KE [GeV]     (paper T_p = 700 MeV)
-    "theta_p": (43.0,  1.0),     # proton angle [deg]          (paper θ_p = 43.5° conjugate)
+    "theta_p": (43.0,  0.1),     # proton angle [deg]          (paper θ_p = 43.5° conjugate)
 }
 
 BRANCHES = ["Ev", "pxv", "pyv", "pzv", "El", "pxl", "pyl", "pzl", "cthl",
