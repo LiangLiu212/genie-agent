@@ -13,6 +13,7 @@ sigma(E). Emits a log-log view and a linear view. Personal plot style.
 import sys, glob, re
 sys.path.insert(0, "results/template")
 import numpy as np
+from matplotlib.lines import Line2D
 from plot_style import (apply_style, new_panels, style_axis, COLORS,
                         FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE)
 
@@ -51,9 +52,12 @@ def make_fig(out, logx, logy, ymin):
                 label=(f"t{cut}: Q² > {lim} GeV²" if cfg == "22b" else None))
     style_axis(ax, title=None, xlabel="E$_e$  [GeV]", ylabel="σ(QEL-EM)  [10⁻³⁸ cm²]",
                logx=logx, logy=logy, ymin=ymin)
-    ax.legend(title="EM-MinQ2Limit cut", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
-    ax.text(0.97, 0.05, "solid = Benhar SF (GEM26_22b)\ndashed = ABS 2024 SF (GEM26_33b)",
-            transform=ax.transAxes, ha="right", va="bottom", fontsize=FS_LEGEND, color="0.35")
+    handles, labels = ax.get_legend_handles_labels()
+    handles += [Line2D([], [], color="0.25", ls="-", lw=1.8),
+                Line2D([], [], color="0.25", ls="--", lw=1.8)]
+    labels += ["22b: old SF (Benhar)", "33b: new SF (ABS 2024)"]
+    ax.legend(handles, labels, title="EM-MinQ2Limit cut",
+              fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
     fig.suptitle("EM-QES spline vs Q²-cut  (e⁻ on C12, GEM26 UnifiedQEL-SF)", fontsize=FS_SUPTITLE)
     fig.tight_layout()
     fig.savefig(out, dpi=130)
