@@ -164,6 +164,33 @@ ridge** — removal energy rising with missing momentum, the `P(k,E)` correlatio
 a flat fixed-removal-energy band**, independent of `p_m`. In the `33b` column the ridge sits on
 the sharp 16-MeV quasiparticle line of the 2024 SF instead of the old broad p-shell band.
 
+### 4. Missing momentum by shell (E_m slices, both stages)
+
+![missing momentum by shell](missing_p_shells.png)
+
+`p_m` sliced by missing-energy window — **p-shell: 10 < E_m < 25 MeV** (left), **s-shell:
+30 < E_m < 50 MeV** (right) — for stage 1 (top) and stage 2 (bottom), area-normalized. A model
+with N < 50 in a window is listed in the legend but not drawn (a near-empty density histogram is
+all spikes).
+
+The two columns show the textbook shell signature in the observable: the **p-shell slice rises
+from a node at `p_m` ≈ 0 to a broad ~100 MeV/c peak** (l = 1), while the **s-shell slice peaks at
+low `p_m`** (l = 0). Which models populate which window is itself the story:
+
+- **LFG** (fixed removal energy ≈ 36 MeV) has essentially **no p-shell strength** (stage-1
+  N = 1, stage-2 N = 0) — everything sits in the 30–50 MeV window with its narrow low-`p_m` peak.
+- **SF + Rosenbluth** is nearly as empty in the p-window (N = 27 / 1): without the De Forest
+  reshaping its `E_m` strength stays at 30–50 MeV.
+- **SuSAv2** populates the 10–25 MeV window heavily (stage-1 N = 13543), but as a Fermi-gas model
+  it has no shells — the slice is just the low-`E_m` kinematic tail of its distribution; its
+  s-window content is marginal (stage-2 N = 32, not drawn).
+- **The two SF + UnifiedQEL models** are the only ones with genuine strength in *both* windows
+  (p: 13625 `33b` / 13929 `22b`; s: 6055 / 5921 at stage 1). Their p-shell `p_m` shapes lie on
+  top of each other — the 2024 SF changes *where* the p-shell sits in `E_m` (the 16-MeV
+  quasiparticle peak vs the old broad bump) but not its momentum content (`n(k)` unchanged). In
+  the s-window the `33b` slice is the cleaner s-shell sample: its resolved p-shell peaks sit
+  below 25 MeV, while the old SF leaks smeared p-shell strength into 30–50 MeV.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -177,6 +204,7 @@ the sharp 16-MeV quasiparticle line of the 2024 SF instead of the old broad p-sh
 - **`plot_missing.py`** → `missing_e_p_q2_1.28.png`
 - **`plot_dists.py`** → `dists_stage1_electron.png`, `dists_stage2_full.png`
 - **`plot_2d.py`** → `missing_2d_e_vs_p.png`
+- **`plot_missing_shells.py`** → `missing_p_shells.png` (p_m in the p-/s-shell `E_m` windows, both stages)
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 
