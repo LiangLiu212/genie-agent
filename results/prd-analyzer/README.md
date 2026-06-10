@@ -82,14 +82,18 @@ proton** in the event — post-FSI, `pdgf == 2212`, maximal `pf`
 `Q²` is **not** cut directly — it is **pinned** by the electron arm:
 `El ∧ θ_e′ ⇒ Q² = 4 E_beam E_e′ sin²(θ_e′/2) ≈ 1.28 GeV²`.
 
-**Two stages** (`select_electron` → `select`):
+**Three stages** (`select_electron` → `select_proton_e` → `select`):
 - **Stage 1 — electron arm**: `El ∧ θ_e′`. Tags the scattered electron and fixes Q²; the proton
   side is still unconstrained. This is what `build_cache.py` caches.
+- **Stage 2.1 — + proton energy, θ_p free**: `has_p ∧ El ∧ θ_e′ ∧ T_p`. Adds only the
+  leading-proton KE window, leaving the proton angle unconstrained — isolates what the `T_p`
+  window does before the conjugate-angle window carves the momentum acceptance. Computed from
+  the stage-1 cache (`selection.cache_stage_masks`), no re-streaming.
 - **Stage 2 — full (e,e′p) coincidence**: `has_p ∧ El ∧ θ_e′ ∧ T_p ∧ θ_p`. Adds the leading-proton
-  KE and angle windows — the coincidence the HMS/SOS spectrometer pair actually measures.
+  angle window — the coincidence the HMS/SOS spectrometer pair actually measures.
 
-Acceptance is tight: ~0.4 % of events survive stage 1, ~0.01–0.05 % stage 2 (why the full
-10M/model is needed). `cut_summary(ev)` prints the N−1 cut flow per variable.
+Acceptance is tight: ~0.4 % of events survive stage 1, ~0.1–0.2 % stage 2.1, ~0.01–0.05 % stage 2
+(why the full 10M/model is needed). `cut_summary(ev)` prints the N−1 cut flow per variable.
 
 ## Figures
 
@@ -135,6 +139,17 @@ directly visible in the spectrometer window. At fixed luminosity (SF and LFG sha
 σ) LFG keeps **3.8×** more coincidences than SF — Fermi smearing pushes SF protons out of the
 tight HMS window.
 
+**Stage 2.1 — the same observables with θ_p free:**
+
+![missing energy and momentum, stage 2.1](missing_e_p_q2_1.28_stage21.png)
+
+Dropping only the proton-angle window (N = 20840 LFG / 9483 SF / 16260 SuSAv2 /
+14048 SF(2024)+UnifiedQEL / 14002 SF+UnifiedQEL) leaves `E_m` essentially unchanged — the shell
+structure is set by `ω − T_p`, not by the angle — but transforms `p_m`: the spectral-function
+models now peak broadly at ~120–140 MeV/c (their full momentum content within the `T_p` slice)
+instead of being clipped to low `p_m`. The comparison with the stage-2 figure shows directly that
+the **conjugate θ_p window is what selects low missing momentum** in the spectrometer coincidence.
+
 ### 2. Cut-stage distributions
 
 **Stage 1 — electron arm only (`El ∧ θ_e`):**
@@ -145,6 +160,15 @@ tight HMS window.
 `T_p`, `θ_p`, `E_m`, `p_m` are still free/broad (N = 47443 LFG / 39559 SF / 39866 SuSAv2 /
 41164 SF(2024)+UnifiedQEL / 41697 SF+UnifiedQEL). Grey dashed = the acceptance windows (not yet
 applied to `T_p`/`θ_p` here).
+
+**Stage 2.1 — + proton KE, θ_p free (`El ∧ θ_e ∧ T_p`):**
+
+![stage 2.1 distributions](dists_stage21_proton_e.png)
+
+`T_p` is clamped to its window while `θ_p` stays free (N = 20840 / 9483 / 16260 / 14048 / 14002):
+the proton-angle panel shows each model's full conjugate-angle distribution around the dashed
+43 ± 1° window — broadest for the spectral-function models (Fermi motion tilts the proton away
+from the q⃗ direction), narrowest for LFG — and `p_m` is correspondingly broad.
 
 **Stage 2 — full coincidence (`El ∧ θ_e ∧ T_p ∧ θ_p`):**
 
@@ -158,20 +182,23 @@ The `33b` p-shell spike at `E_m` ≈ 16 MeV stands out against the `22b` shoulde
 
 ![2D E_m vs p_m](missing_2d_e_vs_p.png)
 
-`p_m` vs `E_m`, rows = stage 1 / stage 2, columns = LFG / SF / SuSAv2 / SF(2024)+UnifiedQEL /
-SF+UnifiedQEL (Variant 05, rightmost). **The spectral-function models show the `(E_m, p_m)`
-ridge** — removal energy rising with missing momentum, the `P(k,E)` correlation — while **LFG is
-a flat fixed-removal-energy band**, independent of `p_m`. In the `33b` column the ridge sits on
-the sharp 16-MeV quasiparticle line of the 2024 SF instead of the old broad p-shell band.
+`p_m` vs `E_m`, rows = stage 1 / stage 2.1 (+ `T_p`, θ_p free) / stage 2 (full), columns =
+LFG / SF / SuSAv2 / SF(2024)+UnifiedQEL / SF+UnifiedQEL (Variant 05, rightmost). **The
+spectral-function models show the `(E_m, p_m)` ridge** — removal energy rising with missing
+momentum, the `P(k,E)` correlation — while **LFG is a flat fixed-removal-energy band**,
+independent of `p_m`. In the `33b` column the ridge sits on the sharp 16-MeV quasiparticle line
+of the 2024 SF instead of the old broad p-shell band. Reading down a column: the `T_p` window
+(row 2) keeps the ridge intact across the full `p_m` range; the θ_p window (row 3) then cuts it
+off at low missing momentum.
 
 ### 4. Missing momentum by shell (E_m slices, both stages)
 
 ![missing momentum by shell](missing_p_shells.png)
 
 `p_m` sliced by missing-energy window — **p-shell: 10 < E_m < 25 MeV** (left), **s-shell:
-30 < E_m < 50 MeV** (right) — for stage 1 (top) and stage 2 (bottom), area-normalized. A model
-with N < 50 in a window is listed in the legend but not drawn (a near-empty density histogram is
-all spikes).
+30 < E_m < 50 MeV** (right) — for stage 1 (top), stage 2.1 (`T_p` in window, θ_p free, middle)
+and stage 2 (bottom), area-normalized. A model with N < 50 in a window is listed in the legend
+but not drawn (a near-empty density histogram is all spikes).
 
 The two columns show the textbook shell signature in the observable: the **p-shell slice rises
 from a node at `p_m` ≈ 0 to a broad ~100 MeV/c peak** (l = 1), while the **s-shell slice peaks at
@@ -200,11 +227,13 @@ low `p_m`** (l = 0). Which models populate which window is itself the story:
   - `CUTS` — acceptance windows (center ± half-width): `El` 1.725±0.005 GeV, `theta_e` 32±0.5°,
     `Tp` 0.700±0.025 GeV, `theta_p` 43±1°.
   - `load_events` — leading (post-FSI) proton, `E_m = ω − T_p`, `p_m = |q⃗ − p⃗_p|`, `Q2`, angles.
-  - `select_electron(ev)` — stage 1 (El ∧ θ_e). `select(ev)` — stage 2 (full). `cut_summary(ev)`.
-- **`plot_missing.py`** → `missing_e_p_q2_1.28.png`
-- **`plot_dists.py`** → `dists_stage1_electron.png`, `dists_stage2_full.png`
-- **`plot_2d.py`** → `missing_2d_e_vs_p.png`
-- **`plot_missing_shells.py`** → `missing_p_shells.png` (p_m in the p-/s-shell `E_m` windows, both stages)
+  - `select_electron(ev)` — stage 1 (El ∧ θ_e). `select_proton_e(ev)` — stage 2.1 (+ T_p, θ_p
+    free). `select(ev)` — stage 2 (full). `cache_stage_masks(c)` — all three masks from a
+    stage-1 cache. `cut_summary(ev)`.
+- **`plot_missing.py`** → `missing_e_p_q2_1.28.png`, `missing_e_p_q2_1.28_stage21.png`
+- **`plot_dists.py`** → `dists_stage1_electron.png`, `dists_stage21_proton_e.png`, `dists_stage2_full.png`
+- **`plot_2d.py`** → `missing_2d_e_vs_p.png` (3 stages × 5 models)
+- **`plot_missing_shells.py`** → `missing_p_shells.png` (p_m in the p-/s-shell `E_m` windows, all 3 stages)
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 

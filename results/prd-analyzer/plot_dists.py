@@ -1,8 +1,9 @@
 """Cut-stage diagnostics: 7 (e,e'p) variables after each selection stage, 5 QE-EM models.
 
-Two figures from the XRootD-streamed cache (build_cache.py), C12 t05 (Q²=1.28, 2.445 GeV):
-  stage 1 — electron arm only (El ∧ θ_e)            -> dists_stage1_electron.png
-  stage 2 — full coincidence (El ∧ θ_e ∧ T_p ∧ θ_p) -> dists_stage2_full.png
+Three figures from the XRootD-streamed cache (build_cache.py), C12 t05 (Q²=1.28, 2.445 GeV):
+  stage 1   — electron arm only (El ∧ θ_e)              -> dists_stage1_electron.png
+  stage 2.1 — + proton KE, θ_p free (El ∧ θ_e ∧ T_p)    -> dists_stage21_proton_e.png
+  stage 2   — full coincidence (El ∧ θ_e ∧ T_p ∧ θ_p)   -> dists_stage2_full.png
 Each shows El, θ_e, T_p, θ_p, Q², E_miss, p_miss for the five models in samples.MODELS
 (area-normalized); acceptance windows drawn as grey dashed lines. Personal plot style.
 """
@@ -26,21 +27,21 @@ PANELS = [
     ("p_miss",  r"p$_m$  [MeV/c]",         (0., 400.),    50, None),
 ]
 
-# cache: each model -> (dict of stage-1 arrays, stage-2 mask within stage-1)
+# cache: each model -> (dict of stage-1 arrays, per-stage masks within stage-1)
 data = {}
 for m in S.MODELS:
     c = S.load_cache(m)
-    data[m] = (c, c["stage2"].astype(bool))
+    data[m] = (c, sel.cache_stage_masks(c))
 
 
-def make_fig(out, use_stage2, stage_label):
+def make_fig(out, stage, stage_label):
     apply_style()
     fig, axes = new_panels(ncols=4, nrows=2, sharey=False)
     for ax, (key, lab, rng, nb, cutkey) in zip(axes, PANELS):
         bins = np.linspace(rng[0], rng[1], nb)
         for m in S.MODELS:
-            c, s2 = data[m]
-            x = c[key][s2] if use_stage2 else c[key]
+            c, masks = data[m]
+            x = c[key][masks[stage]]
             x = x[np.isfinite(x)]
             ax.hist(x, bins=bins, histtype="step", linewidth=S.lw(m), color=S.color(m),
                     density=True, label=S.label(m), zorder=S.zorder(m))
@@ -55,7 +56,7 @@ def make_fig(out, use_stage2, stage_label):
     handles, labels = axes[0].get_legend_handles_labels()
     axes[7].legend(handles, labels, title="QE-EM model", loc="center",
                    fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
-    ns = {m: (int(data[m][1].sum()) if use_stage2 else len(data[m][0]["El"])) for m in S.MODELS}
+    ns = {m: int(data[m][1][stage].sum()) for m in S.MODELS}
     fig.suptitle(f"(e,e'p) distributions after {stage_label}  —  e⁻ on C12, Q²=1.28 (t05)\n"
                  "grey dashed = acceptance window · selected N: "
                  + ",  ".join(f"{m} {ns[m]}" for m in S.MODELS),
@@ -65,7 +66,9 @@ def make_fig(out, use_stage2, stage_label):
     print("wrote", out)
 
 
-make_fig("results/prd-analyzer/dists_stage1_electron.png", False,
+make_fig("results/prd-analyzer/dists_stage1_electron.png", "1",
          "stage 1 (electron cut: El ∧ θ_e)")
-make_fig("results/prd-analyzer/dists_stage2_full.png", True,
+make_fig("results/prd-analyzer/dists_stage21_proton_e.png", "2.1",
+         "stage 2.1 (El ∧ θ_e ∧ T_p, θ_p free)")
+make_fig("results/prd-analyzer/dists_stage2_full.png", "2",
          "stage 2 (full: El ∧ θ_e ∧ T_p ∧ θ_p)")

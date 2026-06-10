@@ -74,10 +74,24 @@ def select_electron(ev):
     return _win(ev["El"], *CUTS["El"]) & _win(ev["theta_e"], *CUTS["theta_e"])
 
 
+def select_proton_e(ev):
+    """Stage 2.1: electron arm + leading-proton KE — has_p ∧ El ∧ θ_e ∧ T_p (θ_p free)."""
+    return ev["has_p"].astype(bool) & select_electron(ev) & _win(ev["Tp"], *CUTS["Tp"])
+
+
 def select(ev):
     """Stage 2: full (e,e'p) coincidence — has_p ∧ El ∧ θ_e ∧ T_p ∧ θ_p."""
     return (ev["has_p"] & select_electron(ev)
             & _win(ev["Tp"], *CUTS["Tp"]) & _win(ev["theta_p"], *CUTS["theta_p"]))
+
+
+def cache_stage_masks(c):
+    """Stage masks within a build_cache.py stage-1 cache dict (all keys are stage-1 arrays):
+    '1' = all stage-1 events, '2.1' = + has_p ∧ T_p window (θ_p free), '2' = full coincidence
+    (the stored stage2 mask). The El/θ_e windows are already satisfied by construction."""
+    return {"1": np.ones(len(c["El"]), bool),
+            "2.1": select_proton_e(c),
+            "2": c["stage2"].astype(bool)}
 
 
 def cut_summary(ev, label=""):
