@@ -53,8 +53,8 @@ Because the five models have **different total QE cross sections**, the 1D overl
 
 ## Selection & cuts
 
-Replicates the E91-013 **Q² = 1.28 GeV²** spectrometer setting (Dutta et al., Table I row 5): the
-narrow HMS/SOS acceptance windows on the scattered electron and the leading proton, reconstructed
+Replicates the E91-013 **Q² = 1.28 GeV²** spectrometer setting (Dutta et al., Table I row 5):
+energy and angle windows on the scattered electron and the leading proton, reconstructed
 from the GENIE gst. All of this lives in `selection.py`.
 
 **Leading (knocked-out) proton.** The reconstructed proton is the **highest-momentum final-state
@@ -75,12 +75,15 @@ proton** in the event — post-FSI, `pdgf == 2212`, maximal `pf`
 | cut | variable | window | paper (E91-013) | arm |
 |-----|----------|--------|-----------------|-----|
 | `El`      | scattered e′ energy `E_e′` | 1.725 ± 0.005 GeV | E_e′ = 1.725 GeV         | electron |
-| `theta_e` | scattered e′ angle `θ_e′`  | 32.0 ± 0.5°       | θ_e′ = 32°               | electron |
+| `theta_e` | scattered e′ angle `θ_e′`  | 32.0 ± 6.0°       | θ_e′ = 32°               | electron |
 | `Tp`      | leading-proton KE `T_p`    | 0.700 ± 0.025 GeV | T_p = 700 MeV            | proton   |
-| `theta_p` | leading-proton angle `θ_p` | 43.0 ± 1.0°       | θ_p ≈ 43.5° (conjugate)  | proton   |
+| `theta_p` | leading-proton angle `θ_p` | 43.0 ± 6.0°       | θ_p ≈ 43.5° (conjugate)  | proton   |
 
-`Q²` is **not** cut directly — it is **pinned** by the electron arm:
-`El ∧ θ_e′ ⇒ Q² = 4 E_beam E_e′ sin²(θ_e′/2) ≈ 1.28 GeV²`.
+The angular windows are **±6° (~±105 mrad)** around the paper's central angles — an
+acceptance-scale bite (cf. the ~±120 mrad spectrometer acceptance) rather than the earlier
+±0.5°/±1° pinholes. `Q²` is **not** cut directly — the electron arm constrains it via
+`Q² = 4 E_beam E_e′ sin²(θ_e′/2)`, which across the ±6° `θ_e′` window spans **≈ 0.85–1.8 GeV²**
+around the 1.28 GeV² setting (no longer a sharp pin).
 
 **Three stages** (`select_electron` → `select_proton_e` → `select`):
 - **Stage 1 — electron arm**: `El ∧ θ_e′`. Tags the scattered electron and fixes Q²; the proton
@@ -92,8 +95,8 @@ proton** in the event — post-FSI, `pdgf == 2212`, maximal `pf`
 - **Stage 2 — full (e,e′p) coincidence**: `has_p ∧ El ∧ θ_e′ ∧ T_p ∧ θ_p`. Adds the leading-proton
   angle window — the coincidence the HMS/SOS spectrometer pair actually measures.
 
-Acceptance is tight: ~0.4 % of events survive stage 1, ~0.1–0.2 % stage 2.1, ~0.01–0.05 % stage 2
-(why the full 10M/model is needed). `cut_summary(ev)` prints the N−1 cut flow per variable.
+With the ±6° angular windows: ~1.6–1.9 % of events survive stage 1, ~0.4–0.8 % stage 2.1,
+~0.3–0.7 % stage 2. `cut_summary(ev)` prints the N−1 cut flow per variable.
 
 ## Figures
 
@@ -121,34 +124,34 @@ unchanged. Full write-up on the [dedicated page](spectral_function_c12_2024.md).
 ![missing energy and momentum](missing_e_p_q2_1.28.png)
 
 Reconstructed `E_m = ω − T_p` and `p_m = |q⃗ − p⃗_p|` after the full (e,e′p) selection
-(N = 5120 LFG / 1332 SF / 3462 SuSAv2 / 2161 SF(2024)+UnifiedQEL / **2180 SF+UnifiedQEL**, from
-10M each). **LFG** is a sharp removal-energy spike (~36 MeV) with a low-`p_m` peak; **SF** is a
-broad removal-energy distribution (~30–50 MeV) reaching out to a high-`p_m` shoulder (~120 MeV/c)
-— the spectral function's `P(k,E)` tail; **SuSAv2** peaks *lower* in `E_m` (~28 MeV) with a soft
-tail to zero, and a low-`p_m` shape closer to LFG. **SF + UnifiedQEL (Variant 05, thick red, on
-top)** peaks markedly *lower* in `E_m` (~15–20 MeV) with a broad low-energy shoulder — the
-SF-consistent (CBF) cross section reshapes the removal-energy distribution relative to factorized
-SF+Rosenbluth at the *same* Benhar ground state, while its `p_m` shape tracks SF (both
-spectral-function). That contrast (`22a` ↔ `22b`) isolates the QE-EM cross-section model at fixed
-SF ground state. **SF(2024) + UnifiedQEL (`33b`, purple)** swaps in the 2024
-Ankowski-Benhar-Sakuda SF at the same cross section: its `E_m` collapses into a sharp ~16 MeV
-spike — the resolved p-shell quasiparticle peak of `pke12_2024`, vs the old SF's broad 5-MeV-wide
-p-shell bump smeared further by De Forest weighting — while its `p_m` shape stays on top of `22b`
-(`n(k)` essentially unchanged). That contrast (`22b` ↔ `33b`) is a pure ground-state-input effect,
-directly visible in the spectrometer window. At fixed luminosity (SF and LFG share the Rosenbluth
-σ) LFG keeps **3.8×** more coincidences than SF — Fermi smearing pushes SF protons out of the
-tight HMS window.
+(N = 68481 LFG / 32209 SF / 59672 SuSAv2 / 48554 SF(2024)+UnifiedQEL / **48168 SF+UnifiedQEL**,
+from 10M each). **LFG** is a sharp removal-energy spike (~36 MeV); **SF** is a broad
+removal-energy distribution (~30–50 MeV); **SuSAv2** peaks *lower* in `E_m` (~28 MeV) with a soft
+tail to zero. **SF + UnifiedQEL (Variant 05, thick red, on top)** peaks markedly *lower* in `E_m`
+(~15–20 MeV) with a broad low-energy shoulder — the SF-consistent (CBF) cross section reshapes
+the removal-energy distribution relative to factorized SF+Rosenbluth at the *same* Benhar ground
+state. That contrast (`22a` ↔ `22b`) isolates the QE-EM cross-section model at fixed SF ground
+state. **SF(2024) + UnifiedQEL (`33b`, purple)** swaps in the 2024 Ankowski-Benhar-Sakuda SF at
+the same cross section: its `E_m` collapses into a sharp ~16 MeV spike — the resolved p-shell
+quasiparticle peak of `pke12_2024`, vs the old SF's broad 5-MeV-wide p-shell bump smeared further
+by De Forest weighting — while its `p_m` shape stays on top of `22b` (`n(k)` essentially
+unchanged). That contrast (`22b` ↔ `33b`) is a pure ground-state-input effect, directly visible
+in the spectrometer window. In `p_m` all five models now peak at ~100–140 MeV/c (the ±6° windows
+admit the full transverse-momentum bite): LFG and SuSAv2 peak lower (~100 MeV/c) and softer, the
+spectral-function trio higher (~130 MeV/c) with the p-shell hump. At fixed luminosity (SF and LFG
+share the Rosenbluth σ) LFG keeps **2.1×** more coincidences than SF — Fermi smearing pushes SF
+protons out of the `T_p` window.
 
 **Stage 2.1 — the same observables with θ_p free:**
 
 ![missing energy and momentum, stage 2.1](missing_e_p_q2_1.28_stage21.png)
 
-Dropping only the proton-angle window (N = 20840 LFG / 9483 SF / 16260 SuSAv2 /
-14048 SF(2024)+UnifiedQEL / 14002 SF+UnifiedQEL) leaves `E_m` essentially unchanged — the shell
-structure is set by `ω − T_p`, not by the angle — but transforms `p_m`: the spectral-function
-models now peak broadly at ~120–140 MeV/c (their full momentum content within the `T_p` slice)
-instead of being clipped to low `p_m`. The comparison with the stage-2 figure shows directly that
-the **conjugate θ_p window is what selects low missing momentum** in the spectrometer coincidence.
+Dropping only the proton-angle window (N = 78075 LFG / 39710 SF / 68119 SuSAv2 /
+59859 SF(2024)+UnifiedQEL / 59483 SF+UnifiedQEL) leaves `E_m` essentially unchanged — the shell
+structure is set by `ω − T_p`, not by the angle. With the **±6° windows** `p_m` too is nearly
+unchanged: the θ_p cut now trims only ~15–20 % of the `T_p`-selected events. (With the original
+±1° pinhole it removed ~85 % and carved the `p_m` spectrum down to the low-momentum bite — the
+conjugate-angle window is what controls the missing-momentum acceptance.)
 
 ### 2. Cut-stage distributions
 
@@ -156,27 +159,29 @@ the **conjugate θ_p window is what selects low missing momentum** in the spectr
 
 ![stage 1 distributions](dists_stage1_electron.png)
 
-`El`, `θ_e` sit in their windows and **Q² is pinned at ~1.28** (the electron arm fixes it), while
-`T_p`, `θ_p`, `E_m`, `p_m` are still free/broad (N = 47443 LFG / 39559 SF / 39866 SuSAv2 /
-41164 SF(2024)+UnifiedQEL / 41697 SF+UnifiedQEL). Grey dashed = the acceptance windows (not yet
-applied to `T_p`/`θ_p` here).
+`El`, `θ_e` sit in their windows and the electron arm constrains **Q² to ≈ 1.18–1.8 GeV²** — the
+±6° `θ_e` window would reach down to 0.85, but the **t05 generation cut (EM-MinQ2Limit = 1.18)
+sets the lower edge** (equivalently θ_e′ ≳ 30.6°) — while `T_p`, `θ_p`, `E_m`, `p_m` are still
+free/broad (N = 185999 LFG / 164928 SF / 168375 SuSAv2 / 173243 SF(2024)+UnifiedQEL /
+174052 SF+UnifiedQEL). Grey dashed = the acceptance windows (not yet applied to `T_p`/`θ_p`
+here).
 
 **Stage 2.1 — + proton KE, θ_p free (`El ∧ θ_e ∧ T_p`):**
 
 ![stage 2.1 distributions](dists_stage21_proton_e.png)
 
-`T_p` is clamped to its window while `θ_p` stays free (N = 20840 / 9483 / 16260 / 14048 / 14002):
-the proton-angle panel shows each model's full conjugate-angle distribution around the dashed
-43 ± 1° window — broadest for the spectral-function models (Fermi motion tilts the proton away
-from the q⃗ direction), narrowest for LFG — and `p_m` is correspondingly broad.
+`T_p` is clamped to its window while `θ_p` stays free (N = 78075 / 39710 / 68119 / 59859 /
+59483): the proton-angle panel shows each model's full conjugate-angle distribution around the
+dashed 43 ± 6° window — broadest for the spectral-function models (Fermi motion tilts the proton
+away from the q⃗ direction) — and with the wide window most of it is already inside the cut.
 
 **Stage 2 — full coincidence (`El ∧ θ_e ∧ T_p ∧ θ_p`):**
 
 ![stage 2 distributions](dists_stage2_full.png)
 
 All four cut variables are clamped to their windows, leaving the residual `Q²`, `E_m`, `p_m`
-(N = 5120 / 1332 / 3462 / 2161 / 2180) — the model differences surviving the spectrometer bite.
-The `33b` p-shell spike at `E_m` ≈ 16 MeV stands out against the `22b` shoulder.
+(N = 68481 / 32209 / 59672 / 48554 / 48168) — the model differences surviving the spectrometer
+bite. The `33b` p-shell spike at `E_m` ≈ 16 MeV stands out against the `22b` shoulder.
 
 ### 3. 2D missing energy vs momentum (stage × model)
 
@@ -188,8 +193,8 @@ spectral-function models show the `(E_m, p_m)` ridge** — removal energy rising
 momentum, the `P(k,E)` correlation — while **LFG is a flat fixed-removal-energy band**,
 independent of `p_m`. In the `33b` column the ridge sits on the sharp 16-MeV quasiparticle line
 of the 2024 SF instead of the old broad p-shell band. Reading down a column: the `T_p` window
-(row 2) keeps the ridge intact across the full `p_m` range; the θ_p window (row 3) then cuts it
-off at low missing momentum.
+(row 2) keeps the ridge intact across the full `p_m` range, and with the ±6° angular windows the
+θ_p cut (row 3) only trims the edges — rows 2 and 3 are nearly identical.
 
 ### 4. Missing momentum by shell (E_m slices, both stages)
 
@@ -205,14 +210,14 @@ from a node at `p_m` ≈ 0 to a broad ~100 MeV/c peak** (l = 1), while the **s-s
 low `p_m`** (l = 0). Which models populate which window is itself the story:
 
 - **LFG** (fixed removal energy ≈ 36 MeV) has essentially **no p-shell strength** (stage-1
-  N = 1, stage-2 N = 0) — everything sits in the 30–50 MeV window with its narrow low-`p_m` peak.
-- **SF + Rosenbluth** is nearly as empty in the p-window (N = 27 / 1): without the De Forest
+  N = 4, stage-2 N = 0) — everything sits in the 30–50 MeV window.
+- **SF + Rosenbluth** is nearly as empty in the p-window (N = 113 / 20): without the De Forest
   reshaping its `E_m` strength stays at 30–50 MeV.
-- **SuSAv2** populates the 10–25 MeV window heavily (stage-1 N = 13543), but as a Fermi-gas model
+- **SuSAv2** populates the 10–25 MeV window heavily (stage-1 N = 57096), but as a Fermi-gas model
   it has no shells — the slice is just the low-`E_m` kinematic tail of its distribution; its
-  s-window content is marginal (stage-2 N = 32, not drawn).
+  s-window content is marginal (stage-1 N = 2239, stage-2 N = 790).
 - **The two SF + UnifiedQEL models** are the only ones with genuine strength in *both* windows
-  (p: 13625 `33b` / 13929 `22b`; s: 6055 / 5921 at stage 1). Their p-shell `p_m` shapes lie on
+  (p: 60816 `33b` / 61599 `22b`; s: 23211 / 22773 at stage 1). Their p-shell `p_m` shapes lie on
   top of each other — the 2024 SF changes *where* the p-shell sits in `E_m` (the 16-MeV
   quasiparticle peak vs the old broad bump) but not its momentum content (`n(k)` unchanged). In
   the s-window the `33b` slice is the cleaner s-shell sample: its resolved p-shell peaks sit
@@ -253,6 +258,11 @@ streamed over XRootD (never copied locally). The narrow spectrometer cuts keep ~
 
 ## Notes
 - The EMQE samples are pure QEL (the `EMQE` generator list is QEL-EM only), so no RES/DIS split.
+- **Generation-cut caveat for the wide windows:** the ±6° `θ_e′` window kinematically reaches
+  Q² ≈ 0.85, but the t05 samples are generated with `EM-MinQ2Limit = 1.18` — the region
+  Q² ∈ [0.85, 1.18) (θ_e′ ≲ 30.6°) is simply absent from the samples, so the accepted electron
+  arm is effectively Q² ∈ [1.18, 1.8]. Widening further (or studying the low-Q² side) needs a
+  lower generation cut (t04).
 - 1D overlays are **area-normalized** — the five models have different total σ, so raw counts are
   not a fair overlay; the rate information lives in the legend `N` (and the stage-2 efficiencies).
 - `p_m` is the unsigned magnitude (matches the paper); the p-shell dip at `p_m≈0` is the l=1 node.

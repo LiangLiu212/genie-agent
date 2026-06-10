@@ -19,10 +19,10 @@ import samples as S
 # panel -> (cache key, axis label, (lo, hi), nbins, cut-key-in-CUTS-or-None)
 PANELS = [
     ("El",      r"E$_{e'}$  [GeV]",        (1.70, 1.75),  50, "El"),
-    ("theta_e", r"$\theta_{e'}$  [deg]",   (30.5, 33.5),  50, "theta_e"),
+    ("theta_e", r"$\theta_{e'}$  [deg]",   (24.0, 40.0),  50, "theta_e"),
     ("Tp",      r"T$_p$  [GeV]",           (0.50, 0.95),  50, "Tp"),
-    ("theta_p", r"$\theta_p$  [deg]",      (32.0, 56.0),  50, "theta_p"),
-    ("Q2",      r"Q$^2$  [(GeV/c)$^2$]",   (1.05, 1.55),  50, None),
+    ("theta_p", r"$\theta_p$  [deg]",      (30.0, 56.0),  50, "theta_p"),
+    ("Q2",      r"Q$^2$  [(GeV/c)$^2$]",   (0.75, 1.95),  50, None),
     ("E_miss",  r"E$_m$  [MeV]",           (-20., 140.),  55, None),
     ("p_miss",  r"p$_m$  [MeV/c]",         (0., 400.),    50, None),
 ]
