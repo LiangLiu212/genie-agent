@@ -36,15 +36,22 @@ XRootD and caches only the tiny selected subset:
 1. **`samples.py`** — the 5-model registry. Maps `/pnfs/dune/…` →
    `root://fndca1.fnal.gov:1094//pnfs/fnal.gov/usr/dune/…` (dCache namespace) and lists each
    model's gst URLs (`gst_urls(model)`).
-2. **`build_cache.py`** — streams every gst over XRootD, applies the stage-1 (electron-arm)
-   selection, and writes `cache/<model>.npz` (~2 MB each: the ~40k stage-1 survivors + the stage-2
-   mask + total event count). Needs a dCache token:
+2. **`build_cache.py`** — streams every gst over XRootD (parallel worker processes, `WORKERS`
+   env, default 8), applies the stage-1 (electron-arm) selection, and writes
+   `cache/<model>.npz` (the stage-1 survivors + the stage-2 mask + total event count). Needs a
+   dCache token:
    ```bash
    export BEARER_TOKEN_FILE=<token>          # refresh with: htgettoken -i dune
-   pixi run python results/prd-analyzer/build_cache.py        # ~8 min, 50M events
+   pixi run python results/prd-analyzer/build_cache.py              # all models, branch CUTS
+   pixi run python results/prd-analyzer/build_cache.py --superset   # loosest theta_e (+-6)
    pixi run python results/prd-analyzer/build_cache.py UnifiedQEL2024   # just one model
    ```
    Re-run only when the sample list or selection changes (new models: pass their keys).
+   **Superset workflow** (preferred with the 1B samples): `--superset` streams each sample once
+   with the loosest electron window into `cache/superset/<model>.npz`; each angle-cut branch
+   then derives its own `cache/<model>.npz` locally with **`recut_cache.py`** (re-applies that
+   branch's `selection.CUTS`, recomputes the stage-2 mask from the cached columns — verified
+   bit-identical to a direct build) — no re-streaming per branch.
 3. **`plot_*.py`** — read the cache (instant) and draw the figures.
 
 Streaming needs `xrootd` + `fsspec-xrootd` in the pixi env (uproot opens `root://` directly).
