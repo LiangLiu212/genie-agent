@@ -1,0 +1,92 @@
+% Axial form factor comparison figures (LQCD vs deuterium), in the paper's
+% 6-panel overpic template. Per-panel PDFs are co-located here as
+% fa_lfg_ha2018_{a..f}.pdf and fa_sf_incl_{a..f}.pdf; prepend the path
+% (e.g. plots/) to the \includegraphics keys to match your paper layout.
+% Requires: graphicx, overpic.  Panels: (a) dpT (dalphaT<45 deg),
+% (b) dpT (135<dalphaT<180), (c) dpT, (d) dalphaT, (e) p_mu, (f) p_p.
+
+% ---------- LFG + hA2018 : F_A LQCD vs deuterium ----------
+\begin{figure*}[htbp]
+\centering
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_lfg_ha2018_a.pdf}
+\put(24,56){\footnotesize\text{(a)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_lfg_ha2018_b.pdf}
+\put(24,56){\footnotesize\text{(b)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_lfg_ha2018_c.pdf}
+\put(24,56){\footnotesize\text{(c)}}
+\end{overpic}
+\end{minipage}
+
+%\hfill
+\vspace{0.5cm}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_lfg_ha2018_d.pdf}
+\put(24,56){\footnotesize\text{(d)}}
+\end{overpic}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_lfg_ha2018_e.pdf}
+\put(24,56){\footnotesize\text{(e)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_lfg_ha2018_f.pdf}
+\put(24,56){\footnotesize\text{(f)}}
+\end{overpic}
+\end{minipage}
+\caption{Effect of the nucleon axial form factor on the MicroBooNE CC1$\mu$1p / CC1$\mu$Np argon cross sections with the N/LFG ground state and hA2018 FSI held fixed: $F_A^{\rm LQCD}$ (blue) versus $F_A^{\rm Deu}$ (orange), compared with MicroBooNE data (black points). Panels: (a) $\delta p_T$ for $\delta\alpha_T<45^\circ$ and (b) for $135^\circ<\delta\alpha_T<180^\circ$ (two slices of the 2D $\delta p_T$--$\delta\alpha_T$ measurement); (c) $\delta p_T$; (d) $\delta\alpha_T$; (e) $p_\mu$; (f) $p_p$. The LQCD form factor raises the predicted cross section and lowers $\chi^2/{\rm ndf}$ in every observable (2D: $35.98/49$ vs $44.21/49$; $p_\mu$: $16.29/26$ vs $20.89/26$), favouring $F_A^{\rm LQCD}$.}
+\label{fig:fa_lfg_ha2018}
+\end{figure*}
+
+% ---------- SF + INCL : F_A LQCD vs deuterium ----------
+\begin{figure*}[htbp]
+\centering
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_sf_incl_a.pdf}
+\put(24,56){\footnotesize\text{(a)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_sf_incl_b.pdf}
+\put(24,56){\footnotesize\text{(b)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_sf_incl_c.pdf}
+\put(24,56){\footnotesize\text{(c)}}
+\end{overpic}
+\end{minipage}
+
+%\hfill
+\vspace{0.5cm}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_sf_incl_d.pdf}
+\put(24,56){\footnotesize\text{(d)}}
+\end{overpic}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_sf_incl_e.pdf}
+\put(24,56){\footnotesize\text{(e)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fa_sf_incl_f.pdf}
+\put(24,56){\footnotesize\text{(f)}}
+\end{overpic}
+\end{minipage}
+\caption{As in Fig.~\ref{fig:fa_lfg_ha2018} but with the spectral-function ground state and INCL FSI held fixed: $F_A^{\rm LQCD}$ (blue) versus $F_A^{\rm Deu}$ (orange). The LQCD form factor again improves every observable (2D: $66.61/49$ vs $81.91/49$; $p_\mu$: $23.91/26$ vs $35.08/26$), but with INCL FSI both predictions remain well below the data ($p_p$: $32.25/15$ and $38.83/15$), so varying $F_A$ alone does not reconcile the SF+INCL configuration with MicroBooNE.}
+\label{fig:fa_sf_incl}
+\end{figure*}
