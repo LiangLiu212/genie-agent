@@ -54,7 +54,7 @@ DATA = {tag: load(tag) for tag, _, _ in SERIES}
 H2D, vmax = {}, 0.0
 for tag, _, _ in SERIES:
     p, erm = DATA[tag]
-    H, _, _ = np.histogram2d(erm, p, bins=[EBINS, PBINS])
+    H, _, _ = np.histogram2d(p, erm, bins=[PBINS, EBINS])  # x=|p_n|, y=E_rm
     H = H / H.sum()
     H2D[tag] = H
     vmax = max(vmax, H.max())
@@ -88,14 +88,14 @@ ax_e.set_ylabel("fraction of events / bin", fontsize=FS_LABEL)
 
 # --- bottom row: 2D P(|p|,E) ----------------------------------------------
 norm = LogNorm(vmin=vmax * 1e-4, vmax=vmax)
-Xe, Ye = np.meshgrid(EBINS, PBINS, indexing="ij")
+Xe, Ye = np.meshgrid(PBINS, EBINS, indexing="ij")
 pc = None
 for ax, (tag, label, _) in zip((ax2_lfg, ax2_sf), SERIES):
     Z = np.ma.masked_less_equal(H2D[tag], 0.0)
     pc = ax.pcolormesh(Xe, Ye, Z, cmap="viridis", norm=norm)
     ax.set_title(label, fontsize=FS_TITLE)
-    ax.set_xlabel(r"E$_\mathrm{rm}$ = M$_N-$E$_n$  [MeV]", fontsize=FS_LABEL)
-    ax.set_ylabel(r"|p$_n$|  [MeV/c]", fontsize=FS_LABEL)
+    ax.set_xlabel(r"|p$_n$|  [MeV/c]", fontsize=FS_LABEL)
+    ax.set_ylabel(r"E$_\mathrm{rm}$ = M$_N-$E$_n$  [MeV]", fontsize=FS_LABEL)
     ax.tick_params(labelsize=FS_TICK)
 cb = fig.colorbar(pc, ax=(ax2_lfg, ax2_sf), pad=0.02, fraction=0.046)
 cb.set_label("fraction of events / bin", fontsize=FS_TITLE)
