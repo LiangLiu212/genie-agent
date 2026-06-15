@@ -1,0 +1,124 @@
+% Final-state-interaction comparison (hA2018 vs INCL): figures + chi2 tables in
+% one file, each base model's 6-panel figure followed by its two-row chi2/ndf
+% table. Base model + LQCD axial form factor held fixed; only the FSI varies.
+% Per-panel PDFs co-located as fsi_lfg_lqcd_{a..f}.pdf / fsi_sf_lqcd_{a..f}.pdf;
+% prepend your paper's path (e.g. plots/) to the \includegraphics keys.
+% Requires: amsmath (for \text), graphicx, overpic, booktabs.
+% Panels: (a) dpT (dalphaT<45 deg), (b) dpT (135<dalphaT<180), (c) dpT,
+%         (d) dalphaT, (e) p_mu, (f) p_p.
+
+% ======================= LFG + LQCD : hA2018 vs INCL =======================
+\begin{figure*}[htbp]
+\centering
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_lfg_lqcd_a.pdf}
+\put(24,56){\footnotesize\text{(a)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_lfg_lqcd_b.pdf}
+\put(24,56){\footnotesize\text{(b)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_lfg_lqcd_c.pdf}
+\put(24,56){\footnotesize\text{(c)}}
+\end{overpic}
+\end{minipage}
+
+%\hfill
+\vspace{0.5cm}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_lfg_lqcd_d.pdf}
+\put(24,56){\footnotesize\text{(d)}}
+\end{overpic}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_lfg_lqcd_e.pdf}
+\put(24,56){\footnotesize\text{(e)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_lfg_lqcd_f.pdf}
+\put(24,56){\footnotesize\text{(f)}}
+\end{overpic}
+\end{minipage}
+\caption{Effect of the final-state-interaction (FSI) model on the MicroBooNE CC1$\mu$1p / CC1$\mu$Np argon cross sections with the N/LFG ground state and LQCD axial form factor held fixed: hA2018 (blue) versus INCL (orange), compared with MicroBooNE data (black points). Panels: (a) $\delta p_T$ for $\delta\alpha_T<45^\circ$ and (b) for $135^\circ<\delta\alpha_T<180^\circ$ (two slices of the 2D $\delta p_T$--$\delta\alpha_T$ measurement); (c) $\delta p_T$; (d) $\delta\alpha_T$; (e) $p_\mu$; (f) $p_p$. hA2018 agrees better with the data; switching to INCL raises $\chi^2/{\rm ndf}$ in most observables (most strongly $p_p$; see Table~\ref{tab:chisq_fsi_lfg_lqcd}).}
+\label{fig:fsi_lfg_lqcd}
+\end{figure*}
+
+\begin{table}[htbp]
+\caption{$\chi^2/{\rm ndf}$ ($p$-value) relative to MicroBooNE data for Fig.~\ref{fig:fsi_lfg_lqcd} (N/LFG ground state and LQCD axial form factor held fixed).}
+\label{tab:chisq_fsi_lfg_lqcd}
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+Configuration & $\delta p_T$ vs. $\delta \alpha_T$ & $\delta p_T$ & $\delta \alpha_T$ & $p_{\mu}$ & $p_p$ \\
+\midrule
+N/LFG + $F_A^{\rm LQCD}$ + hA2018 & 35.98/49  (0.92) & 6.78/13  (0.91) & 3.47/7  (0.84) & 16.29/26  (0.93) & 16.05/15  (0.38)\\
+N/LFG + $F_A^{\rm LQCD}$ + INCL   & 56.01/49  (0.23) & 9.09/13  (0.77) & 5.75/7  (0.57) & 17.66/26  (0.89) & 26.94/15  (0.03)\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+% ======================= SF + LQCD : hA2018 vs INCL =======================
+\begin{figure*}[htbp]
+\centering
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_sf_lqcd_a.pdf}
+\put(24,56){\footnotesize\text{(a)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_sf_lqcd_b.pdf}
+\put(24,56){\footnotesize\text{(b)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_sf_lqcd_c.pdf}
+\put(24,56){\footnotesize\text{(c)}}
+\end{overpic}
+\end{minipage}
+
+%\hfill
+\vspace{0.5cm}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_sf_lqcd_d.pdf}
+\put(24,56){\footnotesize\text{(d)}}
+\end{overpic}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_sf_lqcd_e.pdf}
+\put(24,56){\footnotesize\text{(e)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{fsi_sf_lqcd_f.pdf}
+\put(24,56){\footnotesize\text{(f)}}
+\end{overpic}
+\end{minipage}
+\caption{As in Fig.~\ref{fig:fsi_lfg_lqcd} but with the spectral-function ground state (LQCD axial form factor held fixed): hA2018 (blue) versus INCL (orange). Again hA2018 is favoured over INCL, which substantially worsens the 2D $\delta p_T$--$\delta\alpha_T$ and $p_p$ agreement (see Table~\ref{tab:chisq_fsi_sf_lqcd}).}
+\label{fig:fsi_sf_lqcd}
+\end{figure*}
+
+\begin{table}[htbp]
+\caption{$\chi^2/{\rm ndf}$ ($p$-value) relative to MicroBooNE data for Fig.~\ref{fig:fsi_sf_lqcd} (spectral-function ground state and LQCD axial form factor held fixed).}
+\label{tab:chisq_fsi_sf_lqcd}
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+Configuration & $\delta p_T$ vs. $\delta \alpha_T$ & $\delta p_T$ & $\delta \alpha_T$ & $p_{\mu}$ & $p_p$ \\
+\midrule
+SF + $F_A^{\rm LQCD}$ + hA2018 & 34.25/49  (0.95) & 6.36/13  (0.93) & 5.19/7  (0.64) & 18.82/26  (0.84) & 15.59/15  (0.41)\\
+SF + $F_A^{\rm LQCD}$ + INCL   & 66.61/49  (0.05) & 15.72/13  (0.26) & 5.47/7  (0.60) & 23.91/26  (0.58) & 32.25/15  (0.01)\\
+\bottomrule
+\end{tabular}}
+\end{table}
