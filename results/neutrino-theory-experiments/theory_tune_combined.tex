@@ -1,0 +1,69 @@
+% Reference-tune comparison (theory side): the most theory-driven GENIE config
+%   SF + F_A^LQCD + INCL  (= SF26_21b_00_000)
+% against the AR23 and MicroBooNE reference tunes; 6-panel figure + chi2 table.
+% Companion to reference_tune_combined.tex (best empirical config, LFG26_24a).
+% Per-panel PDFs are co-located as theory_tune_{a..f}.pdf; prepend your paper's
+% path (e.g. plots/) to the \includegraphics keys.
+% chi2/ndf (p-value) rows are reused verbatim from chisq_table.tex (tab:chisq).
+% Requires: amsmath (for \text), graphicx, overpic, booktabs.
+% Panels: (a) dpT (dalphaT<45 deg), (b) dpT (135<dalphaT<180), (c) dpT,
+%         (d) dalphaT, (e) p_mu, (f) p_p.
+
+% ============ most-theoretical config vs AR23 / MicroBooNE reference tunes ============
+\begin{figure*}[htbp]
+\centering
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{theory_tune_a.pdf}
+\put(24,56){\footnotesize\text{(a)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{theory_tune_b.pdf}
+\put(24,56){\footnotesize\text{(b)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{theory_tune_c.pdf}
+\put(24,56){\footnotesize\text{(c)}}
+\end{overpic}
+\end{minipage}
+
+%\hfill
+\vspace{0.5cm}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{theory_tune_d.pdf}
+\put(24,56){\footnotesize\text{(d)}}
+\end{overpic}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{theory_tune_e.pdf}
+\put(24,56){\footnotesize\text{(e)}}
+\end{overpic}
+\end{minipage}
+%\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{overpic}[width=\linewidth]{theory_tune_f.pdf}
+\put(24,56){\footnotesize\text{(f)}}
+\end{overpic}
+\end{minipage}
+\caption{The most theory-driven GENIE configuration SF $+\ F_A^{\rm LQCD}\ +$ INCL (blue) compared with the AR23 (orange) and MicroBooNE (green) reference tunes on the MicroBooNE CC1$\mu$1p / CC1$\mu$Np argon cross sections (black points). Panels: (a) $\delta p_T$ for $\delta\alpha_T<45^\circ$ and (b) for $135^\circ<\delta\alpha_T<180^\circ$ (two slices of the 2D $\delta p_T$--$\delta\alpha_T$ measurement); (c) $\delta p_T$; (d) $\delta\alpha_T$; (e) $p_\mu$; (f) $p_p$. Both reference tunes are drawn dashed. With INCL FSI the SF $+\ F_A^{\rm LQCD}$ prediction sits below the data around the $\delta p_T$ peak and gives the largest $\chi^2/{\rm ndf}$ of the three in the 2D $\delta p_T$--$\delta\alpha_T$, $\delta p_T$ and $p_p$ distributions (see Table~\ref{tab:chisq_theory_tune}).}
+\label{fig:theory_tune}
+\end{figure*}
+
+\begin{table}[htbp]
+\caption{$\chi^2/{\rm ndf}$ ($p$-value) relative to MicroBooNE data for Fig.~\ref{fig:theory_tune}.}
+\label{tab:chisq_theory_tune}
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+Configuration & $\delta p_T$ vs. $\delta \alpha_T$ & $\delta p_T$ & $\delta \alpha_T$ & $p_{\mu}$ & $p_p$ \\
+\midrule
+SF + $F_A^{\rm LQCD}$ + INCL & 66.61/49  (0.05) & 15.72/13  (0.26) & 5.47/7  (0.60) & 23.91/26  (0.58) & 32.25/15  (0.01)\\
+AR23                         & 38.05/49  (0.87) & 10.63/13  (0.64) & 7.56/7  (0.37) & 28.96/26  (0.31) & 24.07/15  (0.06)\\
+MicroBooNE Tune              & 42.61/49  (0.73) & 7.31/13  (0.89) & 3.96/7  (0.78) & 24.59/26  (0.54) & 17.38/15  (0.30)\\
+\bottomrule
+\end{tabular}}
+\end{table}
