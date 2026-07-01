@@ -218,7 +218,7 @@ arm has a central momentum P0 (giving an energy window E' = P0*(1 +/- delta) for
 bite) and a central angle theta0 (giving theta0 +/- the angular acceptance). For a specific
 comparison, read them from the SIMC deck -- `spec%e%P`, `spec%e%theta`, `spec%p%P`,
 `spec%p%theta` for the centers and the `SPedge%e%/SPedge%p%` delta/yptar/xptar limits (the
-`e_arm_accept` / `p_arm_accept` blocks) for the widths (`simc_gfortran/infiles/*.inp`) -- or
+`e_arm_accept` / `p_arm_accept` blocks) for the widths (e.g. [`test_eep_fe.inp` on the fork](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/infiles/test_eep_fe.inp#L52-L68)) -- or
 from the experiment's kinematics table. See `simc-eep-normalization.md` Section 4 for the
 full fiducial-box mapping (delta [%], yptar/xptar [mrad] about the arm axis) and real
 (e,e'p) values.

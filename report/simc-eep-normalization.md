@@ -4,7 +4,7 @@ Exploration report on the `simc_gfortran` codebase, focused on the (e,e'p) react
 path and how the Monte Carlo weight is turned into an absolutely-normalized cross
 section / yield.
 
-- Repository: `simc_gfortran/` (vendored, own git checkout; HEAD `60c2047`)
+- Source: [LiangLiu212/simc_gfortran](https://github.com/LiangLiu212/simc_gfortran) @ [`60c2047`](https://github.com/LiangLiu212/simc_gfortran/tree/60c20471c565be500eb7192752a5ad5eb7768028) (fork of JeffersonLab/simc_gfortran) -- every `file:line` below anchors to this commit
 - Working-tree state at time of exploration: clean (no local modifications)
 - Date: 2026-07-01
 
@@ -210,6 +210,12 @@ New decks use `%` (`record%field`); older decks (`test_eep_h.inp`, `test_eep_d.i
 dots (`SPedge.e.delta.min`). Registered at `dbase.f:1115-1129`; mrad->rad conversion at
 `dbase.f:485-492`.
 
+**Fiducial-box source on the fork** (@ `60c2047`): the `test_eep_fe.inp` blocks
+[`e_arm_accept` (L52-59)](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/infiles/test_eep_fe.inp#L52-L59)
+and [`p_arm_accept` (L61-68)](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/infiles/test_eep_fe.inp#L61-L68);
+parsed at [`dbase.f:1115-1129`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/dbase.f#L1115-L1129),
+mrad->rad at [`dbase.f:485-492`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/dbase.f#L485-L492).
+
 ### 4.2 What the box is (per arm, 3D about the central setting)
 
 | field           | meaning                                        | maps to             |
@@ -229,8 +235,9 @@ All three `test_eep_*.inp` share the same box:
 - e-arm: delta +/-10 %, yptar +/-50 mrad, xptar +/-100 mrad
 - p-arm: delta +/-15 %, yptar +/-90 mrad, xptar +/-50 mrad
 
-Worked example -- `test_eep_fe.inp` (A(e,e'p); centers `(P0,theta0)_e = (1300 MeV/c,
-54.0 deg)`, `(P0,theta0)_p = (2520 MeV/c, 24.80 deg)`, Ebeam 3056 MeV):
+Worked example -- [`test_eep_fe.inp`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/infiles/test_eep_fe.inp)
+(A(e,e'p); [centers L21-30](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/infiles/test_eep_fe.inp#L21-L30)
+`(P0,theta0)_e = (1300 MeV/c, 54.0 deg)`, `(P0,theta0)_p = (2520 MeV/c, 24.80 deg)`, Ebeam 3056 MeV):
 
 - e': p in [1170, 1430] MeV/c, about 54.0 deg +/- (~2.9 deg in-plane, ~5.7 deg out-of-plane)
 - p:  p in [2142, 2898] MeV/c, about 24.80 deg +/- (~5.2 deg, ~2.9 deg)
@@ -238,11 +245,11 @@ Worked example -- `test_eep_fe.inp` (A(e,e'p); centers `(P0,theta0)_e = (1300 Me
 ### 4.4 Three layers of fiducial
 
 1. `SPedge` (deck) -- the rectangular acceptance box above.
-2. `gen` (`init.f:490-517`) -- generation limits derived from SPedge/edge: angular
+2. `gen` ([`init.f:490-517`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/init.f#L490-L517)) -- generation limits derived from SPedge/edge: angular
    `gen = edge` (~ SPedge); `gen%delta` computed from the energy window and P0
-   (`gen%e%delta%min = (E_min/P0 - 1)*100`). `genvol` (`simc.f:376-396`) is exactly the
+   (`gen%e%delta%min = (E_min/P0 - 1)*100`). `genvol` ([`simc.f:376-396`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/simc.f#L376-L396)) is exactly the
    volume of this box -- so the fiducial box and the normalization volume are one object.
-3. Physical apertures / collimators (`hms/mc_hms.f` and the other arm dirs) -- collimator,
+3. Physical apertures / collimators ([`hms/mc_hms.f`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/hms/mc_hms.f) and the other arm dirs) -- collimator,
    Q1/Q2/Q3 (checked at 2/3 of each), dipole, and circular vacuum-pipe cuts carve the true,
    NON-rectangular acceptance during transport. SPedge is the bounding box, not the exact
    shape.
