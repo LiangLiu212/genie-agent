@@ -242,7 +242,35 @@ Worked example -- [`test_eep_fe.inp`](https://github.com/LiangLiu212/simc_gfortr
 - e': p in [1170, 1430] MeV/c, about 54.0 deg +/- (~2.9 deg in-plane, ~5.7 deg out-of-plane)
 - p:  p in [2142, 2898] MeV/c, about 24.80 deg +/- (~5.2 deg, ~2.9 deg)
 
-### 4.4 Three layers of fiducial
+### 4.4 SPedge is a generation box, not the true acceptance
+
+The `SPedge` numbers above are a **generic generation box**, not the physical HMS/SOS
+acceptance, and they are **not fixed** -- they vary by deck:
+
+| deck(s)                                   | e-arm delta/yptar/xptar (max) | p-arm delta/yptar/xptar (max) |
+|-------------------------------------------|-------------------------------|-------------------------------|
+| `test_eep_*`, `eep_hydrogen_q8` (this box)| 10 % / 50 / 100 mrad          | 15 % / 90 / 50 mrad           |
+| `test_kaon_h`                             | 14 % / 60 / 100               | 22 % / 90 / 50                |
+| `test_pion_h`                             | 12 % / 50 / 90                | 22 % / 130 / 100              |
+| `nps_excl_pi0_test`                       | 15 % / 40 / 90                | 90 % / 500 / 500              |
+| `mc_neg_h_z85_zbin`                       | 15 % / 80 / 60                | 8.5 % / 60 / 100              |
+
+(across decks: e-arm delta spans +/-10 to +/-40 %, p-arm +/-8.5 to +/-90 %.) The eep decks
+share one box only because they are copied from a common template.
+
+`SPedge` merely sets the rectangular region SIMC generates into; the true, non-rectangular
+acceptance is carved by the collimator + magnet + vacuum-pipe apertures (Section 4.5,
+layer 3). So `SPedge` only has to be **>=** the real acceptance -- e.g. the HMS box above is
+a ~20 msr rectangle, but the real collimated HMS solid angle is ~6.8 msr; the collimator
+does the actual cut.
+
+**Real HMS/SOS acceptance** (Dutta et al., nucl-ex/0303011, `papers/nucl-ex_0303011/`):
+HMS 6.8 msr collimated (8.1 msr open), delta ~ +/-(9-10) %; SOS 7.5 msr collimated
+(9 msr open), momentum bite ~40 % -> delta +/-20 %. Note the test-deck proton delta +/-15 %
+**under-covers** the real SOS +/-20 % bite -- set it to +/-20 % (or the actual analysis
+fiducial cut) for a faithful reproduction.
+
+### 4.5 Three layers of fiducial
 
 1. `SPedge` (deck) -- the rectangular acceptance box above.
 2. `gen` ([`init.f:490-517`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/init.f#L490-L517)) -- generation limits derived from SPedge/edge: angular
@@ -257,7 +285,7 @@ Worked example -- [`test_eep_fe.inp`](https://github.com/LiangLiu212/simc_gfortr
 Plus optional physics-variable cuts `cuts%Em`, `cuts%Pm` (missing energy / momentum),
 default wide-open (+/-1e6, `dbase.f:539-541`); the eep decks do not set them.
 
-### 4.5 Using it to match GENIE
+### 4.6 Using it to match GENIE
 
 The box is in SPECTROMETER-ARM coordinates (delta, xptar, yptar about the arm axis), NOT lab
 (E, theta). To reproduce it faithfully on GENIE events, do not cut lab theta directly:
