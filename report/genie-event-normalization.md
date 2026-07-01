@@ -211,11 +211,24 @@ subtends limited phi makes GENIE over-count. Match dOmega = dcos(theta) dphi on 
   this for data comparison, `pn` for the true initial-state distribution. EMQE + FSI shifts
   the two apart.
 
-### 6.6 Cut-applied snippet (verified on the example gst; extends Section 5)
+### 6.6 Cut-applied snippet (mechanics verified on the example gst; fill in the cut values)
+
+Where the cut VALUES come from: the spectrometer arm settings, not the event sample. Each
+arm has a central momentum P0 (giving an energy window E' = P0*(1 +/- delta) for the delta
+bite) and a central angle theta0 (giving theta0 +/- the angular acceptance). For a specific
+comparison, read them from the SIMC deck -- `spec%e%P`, `spec%e%theta`, `spec%p%P`,
+`spec%p%theta` for the centers and the `SPedge%e%/SPedge%p%` delta/yptar/xptar limits (the
+`e_arm_accept` / `p_arm_accept` blocks) for the widths (`simc_gfortran/infiles/*.inp`) -- or
+from the experiment's kinematics table. See `simc-eep-normalization.md` Section 4 for the
+full fiducial-box mapping (delta [%], yptar/xptar [mrad] about the arm axis) and real
+(e,e'p) values.
+
+The cut values in the snippet below are written as `xxx` -- they are placeholders you must
+fill in from your arm settings, not real numbers. (For orientation only: this particular
+sample sits at forward theta_e' ~5 deg, E' ~2.38 GeV, with low-momentum protons.)
 
 Note: `Ef` is TOTAL energy (includes the 0.938 GeV proton mass); use `Ef - m_p` for kinetic
-energy, or `pf` for momentum, depending on what your spectrometer cut is defined on. The
-ranges below are placeholders -- set them to your arm settings.
+energy, or `pf` for momentum, depending on what your spectrometer cut is defined on.
 
 ```python
 import uproot, numpy as np, awkward as ak
@@ -239,12 +252,12 @@ lead  = ak.argmax(ak.mask(a.pf, is_p), axis=1, keepdims=True)
 Ep    = ak.to_numpy(ak.fill_none(ak.firsts(a.Ef[lead]),   -1.0))
 thp   = np.degrees(np.arccos(ak.to_numpy(ak.fill_none(ak.firsts(a.cthf[lead]), -1.0))))
 
-# fiducial box -- edit ranges to match the spectrometer arms
+# fiducial box -- replace every xxx with YOUR spectrometer arm settings (see note above)
 mask = ( has_p
-       & (Ee  > 1.9) & (Ee  < 2.1)      # e' energy bite     [GeV]
-       & (the > 12.) & (the < 16.)      # e' polar angle     [deg]
-       & (Ep  > 0.9) & (Ep  < 1.6)      # proton total E     [GeV]
-       & (thp > 30.) & (thp < 70.) )    # proton polar angle [deg]
+       & (Ee  > xxx) & (Ee  < xxx)      # e' energy bite     [GeV]
+       & (the > xxx) & (the < xxx)      # e' polar angle     [deg]
+       & (Ep  > xxx) & (Ep  < xxx)      # proton total E     [GeV]
+       & (thp > xxx) & (thp < xxx) )    # proton polar angle [deg]
 
 # bin in missing momentum p_m (true initial nucleon momentum)
 pn = ak.to_numpy(a.pn); w = ak.to_numpy(a.wght)
