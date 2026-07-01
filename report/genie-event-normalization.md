@@ -139,7 +139,124 @@ For the example run this gives `sig_tot_ub ~= 35.6` microbarn per C12.
 
 ---
 
-## 6. Gotchas
+## 6. Fiducial cuts and binning
+
+Comparing to SIMC (or data) means restricting to a phase-space box. Keep two ideas apart:
+
+- **Cuts** = the fiducial box in the 6-fold phase space (E', theta_e', E_p, theta_p, and
+  the two azimuths). They define WHICH region you measure.
+- **Binning** = the differential variable you histogram INSIDE that box.
+
+### 6.1 Cuts are boolean selections on true kinematics -- they do not change the prefactor
+
+gevgen threw `N_gen` unweighted events over the FULL 6-fold phase space, distributed
+proportional to the true dsigma. So for any fiducial selection C and bin in x:
+
+```
+dsigma/dx |_{x-bin, event passes C} = sigma_tot * N(passes C & in x-bin) / (N_gen * dx)
+```
+
+`sigma_tot` and `N_gen` stay the FULL total and FULL generated count; the cut changes only
+the numerator. Consequences:
+
+- No acceptance correction and NO Jacobian are needed -- for the cut or for a nonlinear
+  change of binning variable. The MC event density transforms automatically; apply the cut
+  as a boolean and histogram x with the constant weight `sigma_tot/N_gen`.
+- Do NOT shrink `sigma_tot` or `N_gen` to "events passing cuts" -- that double-counts the
+  acceptance. The cut lives only in the numerator.
+
+The result is the cross section integrated over the fiducial box, differential in x --
+exactly what an (e,e'p) measurement within spectrometer acceptances reports.
+
+### 6.2 What the four cuts constrain (fixed beam energy)
+
+| cut (gst branch)             | fixes                          | spectral-function axis         |
+|------------------------------|--------------------------------|--------------------------------|
+| E' (`El`), theta_e' (`cthl`) | Q2, nu, \|q\|, x_B             | the (Q2, nu) hard-scatter point |
+| E_p (`Ef`) at fixed nu       | E_m = nu - T_p - T_recoil      | removal / separation energy    |
+| theta_p (`cthf`) at fixed q  | \|p_m\| (via theta_pq)         | initial-nucleon momentum       |
+
+So the electron-arm cut is a cut on (Q2, x); the proton-arm cuts are a cut on (E_m, p_m).
+Pick binning by goal:
+
+- Reproduce a specific measurement: cut on the raw arm variables the experiment used, bin
+  in its reported observable.
+- QE (e,e'p) physics: cut the electron arm to fix (Q2, x~1), then bin in missing momentum
+  p_m (and/or E_m) inside the proton-arm acceptance.
+
+### 6.3 Match SIMC's genvol box (cross-check)
+
+SIMC's `genvol` for A(e,e'p) is exactly the generated (Omega_e * Omega_p * E_e * E_p) box
+(`simc.f:376-394`). If the GENIE cuts reproduce that same box -- including each arm's
+AZIMUTHAL coverage, not just the in-plane angle -- the two integrated cross sections
+should agree up to model/FSI differences. Leaving phi at full 4pi in GENIE while SIMC
+subtends limited phi makes GENIE over-count. Match dOmega = dcos(theta) dphi on both arms.
+
+### 6.4 Apply cuts at the same level on both sides
+
+- GENIE gst gives TRUE (vertex) kinematics only.
+- SIMC applies acceptance on RECONSTRUCTED kinematics (after optics, energy loss,
+  resolution). For a theory-to-theory comparison, cut SIMC on its thrown/vertex quantities,
+  not recon, so both are true-level. To compare to real data, fold GENIE through the
+  detector acceptance (or unfold the data).
+- A hard rectangular box is the standard first approximation; the real spectrometer
+  acceptance is a smooth function (what SIMC's optics produce). For that fidelity, apply an
+  acceptance function/weight to GENIE instead of a hard box.
+
+### 6.5 Missing momentum: two definitions
+
+- **True initial momentum:** `pn` (struck nucleon, pre-FSI) -- the PWIA p_m.
+- **Reconstructed:** p_m = \|q - p_p'\|, with q = k - k' from the electron branches and the
+  detected proton -- includes FSI distortion, which is what an experiment measures. Use
+  this for data comparison, `pn` for the true initial-state distribution. EMQE + FSI shifts
+  the two apart.
+
+### 6.6 Cut-applied snippet (verified on the example gst; extends Section 5)
+
+Note: `Ef` is TOTAL energy (includes the 0.938 GeV proton mass); use `Ef - m_p` for kinetic
+energy, or `pf` for momentum, depending on what your spectrometer cut is defined on. The
+ranges below are placeholders -- set them to your arm settings.
+
+```python
+import uproot, numpy as np, awkward as ak
+
+t = uproot.open("….gst.root")["gst"]
+a = t.arrays(["El","cthl","pdgf","Ef","cthf","pf","pn","hitnuc","XSec","wght"])
+
+# FULL-sample normalization (unchanged by cuts)
+hn = ak.to_numpy(a.hitnuc)
+sig_tot_ub = sum(np.unique(ak.to_numpy(a.XSec)[hn==n])[0] for n in np.unique(hn)) * 1e-8
+N_gen = len(a)
+
+# electron arm (one value per event)
+Ee  = ak.to_numpy(a.El)
+the = np.degrees(np.arccos(ak.to_numpy(a.cthl)))
+
+# leading final-state proton per event (pdgf/Ef/cthf/pf are per-particle)
+is_p  = (a.pdgf == 2212)
+has_p = ak.to_numpy(ak.num(a.pf[is_p]) > 0)
+lead  = ak.argmax(ak.mask(a.pf, is_p), axis=1, keepdims=True)
+Ep    = ak.to_numpy(ak.fill_none(ak.firsts(a.Ef[lead]),   -1.0))
+thp   = np.degrees(np.arccos(ak.to_numpy(ak.fill_none(ak.firsts(a.cthf[lead]), -1.0))))
+
+# fiducial box -- edit ranges to match the spectrometer arms
+mask = ( has_p
+       & (Ee  > 1.9) & (Ee  < 2.1)      # e' energy bite     [GeV]
+       & (the > 12.) & (the < 16.)      # e' polar angle     [deg]
+       & (Ep  > 0.9) & (Ep  < 1.6)      # proton total E     [GeV]
+       & (thp > 30.) & (thp < 70.) )    # proton polar angle [deg]
+
+# bin in missing momentum p_m (true initial nucleon momentum)
+pn = ak.to_numpy(a.pn); w = ak.to_numpy(a.wght)
+cnts, edges = np.histogram(pn[mask], bins=40, range=(0,0.4), weights=w[mask])
+dsig_dpm = sig_tot_ub * cnts / (N_gen * np.diff(edges))   # microbarn/(GeV/c) per C12
+```
+
+`sigma_tot` and `N_gen` are the full-sample values; `mask` selects only the numerator.
+
+---
+
+## 7. Gotchas
 
 - **Per-nucleus vs per-nucleon.** GENIE's `tgt:…;N:2212` cross section already sums over
   the 6 carbon protons -- it is per nucleus, matching SIMC's A(e,e'p) convention. Divide
@@ -157,18 +274,22 @@ For the example run this gives `sig_tot_ub ~= 35.6` microbarn per C12.
 
 ---
 
-## 7. gst branch reference (this run)
+## 8. gst branch reference (this run)
 
 - Event weight: `wght` (identically 1 here).
 - Cross sections: `XSec` (channel total), `DXSec` (differential), both in 1e-38 cm^2.
 - Selected vs true kinematics: `xs, ys, ts, Q2s, Ws` (selected) vs `x, y, t, Q2, W` (true).
 - Reaction flags: `qel, mec, res, dis, coh, em, cc, nc, …` (here `qel & em` true for all).
 - Target / hit nucleon: `tgt, Z, A, hitnuc` (2212 proton / 2112 neutron).
+- Final electron (primary lepton): `El, pl, cthl` (E', |p|, cos theta_e').
+- Final-state particles (per-particle arrays of length `nf`): `pdgf, Ef, pf, cthf`; counts
+  `nfp` (protons), `nfn` (neutrons). Select the proton with `pdgf == 2212`.
+- Struck (initial) nucleon, pre-FSI: `En, pn, cthn` -- `pn` is the PWIA missing momentum.
 - Kinematic phase-space code: `KPS` (12 here).
 
 ---
 
-## 8. Units summary
+## 9. Units summary
 
 | Quantity                | Units                          |
 |-------------------------|--------------------------------|
