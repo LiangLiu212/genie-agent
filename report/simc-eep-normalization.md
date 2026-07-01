@@ -187,7 +187,82 @@ Each ntuple event carries `Weight = main%weight` (`results_write.f:146, 195, 257
 
 ---
 
-## 4. Recipe: from SIMC output to a cross section / yield
+## 4. Spectrometer acceptance -- the fiducial box
+
+SIMC does not generate over 4pi; it throws events only inside each spectrometer arm's
+acceptance. That acceptance -- the fiducial box -- is set explicitly in the input deck, and
+it IS the `genvol` used in the normalization (Section 3).
+
+### 4.1 Where it lives: two parm blocks per deck
+
+```
+begin parm e_arm_accept                    begin parm p_arm_accept
+  SPedge%e%delta%min = -10.0   ; %           SPedge%p%delta%min = -15.0   ; %
+  SPedge%e%delta%max =  10.0                 SPedge%p%delta%max =  15.0
+  SPedge%e%yptar%min = -50.0   ; mrad        SPedge%p%yptar%min = -90.0   ; mrad
+  SPedge%e%yptar%max =  50.0                 SPedge%p%yptar%max =  90.0
+  SPedge%e%xptar%min = -100.0  ; mrad        SPedge%p%xptar%min = -50.0   ; mrad
+  SPedge%e%xptar%max =  100.0                SPedge%p%xptar%max =  50.0
+end parm e_arm_accept                      end parm p_arm_accept
+```
+
+New decks use `%` (`record%field`); older decks (`test_eep_h.inp`, `test_eep_d.inp`) use
+dots (`SPedge.e.delta.min`). Registered at `dbase.f:1115-1129`; mrad->rad conversion at
+`dbase.f:485-492`.
+
+### 4.2 What the box is (per arm, 3D about the central setting)
+
+| field           | meaning                                        | maps to             |
+|-----------------|------------------------------------------------|---------------------|
+| `delta%min/max` | momentum bite, % of P0: p = P0*(1 + delta/100) | E' / E_p window     |
+| `yptar%min/max` | one transverse slope, mrad, about the arm axis | in-plane angle*     |
+| `xptar%min/max` | the other transverse slope, mrad               | out-of-plane angle* |
+
+Centered on `spec%<arm>%P` (P0) and `spec%<arm>%theta` (theta0) from the kinematics block.
+*HMS/SHMS/HRS convention (dispersive plane vertical); the arm transport code fixes the exact
+geometry.
+
+### 4.3 Real (e,e'p) values
+
+All three `test_eep_*.inp` share the same box:
+
+- e-arm: delta +/-10 %, yptar +/-50 mrad, xptar +/-100 mrad
+- p-arm: delta +/-15 %, yptar +/-90 mrad, xptar +/-50 mrad
+
+Worked example -- `test_eep_fe.inp` (A(e,e'p); centers `(P0,theta0)_e = (1300 MeV/c,
+54.0 deg)`, `(P0,theta0)_p = (2520 MeV/c, 24.80 deg)`, Ebeam 3056 MeV):
+
+- e': p in [1170, 1430] MeV/c, about 54.0 deg +/- (~2.9 deg in-plane, ~5.7 deg out-of-plane)
+- p:  p in [2142, 2898] MeV/c, about 24.80 deg +/- (~5.2 deg, ~2.9 deg)
+
+### 4.4 Three layers of fiducial
+
+1. `SPedge` (deck) -- the rectangular acceptance box above.
+2. `gen` (`init.f:490-517`) -- generation limits derived from SPedge/edge: angular
+   `gen = edge` (~ SPedge); `gen%delta` computed from the energy window and P0
+   (`gen%e%delta%min = (E_min/P0 - 1)*100`). `genvol` (`simc.f:376-396`) is exactly the
+   volume of this box -- so the fiducial box and the normalization volume are one object.
+3. Physical apertures / collimators (`hms/mc_hms.f` and the other arm dirs) -- collimator,
+   Q1/Q2/Q3 (checked at 2/3 of each), dipole, and circular vacuum-pipe cuts carve the true,
+   NON-rectangular acceptance during transport. SPedge is the bounding box, not the exact
+   shape.
+
+Plus optional physics-variable cuts `cuts%Em`, `cuts%Pm` (missing energy / momentum),
+default wide-open (+/-1e6, `dbase.f:539-541`); the eep decks do not set them.
+
+### 4.5 Using it to match GENIE
+
+The box is in SPECTROMETER-ARM coordinates (delta, xptar, yptar about the arm axis), NOT lab
+(E, theta). To reproduce it faithfully on GENIE events, do not cut lab theta directly:
+transform each e'/proton momentum into the arm frame (central direction from theta0), compute
+`delta = (|p|/P0 - 1)*100` and the two transverse slopes, then apply the SPedge box. That
+automatically captures the azimuthal / out-of-plane acceptance. For higher fidelity, add the
+collimator model; SPedge + centers is the standard first-order fiducial. See
+`genie-event-normalization.md` Section 6 for the GENIE-side cut mechanics.
+
+---
+
+## 5. Recipe: from SIMC output to a cross section / yield
 
 The estimator implied by the code (`simc.f:398` combined with the
 `wtcontribute/nevent` report at `simc.f:923`) is:
@@ -216,7 +291,7 @@ and target; scale by the real experimental charge/target to compare to data.
 
 ---
 
-## 5. Key file / symbol reference
+## 6. Key file / symbol reference
 
 | File                     | Symbol / line                        | Role                                                   |
 |--------------------------|--------------------------------------|--------------------------------------------------------|
@@ -232,12 +307,15 @@ and target; scale by the real experimental charge/target to compare to data.
 | `simc.f`                 | `:368`, `:376-396`                   | normfac, genvol (phase-space volume)                   |
 | `simc.f`                 | `:916-968`                           | output header (Ngen, normfac, luminosity, ...)         |
 | `results_write.f`        | `:146/195/257/303`                   | per-event Weight into ntuple                           |
+| `dbase.f`                | `:1115-1129`, `:485-492`             | SPedge fiducial-box params (deck) + mrad->rad          |
+| `init.f`                 | `:490-517`                           | gen limits from SPedge/edge (= the genvol box)         |
+| `hms/mc_hms.f` (+ arms)  | apertures                            | collimator + magnet/pipe apertures (true acceptance)   |
 | `central_xsec_howto.txt` | --                                   | central cross-section extraction how-to                |
 | `infiles/test_eep_*.inp` | --                                   | H / D / Fe (e,e'p) input decks                         |
 
 ---
 
-## 6. Units summary
+## 7. Units summary
 
 | Quantity            | Units                          |
 |---------------------|--------------------------------|
@@ -251,7 +329,7 @@ and target; scale by the real experimental charge/target to compare to data.
 
 ---
 
-## 7. Caveats / gotchas
+## 8. Caveats / gotchas
 
 - `ee_calcium48.inp` is **nuclear elastic** (`doing_nuc_elast=1`), not quasi-elastic
   (e,e'p). For A(e,e'p) leave the reaction flags false and set `use_benhar_sf` as needed.
