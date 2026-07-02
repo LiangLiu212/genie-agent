@@ -225,6 +225,46 @@ low `p_m`** (l = 0). Which models populate which window is itself the story:
   the s-window the `33b` slice is the cleaner s-shell sample: its resolved p-shell peaks sit
   below 25 MeV, while the old SF leaks smeared p-shell strength into 30–50 MeV.
 
+### 5. Missing energy vs Dutta Fig. 9 — spectrometer acceptance + occupancy normalization
+
+![E_m vs Dutta fig9](em_dutta_fig9_q1p28.png)
+
+The direct data overlay: `E_m` through the **physical HMS×SOS acceptance** instead of the
+stage-2 windows. `acceptance.py` cuts in **spectrometer coordinates** (per-arm `delta`/`yptar`/
+`xptar` boxes about the Q² = 1.28 central settings — HMS e′: 1.725 GeV/c @ 32.0°, |δ|<8 %,
+|y′|<27.5 mrad; SOS p: 1.341 GeV/c @ 43.5°, |δ|<20 %, |y′|<57 mrad, |x′|<37.2 mrad — from
+[report/simc-eep-normalization.md](../../report/simc-eep-normalization.md) §4.5/4.7,
+collimator-derived). Each event is rotated about the beam to put e′ in the spectrometer plane
+(the MC is azimuthally symmetric; the proton keeps its relative out-of-plane angle, so the SOS
+box carves the physical coincidence acceptance). `E_m = ω − T_p − T_rec` (paper definition,
+recoil included), 5-MeV data bins, `p_m` < 300 MeV/c (automatically satisfied in this
+acceptance). Acceptance efficiency ~1.4–2.6 % (N = 135k–260k from 10M streamed/model).
+
+**Normalization**: the fig9 data are on the **full-occupancy (IPSM) scale** — their integral is
+Σ·5 MeV = 6.08 ≈ Z, not the raw absorbed yield (see
+[open_questions](../../papers/nucl-ex_0303011/open_questions.md)) — so each model is scaled to
+the same integral over 0–80 MeV (shape + occupancy comparison). Data error bars: inner = the
+data file's statistical errors (0.8–3.3 %); outer grey = total point-to-point per the
+open-questions prescription (stat ⊕ 2 % ⊕ 5 %, the two p-shell bins set to the published
+pixel-measured bars 8.1 %/4.7 %).
+
+**Read**: the two **SF + UnifiedQEL** variants are closest (χ²/13 ≈ 2.2k vs 21k–56k for the
+rest — the tiny data errors make χ² a ranking, not a goodness); they put the p-shell peak in
+the right bin but ~25 % low and spill strength into 20–50 MeV, plus unphysical sub-threshold
+strength at E_m < 16 MeV where the data are zero. SF + Rosenbluth peaks 20–35 MeV too high
+(no De Forest reshaping); LFG is a delta-spike at ~36 MeV (1.2 MeV⁻¹, off scale); SuSAv2 sits
+between. At this 5-MeV binning the 2024-SF quasiparticle structure is washed out — `33b` ≈
+`22b`.
+
+**Caveats**: (i) the t05 generation cut (Q² ≥ 1.18) clips the low-Q² corner of the acceptance
+(which extends to ≈1.07) — ~18 % of accepted events sit within 0.04 GeV² of the boundary; all
+five models are clipped identically and the E_m shape impact is second-order. (ii) The HMS
+octagonal collimator is modeled as its bounding rectangle (~10 % more solid angle). (iii) The
+electron out-of-plane window is treated as fully accepting (the e′-plane rotation). (iv) The
+data are deradiated but still FSI-distorted (S^D); GENIE events are post-FSI — consistent in
+spirit, but the data's absolute scale is convention-defined (occupancy), so only shapes and
+relative occupancies are compared.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -241,6 +281,12 @@ low `p_m`** (l = 0). Which models populate which window is itself the story:
 - **`plot_dists.py`** → `dists_stage1_electron.png`, `dists_stage21_proton_e.png`, `dists_stage2_full.png`
 - **`plot_2d.py`** → `missing_2d_e_vs_p.png` (3 stages × 5 models)
 - **`plot_missing_shells.py`** → `missing_p_shells.png` (p_m in the p-/s-shell `E_m` windows, all 3 stages)
+- **`acceptance.py`** — HMS/SOS spectrometer-acceptance selection (arm-frame δ/y′/x′ boxes,
+  e′-plane rotation, `E_m = ω − T_p − T_rec`); `select_acceptance(ev)`, `cut_summary(ev)`.
+- **`build_cache_acceptance.py`** — XRootD stream + acceptance selection →
+  `cache/acceptance/<model>.npz` (`MAX_FILES` env, default 20 = 10M events/model).
+- **`plot_em_dutta_fig9.py`** → `em_dutta_fig9_q1p28.png` (E_m overlay on Dutta Fig. 9,
+  occupancy-normalized; prints per-model χ²)
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 

@@ -37,19 +37,19 @@ _PNFS_ROOT = "/pnfs/dune/scratch/users/liangliu/jobsub-agent/prd_paper/EM"
 SAMPLES = {
     "LFG": ("LFG + Rosenbluth", "C0",
             f"{_PNFS_ROOT}/genie_inclxx/GEM26_11a_05_000/"
-            "eminus_C12_20260602-131202_gev/11_1000060120_GEM26_11a_05_000"),
+            "eminus_C12_20260611-115623_gev/11_1000060120_GEM26_11a_05_000"),
     "SF": ("SF + Rosenbluth", "C1",
            f"{_PNFS_ROOT}/genie_inclxx/GEM26_22a_05_000/"
-           "eminus_C12_20260602-131216_gev/11_1000060120_GEM26_22a_05_000"),
+           "eminus_C12_20260611-115638_gev/11_1000060120_GEM26_22a_05_000"),
     "SuSAv2": ("LFG + SuSAv2", "C2",
                f"{_PNFS_ROOT}/genie_dev/GEM21_11a_05_000/"
-               "eminus_C12_20260601-153754_gev/11_1000060120_GEM21_11a_05_000"),
+               "eminus_C12_20260611-115749_gev/11_1000060120_GEM21_11a_05_000"),
     "UnifiedQEL2024": ("SF(2024) + UnifiedQEL", "C4",
                        f"{_PNFS_ROOT}/genie_inclxx/GEM26_33b_05_000/"
-                       "eminus_C12_20260610-095820_gev/11_1000060120_GEM26_33b_05_000"),
+                       "eminus_C12_20260611-115653_gev/11_1000060120_GEM26_33b_05_000"),
     "UnifiedQEL": ("SF + UnifiedQEL", "C3",
                    f"{_PNFS_ROOT}/genie_inclxx/GEM26_22b_05_000/"
-                   "eminus_C12_20260604-103343_gev/11_1000060120_GEM26_22b_05_000"),
+                   "eminus_C12_20260611-115708_gev/11_1000060120_GEM26_22b_05_000"),
 }
 # Canonical order; UnifiedQEL (Variant 05) is appended last so it is drawn on top in
 # every overlay, with UnifiedQEL2024 (the new-SF sibling) right beside it. Plots
