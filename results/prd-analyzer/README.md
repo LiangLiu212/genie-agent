@@ -362,13 +362,19 @@ detector cuts; occupancy scale `y = Z·hist(p_m<300)/(N_p·5 MeV)` (full-p_m int
 construction; plotted E_m<80 integrals 5.2–6.0 vs input tables' 5.25, data 6.08).
 
 **Findings** (this figure corrects the section 0/1 reading of the `22a` E_m shape):
-- **The Rosenbluth pair (LFG `11a`, SF `22a`) has pre-FSI E_m ≡ 16.0 MeV — a single-bin
-  delta (1.20/1.09 MeV⁻¹), event-by-event exact.** Their generator uses a fixed binding
-  prescription; the sampled removal energy is *not* propagated into the outgoing proton
-  (for `22a` the Benhar `f(E)` never reaches E_m — only `n(k)` survives into `p_m`). Their
-  post-FSI E_m spike at ~36 MeV (sections 1/6) therefore means **INTRANUKE hA2018 shifts
-  every surviving proton down by ~20 MeV in transport**; the INCL b-tunes show no such
-  shift (pre-FSI median 19.2 MeV vs post-FSI peak 15–20 MeV).
+- **The Rosenbluth pair (LFG `11a`, SF `22a`) has pre-FSI E_m ≡ 15.957 MeV = S_p — a
+  single-bin delta (1.20/1.09 MeV⁻¹), event-by-event exact.** These a-tunes run the
+  install-default OLD QEL-EM chain (`FermiMover` + `QELKinematicsGenerator/EM` + …),
+  which closes energy conservation against an on-shell ground-state ¹¹B remnant — the
+  sampled removal energy is *not* propagated into the outgoing proton (for `22a` the
+  Benhar `f(E)` never reaches E_m — only `n(k)` survives into `p_m`). Their post-FSI
+  spike at ~36 MeV (sections 1/6) is the old chain's **`NucBindEnergyAggregator` module
+  subtracting RFG-NucRemovalE = 20 MeV after transport** (15.96 + 20.0 = 35.96) — not an
+  hA transport effect. The b-tunes override QEL-EM (tune-tarball `EventGenerator.xml`)
+  with the new 8-module `QELEventGenerator/EM-Default` chain — no aggregator, hence no
+  shift (pre-FSI median 19.2 MeV vs post-FSI peak 15–20 MeV). All GEM26 tunes use
+  hA2018 transport (`HadronTransp-Model` in CommonParam); `genie-agent/tunes/` is
+  byte-identical to the published CVMFS tune tarball (verified with `diff -rq`).
 - **The UnifiedQEL pair propagates the input**: broad distributions (p95 ≈ 60 MeV) that
   ride on their dashed input curves — and on the data — across the s-shell and tail
   (25–80 MeV), with the De Forest reshaping moving peak strength down in E_m

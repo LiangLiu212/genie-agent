@@ -126,11 +126,18 @@ sigma-model mismatch is part of what the estimator measures, identically on the 
 
    NOTE 2026-07-02 (from the pre-FSI study, README section 9): the closure target
    "recover the input f(E)" applies to the UnifiedQEL variants ONLY. The Rosenbluth
-   pair's pre-FSI E_m is a fixed 16.0-MeV delta (sampled removal energy not propagated
-   into the outgoing kinematics), so its FSI-off closure would return that delta, not
-   f(E); its E_m information content lives entirely in FSI transport. Also measured:
-   INTRANUKE hA2018 shifts surviving protons down ~20 MeV in E_m (pre 16.0 -> post ~36),
-   INCL does not (pre median 19.2 -> post peak 15-20).
+   pair's pre-FSI E_m is a fixed delta at S_p = 15.957 MeV (the a-tunes run the OLD
+   QEL-EM chain -- FermiMover ground-state-remnant energy bookkeeping -- so the sampled
+   removal energy never reaches the outgoing kinematics); its FSI-off closure would
+   return that delta, not f(E). CORRECTED attribution of the ~20 MeV post-FSI shift:
+   it is the old chain's NucBindEnergyAggregator subtracting RFG-NucRemovalE = 20 MeV
+   after transport (15.96 + 20.0 = 35.96 ~ the observed 36-MeV spike), NOT an hA-vs-INCL
+   transport difference -- ALL GEM26 tunes use hA2018 (CommonParam). The b-tunes override
+   QEL-EM via a tune-level EventGenerator.xml selecting the NEW 8-module
+   QELEventGenerator/EM-Default chain (UseNuclearModel -> sampled SF energy propagated;
+   no aggregator); the a-tunes have no override and fall through to the install default,
+   the OLD 12-module chain. Verified: genie-agent/tunes/ is byte-identical to the
+   published CVMFS tune tarball (diff -rq clean for all six tunes).
 
 6. **Docs**: README section 7 (method, dictionary table, integrals table, caveats);
    cross-link `report/simc-eep-normalization.md` (the H/genvol machinery is the SIMC
