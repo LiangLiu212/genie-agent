@@ -278,6 +278,15 @@ Grey dashed lines mark the applied Q² window and, on the El/θ_e′/T_p/θ_p pa
 acceptance windows (in-plane projections, derived from `acceptance.py` — **not** applied here):
 El ∈ [1.587, 1.863] GeV, θ_e′ = 32.0 ± 1.58°, T_p ∈ [0.487, 0.924] GeV, θ_p = 43.5 ± 3.26°.
 
+**Raw event counts companion** (`dists_q2window_counts.png`): the same seven panels in
+events/bin — directly comparable rates at equal ntot = 2M generated/model. SuSAv2's higher
+in-window rate (N = 592k vs ~540k) is explicit there, as are the absolute E_m peak heights
+(LFG spike ~193k/bin; 2024-SF quasiparticle peak ~120k vs old-SF ~95k) and the near
+model-independent ~11k/bin low-T_p FSI population (an INTRANUKE effect, not a cross-section
+one).
+
+![Q2-window distributions, raw counts](dists_q2window_counts.png)
+
 **Read**: with the spectrometer bite removed, `El`/`θ_e′` are the smooth QE peak (1.75 GeV,
 ~31.5°) — the Q² window alone constrains them only weakly. `T_p` is double-peaked: the QE bump
 at ~0.65 GeV plus a low-`T_p` (~0.1–0.2 GeV) population of FSI-rescattered / secondary leading

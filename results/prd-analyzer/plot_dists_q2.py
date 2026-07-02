@@ -2,7 +2,11 @@
 
 Reads cache/q2window/<model>.npz (build_cache_q2.py: |Q^2/1.28 - 1| <= 5 %,
 nothing else) and overlays the 7 analysis variables — El, theta_e', T_p,
-theta_p, Q^2, E_miss, p_miss — for the 5 QE-EM models, area-normalized.
+theta_p, Q^2, E_miss, p_miss — for the 5 QE-EM models. Two figures:
+    dists_q2window.png         area-normalized (shape comparison)
+    dists_q2window_counts.png  raw EVENT counts per bin — directly comparable
+                               rates, since every model streamed the same
+                               ntot = 2M generated events
 This is the uncut counterpart of the plot_dists.py cut-stage figures: what the
 models look like in the Q^2 = 1.28 slice before any spectrometer selection.
 
@@ -23,7 +27,6 @@ from selection import M_P
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
 Q2_LO, Q2_HI = Q2_CENTER * (1 - Q2_FRAC), Q2_CENTER * (1 + Q2_FRAC)
-OUT = "results/prd-analyzer/dists_q2window.png"
 
 # HMS/SOS acceptance windows (in-plane projections), derived from acceptance.py:
 # El: HMS momentum bite (electron ~ massless, E ~ p); theta: arm angle +- atan(yptar);
@@ -52,35 +55,44 @@ PANELS = [
 
 cache = {m: S.load_cache(m, cache_dir=f"{S.CACHE_DIR}/q2window") for m in S.MODELS}
 
-apply_style()
-fig, axes = new_panels(ncols=4, nrows=2, sharey=False)
-for ax, (key, lab, rng, nb) in zip(axes, PANELS):
-    bins = np.linspace(rng[0], rng[1], nb)
-    for m in S.MODELS:
-        x = cache[m][key]
-        x = x[np.isfinite(x)]
-        ax.hist(x, bins=bins, histtype="step", linewidth=S.lw(m), color=S.color(m),
-                density=True, label=f"{S.label(m)}  (N={len(cache[m]['Q2'])})",
-                zorder=S.zorder(m))
-    if key in ACCEPT:            # Q2 = the applied cut; others = HMS/SOS acceptance (NOT applied)
-        for v in ACCEPT[key]:
-            ax.axvline(v, color="0.5", ls="--", lw=1.0)
-    style_axis(ax, title=None, xlabel=lab, logx=False, logy=False, ymin=None)
-    ax.set_ylabel("normalized / bin", fontsize=FS_LABEL)
 
-axes[7].axis("off")
-handles, labels = axes[0].get_legend_handles_labels()
-axes[7].legend(handles, labels, title="QE-EM model", loc="center",
-               fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
-ns = {m: len(cache[m]["Q2"]) for m in S.MODELS}
-fig.suptitle("(e,e'p) distributions, Q² = 1.28 ± 5 % only — no e′/p cuts  —  e⁻ on C12 (t05)\n"
-             "grey dashed = Q² window (applied) + HMS/SOS acceptance, "
-             "in-plane projection (NOT applied)",
-             fontsize=FS_SUPTITLE)
-fig.tight_layout()
-fig.savefig(OUT, dpi=130)
-print("wrote", OUT)
+def make_fig(out, density):
+    apply_style()
+    fig, axes = new_panels(ncols=4, nrows=2, sharey=False)
+    for ax, (key, lab, rng, nb) in zip(axes, PANELS):
+        bins = np.linspace(rng[0], rng[1], nb)
+        for m in S.MODELS:
+            x = cache[m][key]
+            x = x[np.isfinite(x)]
+            ax.hist(x, bins=bins, histtype="step", linewidth=S.lw(m), color=S.color(m),
+                    density=density, label=f"{S.label(m)}  (N={len(cache[m]['Q2'])})",
+                    zorder=S.zorder(m))
+        if key in ACCEPT:        # Q2 = the applied cut; others = HMS/SOS acceptance (NOT applied)
+            for v in ACCEPT[key]:
+                ax.axvline(v, color="0.5", ls="--", lw=1.0)
+        style_axis(ax, title=None, xlabel=lab, logx=False, logy=False, ymin=None)
+        ax.set_ylabel("normalized / bin" if density else "events / bin",
+                      fontsize=FS_LABEL)
+
+    axes[7].axis("off")
+    handles, labels = axes[0].get_legend_handles_labels()
+    axes[7].legend(handles, labels, title="QE-EM model", loc="center",
+                   fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
+    norm_note = ("area-normalized" if density
+                 else "raw event counts (equal ntot = 2M generated/model)")
+    fig.suptitle("(e,e'p) distributions, Q² = 1.28 ± 5 % only — no e′/p cuts  —  "
+                 f"e⁻ on C12 (t05), {norm_note}\n"
+                 "grey dashed = Q² window (applied) + HMS/SOS acceptance, "
+                 "in-plane projection (NOT applied)",
+                 fontsize=FS_SUPTITLE - 1)
+    fig.tight_layout()
+    fig.savefig(out, dpi=130)
+    print("wrote", out)
+
+
+make_fig("results/prd-analyzer/dists_q2window.png", density=True)
+make_fig("results/prd-analyzer/dists_q2window_counts.png", density=False)
 for m in S.MODELS:
     c = cache[m]
-    print(f"  {m:15s} N={ns[m]:7d} of ntot={int(c['ntot'][0])}  "
+    print(f"  {m:15s} N={len(c['Q2']):7d} of ntot={int(c['ntot'][0])}  "
           f"has_p={100*np.mean(c['has_p']):.1f}%")
