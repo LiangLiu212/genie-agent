@@ -265,6 +265,25 @@ data are deradiated but still FSI-distorted (S^D); GENIE events are post-FSI —
 spirit, but the data's absolute scale is convention-defined (occupancy), so only shapes and
 relative occupancies are compared.
 
+### 6. Uncut distributions in the Q² slice — Q² = 1.28 ± 5 % only
+
+![Q2-window distributions](dists_q2window.png)
+
+The no-cut counterpart of the cut-stage figures: **all electron and proton cuts removed**, only
+`|Q²/1.28 − 1| ≤ 5 %` (Q² ∈ [1.216, 1.344], fully inside the t05 generation cut — no boundary
+clip). 4 files/model streamed (2M events), ~27–30 % selected (N = 538k–592k), cached in
+`cache/q2window/`. All seven variables (El, θ_e′, T_p, θ_p, Q², E_m, p_m), area-normalized;
+proton panels implicitly drop the ~21 % of events with no final-state proton (neutron knockout).
+
+**Read**: with the spectrometer bite removed, `El`/`θ_e′` are the smooth QE peak (1.75 GeV,
+~31.5°) — the Q² window alone constrains them only weakly. `T_p` is double-peaked: the QE bump
+at ~0.65 GeV plus a low-`T_p` (~0.1–0.2 GeV) population of FSI-rescattered / secondary leading
+protons that the spectrometer windows normally remove; correspondingly `θ_p` has a long tail
+beyond the ~45° conjugate peak and `p_m` a flat FSI tail out to 800 MeV/c. `E_m` remains the
+model discriminator even uncut: LFG spike at ~36 MeV, SF+Rosenbluth at ~40 MeV with the broad
+shoulder, SuSAv2 low and broad, the two SF+UnifiedQEL variants at ~16–18 MeV (the 2024 SF
+visibly sharper — the quasiparticle p-shell peak survives without any acceptance shaping).
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -287,6 +306,9 @@ relative occupancies are compared.
   `cache/acceptance/<model>.npz` (`MAX_FILES` env, default 20 = 10M events/model).
 - **`plot_em_dutta_fig9.py`** → `em_dutta_fig9_q1p28.png` (E_m overlay on Dutta Fig. 9,
   occupancy-normalized; prints per-model χ²)
+- **`build_cache_q2.py`** — XRootD stream, Q² = 1.28 ± 5 % window ONLY (no e′/p cuts) →
+  `cache/q2window/<model>.npz` (`MAX_FILES` env, default 4).
+- **`plot_dists_q2.py`** → `dists_q2window.png` (the 7 variables, uncut, in the Q² slice)
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 
