@@ -5,8 +5,9 @@ path and how the Monte Carlo weight is turned into an absolutely-normalized cros
 section / yield.
 
 - Source: [LiangLiu212/simc_gfortran](https://github.com/LiangLiu212/simc_gfortran) @ [`60c2047`](https://github.com/LiangLiu212/simc_gfortran/tree/60c20471c565be500eb7192752a5ad5eb7768028) (fork of JeffersonLab/simc_gfortran) -- every `file:line` below anchors to this commit
+- Local checkout `simc_gfortran/` (repo root) tracks upstream `JeffersonLab/simc_gfortran` at the same SHA `60c2047`, so it is content-identical and all anchors hold for both
 - Working-tree state at time of exploration: clean (no local modifications)
-- Date: 2026-07-01
+- Date: 2026-07-01 (corrected against the source 2026-07-02)
 
 ---
 
@@ -65,7 +66,9 @@ doing_heavy     = (nint(targ%A).ge.3)
   section (de Forest sigma_cc1 / sigma_cc2), selected by `deForest_flag`:
   - `0`  -> sigcc1
   - `1`  -> sigcc2
-  - `-1` -> sigcc1 ON-SHELL (replace Ebar with E'-nu, qbar with q)
+  - `-1` -> sigcc1 ON-SHELL (replace Ebar with E'-nu, qbar with q). N.B. E' here is the
+    outgoing PROTON energy (`ebar = ev%p%E - ev%nu`, `physics_proton.f:70`), not the
+    scattered-electron E' of the `sigep` bullet above.
 
   **Critical units note** (header comment, `physics_proton.f:51-62`): the 6-fold cross
   section is `d6sigma = K * S(E,p) * sigma_eN`. `deForest` returns
@@ -190,8 +193,11 @@ Each ntuple event carries `Weight = main%weight` (`results_write.f:146, 195, 257
 ## 4. Spectrometer acceptance -- the fiducial box
 
 SIMC does not generate over 4pi; it throws events only inside each spectrometer arm's
-acceptance. That acceptance -- the fiducial box -- is set explicitly in the input deck, and
-it IS the `genvol` used in the normalization (Section 3).
+acceptance. That acceptance -- the fiducial box -- is set explicitly in the input deck and
+seeds the generation volume `genvol` of the normalization (Section 3). Seeds -- not
+equals: SIMC widens the deck box by slop terms before computing `genvol` (Section 4.6,
+layer 2), so always read `genvol`/`normfac` from the output header; never recompute them
+from the `SPedge` values.
 
 ### 4.1 Where it lives: two parm blocks per deck
 
@@ -259,7 +265,7 @@ acceptance, and they are **not fixed** -- they vary by deck:
 share one box only because they are copied from a common template.
 
 `SPedge` merely sets the rectangular region SIMC generates into; the true, non-rectangular
-acceptance is carved by the collimator + magnet + vacuum-pipe apertures (Section 4.5,
+acceptance is carved by the collimator + magnet + vacuum-pipe apertures (Section 4.6,
 layer 3). So `SPedge` only has to be **>=** the real acceptance -- e.g. the HMS box above is
 a ~20 msr rectangle, but the real collimated HMS solid angle is ~6.8 msr; the collimator
 does the actual cut.
@@ -270,22 +276,79 @@ HMS 6.8 msr collimated (8.1 msr open), delta ~ +/-(9-10) %; SOS 7.5 msr collimat
 **under-covers** the real SOS +/-20 % bite -- set it to +/-20 % (or the actual analysis
 fiducial cut) for a faithful reproduction.
 
-### 4.5 Three layers of fiducial
+### 4.5 HMS/SOS acceptance cuts (from the SIMC collimators)
+
+The real (octagonal) ANGULAR acceptance comes from the collimators in the transport code,
+not from `SPedge`. Half-angle = half-aperture / (target-to-collimator distance z):
+
+- **HMS** ([`hms/mc_hms.f`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/hms/mc_hms.f#L70-L88), HMS-100 octagon):
+  h = 4.575 cm, v = 11.646 cm, z = 166.4 cm.
+- **SOS** ([`sos/mc_sos.f`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/sos/mc_sos.f#L59-L66), 'large' collimator):
+  h = 7.201 cm, v = 4.696 cm, z = 126.3 cm.
+
+(h = horizontal = in-plane = `yptar` -> changes the polar scattering angle theta;
+v = vertical = out-of-plane = `xptar` -> changes the azimuth phi.)
+
+| arm     | momentum \|delta\| *   | in-plane (yptar)          | out-of-plane (xptar)      |
+|---------|------------------------|---------------------------|---------------------------|
+| HMS (e) | <~ 8 % (full ~+/-10 %) | < 27.5 mrad (+/-1.58 deg) | < 70.0 mrad (+/-4.01 deg) |
+| SOS (p) | <~ 20 % (40 % bite)    | < 57.0 mrad (+/-3.27 deg) | < 37.2 mrad (+/-2.13 deg) |
+
+`delta = (p/P0 - 1)*100`. Angles are collimator-derived and verified against the paper: the
+rectangular ~7.7 / ~8.5 msr clip to the octagon's 6.8 / 7.5 msr (Section 4.4). *Momentum
+acceptance is set by the magnets/hut, not the collimator -- HMS ~+/-8 % is the clean region
+(full ~+/-10 %), SOS +/-20 % is the full 40 % bite; the paper's analysis may apply a tighter
+fiducial delta.
+
+**Applied to the 2.445 GeV settings** (central P0, theta0 from Dutta Table I,
+`papers/nucl-ex_0303011/`; the SOS P0 values are the central |q| computed from the
+electron kinematics with nominal Q2 -- the paper's central proton kinetic energies,
+700 / 350 MeV, give 1343 / 883 MeV/c, a negligible ~2 MeV/c difference):
+
+Q2 = 1.28 -- HMS (1725 MeV/c, 32.0 deg), SOS (1341 MeV/c, 43.5 deg):
+
+| particle | momentum          | polar angle (in-plane) | out-of-plane |
+|----------|-------------------|------------------------|--------------|
+| e' (HMS) | 1587 - 1863 MeV/c | 30.4 - 33.6 deg        | +/-4.0 deg   |
+| p (SOS)  | 1073 - 1609 MeV/c | 40.2 - 46.8 deg        | +/-2.1 deg   |
+
+Q2 = 0.64 -- HMS (2075 MeV/c, 20.5 deg), SOS (881 MeV/c, 55.4 deg):
+
+| particle | momentum          | polar angle (in-plane) | out-of-plane |
+|----------|-------------------|------------------------|--------------|
+| e' (HMS) | 1909 - 2241 MeV/c | 18.9 - 22.1 deg        | +/-4.0 deg   |
+| p (SOS)  | 705 - 1057 MeV/c  | 52.1 - 58.7 deg        | +/-2.1 deg   |
+
+Apply the angle cut on the arm-frame slopes (yptar, xptar) about the central direction, not a
+raw lab-theta box (Section 4.7); the polar ranges above are the in-plane (yptar) projection.
+
+### 4.6 Three layers of fiducial
 
 1. `SPedge` (deck) -- the rectangular acceptance box above.
-2. `gen` ([`init.f:490-517`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/init.f#L490-L517)) -- generation limits derived from SPedge/edge: angular
-   `gen = edge` (~ SPedge); `gen%delta` computed from the energy window and P0
+2. `gen` ([`init.f:490-517`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/init.f#L490-L517)) -- generation limits: angular
+   `gen = edge`; `gen%delta` computed from the energy window and P0
    (`gen%e%delta%min = (E_min/P0 - 1)*100`). `genvol` ([`simc.f:376-396`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/simc.f#L376-L396)) is exactly the
-   volume of this box -- so the fiducial box and the normalization volume are one object.
+   volume of this box. But this box is WIDER than the deck's SPedge: SIMC first widens
+   SPedge by spectrometer-resolution slop (`init.f:209-220`; HMS 0.5 % delta / 5 mrad
+   angles, SOS 1.0 % / 8 mrad, `simulate.inc:17-24`), `edge` adds multiple-scattering
+   slop (`init.f:264-271`), and the `gen` energy windows add radiative slop
+   (`Egamma2_max`). For the test_eep box the resolution slop alone grows dOmega_e by
+   ~16 % and dOmega_p by ~26 %, so a genvol hand-computed from the deck SPedge
+   underestimates the true one by tens of percent -- take `genvol`/`normfac` from the
+   output header (the Section 5 recipe does).
 3. Physical apertures / collimators ([`hms/mc_hms.f`](https://github.com/LiangLiu212/simc_gfortran/blob/60c20471c565be500eb7192752a5ad5eb7768028/hms/mc_hms.f) and the other arm dirs) -- collimator,
    Q1/Q2/Q3 (checked at 2/3 of each), dipole, and circular vacuum-pipe cuts carve the true,
    NON-rectangular acceptance during transport. SPedge is the bounding box, not the exact
    shape.
 
-Plus optional physics-variable cuts `cuts%Em`, `cuts%Pm` (missing energy / momentum),
-default wide-open (+/-1e6, `dbase.f:539-541`); the eep decks do not set them.
+Plus one optional physics-variable cut: `cuts%Em` (missing energy), registered at
+`dbase.f:1085-1086`, defaulted wide-open (+/-1e6) at `dbase.f:539-541`, and enforced as
+an (e,e'p) success condition (`recon%Em > cuts%Em%max` fails the event, `simc.f:245`;
+also feeds `edge%Em`, `init.f:299-300`). The eep decks do not set it. `cuts%Pm` exists
+in the structure but is inert in mainline SIMC -- initialized to +/-1e10
+(`init.f:979-980`), registered only in the `poltar/gaw_code/` variant, never read.
 
-### 4.6 Using it to match GENIE
+### 4.7 Using it to match GENIE
 
 The box is in SPECTROMETER-ARM coordinates (delta, xptar, yptar about the arm axis), NOT lab
 (E, theta). To reproduce it faithfully on GENIE events, do not cut lab theta directly:
@@ -306,11 +369,16 @@ The estimator implied by the code (`simc.f:398` combined with the
 bin_yield [counts] = (normfac / Ngen) * sum_over_events( Weight )
 ```
 
-where `Ngen = nevent` (number of generated successes) and `normfac`, `Ngen` are read
-from the output header; `Weight` is the per-event ntuple weight.
+where `normfac` and `Ngen` are read from the output header, `Ngen = |Ngen (request)|`.
+At normal completion this equals the code's `nevent`: the number of successes for
+positive `ngen`, but the number of TRIES for negative `ngen` (`simc.f:346-350`). Do not
+substitute the ntuple entry count: only successful events are written
+(`results_write.f:32`), so a negative-`ngen` run has fewer entries than `nevent`.
+`Weight` is the per-event ntuple weight.
 
-- Divide by `luminosity` to recover the model cross section (units follow the fold count:
-  microbarn / MeV^i / sr^j).
+- Divide by `luminosity` to recover the model cross section integrated over the bin
+  (microbarn); divide additionally by the bin's phase-space volume for the differential
+  form (microbarn / MeV^i / sr^j, i/j per the fold count).
 - Standard experimental extraction (`central_xsec_howto.txt`):
 
   ```
@@ -343,7 +411,7 @@ and target; scale by the real experimental charge/target to compare to data.
 | `simc.f`                 | `:916-968`                           | output header (Ngen, normfac, luminosity, ...)         |
 | `results_write.f`        | `:146/195/257/303`                   | per-event Weight into ntuple                           |
 | `dbase.f`                | `:1115-1129`, `:485-492`             | SPedge fiducial-box params (deck) + mrad->rad          |
-| `init.f`                 | `:490-517`                           | gen limits from SPedge/edge (= the genvol box)         |
+| `init.f`                 | `:209-220`, `:264-271`, `:490-517`   | SPedge+slop -> edge -> gen limits (= the genvol box)   |
 | `hms/mc_hms.f` (+ arms)  | apertures                            | collimator + magnet/pipe apertures (true acceptance)   |
 | `central_xsec_howto.txt` | --                                   | central cross-section extraction how-to                |
 | `infiles/test_eep_*.inp` | --                                   | H / D / Fe (e,e'p) input decks                         |
@@ -372,6 +440,10 @@ and target; scale by the real experimental charge/target to compare to data.
   extra factor of `nevent` (`simc.f:368,398`); the physically meaningful integrated
   weight reported to the user is `wtcontribute/nevent` (`simc.f:923`). Downstream
   per-event histogramming must therefore use `normfac / Ngen` (not `normfac` alone).
+- Negative `ngen` (tries mode): `nevent` counts attempts, not successes
+  (`simc.f:346-350`), while the ntuple stores only successes (`results_write.f:32`).
+  `normfac / Ngen` with `Ngen = |Ngen (request)|` still normalizes correctly; dividing
+  by the (smaller) ntuple entry count instead would overestimate the yield.
 - de Forest metric is (-1,1,1,1); the code defines inner products with regular signs and
   flips them in the structure-function formulas (`physics_proton.f:42-46`). Do not
   "fix" the signs without reading that comment.
