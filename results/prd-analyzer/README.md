@@ -334,6 +334,23 @@ differing by orders of magnitude) agrees bin-by-bin to median a/b = 0.946, media
 Caveats: the acceptance variant covers only part of the p_m sphere (its y(Em) is a lower
 bound); data occupancy normalization is the standing open question.
 
+### 8. Ground-state inputs vs Dutta Fig. 9
+
+![input SF f(E) vs fig9](sf_input_em_fig9.png)
+
+The undistorted INPUT tables — old Benhar `pke12_tot` (22a/22b) and the 2024
+Ankowski-Benhar-Sakuda SF (33b) — as `Z·∫_{k<300} 4πk²P dk`, i.e. the fig9 observable with
+no FSI, no σ weighting, no acceptance; both on the occupancy scale like the data. Key
+numbers: each table holds **5.42 protons inside k < 300 MeV/c** (5.25 within E < 80) —
+6/5.42 = **1.11, exactly the correlation factor** E91-013 applied for out-of-window SRC
+strength; and the data's peak bin sits 12 % above the inputs (0.571 vs 0.51), again ≈ the
+1.11 rescale. Shape-wise the inputs already track the data closely across the s-shell
+(30–50 MeV) and tail; the visible differences are the data's wider p-shell (the 22.5 MeV
+point at 0.269 vs ~0.15 input — FSI smearing lives in the data's S^D shape) and the 2024
+table's resolved quasiparticle spikes (faint continuous curve, clipped). Together with
+section 7 this brackets the physics: input (no FSI) ≈ data/1.11; extracted S^D (with FSI)
+≈ data×0.54.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -375,6 +392,8 @@ bound); data occupancy normalization is the standing open question.
 - **`plot_sd_extraction.py`** → `sd_2d_maps.png`, `sd_extraction_fig9.png` (the S^D
   extraction: 2D maps, absolute fig9 overlay + ratio panel; prints the window integrals
   and the cross-fiducial validation).
+- **`plot_sf_input_em_fig9.py`** → `sf_input_em_fig9.png` (the undistorted input-table
+  f(E), k < 300, occupancy scale, vs the fig9 data).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 
