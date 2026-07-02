@@ -16,6 +16,9 @@ numpy = ">=2.4.6,<3"
 awkward = ">=2.9.0,<3"
 xrootd = ">=5.9.2,<6"
 fsspec-xrootd = ">=0.5.2,<0.6"
+pandas = ">=3.0.3,<4"
+vector = ">=1.8.1,<2"
+hist = ">=2.10.1,<3"
 
 # Build-time only: shared/build_pdg.py uses the PDG API to validate GENIE
 # codes and enrich shared/pdg.json. Runtime (lib/pdg.py) reads the JSON only.
