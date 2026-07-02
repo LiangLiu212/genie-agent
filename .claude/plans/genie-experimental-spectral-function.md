@@ -124,6 +124,14 @@ sigma-model mismatch is part of what the estimator measures, identically on the 
    -> Z within a few %. Bonus closure on SF+Rosenbluth: the reweight ratio
    sigma_Rosenbluth/sigma_cc1 is directly computable per event.
 
+   NOTE 2026-07-02 (from the pre-FSI study, README section 9): the closure target
+   "recover the input f(E)" applies to the UnifiedQEL variants ONLY. The Rosenbluth
+   pair's pre-FSI E_m is a fixed 16.0-MeV delta (sampled removal energy not propagated
+   into the outgoing kinematics), so its FSI-off closure would return that delta, not
+   f(E); its E_m information content lives entirely in FSI transport. Also measured:
+   INTRANUKE hA2018 shifts surviving protons down ~20 MeV in E_m (pre 16.0 -> post ~36),
+   INCL does not (pre median 19.2 -> post peak 15-20).
+
 6. **Docs**: README section 7 (method, dictionary table, integrals table, caveats);
    cross-link `report/simc-eep-normalization.md` (the H/genvol machinery is the SIMC
    analogue) and the open_questions entries (this extraction is the GENIE side of the

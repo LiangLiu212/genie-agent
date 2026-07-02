@@ -110,9 +110,10 @@ Acceptance is tight: ~0.4 % of events survive stage 1, ~0.1–0.2 % stage 2.1, ~
 
 The **input** both SF models sample from, read straight from `pke12_tot.data`: `P(k,E)` in the
 (missing energy, missing momentum) plane plus its `f(E)`/`n(k)` marginals (`∫4πk²P dk dE = 1.0000`,
-`f(E)` peak 17.5 MeV, `n(k)` peak 150 MeV/c). SF+Rosenbluth (`22a`) carries this `f(E)` through to
-`E_m` unchanged; SF+UnifiedQEL (`22b`) reshapes it lower via its De Forest off-shell weighting. Full
-write-up on the [dedicated page](spectral_function_c12.md).
+`f(E)` peak 17.5 MeV, `n(k)` peak 150 MeV/c). SF+UnifiedQEL (`22b`) propagates this `f(E)` into the
+outgoing kinematics (with a De Forest downward reshaping); SF+Rosenbluth (`22a`) does **not** — its
+pre-FSI reconstructed `E_m` is a fixed 16.0-MeV delta (section 9), so the input `f(E)` shows up only
+in `n(k)`/`p_m` for that tune. Full write-up on the [dedicated page](spectral_function_c12.md).
 
 ### 0b. Updated ground state — Ankowski-Benhar-Sakuda 2024 (see [page](spectral_function_c12_2024.md))
 
@@ -351,6 +352,30 @@ table's resolved quasiparticle spikes (faint continuous curve, clipped). Togethe
 section 7 this brackets the physics: input (no FSI) ≈ data/1.11; extracted S^D (with FSI)
 ≈ data×0.54.
 
+### 9. Pre-FSI missing energy — the sampled ground state, no cuts
+
+![pre-FSI Em vs fig9](em_prefsi_fig9.png)
+
+`E_m = ω − T_p − T_rec` from the **primary (pre-INTRANUKE) proton**, proton-channel events
+only (hitnuc = p, 68.7–69.8 % of each sample — exactly σ_p/σ_tot from the splines), no
+detector cuts; occupancy scale `y = Z·hist(p_m<300)/(N_p·5 MeV)` (full-p_m integral ≡ 6 by
+construction; plotted E_m<80 integrals 5.2–6.0 vs input tables' 5.25, data 6.08).
+
+**Findings** (this figure corrects the section 0/1 reading of the `22a` E_m shape):
+- **The Rosenbluth pair (LFG `11a`, SF `22a`) has pre-FSI E_m ≡ 16.0 MeV — a single-bin
+  delta (1.20/1.09 MeV⁻¹), event-by-event exact.** Their generator uses a fixed binding
+  prescription; the sampled removal energy is *not* propagated into the outgoing proton
+  (for `22a` the Benhar `f(E)` never reaches E_m — only `n(k)` survives into `p_m`). Their
+  post-FSI E_m spike at ~36 MeV (sections 1/6) therefore means **INTRANUKE hA2018 shifts
+  every surviving proton down by ~20 MeV in transport**; the INCL b-tunes show no such
+  shift (pre-FSI median 19.2 MeV vs post-FSI peak 15–20 MeV).
+- **The UnifiedQEL pair propagates the input**: broad distributions (p95 ≈ 60 MeV) that
+  ride on their dashed input curves — and on the data — across the s-shell and tail
+  (25–80 MeV), with the De Forest reshaping moving peak strength down in E_m
+  (`22b` 0.436 vs input 0.51 at [15,20); `33b` split 0.295/0.292 across [10,20)).
+- **SuSAv2** spreads E_m broadly around ~14 MeV including sub-threshold and negative
+  values (p5 = −3.6 MeV) — a Fermi-gas energy-balance prescription, no shell structure.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -394,6 +419,10 @@ section 7 this brackets the physics: input (no FSI) ≈ data/1.11; extracted S^D
   and the cross-fiducial validation).
 - **`plot_sf_input_em_fig9.py`** → `sf_input_em_fig9.png` (the undistorted input-table
   f(E), k < 300, occupancy scale, vs the fig9 data).
+- **`build_cache_prefsi.py`** — XRootD stream, hitnuc = p, no cuts → `cache/prefsi/`
+  (pre-FSI primary-proton E_m/p_m).
+- **`plot_em_prefsi_fig9.py`** → `em_prefsi_fig9.png` (pre-FSI E_m, occupancy scale, vs
+  the input tables and the fig9 data).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 
