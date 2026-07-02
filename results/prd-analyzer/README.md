@@ -287,6 +287,44 @@ model discriminator even uncut: LFG spike at ~36 MeV, SF+Rosenbluth at ~40 MeV w
 shoulder, SuSAv2 low and broad, the two SF+UnifiedQEL variants at ~16–18 MeV (the 2024 SF
 visibly sharper — the quasiparticle p-shell peak survives without any acceptance shaping).
 
+### 7. Extracted distorted spectral function S^D — absolute scale, no area matching
+
+![S^D vs fig9](sd_extraction_fig9.png)
+
+Dutta's own PWIA estimator run on the GENIE events
+([plan](../../.claude/plans/genie-experimental-spectral-function.md)): per (E_m, p_m) bin,
+`S^D = [σ_tot/N_gen · Σ 1/(E_p·p_p·σ_cc1)] / H`, with σ_cc1 from `deforest.py` (the same
+off-shell prescription the experiment used), σ_tot from each production's own spline, and H
+the flat-MC phase space (`phase_space_h.py`). `y(Em) = Σ S^D·(4π/3)Δp_m³` over p_m < 300
+reproduces the fig9 observable in MeV⁻¹ — **absolute**, unlike the area-matched overlay of
+section 5. C^rad = 1 (GENIE is radiation-free = deradiated data). 2D maps
+(`sd_2d_maps.png`): the SF models show the P(k,E) ridge, LFG the fixed-E_m stripe, in both
+fiducials.
+
+**Window integrals** ∫S^D dEm d³pm (0 ≤ E_m < 80, p_m < 300), vs the paper's absorbed scale
+T/1.11 × 6 ≈ 3.24 and the data file's occupancy integral 6.08:
+
+| model | I | I/3.24 | I/6.08 |
+|---|---|---|---|
+| LFG + Rosenbluth | 3.505 ± 0.008 | 1.08 | 0.58 |
+| SF + Rosenbluth | 2.978 ± 0.005 | 0.92 | 0.49 |
+| LFG + SuSAv2 | 3.221 ± 0.006 | 0.99 | 0.53 |
+| SF(2024) + UnifiedQEL | 2.175 ± 0.004 | 0.67 | 0.36 |
+| SF + UnifiedQEL | 2.137 ± 0.004 | 0.66 | 0.35 |
+
+**Read**: the Rosenbluth/SuSAv2 models land within ±9 % of the experiment's absorbed
+strength (I/6.08 ≈ 0.49–0.58 vs the measured T/1.11 = 0.54 guide in the ratio panel) —
+GENIE's absolute in-window (e,e'p) retention quantitatively matches E91-013's
+transparency-suppressed yield. The UnifiedQEL pair sits at 0.66× that, directly tracking its
+smaller σ_tot (15.6/23.6 nb): dividing all models by the *same* σ_cc1 (as the experiment
+does) exposes the SF-consistent cross section's lower absolute yield. Shapes: the SF-model
+tails reach GENIE/data ≈ 1 above E_m ≈ 60 MeV while the p-shell peak region sits at 0.2–0.5.
+**Cross-fiducial validation**: UnifiedQEL extracted through both fiducials (H volumes
+differing by orders of magnitude) agrees bin-by-bin to median a/b = 0.946, median
+|pull| = 0.64 (232 common bins); the acceptance-fiducial open circles track the q2win curve.
+Caveats: the acceptance variant covers only part of the p_m sphere (its y(Em) is a lower
+bound); data occupancy normalization is the standing open question.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -312,6 +350,22 @@ visibly sharper — the quasiparticle p-shell peak survives without any acceptan
 - **`build_cache_q2.py`** — XRootD stream, Q² = 1.28 ± 5 % window ONLY (no e′/p cuts) →
   `cache/q2window/<model>.npz` (`MAX_FILES` env, default 4).
 - **`plot_dists_q2.py`** → `dists_q2window.png` (the 7 variables, uncut, in the Q² slice)
+- **`deforest.py`** — numpy port of SIMC's σ_cc1/σ_Mott/Bosted-FF/sigep
+  (`simc_gfortran/physics_proton.f` @ 60c2047; flag 0/−1) for the S^D extraction
+  ([plan](../../.claude/plans/genie-experimental-spectral-function.md)); self-validating
+  (`pixi run python results/prd-analyzer/deforest.py`): elastic closure
+  deforest·Ee/(pp·Mp·Ein) = sigep exact at the Dutta settings.
+- **`build_cache_sd.py`** — one XRootD pass → `cache/sd/<model>_{q2win,accept}.npz`: the
+  σ_cc1 inputs (nu, q, E_p, p_p, sinγ, cosφ) + E_m (recoil incl.)/p_m per event for both
+  S^D fiducials, plus the sample cross section from the production's own gmkspl spline
+  (auto-located via the campaign gridlog; C12 channels; e.g. Rosenbluth 23.61 nb,
+  UnifiedQEL 15.56 nb at 2.445 GeV, Q² ≥ 1.18).
+- **`phase_space_h.py`** — flat companion MC → `cache/sd/H_{q2win,accept}.npz`: the
+  per-(E_m, p_m)-bin phase-space volume H [MeV²·sr²] for each S^D fiducial (exact
+  importance sampling, Q² ≥ 1.18 imposed, split-sample converged to 0.35 % median).
+- **`plot_sd_extraction.py`** → `sd_2d_maps.png`, `sd_extraction_fig9.png` (the S^D
+  extraction: 2D maps, absolute fig9 overlay + ratio panel; prints the window integrals
+  and the cross-fiducial validation).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 
