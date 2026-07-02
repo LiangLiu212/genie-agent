@@ -274,6 +274,9 @@ The no-cut counterpart of the cut-stage figures: **all electron and proton cuts 
 clip). 4 files/model streamed (2M events), ~27–30 % selected (N = 538k–592k), cached in
 `cache/q2window/`. All seven variables (El, θ_e′, T_p, θ_p, Q², E_m, p_m), area-normalized;
 proton panels implicitly drop the ~21 % of events with no final-state proton (neutron knockout).
+Grey dashed lines mark the applied Q² window and, on the El/θ_e′/T_p/θ_p panels, the HMS/SOS
+acceptance windows (in-plane projections, derived from `acceptance.py` — **not** applied here):
+El ∈ [1.587, 1.863] GeV, θ_e′ = 32.0 ± 1.58°, T_p ∈ [0.487, 0.924] GeV, θ_p = 43.5 ± 3.26°.
 
 **Read**: with the spectrometer bite removed, `El`/`θ_e′` are the smooth QE peak (1.75 GeV,
 ~31.5°) — the Q² window alone constrains them only weakly. `T_p` is double-peaked: the QE bump

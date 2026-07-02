@@ -18,10 +18,26 @@ import numpy as np
 from plot_style import (apply_style, new_panels, style_axis,
                         FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE)
 import samples as S
+import acceptance as acc
+from selection import M_P
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
 Q2_LO, Q2_HI = Q2_CENTER * (1 - Q2_FRAC), Q2_CENTER * (1 + Q2_FRAC)
 OUT = "results/prd-analyzer/dists_q2window.png"
+
+# HMS/SOS acceptance windows (in-plane projections), derived from acceptance.py:
+# El: HMS momentum bite (electron ~ massless, E ~ p); theta: arm angle +- atan(yptar);
+# Tp: SOS momentum bite converted to kinetic energy.
+_p_lo, _p_hi = acc.P0_P * (1 - acc.DELTA_P_HW / 100), acc.P0_P * (1 + acc.DELTA_P_HW / 100)
+ACCEPT = {
+    "El":      (acc.P0_E * (1 - acc.DELTA_E_HW / 100), acc.P0_E * (1 + acc.DELTA_E_HW / 100)),
+    "theta_e": tuple(np.degrees(acc.TH0_E) + s * np.degrees(np.arctan(acc.YPTAR_E_HW))
+                     for s in (-1, +1)),
+    "Tp":      tuple(np.hypot(p, M_P) - M_P for p in (_p_lo, _p_hi)),
+    "theta_p": tuple(np.degrees(acc.TH0_P) + s * np.degrees(np.arctan(acc.YPTAR_P_HW))
+                     for s in (-1, +1)),
+    "Q2":      (Q2_LO, Q2_HI),          # the only cut actually applied here
+}
 
 # panel -> (cache key, axis label, (lo, hi), nbins)  — ranges cover ~p1-p99
 PANELS = [
@@ -44,9 +60,10 @@ for ax, (key, lab, rng, nb) in zip(axes, PANELS):
         x = cache[m][key]
         x = x[np.isfinite(x)]
         ax.hist(x, bins=bins, histtype="step", linewidth=S.lw(m), color=S.color(m),
-                density=True, label=S.label(m), zorder=S.zorder(m))
-    if key == "Q2":                                  # the only applied cut
-        for v in (Q2_LO, Q2_HI):
+                density=True, label=f"{S.label(m)}  (N={len(cache[m]['Q2'])})",
+                zorder=S.zorder(m))
+    if key in ACCEPT:            # Q2 = the applied cut; others = HMS/SOS acceptance (NOT applied)
+        for v in ACCEPT[key]:
             ax.axvline(v, color="0.5", ls="--", lw=1.0)
     style_axis(ax, title=None, xlabel=lab, logx=False, logy=False, ymin=None)
     ax.set_ylabel("normalized / bin", fontsize=FS_LABEL)
@@ -57,8 +74,8 @@ axes[7].legend(handles, labels, title="QE-EM model", loc="center",
                fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE)
 ns = {m: len(cache[m]["Q2"]) for m in S.MODELS}
 fig.suptitle("(e,e'p) distributions, Q² = 1.28 ± 5 % only — no e′/p cuts  —  e⁻ on C12 (t05)\n"
-             "grey dashed = the Q² window · selected N: "
-             + ",  ".join(f"{m} {ns[m]}" for m in S.MODELS),
+             "grey dashed = Q² window (applied) + HMS/SOS acceptance, "
+             "in-plane projection (NOT applied)",
              fontsize=FS_SUPTITLE)
 fig.tight_layout()
 fig.savefig(OUT, dpi=130)
