@@ -80,17 +80,17 @@ fig, (ax,) = new_panels(ncols=1, sharey=False)
 fig.set_size_inches(7.5, 6.5)
 
 ax.stairs(y_o, EDGES, color=S.color("SF"), linewidth=2.0, zorder=4,
-          label="SF input f(E) (Benhar pke12_tot)")
-ax.stairs(y_n, EDGES, color=S.color("UnifiedQEL2024"), linewidth=2.0, zorder=5,
-          label="SF(2024) input f(E) (Ankowski-Benhar-Sakuda)")
+          label="Benhar SF")
 fine = E_n <= 85.0
-ax.plot(E_n[fine], f_n[fine], color=S.color("UnifiedQEL2024"), lw=0.8,
-        alpha=0.45, zorder=3, label="SF(2024) continuous (clipped)")
+ax.plot(E_n[fine], f_n[fine], color=S.color("UnifiedQEL2024"), lw=1.0,
+        alpha=0.55, zorder=3, label="SF 2024")
+ax.stairs(y_n, EDGES, color=S.color("UnifiedQEL2024"), linewidth=2.0, zorder=5,
+          label="SF 2024 rebin")
 
 ax.errorbar(dem, dsf, yerr=dtot, fmt="none", ecolor="0.6", elinewidth=3,
             alpha=0.8, zorder=8)
 ax.errorbar(dem, dsf, yerr=dstat, fmt="s", ms=5, color="black", capsize=2,
-            zorder=9, label="Dutta Fig. 9 (occupancy-normalized)")
+            zorder=9, label="Dutta data")
 
 style_axis(ax, title=r"$^{12}$C input spectral functions vs data,  $k<300$ MeV/$c$",
            xlabel=r"$E_m$  (MeV)", logx=False, logy=False, ymin=None)
@@ -98,7 +98,7 @@ ax.set_ylabel(r"$Z\,\int_{k<300} 4\pi k^2 P(k,E)\,dk$   (MeV$^{-1}$)",
               fontsize=FS_LABEL)
 ax.set_xlim(0, 85)
 ax.set_ylim(0, 0.7)
-ax.legend(fontsize=FS_LEGEND - 1, title="input tables — no FSI, no σ weighting",
+ax.legend(fontsize=FS_LEGEND - 1, title="input tables",
           title_fontsize=FS_LEGEND_TITLE - 1)
 fig.suptitle("ground-state inputs vs Dutta Fig. 9 — both on the occupancy scale\n"
              "(data are FSI-distorted in shape; inputs are the undistorted tables)",
