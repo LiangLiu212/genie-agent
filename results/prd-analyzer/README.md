@@ -521,6 +521,27 @@ generator's E_m spectrum is systematically low by T_rec(k). Candidate upstream G
 bounded by ≤ 4.4 MeV inside p_m < 300, invisible at 5-MeV binning, but exactly the first-bin
 distortion resolved here.
 
+### 10c. Reconstruction kinematics — pre-FSI vs post-FSI proton
+
+![kinematics pre vs post FSI](kin_prefsi_vs_postfsi.png)
+
+The five reconstruction observables (`plot_kin_prefsi_postfsi.py`) drawn twice per model:
+dashed = pre-FSI primary proton, solid = leading post-FSI proton; proton channel, no cuts,
+per-N_p normalization (event-faithful, not area-matched). **E_e′, θ_e′ and Q² are FSI-blind
+by construction** — the lepton branches are untouched by transport, so every dashed curve
+hides exactly under its solid twin (the post version merely drops the ≤ 0.15 % of events with
+no surviving proton). The change is confined to the proton arm:
+- **T_p**: the QE peak at ~0.75 GeV loses ~1/3 of its height and a new population appears
+  below ~0.4 GeV (below the pre-FSI kinematic floor) — hard-rescattered leading protons and
+  knockout secondaries. Median T_p(pre) − T_p(post): **20.0 MeV for LFG** (the fixed
+  aggregator subtraction, §10b), **55.5 MeV for SF** (the sampled Benhar removal energy),
+  **exactly 0 for SuSAv2 and both b-tunes** (no aggregator in their chains — a transparent
+  proton keeps its energy to the bit); p90 ≈ 730 MeV for all (the hA hard-interaction tail).
+- **θ_p**: transparent protons keep their direction exactly (median |Δθ_p| = 0.00°); FSI
+  shows as a ~30 % peak reduction at ~40° plus broad deflection tails.
+The `cache/ladder` schema gained the columns `El, cthl, T3, cth3, T4, cth4` for this figure
+(stage-3 arrays re-verified bit-identical to `cache/prefsi` after the rebuild).
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -572,8 +593,9 @@ distortion resolved here.
   `load_input_tables()`, the restricted marginals `f_restricted` (k<300) / `n_restricted`
   (E<80), `rebin`, and the `EDGES/PM_MAX/BINW/EM_MAX/Z` constants.
 - **`build_cache_ladder.py`** — one XRootD pass, hitnuc = p, no cuts → `cache/ladder/<model>.npz`
-  (per-event E/p at stages 2/3/4 + Q²; stage 3 verified bit-identical to `cache/prefsi`;
-  `MAX_FILES` env, default 4 = 2M events/model — the gst files are 500k events each).
+  (per-event E/p at stages 2/3/4 + Q², plus `El, cthl` and the pre/post-FSI proton `T3, cth3,
+  T4, cth4`; stage 3 verified bit-identical to `cache/prefsi`; `MAX_FILES` env, default 4 =
+  2M events/model — the gst files are 500k events each).
 - **`plot_em_ladder_fig9.py`** → `em_ladder_fig9.png` (the four-stage E_m ladder vs fig9;
   prints the §10 bookkeeping table).
 - **`plot_em_stages_by_model.py`** → `em_stages_by_model.png` (per-model overlay of the three
@@ -585,6 +607,8 @@ distortion resolved here.
 - **`plot_em_input_struck_fine_by_model.py`** → `em_input_struck_fine_22b.png`,
   `em_input_struck_fine_33b.png` (per-model input vs record vs recoil-restored `m_N − E_n` —
   the T_rec(k) mechanism figures of §10b1/§10b2).
+- **`plot_kin_prefsi_postfsi.py`** → `kin_prefsi_vs_postfsi.png` (E_e′, θ_e′, Q², T_p, θ_p with
+  the pre-FSI vs leading post-FSI proton — electron arm FSI-blind, §10c).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 

@@ -19,8 +19,13 @@ input SF table is stage 1, drawn straight from the tables by the plots):
            left no proton (absorption/CEX) -- those events stay in the n_hitp
            denominator only, so occupancy integrals show the loss directly.
 
-Writes cache/ladder/<model>.npz: E2,p2,E3,p3,E4,p4 [MeV], Q2 [GeV^2] per
-proton-channel event (float64), + ntot (all streamed) and n_hitp.
+Writes cache/ladder/<model>.npz per proton-channel event (float64):
+  E2,p2,E3,p3,E4,p4 [MeV], Q2 [GeV^2]           the ladder kinematics
+  El [GeV], cthl                                 scattered e' (FSI-blind)
+  T3,cth3 / T4,cth4 [GeV]                        kinetic energy + cos(theta)
+                                                 of the pre-FSI / leading
+                                                 post-FSI proton
++ scalars ntot (all streamed) and n_hitp.
 
     export BEARER_TOKEN_FILE=/run/user/$(id -u)/bt_u$(id -u)
     MAX_FILES=20 pixi run python results/prd-analyzer/build_cache_ladder.py \
@@ -42,7 +47,7 @@ import samples as S
 from selection import M_P
 from acceptance import M_REC
 
-BRANCHES = ["Ev", "pxv", "pyv", "pzv", "El", "pxl", "pyl", "pzl",
+BRANCHES = ["Ev", "pxv", "pyv", "pzv", "El", "pxl", "pyl", "pzl", "cthl",
             "hitnuc", "Q2",
             "En", "pxn", "pyn", "pzn",                    # stage 2 (no `pn` scalar
             # in the genie_dev-install gst -- SuSAv2 sample -- so build |p_n|
@@ -81,10 +86,17 @@ def load_ladder(path):
     p4 = np.sqrt((pxf - qx) ** 2 + (pyf - qy) ** 2 + (pzf - qz) ** 2)
     E4 = (omega - (Efp - M_P) - p4 ** 2 / (2.0 * M_REC)) * 1000.0
 
+    with np.errstate(invalid="ignore", divide="ignore"):
+        cth3 = pzp / np.sqrt(pxp ** 2 + pyp ** 2 + pzp ** 2)
+        cth4 = pzf / np.sqrt(pxf ** 2 + pyf ** 2 + pzf ** 2)
+
     out = dict(E2=E2[hitp], p2=p2[hitp],
                E3=E3[hitp], p3=p3[hitp] * 1000.0,
                E4=E4[hitp], p4=p4[hitp] * 1000.0,
-               Q2=nz("Q2")[hitp])
+               Q2=nz("Q2")[hitp],
+               El=nz("El")[hitp], cthl=nz("cthl")[hitp],
+               T3=(Ep - M_P)[hitp], cth3=cth3[hitp],
+               T4=(Efp - M_P)[hitp], cth4=cth4[hitp])
     n_nop3 = int(np.sum(~np.isfinite(out["E3"])))    # expect 0: EMQE is pure QEL
     return out, len(hitp), int(hitp.sum()), n_nop3
 
