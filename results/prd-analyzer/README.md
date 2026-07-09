@@ -448,8 +448,9 @@ this lives inside the single fig9 bin [15,20):
   height ≡ Z/binw (24 at 0.25-MeV bins), a degenerate line masquerading as a "peak" at 5 MeV;
 - **SF+UnifiedQEL**: the table's flat [15,20) block emerges as a smooth dome peaking at
   14.8–14.9 MeV (*below* the block edge), strength leaking down to ~11 MeV, block edges at
-  20/25 MeV only softened steps; 38 % in [15,20) vs the table's ~55 % — the b-chain's
-  off-shell reshaping, not a bin-for-bin resample;
+  20/25 MeV only softened steps; 38 % in [15,20) vs the table's ~55 % — not a bin-for-bin
+  resample (mechanism pinned in §10b1: the record is the sampled table shifted down by
+  T_rec(k));
 - **SF(2024)+UnifiedQEL**: the NIKHEF quasiparticle peaks (16.0 / 18.2 / ~21 MeV) **survive
   into the record** at the right positions, broadened to a few hundred keV with partly filled
   valleys — the generator preserves the 2024 SF's resolved shell structure at ~half-MeV
@@ -478,6 +479,47 @@ differs per a-tune:
   correlation tail drags the median E₄ to 70.6 MeV — why SF has the lowest in-window I₄.
 So §9's "+20 MeV aggregator shift" is exact for LFG only; for SF the pre→post-FSI step is,
 ironically, the only place the sampled Benhar f(E) shape ever reaches an observable.
+
+### 10b1. SF + UnifiedQEL (22b) vs the Benhar input — the record is the table minus T_rec(k)
+
+![22b input vs struck](em_input_struck_fine_22b.png)
+
+Single-model view (`plot_em_input_struck_fine_by_model.py`) with a third curve that pins the
+§10b "dome" mechanism: the struck-nucleon record with the ¹¹B recoil kinetic energy **added
+back**, `m_N − E_n = E_m + T_rec`, `T_rec = p_n²/2M(¹¹B)`. That curve lands on the Benhar
+input **exactly** — the [15,20) block edge is restored razor-sharp (strength below 15 MeV:
+14.5 % in E_m → **0.0000** in m_N − E_n) and the [20,25)/[25,30) steps reappear.
+
+**Code mechanism** (`genie::utils::BindHitNucleon`, `QELUtils.cxx:271`, reached with the
+default `HitNucleonBindingMode = UseNuclearModel`, `QELEventGenerator.cxx:402`): every nuclear
+model except SpectralFunc gets `Mf = Mi + Eb − mNi` (excited recoiling remnant → reconstructed
+E_m = Eb). SpectralFunc alone gets a special case — *"the SpectralFunc nuclear model returns a
+removal energy which includes the kinetic energy of the final-state nucleus. We account for
+this difference here"* — `Mf = √((Mi+E−mNi)² − k²)`, which collapses to **`E_n = m_N − E`**
+(static-spectator closure). The sampling itself is faithful (`SpectralFunc::LoadSFDataFile`
+builds a uniform-bin TH2D, tabulated values = bin centers; `GetRandom2` draws bin-uniformly),
+so the entire distortion is this one line: the reconstructed, recoil-subtracted missing energy
+comes out **E_m = E_sampled − k²/2M(¹¹B)** — 0.5 / 2.0 / 4.4 MeV low at k = 100 / 200 / 300
+MeV/c, k-correlated, hence a downward *smearing* (the dome) rather than a shift. The σ
+weighting only tilts gently within blocks (the restored curve rides ~5 % above the input
+inside [15,20)). Note the consequence: events reconstruct at E_m < S_p — below the proton
+separation energy, kinematically impossible in PWIA.
+
+### 10b2. SF(2024) + UnifiedQEL (33b) vs the 2024 input — quasiparticle peaks restored at S_p
+
+![33b input vs struck](em_input_struck_fine_33b.png)
+
+Same three-curve view for the 2024 table at 0.05-MeV binning. The record E_m shows the NIKHEF
+quasiparticle peaks broadened and downshifted (ground-state peak at 15.52 MeV, FWHM 0.30);
+adding T_rec back restores them **on top of the input table** — ground-state peak at
+15.94 ≈ S_p = 15.957 MeV with FWHM 0.18, and the strength below the table's 13-MeV floor
+drops 3.5 % → **0.0000**. This also settles the convention question: the 2024 table's E axis
+is the recoil-free (mass-based) removal energy — its ground-state peak sits exactly at the
+physical separation energy, as it must — so the `BindHitNucleon` assumption that the table's
+E "includes the kinetic energy of the final-state nucleus" mis-reads these tables, and the
+generator's E_m spectrum is systematically low by T_rec(k). Candidate upstream GENIE issue;
+bounded by ≤ 4.4 MeV inside p_m < 300, invisible at 5-MeV binning, but exactly the first-bin
+distortion resolved here.
 
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
@@ -540,6 +582,9 @@ ironically, the only place the sampled Benhar f(E) shape ever reaches an observa
   design — the Fig. 6 normalization convention is unresolved).
 - **`plot_em_input_struck_fine.py`** → `em_input_struck_fine.png` (stages 1 vs 2 at 0.25/0.1-MeV
   binning — the structure inside the first fig9 bin; inputs on their native grids).
+- **`plot_em_input_struck_fine_by_model.py`** → `em_input_struck_fine_22b.png`,
+  `em_input_struck_fine_33b.png` (per-model input vs record vs recoil-restored `m_N − E_n` —
+  the T_rec(k) mechanism figures of §10b1/§10b2).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 
