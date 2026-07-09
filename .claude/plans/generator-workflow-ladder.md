@@ -104,6 +104,28 @@ normalization unresolved — deferred; note it in the docstring).
     (Dutta T/1.11 ≈ 0.54 for orientation), raw survival > I4/I3 (absorption vs window migration).
 - Figures render (Agg backend via `apply_style()`), README §10 images resolve.
 
+## Outcome (2026-07-09 — executed; corrections vs the plan above)
+
+- **Delivered**: `fig9_common.py`, `build_cache_ladder.py` (+ `cache/ladder/*.npz`, 2M ev/model),
+  `plot_em_ladder_fig9.py` → `em_ladder_fig9.png`, `plot_em_stages_by_model.py` →
+  `em_stages_by_model.png`, `plot_pm_ladder.py` → `pm_ladder.png`, README §10, cross-link note in
+  `genie-experimental-spectral-function.md`. Stage-3 arrays verified **bit-identical** to
+  `cache/prefsi` for all five models.
+- **Build corrections**: every model's gst files hold **500k events each** (the "100×100k" in
+  samples.py was stale — fixed there), so the full build is `MAX_FILES=4` for all five, one
+  invocation. The genie_dev gst (SuSAv2) has **no `pn` scalar branch** — the builder computes
+  |p_n| from `pxn/pyn/pzn`.
+- **Physics surprises vs the plan's expectations** (README §10 has the full story):
+  1. The a-tunes' **stage 2 is already the S_p = 15.957 MeV delta** — `E2 ≡ E3` to < 3e-12 MeV
+     for a- AND b-chains. The sampled f(E) is discarded when the struck nucleon is *written*,
+     not in the outgoing-proton step; "En carries the sampled f(E)" was wrong for a-tunes.
+  2. **SuSAv2's record nucleon is exactly on-shell** (`En = √(M_P²+p_n²)`, residual < 1e-5 MeV)
+     → `E2 < 0` for every event, median −13 MeV; `med|E2−E3| = 28.9 MeV`.
+  3. **Post-FSI proton survival ≈ 100 %** (99.85–100), not 55–70 %: the I4/I3 = 0.55–0.61
+     occupancy drop is entirely migration out of the (p_m<300, E_m<80) window, not absorption.
+  4. p_m ladder: with E2 pinned at S_p, the a-tunes pass the full n(k) (SRC tail included)
+     through the E_m window — the sampled E–k correlation is destroyed (I2 = 5.92 vs input 5.40).
+
 ## Out of scope / later
 
 - Dutta Fig. 6 p/s-shell momentum overlays (normalization convention unresolved).

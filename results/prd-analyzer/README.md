@@ -382,6 +382,60 @@ construction; plotted E_m<80 integrals 5.2–6.0 vs input tables' 5.25, data 6.0
 - **SuSAv2** spreads E_m broadly around ~14 MeV including sub-threshold and negative
   values (p5 = −3.6 MeV) — a Fermi-gas energy-balance prescription, no shell structure.
 
+### 10. Generator workflow ladder — input → record → pre-FSI → post-FSI
+
+![E_m ladder](em_ladder_fig9.png)
+![stages by model](em_stages_by_model.png)
+![p_m ladder](pm_ladder.png)
+
+The four stages of "how the generator implements the spectral function", every panel in the
+**identical** fig9 convention — occupancy scale `y = Z·hist/(N_p·binw)`, proton channel
+(hitnuc = p), **no cuts**: (1) the input tables `f_{k<300}(E)`; (2) the **struck nucleon as
+written into the event record**, `E_2 = M_p − En − p_n²/(2M_¹¹B)`, `p_2 = |p⃗_n|`; (3) the
+pre-FSI primary proton (`E_m = ω − T_p − T_rec`, bit-identical to `cache/prefsi`, §9); (4) the
+same reconstruction from the post-FSI leading proton. E_m panels take `p_m < 300`, p_m panels
+take `0 ≤ E_m < 80`. Conventions differ from §5 (spectrometer acceptance + area-matching — here
+neither) and §6 (`E_m = ω − T_p` without T_rec — here with); the stage-2 definition subtracts
+T_rec, unlike the `results/template/make_groundstate_*` convention `M_N − En` (~2 MeV apart at
+200 MeV/c), exactly so that PWIA makes stages 2 and 3 coincide when the chain conserves energy.
+Caveat: conditioning every stage on hitnuc = p counts p→n charge exchange as loss and excludes
+n→p feed-in (§5/§7 accept any final proton).
+
+Ladder bookkeeping (integrals over E_m<80, p_m<300, × Z/N_p; `surv` = fraction of
+proton-channel events with ≥1 post-FSI proton):
+
+| model | I₂ | I₃ | I₄ | I₄/I₃ | surv | med\|E₂−E₃\| |
+|---|---|---|---|---|---|---|
+| LFG + Rosenbluth | 6.000 | 6.000 | 3.520 | 0.587 | 100.0 % | 0 |
+| SF + Rosenbluth | 5.439 | 5.439 | 2.981 | 0.548 | 99.9 % | 0 |
+| LFG + SuSAv2 | 0 (E₂<0) | 5.219 | 3.176 | 0.609 | 100.0 % | 28.9 MeV |
+| SF(2024) + UnifiedQEL | 5.512 | 5.512 | 3.208 | 0.582 | 100.0 % | 0 |
+| SF + UnifiedQEL | 5.544 | 5.544 | 3.225 | 0.582 | 100.0 % | 0 |
+
+(inputs 5.25 / 5.23; data 6.08; the paper's FSI-absorbed occupancy scale ≈ 3.24, §7.)
+
+**Findings:**
+- **Stages 2 and 3 coincide event-by-event (< 3·10⁻¹² MeV) for the a- AND b-chains** — the
+  pre-FSI reconstruction is an exact image of the record, so the a-tunes' f(E) destruction (§9)
+  happens **when the struck nucleon is written**, not in the outgoing-proton computation: the old
+  chain stores the on-shell-¹¹B-remnant closure (`E_2 ≡ S_p = 15.957` MeV, a delta for LFG *and*
+  SF), discarding the sampled removal energy before it ever reaches the record. Only the b-tunes
+  put the sampled f(E) into `En`.
+- **SuSAv2's record nucleon is exactly on-shell** (`En = √(M_p²+p_n²)`, residual < 10⁻⁵ MeV):
+  `E_2 = −(T_N + T_rec) < 0` for every event (median −13 MeV) — a third record convention. Its
+  removal-energy physics exists only in the outgoing energy balance (stage 3, median offset
+  28.9 MeV from the record).
+- **The p_m ladder shows the same loss in the other marginal**: with E₂ pinned at S_p, the
+  a-tunes' record passes the **full** n(k) — SRC tail included — through the `E_m < 80` window
+  (I₂ = 5.92 for SF vs the input's E-restricted 5.40): the sampled E–k correlation is destroyed.
+  The b-tunes track the restricted input marginal.
+- **FSI never removes all protons** (survival 99.9–100 %): the occupancy drop to I₄/I₃ =
+  0.55–0.61 (paper: T/1.11 ≈ 0.54) is entirely **migration out of the (p_m<300, E_m<80) window**
+  (plus, for the a-pair, the +20 MeV `NucBindEnergyAggregator` shift parking the delta at
+  ~36 MeV, §9), not proton absorption.
+- Only stage 4 is shape-comparable to the data (the published S(E_m) is FSI-distorted); the
+  ladder localizes where each model's stage-4 shape and normalization came from.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -429,6 +483,18 @@ construction; plotted E_m<80 integrals 5.2–6.0 vs input tables' 5.25, data 6.0
   (pre-FSI primary-proton E_m/p_m).
 - **`plot_em_prefsi_fig9.py`** → `em_prefsi_fig9.png` (pre-FSI E_m, occupancy scale, vs
   the input tables and the fig9 data).
+- **`fig9_common.py`** — shared fig9 pieces: `load_dutta()` (data + error model),
+  `load_input_tables()`, the restricted marginals `f_restricted` (k<300) / `n_restricted`
+  (E<80), `rebin`, and the `EDGES/PM_MAX/BINW/EM_MAX/Z` constants.
+- **`build_cache_ladder.py`** — one XRootD pass, hitnuc = p, no cuts → `cache/ladder/<model>.npz`
+  (per-event E/p at stages 2/3/4 + Q²; stage 3 verified bit-identical to `cache/prefsi`;
+  `MAX_FILES` env, default 4 = 2M events/model — the gst files are 500k events each).
+- **`plot_em_ladder_fig9.py`** → `em_ladder_fig9.png` (the four-stage E_m ladder vs fig9;
+  prints the §10 bookkeeping table).
+- **`plot_em_stages_by_model.py`** → `em_stages_by_model.png` (per-model overlay of the three
+  event-record stages + input table + data).
+- **`plot_pm_ladder.py`** → `pm_ladder.png` (the p_m companion ladder; no external data by
+  design — the Fig. 6 normalization convention is unresolved).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 

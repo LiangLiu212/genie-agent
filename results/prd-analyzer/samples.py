@@ -5,12 +5,17 @@ Five quasi-elastic EM models on C12 at E_beam = 2.445 GeV, generation cut `_05`
 setting). Each sample is ~10M events; instead of pre-pulling the grid output, we
 **stream the gst files straight off dCache over XRootD** (root://).
 
-    key             tune              config (ground state + QE-EM)        install        files
-    LFG             GEM26_11a_05_000  LFG + Rosenbluth                     genie_inclxx   100 x 100k
-    SF              GEM26_22a_05_000  SF  + Rosenbluth                     genie_inclxx   100 x 100k
-    SuSAv2          GEM21_11a_05_000  LFG + SuSAv2 (HybridXSecAlgorithm)    genie_dev       20 x 500k
-    UnifiedQEL2024  GEM26_33b_05_000  SF(ABS 2024) + UnifiedQEL            genie_inclxx   100 x 100k
-    UnifiedQEL      GEM26_22b_05_000  SF  + UnifiedQEL (SF-consistent)     genie_inclxx   100 x 100k
+    key             tune              config (ground state + QE-EM)        install
+    LFG             GEM26_11a_05_000  LFG + Rosenbluth                     genie_inclxx
+    SF              GEM26_22a_05_000  SF  + Rosenbluth                     genie_inclxx
+    SuSAv2          GEM21_11a_05_000  LFG + SuSAv2 (HybridXSecAlgorithm)    genie_dev
+    UnifiedQEL2024  GEM26_33b_05_000  SF(ABS 2024) + UnifiedQEL            genie_inclxx
+    UnifiedQEL      GEM26_22b_05_000  SF  + UnifiedQEL (SF-consistent)     genie_inclxx
+
+All five write 500k events/file (verified 2026-07-09: the first 4 sorted files
+of every model hold exactly 2M events -- the MAX_FILES=4 default of the cache
+builders). NB the genie_dev gst (SuSAv2) lacks the `pn` scalar branch --
+readers use pxn/pyn/pzn.
 
 The clean axes: LFG vs SF isolates the ground state (both Rosenbluth); LFG vs SuSAv2
 isolates the QE-EM cross section (both Local Fermi Gas); SF vs UnifiedQEL isolates the

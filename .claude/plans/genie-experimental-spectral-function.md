@@ -139,6 +139,17 @@ sigma-model mismatch is part of what the estimator measures, identically on the 
    the OLD 12-module chain. Verified: genie-agent/tunes/ is byte-identical to the
    published CVMFS tune tarball (diff -rq clean for all six tunes).
 
+   NOTE 2026-07-09 (four-stage generator-workflow ladder, README section 10;
+   plan .claude/plans/generator-workflow-ladder.md): the ladder localizes WHERE
+   each distortion enters. (a) The a-tunes discard the sampled removal energy
+   already when WRITING the struck nucleon (record E_m == S_p delta, == pre-FSI
+   to < 3e-12 MeV), so the loss is in the record, not the outgoing-proton step;
+   (b) SuSAv2's record nucleon is exactly on-shell (E_m,record < 0) -- a third
+   convention; (c) hA2018 essentially never removes all protons (survival
+   99.9-100%): the S^D occupancy deficit is entirely migration out of the
+   (p_m<300, E_m<80) window, not absorption -- relevant to interpreting the
+   transparency analogue in step 4.
+
 6. **Docs**: README section 7 (method, dictionary table, integrals table, caveats);
    cross-link `report/simc-eep-normalization.md` (the H/genvol machinery is the SIMC
    analogue) and the open_questions entries (this extraction is the GENIE side of the
