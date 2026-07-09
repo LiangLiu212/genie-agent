@@ -436,6 +436,49 @@ proton-channel events with ≥1 post-FSI proton):
 - Only stage 4 is shape-comparable to the data (the published S(E_m) is FSI-distorted); the
   ladder localizes where each model's stage-4 shape and normalization came from.
 
+### 10b. Inside the first bin — fine-binned input vs struck nucleon
+
+![fine input vs struck](em_input_struck_fine.png)
+
+Stages 1 vs 2 below the data's 5-MeV resolution (`plot_em_input_struck_fine.py`): 0.25-MeV bins
+over 5–40 MeV (left) and 0.1-MeV bins over the 2024 table's fine segment (right); the input
+tables drawn on their **native grids** (Benhar: flat 5-MeV steps; 2024: 0.025/0.1 MeV). All of
+this lives inside the single fig9 bin [15,20):
+- **a-tunes**: one ~keV-wide line at S_p = 15.957 MeV (100 % of events within ±0.05 MeV) —
+  height ≡ Z/binw (24 at 0.25-MeV bins), a degenerate line masquerading as a "peak" at 5 MeV;
+- **SF+UnifiedQEL**: the table's flat [15,20) block emerges as a smooth dome peaking at
+  14.8–14.9 MeV (*below* the block edge), strength leaking down to ~11 MeV, block edges at
+  20/25 MeV only softened steps; 38 % in [15,20) vs the table's ~55 % — the b-chain's
+  off-shell reshaping, not a bin-for-bin resample;
+- **SF(2024)+UnifiedQEL**: the NIKHEF quasiparticle peaks (16.0 / 18.2 / ~21 MeV) **survive
+  into the record** at the right positions, broadened to a few hundred keV with partly filled
+  valleys — the generator preserves the 2024 SF's resolved shell structure at ~half-MeV
+  resolution;
+- **SuSAv2**: absent (on-shell record, E₂ < 0).
+
+**Pre→post-FSI mechanism for the a-tunes (code-verified).** The §9 pre-FSI delta moves to the
+~36-MeV post-FSI spike via Module-10 `NucBindEnergyAggregator` of the old QEL-EM thread
+(install `config/EventGenerator.xml:249`), which runs **after** `HadronTransporter` and, for
+every final-state nucleon still carrying a `RemovalEnergy` tag, subtracts that energy from its
+kinetic energy (`NucBindEnergyAggregator.cxx:85-94`), rescales |p⃗| back on-shell (:96-115) and
+books the balance as a `Bindino` (:123). The tag travels in a side channel the 4-vectors never
+see: `FermiMover.cxx:138` stores the nuclear model's removal energy on the struck nucleon while
+writing the on-shell-¹¹B closure into its 4-vector (:182 — hence the stage-2 delta), and
+`QELHadronicSystemGenerator.cxx:85` copies it onto the outgoing proton. The subtracted value
+differs per a-tune:
+- **LFG**: fixed `RFG-NucRemovalE@Pdg=1000060120` = **20 MeV from the tune CommonParam**
+  (`tunes/GEM26_11a/CommonParam.xml:145`; the install default is 25 MeV) since
+  `LFG-MomentumDependentErmv = false`. Measured E₄−E₃: a spike at 19.99 MeV holding 56 % of
+  events (= the transparent fraction, matching I₄/I₃ = 0.587); the 43 % above +25 MeV is hA
+  energy loss stacked on top.
+- **SF**: the **sampled Benhar removal energy** (`SpectralFunc.cxx:124`) — the same number the
+  4-vector bookkeeping discarded. Post-FSI E_m ≈ S_p + E_sampled: the input f(E) reappears one
+  stage too late and double-counted with S_p. Verified: E₄−E₃ peak bin = [15,20) (the table's
+  p-shell), frac in [15,25) = 0.313 vs transparency × p-shell strength = 0.301; the f(E)
+  correlation tail drags the median E₄ to 70.6 MeV — why SF has the lowest in-window I₄.
+So §9's "+20 MeV aggregator shift" is exact for LFG only; for SF the pre→post-FSI step is,
+ironically, the only place the sampled Benhar f(E) shape ever reaches an observable.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -495,6 +538,8 @@ proton-channel events with ≥1 post-FSI proton):
   event-record stages + input table + data).
 - **`plot_pm_ladder.py`** → `pm_ladder.png` (the p_m companion ladder; no external data by
   design — the Fig. 6 normalization convention is unresolved).
+- **`plot_em_input_struck_fine.py`** → `em_input_struck_fine.png` (stages 1 vs 2 at 0.25/0.1-MeV
+  binning — the structure inside the first fig9 bin; inputs on their native grids).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 
