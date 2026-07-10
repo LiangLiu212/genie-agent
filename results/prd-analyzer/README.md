@@ -542,6 +542,53 @@ no surviving proton). The change is confined to the proton arm:
 The `cache/ladder` schema gained the columns `El, cthl, T3, cth3, T4, cth4` for this figure
 (stage-3 arrays re-verified bit-identical to `cache/prefsi` after the rebuild).
 
+### 11. Vertex-recoil missing energy — T_rec = p_n²/2M(¹¹B)
+
+![E_m ladder, vertex-recoil T_rec](em_ladder_trec_pn.png)
+
+The same four-stage ladder with the recoil term of the missing energy pinned to the **true
+remnant recoil**: `E_m = ω − T_p − p_n²/2M(¹¹B)`, where p_n is the struck nucleon's record
+momentum (the ¹¹B spectator recoils with −p⃗_n at the vertex), instead of §10's re-measured
+`T_rec = p_m²/2M(¹¹B)`, `p_m = |q⃗ − p⃗_p|` per stage. Same events, same `p_m < 300` window —
+only the E_m value changes; panels 3–4 overlay the §10 definition dashed
+(`plot_em_ladder_trec_pn.py`, derived entirely from `cache/ladder`:
+`E_s' = E_s + (p_s² − p_n²)/2M`, no rebuild).
+
+| model | I₃′ | I₄′ | I₄ (§10) | I₄′/I₃′ | moved | med ΔE₄ | I₄′ (p_n<300) |
+|---|---|---|---|---|---|---|---|
+| LFG + Rosenbluth | 6.000 | 3.519 | 3.520 | 0.586 | 97.7 % | +0.3 | 3.598 |
+| SF + Rosenbluth | 5.439 | 2.978 | 2.981 | 0.547 | 98.6 % | +0.5 | 3.041 |
+| LFG + SuSAv2 | 5.193 | 3.165 | 3.176 | 0.609 | 98.0 % | +1.3 | 3.343 |
+| SF(2024) + UnifiedQEL | 5.512 | 3.207 | 3.208 | 0.582 | 43.2 % | +47.2 | 3.266 |
+| SF + UnifiedQEL | 5.544 | 3.223 | 3.225 | 0.581 | 43.2 % | +47.2 | 3.283 |
+
+(moved = `|ΔE₄| > 0.01 MeV` among surviving protons, med ΔE₄ [MeV] over those; I₃′ differs
+from §10's I₃ only for SuSAv2, 5.219 → 5.193.)
+
+**Findings:**
+- **The fig9 window is attribution-robust.** Every in-window occupancy moves by ≤ 0.5 %
+  (I₄ by ≤ 0.35 %, I₃ only for SuSAv2, −0.5 %): inside `p_m < 300` the §10 recoil term is
+  bounded by 4.4 MeV, and the events whose recoil is badly mis-attributed are exactly the
+  FSI-kicked ones that have already left the window in both conventions. None of the §10
+  conclusions depend on the recoil-attribution choice.
+- **Outside the window the mis-attribution is large.** For the b-tunes the 43 % of surviving
+  protons that hA touches shift by median **+47 MeV** (p90 +120): at a typical rescattered
+  `p_m ≈ 1 GeV/c`, §10's `T_rec(p_m)` books ~50 MeV of hA energy loss as remnant recoil.
+  Under the vertex definition the p_n-window occupancy I₄′(p_n<300) sits 1.8–5.6 % above I₄′ —
+  a small population keeps `E_m < 80` while its *reconstructed* p_m is kicked hard. The a-pair's
+  ~98 % moved at sub-MeV median is not hA: it is the §10b aggregator's on-shell |p⃗| rescale
+  nudging p_m for every tagged proton, transparent ones included.
+- **SuSAv2 does not close the vertex in momentum** (new): pre-FSI, `|q⃗ − p⃗_p| ≠ p_n` for
+  **96.7 %** of events (Δp = p_m − p_n median +6.4, 5–95 % −83/+132 MeV/c; 24 % move E_m by
+  > 1 MeV — the panel-3 solid/dashed split). Code-verified in `QELEventGeneratorSuSA.cxx`
+  (genie_dev): the record nucleon is written on-shell (:478 — the §10 energy finding), the
+  outgoing nucleon starts as `p_n + q` with the removal energy subtracted from the **energy
+  component only** (:493), then *"Put on shell as in the Aggregator"* (:495, the code's own
+  comment: "a bit of a horrible approximation") rescales |p⃗_f| at fixed energy, and the
+  momentum imbalance is booked to the remnant (:516). Total momentum is conserved event-wide,
+  but the nucleon-level vertex is not 2-body-consistent — for this chain p_m does not measure
+  the initial nucleon momentum even before FSI.
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -609,6 +656,9 @@ The `cache/ladder` schema gained the columns `El, cthl, T3, cth3, T4, cth4` for 
   the T_rec(k) mechanism figures of §10b1/§10b2).
 - **`plot_kin_prefsi_postfsi.py`** → `kin_prefsi_vs_postfsi.png` (E_e′, θ_e′, Q², T_p, θ_p with
   the pre-FSI vs leading post-FSI proton — electron arm FSI-blind, §10c).
+- **`plot_em_ladder_trec_pn.py`** → `em_ladder_trec_pn.png` (the §11 ladder with the
+  vertex-recoil `T_rec(p_n)` vs §10's reconstructed `T_rec(p_m)`; prints the attribution
+  bookkeeping and the SuSAv2 vertex non-closure numbers; pure `cache/ladder` derivation).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 

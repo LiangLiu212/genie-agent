@@ -126,6 +126,22 @@ normalization unresolved — deferred; note it in the docstring).
   4. p_m ladder: with E2 pinned at S_p, the a-tunes pass the full n(k) (SRC tail included)
      through the E_m window — the sampled E–k correlation is destroyed (I2 = 5.92 vs input 5.40).
 
+## §11 follow-up (2026-07-10) — vertex-recoil E_m
+
+- `plot_em_ladder_trec_pn.py` → `em_ladder_trec_pn.png` + README §11: the same ladder with
+  `T_rec = p_n²/2M(¹¹B)` pinned to the struck nucleon's record momentum (the true ¹¹B vertex
+  recoil) instead of the per-stage reconstructed `p_m = |q − p_p|`. Pure `cache/ladder`
+  derivation (`E_s' = E_s + (p_s² − p_n²)/2M`) — no rebuild.
+- Fig9-window occupancies are attribution-robust (all shifts ≤ 0.5 %): inside `p_m < 300` the
+  reconstructed recoil term is bounded by 4.4 MeV, and badly mis-attributed events have left
+  the window anyway. Outside it, hA-touched b-tune protons mis-book median +47 MeV of energy
+  loss as recoil; I₄′(p_n-window) runs 1.8–5.6 % above the reconstructed-window I₄′.
+- **New finding:** SuSAv2 does not close the vertex in momentum — `|q − p_p| ≠ p_n` pre-FSI
+  for 96.7 % of events (Δp 5–95 % = −83/+132 MeV/c). `QELEventGeneratorSuSA.cxx`: removal
+  energy subtracted from the energy only (:493), *"Put on shell as in the Aggregator"* |p⃗|
+  rescale at fixed E (:495), imbalance booked to the remnant (:516). Stages 2/3 identity
+  `p_m ≡ p_n` holds to double precision for the a- and b-chains.
+
 ## Out of scope / later
 
 - Dutta Fig. 6 p/s-shell momentum overlays (normalization convention unresolved).
