@@ -589,6 +589,55 @@ from §10's I₃ only for SuSAv2, 5.219 → 5.193.)
   but the nucleon-level vertex is not 2-body-consistent — for this chain p_m does not measure
   the initial nucleon momentum even before FSI.
 
+### 12. Restored ladder — E_m + T_rec, the input-table axis
+
+![E_m ladder, restored axis](em_ladder_restored.png)
+
+The §10b1 "restored" quantity extended to all four stages: adding each stage's recoil term
+back, `E_s + p_s²/2M(¹¹B)`, collapses algebraically to `m_N − E_n` at the record and to
+`ω − T_p` (no recoil term at all) for the pre-/post-FSI proton — the **mass-based
+removal-energy axis the input tables are natively defined on** (§10b2). This axis is
+recoil-*agnostic*: no p_m-vs-p_n attribution enters (the §11 SuSAv2 stage-3 ambiguity
+vanishes by construction), and stage 4 − stage 3 = `T_p(pre) − T_p(post)` exactly, the §10c
+FSI energy loss. Panels 2–4 overlay the input tables thin-dashed as restoration targets.
+Same events and `p_s < 300` windows as §10 (`plot_em_ladder_restored.py`, pure `cache/ladder`
+derivation). Data caveat: the published Dutta E_m is recoil-*subtracted*, so on this axis the
+points sit low by an event-wise T_rec ≤ 4.4 MeV in-window — sub-bin at 5-MeV binning, shape
+reference only.
+
+| model | I₂ʳ | I₃ʳ | I₄ʳ | I₄ʳ/I₃ʳ | f(<15) s2 | f(<15) s3 | [15,20) s2 |
+|---|---|---|---|---|---|---|---|
+| LFG + Rosenbluth | 6.000 | 6.000 | 3.517 | 0.586 | 0 | 0 | 1.200 |
+| SF + Rosenbluth | 5.439 | 5.439 | 2.965 | 0.545 | 0 | 0 | 1.073 |
+| LFG + SuSAv2 | 0 (E₂ʳ<0) | 5.413 | 3.258 | 0.602 | 100 % | 43.1 % | 0 |
+| SF(2024) + UnifiedQEL | 5.505 | 5.505 | 3.201 | 0.582 | 0 | 0 | 0.539 |
+| SF + UnifiedQEL | 5.538 | 5.538 | 3.218 | 0.581 | 0 | 0 | 0.555 |
+
+(inputs 5.249 / 5.234, [15,20) bin 0.511 / 0.496; f(<15) = in-window fraction below 15 MeV;
+median in-window T_rec ≈ 1.1–1.2 MeV.)
+
+**Findings:**
+- **The b-tune restoration holds ladder-wide.** Stages 2/3 land on their input tables with the
+  below-15-MeV strength at exactly 0 (§10's dome leak was pure T_rec bookkeeping — §10b1
+  confirmed at fig9 binning). What remains is the σ weighting of event sampling: the [15,20)
+  block sits +8.6 % above the table (0.555 vs 0.511; integral +5.5 %) — events are drawn from
+  S(E,k)·σ_ep·phase-space, not resampled from the bare table.
+- **The a-tune δ acquires its T_rec(k) width, upward**: E₂ʳ = S_p + T_rec(k) ∈ [15.96, 20.4).
+  LFG stays entirely inside [15,20) (its n(k) has no strength above 288 MeV/c); SF spills
+  1.4 % into [20,25) via its high-k tail. The restored record shows the a-chain's only
+  E_m content is the separation-energy closure plus recoil — the sampled f(E) is absent on
+  every axis.
+- **SuSAv2's record stays off-axis** (`m_N − E_n = −T_N`, median −17 MeV): no axis choice
+  turns an on-shell record into a removal energy. New on this axis: its **stage 3 puts 43 %
+  of in-window events below S_p = 15.96 MeV** — `ω − T_p < S_p` is kinematically impossible
+  in PWIA (E ≥ S_p, T_rec ≥ 0), a ~10× larger below-S_p population than the §10b1 table
+  mis-read and intrinsic to the chain's energy balance (the model is inclusive by design;
+  its exclusive E_m was never constrained).
+- **Stage 4 is stage 3 plus pure hA energy loss** — no recoil mis-attribution is possible
+  here, so the migration I₄ʳ/I₃ʳ = 0.55–0.60 (matching §10/§11) is now cleanly "FSI moved
+  T_p and direction", with the LFG aggregator spike parked at S_p + T_rec + 20 ≈ 37 MeV
+  (the tall [35,40) bin).
+
 ## Scripts
 - **`samples.py`** — 5-model registry; `xrootd_url()`, `gst_urls(model)`, `load_cache(model)`,
   `lw(model)`/`zorder(model)` (the `HIGHLIGHT` = Variant 05 gets a thick line, drawn on top).
@@ -659,6 +708,10 @@ from §10's I₃ only for SuSAv2, 5.219 → 5.193.)
 - **`plot_em_ladder_trec_pn.py`** → `em_ladder_trec_pn.png` (the §11 ladder with the
   vertex-recoil `T_rec(p_n)` vs §10's reconstructed `T_rec(p_m)`; prints the attribution
   bookkeeping and the SuSAv2 vertex non-closure numbers; pure `cache/ladder` derivation).
+- **`plot_em_ladder_restored.py`** → `em_ladder_restored.png` (the §12 ladder on the restored
+  removal-energy axis `E_m + T_rec` — record `m_N − E_n`, protons `ω − T_p` — input tables
+  overlaid as dashed restoration targets; prints the restoration bookkeeping; pure
+  `cache/ladder` derivation).
 - **`plot_spectral_function.py`** → `spectral_function_c12.png` (parses `pke12_tot.data`; no gst needed)
 - **`plot_spectral_function_2024.py`** → `spectral_function_c12_2024.png`, `spectral_function_c12_2024_vs_old.png` (parses `data/pke12_2024.table`; two-segment energy grid)
 

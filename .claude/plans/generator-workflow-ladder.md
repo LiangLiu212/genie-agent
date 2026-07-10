@@ -142,6 +142,19 @@ normalization unresolved — deferred; note it in the docstring).
   rescale at fixed E (:495), imbalance booked to the remnant (:516). Stages 2/3 identity
   `p_m ≡ p_n` holds to double precision for the a- and b-chains.
 
+## §12 follow-up (2026-07-10) — restored (removal-energy) axis
+
+- `plot_em_ladder_restored.py` → `em_ladder_restored.png` + README §12: the ladder with the
+  recoil term added back (`E_s + p_s²/2M(¹¹B)` = record `m_N − E_n`, protons `ω − T_p`) — the
+  input tables' native axis, recoil-attribution-free by construction; tables overlaid dashed
+  as restoration targets. Pure `cache/ladder` derivation.
+- b-tune stages 2/3 land on their tables (below-15-MeV strength exactly 0; the +8.6 % [15,20)
+  excess is the σ_ep event weighting). a-tune δ smears up by T_rec(k) but stays in [15,20)
+  (LFG n(k) ends below 288 MeV/c; SF spills 1.4 %). Stage 4 − stage 3 = the §10c T_p loss
+  exactly.
+- **New number:** SuSAv2 stage 3 puts 43 % of in-window events below S_p (`ω − T_p < S_p`,
+  PWIA-impossible); its record stays off-axis (−T_N, median −17 MeV) on any convention.
+
 ## Out of scope / later
 
 - Dutta Fig. 6 p/s-shell momentum overlays (normalization convention unresolved).
