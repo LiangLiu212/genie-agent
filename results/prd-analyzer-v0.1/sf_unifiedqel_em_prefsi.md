@@ -8,14 +8,15 @@ proton channel (`hitnuc == p`), no further cuts: **1,373,273 events** (68.7 % of
 the 2M streamed), from `cache/ladder/UnifiedQEL.npz`.
 
 Both figures: [`plot_em_components_prefsi.py`](plot_em_components_prefsi.py) —
-`pixi run python results/prd-analyzer-v0.1/plot_em_components_prefsi.py`.
+`pixi run python results/prd-analyzer-v0.1/plot_em_components_prefsi.py UnifiedQEL`.
 The script validates at runtime that the beam is monochromatic (E_v ≡ 2.445 GeV)
 and that its inlined M(¹¹B) matches the cache builder, via the identity
 T_rec = (2.445 − E_e′) − T_p − E3/1000 (max deviation 8×10⁻¹⁷ GeV).
+Sibling page for the 2024-SF variant: [SF(2024) + UnifiedQEL](sf2024_unifiedqel_em_prefsi.md).
 
 ## 1. The four ingredients of E_m3 = ω − T_p − T_rec
 
-![Em components at stage 3](em_components_prefsi.png)
+![Em components at stage 3](em_components_prefsi_22b.png)
 
 | quantity | median | mean | p5–p95 |
 |---|---|---|---|
@@ -31,7 +32,7 @@ short-range-correlation tail, visible directly in the recoil energy.
 
 ## 2. The subtraction ladder: ω − T_p vs ω − T_p − T_rec
 
-![stage-3 subtraction ladder](em_subtractions_prefsi.png)
+![stage-3 subtraction ladder](em_subtractions_prefsi_22b.png)
 
 | quantity | median | mean | overflow > 100 MeV |
 |---|---|---|---|
@@ -51,7 +52,8 @@ The pair displays the v0 §10b1/§12 vertex finding from the E_m-budget angle:
   *over*-subtracts by exactly T_rec(k): the spectrum lands 0.5–4.4 MeV low over
   the mean-field range (p-shell peak at 14.75 MeV instead of the table's
   [15, 20) block) and **spills down to 3 MeV — below S_p, kinematically
-  impossible in PWIA**. This is the `BindHitNucleon` SpectralFunc special case
+  impossible in PWIA** (23.1 % of the strength reconstructs below S_p).
+  This is the `BindHitNucleon` SpectralFunc special case
   documented in v0 §10b1 (`QELUtils.cxx:271`): GENIE assumes the table's E
   already contains the recoil kinetic energy, which mis-reads these tables.
 

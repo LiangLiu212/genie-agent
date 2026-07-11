@@ -16,8 +16,9 @@ script in this directory.
 | file | provenance / what it does |
 |---|---|
 | `samples.py` | pulled from v0 (only `CACHE_DIR` changed) — 5-model registry, XRootD URLs, cache loader, plot roles |
-| `plot_em_components_prefsi.py` → `em_components_prefsi.png`, `em_subtractions_prefsi.png` | **E_m budget at ladder stage 3 (pre-FSI primary proton), SF + UnifiedQEL only** — see the page [`sf_unifiedqel_em_prefsi.md`](sf_unifiedqel_em_prefsi.md). Fig 1: the four ingredients E_e′, ω, T_p, T_rec. Fig 2: the subtraction ladder — ω − T_p floors razor-sharp at exactly 15.000 MeV (the pke12_tot table's first E-block edge, v0 §12) while ω − T_p − T_rec (= E_m3) spills below S_p (v0 §10b1 `BindHitNucleon` distortion). Reads `cache/ladder/UnifiedQEL.npz`; validates beam + M_REC against the cache identity at runtime. |
-| `sf_unifiedqel_em_prefsi.md` | The study page for the two figures above: sample facts, medians/means table, and the 15.000-MeV table-edge / T_rec over-subtraction findings with links back to v0 §10b1/§12. |
+| `plot_em_components_prefsi.py` → `em_{components,subtractions}_prefsi_{22b,33b}.png` | **E_m budget at ladder stage 3 (pre-FSI primary proton)**, one UnifiedQEL variant per run (argv `UnifiedQEL` \| `UnifiedQEL2024`). Fig 1: the four ingredients E_e′, ω, T_p, T_rec. Fig 2: the subtraction ladder ω − T_p vs ω − T_p − T_rec (= E_m3). Reads `cache/ladder/<model>.npz`; validates beam + M_REC against the cache identity at runtime. |
+| `sf_unifiedqel_em_prefsi.md` | Study page, **22b** (SF + UnifiedQEL): ω − T_p floors razor-sharp at exactly 15.000 MeV (pke12_tot first E-block edge — the mass-based table axis, v0 §12); E_m3 over-subtracts by T_rec, 23.1 % below S_p (v0 §10b1). |
+| `sf2024_unifiedqel_em_prefsi.md` | Study page, **33b** (SF(2024) + UnifiedQEL): ω − T_p reads the 2024 table back undistorted — ground-state quasiparticle line at 15.93–15.98 MeV ≈ S_p (v0 §10b2); E_m3 drags it ~0.8 MeV low, 39.9 % below S_p, 0.08 % **negative** (min −15.3 MeV). |
 
 ## cache/
 

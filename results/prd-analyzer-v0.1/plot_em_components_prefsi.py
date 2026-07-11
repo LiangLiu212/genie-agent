@@ -1,4 +1,8 @@
-"""E_m budget at ladder stage 3 (pre-FSI primary proton) -- SF + UnifiedQEL only.
+"""E_m budget at ladder stage 3 (pre-FSI primary proton), one UnifiedQEL model.
+
+Model from argv (default UnifiedQEL = SF + UnifiedQEL, GEM26_22b_05; also
+UnifiedQEL2024 = SF(ABS 2024) + UnifiedQEL, GEM26_33b_05). Output figures carry
+the v0-style tune tag: em_{components,subtractions}_prefsi_<22b|33b>.png.
 
 The four ingredients of the stage-3 missing energy
 
@@ -26,7 +30,7 @@ Consistency check (printed): T_rec recovered from the cache identity
 this validates both the monochromatic-beam assumption (Ev == 2.445 for every
 event) and the inlined M_REC against what build_cache_ladder.py actually used.
 
-    pixi run python results/prd-analyzer-v0.1/plot_em_components_prefsi.py
+    pixi run python results/prd-analyzer-v0.1/plot_em_components_prefsi.py [model]
 """
 import sys
 
@@ -37,9 +41,13 @@ from plot_style import (apply_style, new_panels, style_axis,
                         FS_LABEL, FS_LEGEND, FS_SUPTITLE, DPI)
 import samples as S
 
-MODEL = "UnifiedQEL"                  # SF + UnifiedQEL (Variant 05), this study only
-OUT = "results/prd-analyzer-v0.1/em_components_prefsi.png"
-OUT2 = "results/prd-analyzer-v0.1/em_subtractions_prefsi.png"
+# model key -> (tune shown in titles, short tag for file names) -- v0 fine-bin idiom
+VARIANTS = {"UnifiedQEL": ("GEM26_22b_05", "22b"),
+            "UnifiedQEL2024": ("GEM26_33b_05", "33b")}
+MODEL = sys.argv[1] if len(sys.argv) > 1 else "UnifiedQEL"
+TUNE, TAG = VARIANTS[MODEL]
+OUT = f"results/prd-analyzer-v0.1/em_components_prefsi_{TAG}.png"
+OUT2 = f"results/prd-analyzer-v0.1/em_subtractions_prefsi_{TAG}.png"
 
 E_BEAM = 2.445                        # [GeV] campaign beam energy (samples.py)
 # 11B recoil mass [GeV], same formula as v0 acceptance.py::M_REC (AME2020 atomic
@@ -91,8 +99,8 @@ for ax, (xlabel, x, edges, logy) in zip(axes, PANELS):
                 fontsize=FS_LEGEND - 2, color="0.4")
     ax.set_ylabel(r"d$N/$d$x\,/\,N_p$", fontsize=FS_LABEL)
 
-fig.suptitle("$E_m$ components at stage 3 (pre-FSI primary proton) — "
-             f"{S.label(MODEL)} (GEM26_22b_05)\n"
+fig.suptitle("$E_m$ components at stage 3 (pre-FSI) — "
+             f"{S.label(MODEL)} ({TUNE})\n"
              r"$E_{m3} = \omega - T_p - T_{rec}$ ·"
              " proton channel, no cuts · per-$N_p$ normalization",
              fontsize=FS_SUPTITLE - 2)
@@ -124,7 +132,7 @@ for ax, (xlabel, x) in zip(axes, SUBTR):
 axes[0].set_ylabel(r"d$N/$d$x\,/\,N_p$  (MeV$^{-1}$)", fontsize=FS_LABEL)
 fig.suptitle(r"stage 3 (pre-FSI) subtraction ladder: $\omega - T_p$ "
              r"($= E_{m3} + T_{rec}$) vs $\omega - T_p - T_{rec}$ ($= E_{m3}$)"
-             f"\n{S.label(MODEL)} (GEM26_22b_05) · proton channel, no cuts",
+             f"\n{S.label(MODEL)} ({TUNE}) · proton channel, no cuts",
              fontsize=FS_SUPTITLE - 2)
 fig.tight_layout()
 fig.savefig(OUT2, dpi=DPI)
