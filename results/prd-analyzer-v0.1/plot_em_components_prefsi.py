@@ -14,6 +14,13 @@ Q^2 >= 1.18):
     T_p3     [GeV]  pre-FSI primary-proton kinetic energy (`T3`)
     T_rec3   [MeV]  residual-nucleus (11B) kinetic energy  p3^2 / (2 M_REC)
 
+Second figure (em_subtractions_prefsi.png): the successive subtractions on the
+removal-energy scale, same events and normalization --
+
+    omega - T_p            [MeV]  = E_m3 + T_rec  (recoil still inside)
+    omega - T_p - T_rec    [MeV]  = E_m3          (== cache E3, the stage-3
+                                                   missing energy)
+
 Consistency check (printed): T_rec recovered from the cache identity
 (E_beam - El) - T3 - E3/1000 must equal p3^2/(2 M_REC) to float precision --
 this validates both the monochromatic-beam assumption (Ev == 2.445 for every
@@ -32,6 +39,7 @@ import samples as S
 
 MODEL = "UnifiedQEL"                  # SF + UnifiedQEL (Variant 05), this study only
 OUT = "results/prd-analyzer-v0.1/em_components_prefsi.png"
+OUT2 = "results/prd-analyzer-v0.1/em_subtractions_prefsi.png"
 
 E_BEAM = 2.445                        # [GeV] campaign beam energy (samples.py)
 # 11B recoil mass [GeV], same formula as v0 acceptance.py::M_REC (AME2020 atomic
@@ -91,3 +99,33 @@ fig.suptitle("$E_m$ components at stage 3 (pre-FSI primary proton) — "
 fig.tight_layout()
 fig.savefig(OUT, dpi=DPI)
 print("wrote", OUT)
+
+# ---- figure 2: the successive subtractions on the removal-energy scale ------------
+SUBTR = [
+    (r"$\omega - T_p$  (MeV)",           (omega - T3) * 1e3),
+    (r"$\omega - T_p - T_{rec}$  (MeV)", em3),
+]
+edges2 = np.linspace(0.0, 100.0, 101)          # 1-MeV bins
+fig, axes = new_panels(ncols=2, nrows=1, sharey=True)
+for ax, (xlabel, x) in zip(axes, SUBTR):
+    over = float((x > edges2[-1]).mean())
+    cnt, _ = np.histogram(x, bins=edges2)
+    ax.stairs(cnt / (n_p * np.diff(edges2)), edges2, color=S.color(MODEL),
+              linewidth=S.lw(MODEL), zorder=S.zorder(MODEL))
+    style_axis(ax, title=xlabel, xlabel=xlabel, logx=False, logy=False, ymin=None)
+    ax.set_xlim(edges2[0], edges2[-1])
+    ax.set_ylim(0, None)
+    ax.annotate(f"median {np.median(x):.1f} MeV\nmean {np.mean(x):.1f} MeV\n"
+                f"overflow >100: {100.0 * over:.1f}%",
+                xy=(0.97, 0.80), xycoords="axes fraction", ha="right",
+                fontsize=FS_LEGEND - 2, color="0.4")
+    print(f"  {xlabel:32s} median {np.median(x):6.1f}  mean {np.mean(x):6.1f} MeV  "
+          f"overflow>100 {100.0 * over:.2f}%")
+axes[0].set_ylabel(r"d$N/$d$x\,/\,N_p$  (MeV$^{-1}$)", fontsize=FS_LABEL)
+fig.suptitle(r"stage 3 (pre-FSI) subtraction ladder: $\omega - T_p$ "
+             r"($= E_{m3} + T_{rec}$) vs $\omega - T_p - T_{rec}$ ($= E_{m3}$)"
+             f"\n{S.label(MODEL)} (GEM26_22b_05) · proton channel, no cuts",
+             fontsize=FS_SUPTITLE - 2)
+fig.tight_layout()
+fig.savefig(OUT2, dpi=DPI)
+print("wrote", OUT2)
