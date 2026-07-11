@@ -11,6 +11,13 @@ with their internal `results/prd-analyzer-v0/...` paths updated to
 `results/prd-analyzer-v0.1/...`. Every figure in this directory was produced by a
 script in this directory.
 
+## Contents
+
+| file | provenance / what it does |
+|---|---|
+| `samples.py` | pulled from v0 (only `CACHE_DIR` changed) — 5-model registry, XRootD URLs, cache loader, plot roles |
+| `plot_em_components_prefsi.py` → `em_components_prefsi.png` | **E_m budget at ladder stage 3 (pre-FSI primary proton), SF + UnifiedQEL only**: E_e′, ω = 2.445 − E_e′, T_p, and the ¹¹B recoil T_rec = p_m²/2M — the four ingredients of E_m3 = ω − T_p − T_rec. Reads `cache/ladder/UnifiedQEL.npz`; validates the monochromatic beam + M_REC against the cache identity at runtime. |
+
 ## cache/
 
 The XRootD-streamed selection cache built by v0's `build_cache*.py` (moved here intact —
