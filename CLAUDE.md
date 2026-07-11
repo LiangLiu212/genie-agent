@@ -136,7 +136,7 @@ a GENIE table change: `pixi run python shared/build_pdg.py`.
 ## Repo conventions
 - `config/` and `genie-runs/` are gitignored (machine-specific paths, snapshotted
   envs, generated artefacts). `genie-agent/tunes/` **is** tracked.
-- Commit messages end with `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+- Commit messages end with `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.
   Branch + commit/push only when asked.
 - Skills under `.claude/skills/` (e.g. `genie-runlog`) document workflows for
   future sessions; keep them in sync when behaviour changes.
