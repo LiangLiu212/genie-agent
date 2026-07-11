@@ -67,7 +67,7 @@ Prefer streaming; only `xrdcp` to a local file when an analysis tool truly canno
 read a `root://` URL.
 
 ## Worked example
-`results/prd-analyzer/` streams three 10M-event C12 samples this way instead of
+`results/prd-analyzer-v0/` streams three 10M-event C12 samples this way instead of
 pulling ~9 GB/model:
 - `samples.py` — `xrootd_url()`, the dCache door, and per-model `gst_urls()`.
 - `build_cache.py` — streams every gst over XRootD, selects, caches a tiny `.npz`.

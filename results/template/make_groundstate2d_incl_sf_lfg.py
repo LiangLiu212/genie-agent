@@ -13,7 +13,7 @@ From the gst hit-nucleon 4-momentum (pxn,pyn,pzn,En):
 M_N from shared/pdg.json (proton/neutron by hitnuc). Restricted to single-nucleon
 initial states (hitnuc=p/n; excludes MEC di-nucleon clusters). Each model is
 area-normalized (fraction/bin) and shown on a shared log color scale, in the same
-(E, k) orientation as results/prd-analyzer/spectral_function_c12.png.
+(E, k) orientation as results/prd-analyzer-v0/spectral_function_c12.png.
 """
 import sys, json
 sys.path.insert(0, "results/template")

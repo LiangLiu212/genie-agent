@@ -110,9 +110,10 @@ while read F; do ifdh cp "$F" "/exp/dune/data/users/$USER/scratch/$(basename "$F
 - **Cross section**: parse the spline XML → σ(E) (`make_spline_gem26_q2cut.py`).
 - **Event kinematics**: read gst with `uproot` → Q², struck-nucleon `pn`, removal energy
   `M_N − En`, etc. (`make_q2_gem26_sf_lfg.py`, `make_groundstate_gem26_sf_lfg.py`).
-- **(e,e′p) point analysis**: `results/prd-analyzer/` — `selection.py` (spectrometer `CUTS`,
-  leading-proton + `E_m`/`p_m`, staged selectors) reused by `plot_missing.py` / `plot_dists.py` /
-  `plot_2d.py`.
+- **(e,e′p) point analysis**: `results/prd-analyzer-v0.1/` (active convergence iteration;
+  the exploratory phase is frozen in `results/prd-analyzer-v0/`) — `selection.py`
+  (spectrometer `CUTS`, leading-proton + `E_m`/`p_m`, staged selectors) reused by
+  `plot_missing.py` / `plot_dists.py` / `plot_2d.py`.
 - Generators emit both **log and linear** views; add a page under `results/pages/` (or a sub-dir
   README) and a row in `results/README.md`.
 
@@ -124,7 +125,7 @@ while read F; do ifdh cp "$F" "/exp/dune/data/users/$USER/scratch/$(basename "$F
 4. gmkspl grid → new splines (§4).
 5. gevgen grid → new samples (§5); track (§6).
 6. Pull gst with `ifdh` to `/exp` scratch (§7).
-7. Replot: point an existing generator / `prd-analyzer` at the new sample paths (§8).
+7. Replot: point an existing generator / `prd-analyzer-v0.1` at the new sample paths (§8).
 8. Commit figures + scripts under `results/`.
 
 ## Gotchas (learned this session)
@@ -141,4 +142,4 @@ while read F; do ifdh cp "$F" "/exp/dune/data/users/$USER/scratch/$(basename "$F
 Tunes `GEM26_{11a,22a}` + cut variants t04–t08 → tarballs `genie_inclxx` + `gem26_emq2lim` →
 10 grid splines + 12 gevgen submissions (120M events, the 6 E91-013 points, SF & LFG) →
 pulled & plotted: spline σ(E), Q², ground-state momentum/removal-energy, and the
-`prd-analyzer` (e,e′p) missing-E/p study at Q²=1.28.
+`prd-analyzer` (e,e′p) missing-E/p study at Q²=1.28 (now archived as `results/prd-analyzer-v0/`).

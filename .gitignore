@@ -31,8 +31,8 @@ jobsub-agent/tarballs/
 # scratch / throwaway
 test-hello/
 
-# prd-analyzer XRootD-streamed selection cache (regenerable via build_cache.py)
-results/prd-analyzer/cache/
+# prd-analyzer XRootD-streamed selection cache (regenerable via build_cache*.py; any version)
+results/prd-analyzer*/cache/
 results/**/__pycache__/
 
 # third-party MINERvA flux/reweight + param data (~3 GB external checkout, not ours)
