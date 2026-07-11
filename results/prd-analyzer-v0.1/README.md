@@ -16,7 +16,8 @@ script in this directory.
 | file | provenance / what it does |
 |---|---|
 | `samples.py` | pulled from v0 (only `CACHE_DIR` changed) — 5-model registry, XRootD URLs, cache loader, plot roles |
-| `plot_em_components_prefsi.py` → `em_components_prefsi.png`, `em_subtractions_prefsi.png` | **E_m budget at ladder stage 3 (pre-FSI primary proton), SF + UnifiedQEL only**. Fig 1: the four ingredients E_e′, ω = 2.445 − E_e′, T_p, and the ¹¹B recoil T_rec = p_m²/2M (slope break at ≈5 MeV = p_m ≈ 320 MeV/c, the SF mean-field→SRC boundary). Fig 2: the subtraction ladder — ω − T_p floors **razor-sharp at exactly 15.000 MeV** (the pke12_tot table's first E-block edge; it *is* the mass-based table axis, v0 §12), while ω − T_p − T_rec (= E_m3, Dutta's recoil-subtracted convention, peak 14.75 MeV) spills down to 3 MeV — below S_p = 15.96 — reproducing the v0 §10b1 `BindHitNucleon` T_rec distortion from the budget angle. Reads `cache/ladder/UnifiedQEL.npz`; validates the monochromatic beam + M_REC against the cache identity at runtime. |
+| `plot_em_components_prefsi.py` → `em_components_prefsi.png`, `em_subtractions_prefsi.png` | **E_m budget at ladder stage 3 (pre-FSI primary proton), SF + UnifiedQEL only** — see the page [`sf_unifiedqel_em_prefsi.md`](sf_unifiedqel_em_prefsi.md). Fig 1: the four ingredients E_e′, ω, T_p, T_rec. Fig 2: the subtraction ladder — ω − T_p floors razor-sharp at exactly 15.000 MeV (the pke12_tot table's first E-block edge, v0 §12) while ω − T_p − T_rec (= E_m3) spills below S_p (v0 §10b1 `BindHitNucleon` distortion). Reads `cache/ladder/UnifiedQEL.npz`; validates beam + M_REC against the cache identity at runtime. |
+| `sf_unifiedqel_em_prefsi.md` | The study page for the two figures above: sample facts, medians/means table, and the 15.000-MeV table-edge / T_rec over-subtraction findings with links back to v0 §10b1/§12. |
 
 ## cache/
 
