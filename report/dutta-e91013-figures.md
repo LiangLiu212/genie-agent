@@ -19,6 +19,9 @@ for the GENIE (e,e′p) replication.
 - Replication analysis: [`results/prd-analyzer-v0/`](../results/prd-analyzer-v0/README.md)
   (frozen exploratory phase) → `results/prd-analyzer-v0.1/` (active)
 - All integrals below computed from the `.dat` files on 2026-07-11 (`pixi run python`, rectangle rule)
+- Replots of every file: [`make_dutta_e91013_figures.py`](make_dutta_e91013_figures.py)
+  → `figures/dutta_fig{6,7,9,11}_replot.png`, shown side by side with the published
+  renders in §3–§6 (house plot style; paper-matching marker shapes)
 
 ---
 
@@ -61,9 +64,20 @@ Grids: p_m = −300…+300 MeV/c in 40 MeV/c steps (16 bins); E_m = 2.5…77.5 M
 0.5713 MeV⁻¹ at E_m = 17.5 ✓, fig11 peak 0.8098 MeV⁻¹ at 12.5 ✓, fig6-top edge
 points ~1.3×10⁻⁹ at |p_m| = 300 ✓.
 
+Two structural findings from replotting every file against the published renders
+(§3–§6):
+
+- **All 12 p_m files are exactly left–right symmetrized** — y(−p_m) ≡ y(+p_m) to full
+  precision, so each holds only 8 independent values, and the ± asymmetry the paper
+  itself points out (tex:922) is absent from the files by construction.
+- **13 of 14 files reproduce the published points; the two fig 6 Q² = 0.64 files do
+  not** (~×1.3 high with a p_m-dependent shape) — see §3.
+
 ## 3. Fig. 6 — carbon shell-resolved momentum distributions
 
-![fig6](../papers/nucl-ex_0303011/figures/fig6.png)
+| published | replot from the `.dat` files |
+|---|---|
+| ![fig6](../papers/nucl-ex_0303011/figures/fig6.png) | ![fig6 replot](figures/dutta_fig6_replot.png) |
 
 Caption facts (tex:891–893): **top = p-shell window 10 < E_m < 25 MeV**, **bottom =
 s-shell window 30 < E_m < 50 MeV**; all four Q² overlaid, each dataset rescaled so its
@@ -89,15 +103,25 @@ Data files: `fig6_{top,bot}_{q0p6,q1p2,q1p8,q3p2}.dat`. In-window 1D integrals
 | p-shell (top) | 2.33×10⁻⁵ | 1.71×10⁻⁵ | 1.80×10⁻⁵ | 1.65×10⁻⁵ |
 | s-shell (bottom) | 1.51×10⁻⁵ | 1.24×10⁻⁵ | 1.15×10⁻⁵ | 1.23×10⁻⁵ |
 
-The global (full-E_m) normalization is equalized by construction, but these
-*windowed* projections still differ — most visibly Q² = 0.64 sits ~30 % above the rest
-in both windows, i.e. relatively more strength inside E_m < 50 MeV at low Q²,
-consistent with the paper's low-Q² excess (transverse) strength and with
-resolution-driven migration across the shell windows.
+**The Q² = 0.64 files disagree with the published figure.** In the published panels
+all four Q² coincide within marker size (verified by zooming the render: at
+p_m = ±100 the 0.64 squares sit inside the common cluster at ≈5.5×10⁻⁸ — no separated
+series). In the files, `fig6_{top,bot}_q0p6.dat` sit **1.07–1.44× above** the q1p8
+reference with a p_m-dependent ratio (dip at |p_m| = 20, maximum at 140; medians
+×1.27 top, ×1.33 bottom — hence the windowed-integral excess in the table above),
+while q1p2/q3p2 agree with q1p8 within ~10 % as printed. So the two 0.64 files are
+**not** the plotted (rescaled-to-1.8) points — either they predate the caption's
+normalization, or they belong to the *other* Q² = 0.64 setting (ε = 0.38, backward
+electron angle; a lower-ε, more transverse-weighted S^D sitting high is qualitatively
+consistent with the paper's low-Q² excess transverse strength). Unresolved — tracked
+in [`open_questions.md`](../papers/nucl-ex_0303011/open_questions.md); **don't use the
+two fig 6 q0p6 files quantitatively** until what they contain is confirmed.
 
 ## 4. Fig. 7 — iron momentum distribution
 
-![fig7](../papers/nucl-ex_0303011/figures/fig7.png)
+| published | replot from the `.dat` files |
+|---|---|
+| ![fig7](../papers/nucl-ex_0303011/figures/fig7.png) | ![fig7 replot](figures/dutta_fig7_replot.png) |
 
 Caption facts (tex:901–902): iron, integrated over the full **0 < E_m < 80 MeV**
 window, same rescale-to-Q²=1.8 convention. Like carbon, the shape is essentially
@@ -106,11 +130,20 @@ Q²-independent (tex:923–926); no shell separation is attempted (Fe shells unr
 Data files: `fig7_{q0p6,q1p2,q1p8,q3p2}.dat`. Full-window integrals: 1.047, 1.047,
 1.000, 1.018 ×10⁻⁴ — equal to ≤ 5 %, as the normalization convention implies (the
 residual spread reflects the plotted-grid discretization of the underlying 2D
-equalization). Remember the row-1 column-3 sign glitch in `fig7_q1p2.dat` (§2).
+equalization). Replot verdict: all four Q² coincide within ~10 % everywhere, exactly
+as printed — the fig 6 q0p6 anomaly (§3) has no counterpart here. Remember the row-1
+column-3 sign glitch in `fig7_q1p2.dat` (§2).
 
 ## 5. Fig. 9 — carbon missing-energy spectral function at Q² = 1.28 (the replication target)
 
-![fig9](../papers/nucl-ex_0303011/figures/fig9.png)
+| published (points + IPSM curve) | replot from `fig9_q1p2.dat` |
+|---|---|
+| ![fig9](../papers/nucl-ex_0303011/figures/fig9.png) | ![fig9 replot](figures/dutta_fig9_replot.png) |
+
+The replot reproduces the published points exactly (the IPSM curve exists only in
+print) and draws **both error-bar sets**: the file's statistical column 4, and the
+pixel-measured published bars at E_m = 17.5/22.5 MeV (grey) that are 5–10× larger —
+caveat 2 below, made visible.
 
 Caption facts (tex:965–966): measured ∫S^D d³p_m for ¹²C at Q² = 1.28 (GeV/c)²,
 compared to the **IPSM** model (Saclay-constrained s₁/₂ + p₃/₂ Woods-Saxon shells,
@@ -146,7 +179,12 @@ that any quantitative use must respect:
 
 ## 6. Fig. 11 — iron missing-energy spectral function at Q² = 1.28
 
-![fig11](../papers/nucl-ex_0303011/figures/fig11.png)
+| published (points + 3 model curves) | replot from `fig11_q1p2.dat` |
+|---|---|
+| ![fig11](../papers/nucl-ex_0303011/figures/fig11.png) | ![fig11 replot](figures/dutta_fig11_replot.png) |
+
+The replot matches the published points exactly (peak 0.810 MeV⁻¹ at E_m = 12.5,
+monotone tail); the three theory curves exist only in print.
 
 Caption facts (tex:999–1004): measured ∫S^D d³p_m for ⁵⁶Fe at Q² = 1.28 (GeV/c)²
 against **three** models — the only one of the four figures with beyond-IPSM theory:
@@ -178,4 +216,6 @@ renormalized (in-window IPSM strength) scale, not raw distorted yield; the same 
   far; a future target if the C12 comparison converges.
 - When fitting or χ²-ing against any of these files: **float the normalization, use
   shape + occupancy ratios, and inflate errors per §5** — the on-disk numbers alone
-  understate the published uncertainties and sit on a renormalized scale.
+  understate the published uncertainties and sit on a renormalized scale. Exclude the
+  two fig 6 q0p6 files until resolved (§3), and remember every p_m file is
+  left–right symmetrized (§2).
