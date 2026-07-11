@@ -19,6 +19,7 @@ script in this directory.
 | `plot_em_components_prefsi.py` → `em_{components,subtractions}_prefsi_{22b,33b}.png` | **E_m budget at ladder stage 3 (pre-FSI primary proton)**, one UnifiedQEL variant per run (argv `UnifiedQEL` \| `UnifiedQEL2024`). Fig 1: the four ingredients E_e′, ω, T_p, T_rec. Fig 2: the subtraction ladder ω − T_p vs ω − T_p − T_rec (= E_m3). Reads `cache/ladder/<model>.npz`; validates beam + M_REC against the cache identity at runtime. |
 | `sf_unifiedqel_em_prefsi.md` | Study page, **22b** (SF + UnifiedQEL): ω − T_p floors razor-sharp at exactly 15.000 MeV (pke12_tot first E-block edge — the mass-based table axis, v0 §12); E_m3 over-subtracts by T_rec, 23.1 % below S_p (v0 §10b1). |
 | `sf2024_unifiedqel_em_prefsi.md` | Study page, **33b** (SF(2024) + UnifiedQEL): ω − T_p reads the 2024 table back undistorted — ground-state quasiparticle line at 15.93–15.98 MeV ≈ S_p (v0 §10b2); E_m3 drags it ~0.8 MeV low, 39.9 % below S_p, 0.08 % **negative** (min −15.3 MeV). |
+| `open_questions.md` | Open questions of the convergence iteration. Currently one: the recoil-convention clash — Dutta's E_m subtracts T_{A−1} (mass-based, floor at S_p) while GENIE's `BindHitNucleon` assumes the Benhar table E includes T_rec; the 2024 table is proven mass-based, the old `pke12_tot` unproven at sub-MeV; fixes the v0.1 comparison rule (data axis vs ω − T_p axis, never mixed). |
 
 ## cache/
 
