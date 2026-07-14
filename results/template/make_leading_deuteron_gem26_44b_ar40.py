@@ -7,15 +7,17 @@ import uproot
 from plot_style import apply_style, style_axis, COLORS, FS_LABEL, FS_LEGEND, FS_SUPTITLE, DPI
 import matplotlib.pyplot as plt
 
-GST = ("/exp/dune/data/users/liangliu/genie-dev/genie-agent/genie-runs/"
-       "GEM26_44b_00_000-2026-07-14/eminus_Ar40_20260714-173526-acf.gst.root")
+import glob
+# grid batch gevgen_grid-eminus_Ar40_20260714-175321-bd666d, 10k events/process
+GST = sorted(glob.glob(
+    "/exp/dune/data/users/liangliu/genie-dev/genie-agent/genie-runs/"
+    "GEM26_44b_grid_pulled-2026-07-14/ar40_gst/*.gst.root"))
+print(f"gst files: {len(GST)}")
 DEUTERON = 1000010020
 
-t = uproot.open(GST)["gst"]
-pdgf = t["pdgf"].array(library="ak")
-pf = t["pf"].array(library="ak")
-
 import awkward as ak
+arr = uproot.concatenate([f + ":gst" for f in GST], ["pdgf", "pf"], library="ak")
+pdgf, pf = arr["pdgf"], arr["pf"]
 mask = pdgf == DEUTERON
 p_deut = pf[mask]
 has_d = ak.num(p_deut) > 0
