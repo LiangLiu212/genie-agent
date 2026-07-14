@@ -34,8 +34,9 @@ ax.hist(leading, bins=40, color=COLORS[0], histtype="step", lw=1.5,
 style_axis(ax, title="2 GeV e$^-$ on C12, EM QEL, GEM26_44b",
            xlabel="leading deuteron p  [GeV]")
 ax.set_xscale("linear")  # momentum spans <1 decade; log x not useful here
+ax.set_yscale("linear")
 ax.set_ylabel("events", fontsize=FS_LABEL)
-ax.set_ylim(0.5, None)
+ax.set_ylim(0, None)
 ax.legend(fontsize=FS_LEGEND, loc="upper right")
 fig.suptitle("Leading deuteron momentum (INCL++ GS+FSI)", fontsize=FS_SUPTITLE)
 fig.tight_layout()
