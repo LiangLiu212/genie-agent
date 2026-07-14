@@ -8,7 +8,7 @@ from plot_style import apply_style, style_axis, COLORS, FS_LABEL, FS_LEGEND, FS_
 import matplotlib.pyplot as plt
 
 GST = ("/exp/dune/data/users/liangliu/genie-dev/genie-agent/genie-runs/"
-       "GEM26_44b_00_000-2026-07-14/eminus_C12_20260714-091136-996.gst.root")
+       "GEM26_44b_00_000-2026-07-14/eminus_C12_20260714-093418-6af.gst.root")
 DEUTERON = 1000010020
 
 t = uproot.open(GST)["gst"]
