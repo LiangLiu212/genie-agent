@@ -17,8 +17,8 @@ compiled dumper (dump_hitnuc.cxx, GENIE libs) writes per-event CSVs
 from the .ghep.root files, and this script reads those:  <dump-dir>/<tune>.csv.
 
 Outputs:
-  results/sf2d_events_fe56_<tune>.png       one figure per tune
-  results/sf2d_events_fe56_all_t05.png      1x4 comparison, shared color scale
+  results/prd-analyzer-v0.1/sf2d_events_fe56_<tune>.png       one figure per tune
+  results/prd-analyzer-v0.1/sf2d_events_fe56_all_t05.png      1x4 comparison, shared color scale
                                             (only with --all-tunes)
 
 Usage:
@@ -89,7 +89,7 @@ def single_figure(tune, H, c):
     fig.suptitle(f"Fe56 ground state realized in generated events\n"
                  f"{tune}  ({GROUND_STATE[tune]}),  e$^-$ 2.445 GeV, genlist EM",
                  fontsize=FS_SUPTITLE - 2)
-    out = REPO / "results" / f"sf2d_events_fe56_{tune}.png"
+    out = REPO / "results" / "prd-analyzer-v0.1" / f"sf2d_events_fe56_{tune}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
@@ -113,7 +113,7 @@ def combined_figure(results):
     fig.suptitle("Fe56 ground state realized in generated events  "
                  "(e$^-$ 2.445 GeV, genlist EM, t05 tunes, shared color scale)",
                  fontsize=FS_SUPTITLE - 2)
-    out = REPO / "results" / "sf2d_events_fe56_all_t05.png"
+    out = REPO / "results" / "prd-analyzer-v0.1" / "sf2d_events_fe56_all_t05.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 

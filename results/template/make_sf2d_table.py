@@ -160,7 +160,7 @@ def make_figure(tune: str, target: str) -> bool:
     fig.suptitle(f"{target} 2D spectral function from the GENIE input table\n"
                  f"{tune}:  {model.replace('genie::', '')}  $\\rightarrow$  "
                  f"{table.name}{shared_short}", fontsize=FS_SUPTITLE - 2)
-    out = REPO / "results" / f"sf2d_table_{target.lower()}_{tune}.png"
+    out = REPO / "results" / "prd-analyzer-v0.1" / f"sf2d_table_{target.lower()}_{tune}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
     return True
