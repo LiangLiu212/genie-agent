@@ -64,10 +64,11 @@ def load_hist(csv: Path):
 
 
 def draw_panel(ax, fig, H, norm, add_cbar=True):
-    Xe, Ye = np.meshgrid(E_EDGES, P_EDGES, indexing="ij")
-    Zm = np.ma.masked_less_equal(H, 0.0)
+    # orientation: x = missing momentum P_miss, y = removal (missing) energy E_miss
+    Xe, Ye = np.meshgrid(P_EDGES, E_EDGES, indexing="ij")
+    Zm = np.ma.masked_less_equal(H.T, 0.0)
     pc = ax.pcolormesh(Xe, Ye, Zm, cmap="viridis", norm=norm)
-    ax.set_xlabel("removal energy  E  [MeV]", fontsize=FS_LABEL)
+    ax.set_xlabel(r"$P_{\rm miss}$  [MeV/c]", fontsize=FS_LABEL)
     ax.tick_params(labelsize=FS_TICK)
     if add_cbar:
         cb = fig.colorbar(pc, ax=ax, pad=0.02, fraction=0.046)
@@ -82,7 +83,7 @@ def single_figure(tune, H, c):
     fig, ax = plt.subplots(figsize=(w * 1.4, h), layout="constrained")
     norm = LogNorm(vmin=H.max() * 1e-6, vmax=H.max())
     draw_panel(ax, fig, H, norm)
-    ax.set_ylabel("nucleon momentum  p  [MeV/c]", fontsize=FS_LABEL)
+    ax.set_ylabel(r"$E_{\rm miss}$  [MeV]", fontsize=FS_LABEL)
     ax.set_title(f"N = {c['n_kept']:,} single-nucleon events (sampled w from GHEP)",
                  fontsize=FS_TITLE - 3)
     fig.suptitle(f"Fe56 ground state realized in generated events\n"
@@ -105,7 +106,7 @@ def combined_figure(results):
     for ax, (tune, H, c) in zip(axes, results):
         pc = draw_panel(ax, fig, H, norm, add_cbar=False)
         ax.set_title(f"{tune}\n{GROUND_STATE[tune]}", fontsize=FS_TITLE - 3)
-    axes[0].set_ylabel("nucleon momentum  p  [MeV/c]", fontsize=FS_LABEL)
+    axes[0].set_ylabel(r"$E_{\rm miss}$  [MeV]", fontsize=FS_LABEL)
     cb = fig.colorbar(pc, ax=axes, pad=0.01, fraction=0.02)
     cb.set_label("fraction of events / bin", fontsize=FS_TITLE - 2)
     cb.ax.tick_params(labelsize=FS_TICK)

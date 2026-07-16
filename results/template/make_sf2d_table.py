@@ -139,21 +139,22 @@ def make_figure(tune: str, target: str) -> bool:
     w, h = PANEL_SIZE
     fig, axes = plt.subplots(1, 2, figsize=(w * 2.4, h), sharey=True,
                              layout="constrained")
-    Xe, Ye = np.meshgrid(E_e, p_e, indexing="ij")
+    # orientation: x = missing momentum P_miss, y = removal (missing) energy E_miss
+    Xe, Ye = np.meshgrid(p_e, E_e, indexing="ij")
     panels = [
-        (S.T,  r"table density  S(p,E)  [MeV$^{-4}$]"),
-        (Wn.T, r"GENIE sampling weight  4$\pi$p$^2$S$\Delta$p$\Delta$E  (norm.)"),
+        (S,  r"table density  S($P_{\rm miss}$, $E_{\rm miss}$)  [MeV$^{-4}$]"),
+        (Wn, r"GENIE sampling weight  4$\pi P_{\rm miss}^2 S\,\Delta P\Delta E$  (norm.)"),
     ]
     for ax, (Z, label) in zip(axes, panels):
         Zm = np.ma.masked_less_equal(Z, 0.0)
         norm = LogNorm(vmin=Zm.max() * 1e-6, vmax=Zm.max())
         pc = ax.pcolormesh(Xe, Ye, Zm, cmap="viridis", norm=norm)
         ax.set_title(label, fontsize=FS_TITLE - 2)
-        ax.set_xlabel("removal energy  E  [MeV]", fontsize=FS_LABEL)
+        ax.set_xlabel(r"$P_{\rm miss}$  [MeV/c]", fontsize=FS_LABEL)
         ax.tick_params(labelsize=FS_TICK)
         cb = fig.colorbar(pc, ax=ax, pad=0.02, fraction=0.046)
         cb.ax.tick_params(labelsize=FS_TICK)
-    axes[0].set_ylabel("nucleon momentum  p  [MeV/c]", fontsize=FS_LABEL)
+    axes[0].set_ylabel(r"$E_{\rm miss}$  [MeV]", fontsize=FS_LABEL)
 
     shared_short = " (p and n)" if shared else ""
     fig.suptitle(f"{target} 2D spectral function from the GENIE input table\n"
