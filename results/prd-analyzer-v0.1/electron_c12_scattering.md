@@ -139,10 +139,30 @@ Q²-window tail enhancement 0.166 vs 0.146), 22b's SRC tail is
 xsec-suppressed, and the two LFG tunes coincide with the local-k_F cutoff.
 Regenerate: `pixi run python results/template/make_pmiss_c12.py`
 
-## Signed missing momentum — not reproducible (follow-up)
+## Signed missing momentum (± asymmetry) — GEM26_22a_05_000
 
-The Fe56 signed-p_m analysis needs the per-event lepton and proton vectors,
-which the ladder caches do not store — and the C12 gst files are purged from
-scratch dCache. Rebuilding it requires regenerating C12 samples (grid or
-local). Parked as a follow-up together with the fig6 (shell-split p_m)
-comparison.
+![C12 signed p_m, GEM26_22a_05_000, 4pi](pmiss_signed_c12_GEM26_22a_05_000.png)
+
+The ladder caches lack the per-event vectors and the grid gst files are
+purged, so this section runs on a **locally regenerated** sample with the
+patched genie_inclxx install: local EMQE spline
+`gmkspl-eminus_C12_20260717-104034-615-fab13a` (2 QE splines, 36 s) +
+`gevgen-eminus_C12_20260717-104229-e7e-894744` (500k events, seed 20260717,
+671 s; 349k hit-proton). Same sign convention and construction as the Fe56
+section (sign of p_m·x̂, density with 4πp² divided out, B11 recoil,
+0 < E_m < 80 MeV); no data overlay — the digitized fig6 momentum
+distributions are shell-split (10–25 / 30–50 MeV) and symmetrized, so no
+0–80 MeV signed reference exists.
+
+Findings — the Fe56 story repeats on carbon:
+
+- Integrated **A = −0.0483 ± 0.0018 (pre-FSI), −0.0447 ± 0.0024 (post-FSI)**;
+  sign-shuffle controls ≤ 0.003. A(|p|) grows from ~0 at 20 MeV/c to ≈ −8%
+  at 260–300 MeV/c — same sign and trend as Fe56 (−5.5%), slightly smaller.
+- The asymmetry is again **kinematic** (pre-FSI p_m ≡ p_n; flux/Q²-window
+  weighting favors nucleons moving away from the e′ side) and **FSI-blind**
+  within errors. In-window survival 176k/320k = 0.549, consistent with the
+  ladder's I4r/I3r = 0.545.
+
+Regenerate: local spline+gevgen as above, `run_gntpc -f gst`, then
+`pixi run python results/template/make_pmiss_signed_c12.py --gst <file>`.
