@@ -184,47 +184,81 @@ Reading:
 Regenerate: `pixi run python results/template/make_pmiss_fe56.py`
 (reads the `cache/ladder_fe56/` caches).
 
-## 4. Signed missing momentum (± asymmetry) — GEM26_22a_05_000
-
-![Fe56 signed p_m, GEM26_22a_05_000, 4pi](pmiss_signed_fe56_GEM26_22a_05_000.png)
+## 4. Signed missing momentum (± asymmetry)
 
 The published Figs. 6–8 momentum distributions carry a left–right (±p_m)
-asymmetry that the paper attributes to W_LT interference beyond deForest
-σ_cc1 and/or Coulomb distortion (tex 1144–1155). The digitized `fig7_*.dat`
-files are exactly symmetrized, so this is simulation-side only (4π, no
-spectrometer acceptance; `qel && hitnuc==2212`, Dutta window 0 < E_m < 80 MeV,
-2M streamed events → 232k pre-FSI / 90k post-FSI in-window).
+asymmetry the paper attributes to W_LT interference beyond deForest σ_cc1
+and/or Coulomb distortion (tex 1144–1155). The digitized `fig7_*.dat` files
+are exactly symmetrized, so this is simulation-side only (4π, no spectrometer
+acceptance; `qel && hitnuc==2212`, Dutta window 0 < E_m < 80 MeV, 2M streamed
+events/tune), one figure per tune.
 
 **Sign convention** (the paper never states its own): ẑ = q̂, x̂ = the
 scattered electron's transverse-to-q direction (in-plane, e′ side);
 signed p_m = sign(p_m·x̂)·|p_m| with p_m = p_p′ − q. Positive = p_m tilted
 toward the e′ side. If the print's asymmetry turns out mirrored, flip.
+**Units**: the top panel is a *density* (raw counts with the 4π p² phase-space
+factor divided out, per d³p_m) — the fig7 y-axis peaks at p_m = 0, raw counts
+dip there.
 
-**Units**: the top panel is a *density* (counts with the 4π p² phase-space
-factor divided out, per d³p_m) — the published fig7 y-axis is ∫S^D dE_m per
-d³p_m, which peaks at p_m = 0; raw signed-p_m counts dip at 0 by phase space.
+**Headline: the ± asymmetry is a diagnostic of the QEL kinematics generator,
+not a physical response.** None of the four chains contains a W_LT term, yet
+the integrated asymmetry spans −0.13 to 0 depending purely on which generator
+samples the proton angle:
 
-Findings:
+| tune | ground state | QEL kinematics generator | A pre-FSI | A post-FSI |
+|---|---|---|---|---|
+| GEM26_11a_05_000 | LFG | `QELKinematicsGenerator` | −0.0466 ± 0.0020 | −0.0367 ± 0.0031 |
+| GEM26_22a_05_000 | SF | `QELKinematicsGenerator` | −0.0546 ± 0.0021 | −0.0554 ± 0.0033 |
+| GEM26_22b_05_000 | SF | `QELEventGenerator` | **−0.1283 ± 0.0024** | **−0.1227 ± 0.0037** |
+| GEM21_11a_05_000 | LFG | `QELEventGeneratorSuSA` | **+0.0028 ± 0.0022** | **+0.0008 ± 0.0035** |
 
-- **GEM26_22a does produce an intrinsic ± asymmetry**: integrated
-  A = −0.0546 ± 0.0021 (pre-FSI) and −0.0554 ± 0.0033 (post-FSI);
-  sign-shuffle controls ±0.001. A(|p|) grows from ~0 at 20 MeV/c to ≈ −8%
-  at 300 MeV/c. The plan expectation (A ≈ 0 for the factorized chain) was
-  wrong: since pre-FSI p_m ≡ p_n exactly, this is a **kinematic** asymmetry —
-  the flux/Q²-window weighting favors initial nucleons moving *away* from
-  the e′ side — not a W_LT response effect (the chain has none by
-  construction).
-- **FSI does not touch the asymmetry** (−5.46% → −5.54%): hA2018 redistributes
-  magnitude, not the ± balance.
-- **The post-FSI density reproduces the (symmetrized) data shape closely**
-  (gray points scaled to the post-FSI integral sit on the red curve) — the
-  FSI-distorted GENIE density has the right p_m profile even though the
-  E_m profile (ladder section) misses the peak.
+Since the pre-FSI p_m ≡ p_n exactly, this is a **kinematic** asymmetry (the
+flux/Q²-window acceptance couples to the sampled proton direction), and **FSI
+barely touches it** (pre→post shifts ≤ 0.01 everywhere). The generator, not
+the ground state or QE cross section, sets it: the two `QELKinematicsGenerator`
+tunes agree at ≈ −0.05 across LFG and SF; `QELEventGenerator` more than doubles
+it; the SuSA generator samples symmetrically and gives zero. Whatever the true
+W_LT/Coulomb asymmetry of the data is, it would sit *on top of* this
+generator artifact — so the signed p_m is not yet a clean model discriminator.
 
-Follow-ups (not done): the HMS×SOS in-acceptance version for a direct print
-comparison; the other three tunes (22b's QELEventGenerator samples full COM
-angles — its intrinsic asymmetry may differ); pixel-measuring the published
-fig7 asymmetry.
+### 4.1 GEM26_11a_05_000 — LocalFGM, QELKinematicsGenerator
 
-Regenerate: `pixi run python results/template/make_pmiss_signed_fe56.py`
+![Fe56 signed p_m, GEM26_11a_05_000](pmiss_signed_fe56_GEM26_11a_05_000.png)
+
+A = −0.047 (pre) → −0.037 (post): the classic FermiMover +
+`QELKinematicsGenerator` chain on a Fermi-gas ground state. A(|p|) grows to
+≈ −7% at 300 MeV/c; FSI slightly *reduces* the magnitude.
+
+### 4.2 GEM26_22a_05_000 — 2D SpectralFunc, QELKinematicsGenerator
+
+![Fe56 signed p_m, GEM26_22a_05_000](pmiss_signed_fe56_GEM26_22a_05_000.png)
+
+A = −0.055, essentially unchanged by FSI. Same generator as 11a on the 2D SF
+ground state — the near-identical asymmetry (−0.047 vs −0.055) shows the
+ground-state model is a minor lever compared to the generator. The post-FSI
+density tracks the symmetrized fig7 shape closely.
+
+### 4.3 GEM26_22b_05_000 — 2D SpectralFunc, QELEventGenerator
+
+![Fe56 signed p_m, GEM26_22b_05_000](pmiss_signed_fe56_GEM26_22b_05_000.png)
+
+A = **−0.128** (pre) → −0.123 (post) — the largest, more than double the
+`QELKinematicsGenerator` tunes on the *same* SF ground state, and A(|p|)
+reaches ≈ −0.19 at 300 MeV/c. The modern `QELEventGenerator` samples the full
+struck-nucleon kinematics from the nuclear model plus the UnifiedQEL off-shell
+cross section, which imprints a much stronger direction–acceptance
+correlation. This is the tune where the signed p_m most departs from the
+others.
+
+### 4.4 GEM21_11a_05_000 — LocalFGM, QELEventGeneratorSuSA
+
+![Fe56 signed p_m, GEM21_11a_05_000](pmiss_signed_fe56_GEM21_11a_05_000.png)
+
+A = **+0.003 ± 0.002 (pre), +0.001 ± 0.004 (post)** — consistent with **zero**.
+`QELEventGeneratorSuSA` samples the proton azimuth symmetrically about q, so
+the SuSA chain produces no intrinsic ± asymmetry at all — the opposite extreme
+from 22b. (Reminder: Fe56 EM SuSAv2 is a scaled-C12 surrogate.)
+
+Regenerate: `pixi run python results/template/make_pmiss_signed_fe56.py --all-tunes`
 (cache: `cache/pmiss_signed_fe56/`).

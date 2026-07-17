@@ -1,4 +1,4 @@
-"""Fe56 SIGNED missing momentum (+-p_m) from simulation — GEM26_22a prototype.
+"""Fe56 SIGNED missing momentum (+-p_m) from simulation, per tune.
 
 The published Dutta Figs. 6-8 momentum distributions carry a left-right
 (+-p_m) asymmetry, attributed by the paper to W_LT interference beyond the
@@ -6,7 +6,7 @@ deForest sigma_cc1 and/or Coulomb distortion (tex 1144-1155). The digitized
 fig7_*.dat files are exactly symmetrized, and all earlier repo code computes
 |p_m| only. This script builds the signed distribution from GENIE events,
 4pi (no spectrometer acceptance), for the pre-FSI primary and post-FSI
-leading proton.
+leading proton, one figure per campaign tune.
 
 Sign convention (the paper never states its own -- flip if mirrored vs print):
 per event, z_hat = q_hat; x_hat = normalized transverse-to-q component of the
@@ -14,18 +14,20 @@ scattered-electron momentum (in the scattering plane, e' side);
 signed p_m = sign(p_m . x_hat) * |p_m| with p_m = p_p' - q. Positive = p_m
 tilted toward the e' side of q.
 
-Expected physics: the classic 22a chain (FermiMover + QELKinematicsGenerator,
-factorized dsigma/dQ^2) has no phi_pq dependence at the vertex, so the
-intrinsic pre-FSI asymmetry should be ~0; hA2018 FSI may induce a small one.
-The paper's W_LT/Coulomb mechanism is absent from this chain by construction.
+Expected physics: the a-tune chain (FermiMover + QELKinematicsGenerator,
+factorized dsigma/dQ^2) has no phi_pq dependence at the vertex, so its
+intrinsic asymmetry is purely KINEMATIC (flux/Q^2-window weighting favors
+initial nucleons moving away from the e' side); 22b (QELEventGenerator) and
+GEM21 (QELEventGeneratorSuSA) sample the proton angle differently and may
+differ. The paper's W_LT/Coulomb mechanism is absent from every chain here.
 
 Selection: qel && hitnuc==2212, Dutta-estimator window 0 < E_m < 80 MeV
 (E_m = omega - T_p - p_m^2/(2 M_Mn55)). Data grid: 16 x 40 MeV/c bins,
-edges -320..320 (fig7 centers are +-20, +-60, ..., +-300).
+edges -320..320 (fig7 centers +-20, +-60, ..., +-300).
 
 Usage:
   export BEARER_TOKEN_FILE=/tmp/bt_u$(id -u)
-  pixi run python results/template/make_pmiss_signed_fe56.py [--max-files 20]
+  pixi run python results/template/make_pmiss_signed_fe56.py [--tune T | --all-tunes]
 Cache: results/prd-analyzer-v0.1/cache/pmiss_signed_fe56/<tune>.npz.
 """
 import argparse
@@ -37,16 +39,26 @@ from pathlib import Path
 sys.path.insert(0, "results/template")
 import numpy as np
 from plot_style import (apply_style, style_axis,
-                        FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_TITLE,
+                        FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE,
                         FS_SUPTITLE, FS_TICK, DPI)
 
 REPO = Path(__file__).resolve().parents[2]
-TUNE = "GEM26_22a_05_000"
-GRIDLOG = REPO / ("jobsub-agent/jobsub-runs/gevgen_grid-2026-07-16/"
-                  "eminus_Fe56_20260716-141800.gridlog")
+GRIDLOG_DIR = REPO / "jobsub-agent/jobsub-runs/gevgen_grid-2026-07-16"
 DATA = REPO / "data/Dipingkar-dutta-data-prc_figs/fig7_q1p2.dat"
-CACHE = REPO / "results/prd-analyzer-v0.1/cache/pmiss_signed_fe56" / f"{TUNE}.npz"
-OUT = REPO / "results/prd-analyzer-v0.1" / f"pmiss_signed_fe56_{TUNE}.png"
+CACHE_DIR = REPO / "results/prd-analyzer-v0.1/cache/pmiss_signed_fe56"
+OUT_DIR = REPO / "results/prd-analyzer-v0.1"
+
+# tune -> (gridlog stem, ground-state label, QEL kinematics generator)
+RUNS = {
+    "GEM26_11a_05_000": ("eminus_Fe56_20260716-113802", "LocalFGM",
+                         "QELKinematicsGenerator"),
+    "GEM26_22a_05_000": ("eminus_Fe56_20260716-141800", "SF",
+                         "QELKinematicsGenerator"),
+    "GEM26_22b_05_000": ("eminus_Fe56_20260716-141807", "SF",
+                         "QELEventGenerator"),
+    "GEM21_11a_05_000": ("eminus_Fe56_20260716-113817", "LocalFGM",
+                         "QELEventGeneratorSuSA"),
+}
 
 Z = 26
 M_REC = 51.1616880                    # Mn55 [GeV], install genie_pdg_table.txt
@@ -55,7 +67,7 @@ M_P = next(v["mass_gev"] for v in _nuc.values() if v["code"] == 2212)
 
 EDGES = np.arange(-320.0, 321.0, 40.0)   # fig7 grid: 16 bins, centers +-20..+-300
 BINW = 40.0
-EM_MAX = 80.0                            # paper window 0 < E_m < 80 MeV
+EM_MAX = 80.0
 
 BRANCHES = ["Ev", "pxv", "pyv", "pzv", "El", "pxl", "pyl", "pzl",
             "hitnuc", "qel",
@@ -68,22 +80,29 @@ def xrootd_url(p, door="fndca1.fnal.gov:1094"):
 
 
 def signed_pm(pxp, pyp, pzp, qx, qy, qz, lx, ly, lz):
-    """Signed p_m = sign(p_m . x_hat)*|p_m|; x_hat = e' transverse to q."""
-    mx, my, mz = pxp - qx, pyp - qy, pzp - qz
-    pm = np.sqrt(mx**2 + my**2 + mz**2)
-    q2 = qx**2 + qy**2 + qz**2
-    a = (lx * qx + ly * qy + lz * qz) / q2       # (p_l . q)/|q|^2
-    tx, ty, tz = lx - a * qx, ly - a * qy, lz - a * qz
-    dot = mx * tx + my * ty + mz * tz            # sign of p_m . x_hat (norm >0)
-    return np.where(dot >= 0, pm, -pm)
+    """Signed p_m = sign(p_m . x_hat)*|p_m|; x_hat = e' transverse to q.
+
+    scikit-hep vector form (regression-checked against the original component
+    arithmetic to float precision, zero sign flips):
+      p_m = p_p - q;  t = p_l - (p_l.q/|q|^2) q;  sign(p_m.t) * |p_m|
+    """
+    import vector
+    pp = vector.array({"px": pxp, "py": pyp, "pz": pzp})
+    q = vector.array({"px": qx, "py": qy, "pz": qz})
+    pl = vector.array({"px": lx, "py": ly, "pz": lz})
+    pm = pp - q
+    t = pl - q * (pl.dot(q) / q.mag2)            # e' transverse to q (in-plane)
+    return np.where(pm.dot(t) >= 0, pm.mag, -pm.mag)
 
 
-def build_cache(max_files):
+def build_cache(tune, max_files):
     import uproot
     import awkward as ak
-    pnfs_dir = json.load(open(GRIDLOG))["pnfs_output_dir"]
+    cache = CACHE_DIR / f"{tune}.npz"
+    gridlog = GRIDLOG_DIR / f"{RUNS[tune][0]}.gridlog"
+    pnfs_dir = json.load(open(gridlog))["pnfs_output_dir"]
     paths = sorted(glob.glob(pnfs_dir + "/*/*.gst.root"))[:max_files]
-    print(f"[{TUNE}] streaming {len(paths)} gst file(s) (signed p_m)")
+    print(f"[{tune}] streaming {len(paths)} gst file(s) (signed p_m)")
     parts, ntot, nsel = [], 0, 0
     for ipath, p in enumerate(paths):
         a = uproot.open(xrootd_url(p))["gst"].arrays(BRANCHES, library="ak")
@@ -115,17 +134,17 @@ def build_cache(max_files):
               f"{nsel:,} selected", flush=True)
     out = {k: np.concatenate([q[k] for q in parts]) for k in parts[0]}
     out["ntot"], out["n_sel"] = np.array([ntot]), np.array([nsel])
-    CACHE.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(CACHE, **out)
-    print(f"[{TUNE}] cached -> {CACHE}")
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(cache, **out)
+    print(f"[{tune}] cached -> {cache}")
 
 
 def occ_hist(pm, Em, n_sel):
-    """Counts per bin and the DENSITY y = Z*N/(N_sel*dp*4pi*p_c^2) [(MeV/c)^-3].
+    """Counts per bin + DENSITY y = Z*N/(N_sel*dp*4pi*p_c^2) [(MeV/c)^-3].
 
     The published fig7 y-axis is a density (int S^D dE_m, per d^3p_m: peaks at
-    p_m = 0), so the event counts (~ p^2 * S: dip at 0) must have the 4pi p^2
-    phase-space factor divided out for a shape comparison."""
+    p_m = 0); raw counts (~ p^2 S) dip at 0, so divide out the 4pi p^2 phase
+    space for a shape comparison."""
     win = np.isfinite(pm) & (Em > 0.0) & (Em < EM_MAX)
     cnt, _ = np.histogram(pm[win], bins=EDGES)
     p_c = np.abs((EDGES[:-1] + EDGES[1:]) / 2.0)
@@ -134,75 +153,59 @@ def occ_hist(pm, Em, n_sel):
 
 
 def asym(cnt):
-    """A(|p|) = (N+ - N-)/(N+ + N-) per mirrored bin pair, with stat error."""
     nb = len(cnt) // 2
     Np, Nm = cnt[nb:], cnt[:nb][::-1]
     tot = Np + Nm
     with np.errstate(invalid="ignore", divide="ignore"):
         A = (Np - Nm) / tot
         dA = np.sqrt(np.clip(1.0 - A ** 2, 0, None) / np.clip(tot, 1, None))
-    return A, dA, tot
+    return A, dA
 
 
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--max-files", type=int, default=20)
-    args = ap.parse_args()
-
-    if not CACHE.exists():
-        build_cache(args.max_files)
-    c = dict(np.load(CACHE))
+def make_figure(tune, max_files, dutta):
+    cache = CACHE_DIR / f"{tune}.npz"
+    if not cache.exists():
+        build_cache(tune, max_files)
+    c = dict(np.load(cache))
     n_sel = float(c["n_sel"][0])
+    gs, gen = RUNS[tune][1], RUNS[tune][2]
 
     stages = {}
+    print(f"[{tune}] ({gs}, {gen}):")
     for s, label in ((3, "pre-FSI primary p"), (4, "post-FSI leading p")):
         cnt, y = occ_hist(c[f"pm{s}"], c[f"Em{s}"], n_sel)
-        A, dA, tot = asym(cnt)
-        Nplus, Nminus = cnt[len(cnt)//2:].sum(), cnt[:len(cnt)//2].sum()
-        Aint = (Nplus - Nminus) / max(Nplus + Nminus, 1)
-        dAint = np.sqrt((1 - Aint**2) / max(Nplus + Nminus, 1))
-        stages[s] = (label, cnt, y, A, dA)
-        print(f"stage {s} ({label}): N(in-window)={int(cnt.sum()):,}  "
-              f"integrated A = {Aint:+.4f} +- {dAint:.4f}")
-        # sign-shuffle control: random signs must give A ~ 0
-        rng = np.random.default_rng(20260716)
-        pm = c[f"pm{s}"]; Em = c[f"Em{s}"]
-        win = np.isfinite(pm) & (Em > 0) & (Em < EM_MAX)
-        shuf = np.abs(pm[win]) * rng.choice([-1.0, 1.0], size=int(win.sum()))
-        cs, _ = np.histogram(shuf, bins=EDGES)
-        Ash = (cs[len(cs)//2:].sum() - cs[:len(cs)//2].sum()) / cs.sum()
-        print(f"  sign-shuffle control: A = {Ash:+.4f} (expect ~0)")
+        A, dA = asym(cnt)
+        Np, Nm = cnt[len(cnt)//2:].sum(), cnt[:len(cnt)//2].sum()
+        Ai = (Np - Nm) / max(Np + Nm, 1)
+        dAi = np.sqrt((1 - Ai**2) / max(Np + Nm, 1))
+        stages[s] = (label, cnt, y, A, dA, Ai, dAi)
+        print(f"  stage {s} ({label}): N={int(cnt.sum()):,}  A = {Ai:+.4f} +- {dAi:.4f}")
 
-    # symmetrized digitized fig7 as gray shape reference (both are densities
-    # now; scale data to the stage-4 density integral)
-    dx, dy, _, de = np.loadtxt(DATA, unpack=True)
+    dx, dy, _, de = np.loadtxt(dutta, unpack=True)
     scale = stages[4][2].sum() / dy.sum()
 
-    apply_style()
     import matplotlib.pyplot as plt
-    fig, (ax, axA) = plt.subplots(2, 1, figsize=(8.5, 8.6), sharex=True,
+    fig, (ax, axA) = plt.subplots(2, 1, figsize=(8.0, 8.2), sharex=True,
                                   height_ratios=[2.2, 1], layout="constrained")
     ax.stairs(stages[3][2], EDGES, color="C0", linewidth=1.8,
               label="pre-FSI primary p")
     ax.stairs(stages[4][2], EDGES, color="C3", linewidth=1.8,
               label="post-FSI leading p")
     ax.errorbar(dx, dy * scale, yerr=de * scale, fmt="s", ms=4, color="0.5",
-                capsize=2, zorder=8,
-                label="fig7_q1p2 (symmetrized, shape only)")
+                capsize=2, zorder=8, label="fig7_q1p2 (symmetrized, shape)")
     style_axis(ax, title="signed missing momentum, 0 < $E_m$ < 80 MeV",
                logx=False, logy=False, ymin=None)
     ax.set_ylim(0, None)
     ax.set_ylabel(r"$Z\cdot$ d$N/$d$^3p_m\,/\,N_{sel}$   [(MeV/c)$^{-3}$]",
                   fontsize=FS_LABEL)
     ax.legend(fontsize=FS_LEGEND - 3, loc="upper right",
-              title="sign: $p_m\\cdot\\hat{x}_{e'}$ (toward e$'$ side = +)",
+              title="sign: $p_m\\cdot\\hat{x}_{e'}$ (toward e$'$ = +)",
               title_fontsize=FS_LEGEND_TITLE - 3)
 
     centers = (EDGES[len(EDGES)//2:-1] + EDGES[len(EDGES)//2 + 1:]) / 2.0
     for s, color in ((3, "C0"), (4, "C3")):
-        label, cnt, y, A, dA = stages[s]
-        axA.errorbar(centers, A, yerr=dA, fmt="o", ms=4, color=color,
-                     capsize=2, label=label)
+        _, _, _, A, dA, _, _ = stages[s]
+        axA.errorbar(centers, A, yerr=dA, fmt="o", ms=4, color=color, capsize=2)
     axA.axhline(0.0, color="0.5", lw=1, ls=":")
     style_axis(axA, title=None, xlabel=r"$p_m$  [MeV/c]  (|p| for asymmetry)",
                logx=False, logy=False, ymin=None)
@@ -210,9 +213,28 @@ if __name__ == "__main__":
     axA.set_ylim(-0.2, 0.2)
     axA.tick_params(labelsize=FS_TICK)
 
-    fig.suptitle(f"Fe56 signed $p_m$ — {TUNE}  (4$\\pi$, qel && hit p)\n"
-                 "e$^-$ 2.445 GeV; A $\\approx-5.5\\%$ kinematic, FSI-blind; "
-                 "chain has no W$_{LT}$",
+    fig.suptitle(f"Fe56 signed $p_m$ — {tune}\n({gs}, {gen}); "
+                 f"A(post-FSI) = {stages[4][5]:+.3f}, 4$\\pi$, qel && hit p",
                  fontsize=FS_SUPTITLE - 3)
-    fig.savefig(OUT, dpi=DPI)
-    print("wrote", OUT)
+    out = OUT_DIR / f"pmiss_signed_fe56_{tune}.png"
+    fig.savefig(out, dpi=DPI)
+    plt.close(fig)
+    print("  wrote", out)
+    return {s: (stages[s][5], stages[s][6]) for s in (3, 4)}
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--tune", default="GEM26_22a_05_000", choices=sorted(RUNS))
+    ap.add_argument("--all-tunes", action="store_true")
+    ap.add_argument("--max-files", type=int, default=20)
+    args = ap.parse_args()
+
+    apply_style()
+    summary = {}
+    for t in (list(RUNS) if args.all_tunes else [args.tune]):
+        summary[t] = make_figure(t, args.max_files, DATA)
+    print("\nintegrated asymmetry summary (post-FSI):")
+    for t, s in summary.items():
+        print(f"  {t}: pre-FSI {s[3][0]:+.4f}+-{s[3][1]:.4f}  "
+              f"post-FSI {s[4][0]:+.4f}+-{s[4][1]:.4f}")
