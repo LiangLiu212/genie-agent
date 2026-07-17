@@ -29,3 +29,38 @@ GEM26_22b_05_000 resolves to the identical table; GEM26_11a / GEM21_11a use
 LocalFGM (no table). Event-level realization: `sf2d_events_fe56_*.png`.
 
 Regenerate: `pixi run python results/template/make_sf2d_table.py --all-tunes`
+
+## Missing energy: table vs simulation vs Dutta Fig. 11 (GEM26_22a_05_000)
+
+![Fe56 restored E_m ladder, GEM26_22a_05_000 vs Dutta Fig. 11](em_ladder_restored_fe56_GEM26_22a_05_000.png)
+
+The C12 four-stage **restored ladder** (v0 README §12) replicated on Fe56 at the
+digitized data's kinematics (Q² = 1.28 (GeV/c)², beam 2.445 GeV): all stages on
+the input-table axis E_m + T_rec (record = m_N − E_n, protons = ω − T_p, remnant
+Mn55), selection `qel && hitnuc==2212` (explicit here; implicit in the EMQE C12
+samples), p_m < 300 MeV/c, occupancy normalization Z·hist/(N_sel·5 MeV) with
+Z = 26. Sample: 254k selected of 2M streamed events (20 gst files).
+
+- **Panel 1** — `pke56_tot.data` marginal f_{k<300}(E). The raw table integrates
+  to 25.998 ≈ Z: the file is proton-number normalized, same convention as C12.
+  In-window occupancy I1 = 22.58 of 26 (the rest is the k > 300 MeV/c SRC tail).
+- **Panel 2** — the record is a **δ at S_p ≈ 10.2 MeV** ([10,15) bin = 4.7, off
+  scale): 22a samples the 2D SF but its classic FermiMover chain drops the
+  sampled w from the 4-momentum — the Fe56 instance of the C12 a-tune finding.
+  The sampled physics survives only in `GHepParticle::RemovalEnergy` (section 1).
+- **Panel 3** — identical to panel 2 (I3r = I2r = 23.42): the pre-FSI chain is
+  energy-conserving, ω − T_p ≡ m_N − E_n.
+- **Panel 4** — hA2018 FSI smears the δ into a broad distribution that tracks the
+  data shape above ~20 MeV but cannot reproduce the 12.5 MeV peak (smearing is
+  upward-only from S_p). In-window survival I4r/I3r = 0.384 (I4r = 9.00);
+  post-FSI a proton still exists in 99.8% of events — strength leaves the
+  window rather than the event.
+
+Data caveats (as in the C12 study): Dutta's published E_m is recoil-subtracted,
+so on this axis the points sit low by an event-wise T_rec ≤ ~4.5 MeV (sub-bin);
+the fig11 absolute scale is renormalized to the in-window IPSM strength
+(∫ = 18.20 ± 0.08, not Z = 26 and not a raw distorted yield); file errors are
+statistical only (inflated by 2% pt-to-pt ⊕ 5% model here).
+
+Regenerate: `pixi run python results/template/make_emiss_ladder_fe56.py`
+(cache: `cache/ladder_fe56/`; delete to re-stream).
