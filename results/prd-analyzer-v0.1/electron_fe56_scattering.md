@@ -54,8 +54,8 @@ Summary (occupancy units, E < 80 MeV, p_s < 300 MeV/c):
 | tune | N_sel (of 2M) | I1 (table) | I2r = I3r | I4r | I4r/I3r | record median [p5, p95] MeV |
 |---|---|---|---|---|---|---|
 | GEM26_11a_05_000 | 251,502 (12.6%) | — | 26.000 | 10.619 | 0.408 | 10.45 [10.22, 10.75] |
-| GEM26_22a_05_000 | 254,047 (12.7%) | 22.577 | 23.423 | 8.997 | 0.384 | 10.48 [10.24, 10.88] |
-| GEM26_22b_05_000 | 186,694 (9.3%) | 22.577 | 23.976 | 9.621 | 0.401 | 20.47 [8.32, 59.29] |
+| GEM26_22a_05_000 | 254,047 (12.7%) | 22.630 | 23.423 | 8.997 | 0.384 | 10.48 [10.24, 10.88] |
+| GEM26_22b_05_000 | 186,694 (9.3%) | 22.630 | 23.976 | 9.621 | 0.401 | 20.47 [8.32, 59.29] |
 | GEM21_11a_05_000 | 213,209 (10.7%) | — | 0.000 / 24.448 | 10.037 | 0.411 | −14.38 [−30.52, −1.78] |
 
 I2r = I3r in every tune (energy-conserving pre-FSI chain; GEM21's I2r = 0 is
@@ -94,7 +94,7 @@ into a shape that tracks the data tail but, as everywhere, misses the
 ![Fe56 restored E_m ladder, GEM26_22a_05_000 vs Dutta Fig. 11](em_ladder_restored_fe56_GEM26_22a_05_000.png)
 
 The Fe56 instance of the C12 **a-tune finding**: the tune samples the 2D SF
-(panel 1, I1 = 22.577 of 26 in-window — the rest is the k > 300 MeV/c SRC
+(panel 1, I1 = 22.630 of 26 in-window — the rest is the k > 300 MeV/c SRC
 tail), but FermiMover writes `En = M_A − √(p² + M²_Mn55,gs)` into the record,
 dropping the sampled w — panel 2 is a δ at S_p ([10,15) bin = 4.7, off scale;
 the sampled physics survives only in `GHepParticle::RemovalEnergy`, section 1).
@@ -112,12 +112,21 @@ tracking the data above ~20 MeV.
 ![Fe56 restored E_m ladder, GEM26_22b_05_000 vs Dutta Fig. 11](em_ladder_restored_fe56_GEM26_22b_05_000.png)
 
 The **b-tune contrast**: `QELEventGenerator` keeps the sampled w in the
-off-shell energy, so the record (median 20.5 MeV, p5–p95 [8.3, 59.3]) broadly
-restores the dashed table instead of collapsing to a δ — but shifted low, with
-strength in [5,10) below S_p where the table is empty (the `BindHitNucleon`
-recoil-convention issue; the C12 study measured 23.1% of 22b strength below
-S_p on the data axis — still an open question). Of the four tunes this record
-is the closest in shape to the data. QEL fraction is 9.3% vs 22a's 12.7%,
+off-shell energy, and the restoration is **exact**: per-event,
+m_N − E_n = E_sampled to keV precision (verified from the GHEP dumps —
+(m_N − E_n) − w_stored reproduces k²/2(M_Mn55+E) to <1.5 keV, i.e. the
+`BindHitNucleon` SpectralFunc reinterpretation lowers only the *stored*
+RemovalEnergy by ≤0.9 MeV and cancels identically on this axis; on the
+table-native grid the record has zero strength below the table's support).
+The record (median 20.5 MeV, p5–p95 [8.3, 59.3]) sits on the dashed table,
+with the residual shape difference — peak 1.03 vs 0.94 — coming from the
+UnifiedQEL cross-section weighting of the sampled kinematics. An earlier
+version of this note attributed an apparent down-shift to `BindHitNucleon`:
+that was a half-bin rebinning artifact (the table grid is centered at
+5, 10, … MeV, offset by 2.5 MeV from the plot grid, and `GetRandom2` samples
+uniformly within table bins), fixed by spreading each table column over its
+native bin in the stage-1 rebin. Of the four tunes this record is the
+closest in shape to the data. QEL fraction is 9.3% vs 22a's 12.7%,
 consistent with the SF-folded UnifiedQEL cross section being smaller than
 Rosenbluth (spline QE σ 1.85 vs 2.75 ×10⁻⁴).
 

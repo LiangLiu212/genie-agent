@@ -101,11 +101,18 @@ def f_restricted(k, P, dk, kmax=PM_MAX):
 
 
 def rebin(E, f, dE, edges):
+    """Rebin treating each table column as a uniform density over its native
+    bin [E-dE/2, E+dE/2) -- NOT a point mass at the center. The table grid is
+    offset by half a bin from the plot grid (centers 5,10,... vs edges
+    0,5,10,...), and GetRandom2 samples uniformly within table bins, so
+    center-deposit rebinning fakes a ~2.5 MeV shift between stage 1 and the
+    event stages (verified per-event: m_N - E_n = E_sampled exactly)."""
     dE = np.broadcast_to(np.asarray(dE, dtype=float), E.shape)
     out = np.zeros(len(edges) - 1)
     for i, (lo, hi) in enumerate(zip(edges[:-1], edges[1:])):
-        m = (E >= lo) & (E < hi)
-        out[i] = (f[m] * dE[m]).sum() / (hi - lo)
+        ov = np.clip(np.minimum(E + dE / 2.0, hi) - np.maximum(E - dE / 2.0, lo),
+                     0.0, None)
+        out[i] = (f * ov).sum() / (hi - lo)
     return out
 
 
@@ -253,8 +260,8 @@ def make_figure(tune, max_files, dutta, table):
     pk = max(h[2].max(), h[3].max())
     if tune == "GEM26_22b_05_000":
         note = ("b-tune record: QELEventGenerator keeps\nthe sampled $w$ — "
-                "broadly restores the dashed\ntable, but shifted low "
-                "(BindHitNucleon\nconvention; strength below $S_p$)")
+                "$m_N-E_n=E_{sampled}$ exactly\n(verified to keV); residual "
+                "shape difference\n= UnifiedQEL xsec weighting")
     elif tune == "GEM21_11a_05_000":
         note = ("SuSA record: $m_N-E_n=-T_N<0$,\noff scale left "
                 f"(median {med2:.1f} MeV).\nFe56 EM SuSAv2 = scaled-C12 surrogate")
