@@ -11,7 +11,7 @@ tune: LFG = GEM26_11a_05_000, SF = GEM26_22a_05_000, UnifiedQEL =
 GEM26_22b_05_000, SuSAv2 = GEM21_11a_05_000 (`samples.py`; the fifth key
 UnifiedQEL2024 = GEM26_33b_05_000 is outside this four-tune series).
 
-## C12 2D spectral function — the GENIE input table
+## 1. C12 2D spectral function — the GENIE input table
 
 ![C12 2D spectral function from the GENIE input table (GEM26_22a_05_000)](sf2d_table_c12_GEM26_22a_05_000.png)
 
@@ -30,7 +30,7 @@ GEM21_11a use LocalFGM (no table).
 
 Regenerate: `pixi run python results/template/make_sf2d_table.py --all-tunes --target C12`
 
-## Missing energy: table vs simulation vs Dutta Fig. 9
+## 2. Missing energy: table vs simulation vs Dutta Fig. 9
 
 The four-stage **restored ladder** (input-table axis E_m + T_rec; record =
 m_N − E_n, protons = ω − T_p, remnant **B11**; selection `hitnuc==2212` — the
@@ -58,7 +58,7 @@ one clean nuclear-size difference: **FSI in-window survival is 0.55–0.60 on
 C12 vs 0.38–0.41 on Fe56** (transparency ordering).
 Regenerate: `pixi run python results/template/make_emiss_ladder_c12.py --all-tunes`
 
-### GEM26_11a_05_000 — LocalFGM + Rosenbluth
+### 2.1 GEM26_11a_05_000 — LocalFGM + Rosenbluth
 
 | piece | algorithm |
 |---|---|
@@ -72,7 +72,7 @@ Record δ at 17.1 MeV (S_p + the B11-recoil spread); all 6 protons in-window
 (I2r = 6.000). The δ misses the data's two-component structure entirely; FSI
 smears it into the tail but cannot create the s-shell bump.
 
-### GEM26_22a_05_000 — 2D SpectralFunc + Rosenbluth (FermiMover chain)
+### 2.2 GEM26_22a_05_000 — 2D SpectralFunc + Rosenbluth (FermiMover chain)
 
 | piece | algorithm |
 |---|---|
@@ -87,7 +87,7 @@ rest is the k > 300 SRC tail) but FermiMover drops the sampled w — the record
 is a δ at 17.2 MeV, not the table. The sampled physics survives only in
 `GHepParticle::RemovalEnergy`.
 
-### GEM26_22b_05_000 — 2D SpectralFunc + UnifiedQEL (QELEventGenerator)
+### 2.3 GEM26_22b_05_000 — 2D SpectralFunc + UnifiedQEL (QELEventGenerator)
 
 | piece | algorithm |
 |---|---|
@@ -104,7 +104,7 @@ at 30–50 MeV — landing on the data's p-shell peak (with the grids aligned,
 no half-bin correction is involved here, unlike Fe56). FSI (panel 4) scales
 the strength down (I4r/I3r = 0.581) while roughly preserving the shape.
 
-### GEM21_11a_05_000 — LocalFGM + SuSAv2
+### 2.4 GEM21_11a_05_000 — LocalFGM + SuSAv2
 
 | piece | algorithm |
 |---|---|
@@ -119,7 +119,7 @@ The SuSA record is entirely below the axis (m_N − E_n = −T_N < 0, median
 genuine calculation — the scaled-C12 surrogate caveat applies only to the
 Fe56 note.
 
-## Missing momentum: table vs QEL struck-nucleon record
+## 3. Missing momentum: table vs QEL struck-nucleon record
 
 ![C12 P_miss, input table vs QEL struck-nucleon record, all t05 tunes](pmiss_struck_c12_t05.png)
 
@@ -139,7 +139,7 @@ Q²-window tail enhancement 0.166 vs 0.146), 22b's SRC tail is
 xsec-suppressed, and the two LFG tunes coincide with the local-k_F cutoff.
 Regenerate: `pixi run python results/template/make_pmiss_c12.py`
 
-## Signed missing momentum (± asymmetry) — GEM26_22a_05_000
+## 4. Signed missing momentum (± asymmetry) — GEM26_22a_05_000
 
 ![C12 signed p_m, GEM26_22a_05_000, 4pi](pmiss_signed_c12_GEM26_22a_05_000.png)
 

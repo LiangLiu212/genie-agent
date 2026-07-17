@@ -1,6 +1,6 @@
 # Electron–Fe56 scattering
 
-## Fe56 2D spectral function — the GENIE input table
+## 1. Fe56 2D spectral function — the GENIE input table
 
 ![Fe56 2D spectral function from the GENIE input table (GEM26_22a_05_000)](sf2d_table_fe56_GEM26_22a_05_000.png)
 
@@ -30,7 +30,7 @@ LocalFGM (no table). Event-level realization: `sf2d_events_fe56_*.png`.
 
 Regenerate: `pixi run python results/template/make_sf2d_table.py --all-tunes`
 
-## Missing energy: table vs simulation vs Dutta Fig. 11
+## 2. Missing energy: table vs simulation vs Dutta Fig. 11
 
 The C12 four-stage **restored ladder** (v0 README §12) replicated on Fe56 for
 each campaign tune, at the digitized data's kinematics (Q² = 1.28 (GeV/c)²,
@@ -66,7 +66,7 @@ an in-window statement — its record sits entirely below E = 0). FSI keeps only
 `pixi run python results/template/make_emiss_ladder_fe56.py --all-tunes`
 (cache: `cache/ladder_fe56/`; delete to re-stream).
 
-### GEM26_11a_05_000 — LocalFGM + Rosenbluth
+### 2.1 GEM26_11a_05_000 — LocalFGM + Rosenbluth
 
 | piece | algorithm |
 |---|---|
@@ -83,7 +83,7 @@ never exceed 300 MeV/c). The pre-FSI proton reproduces the δ; FSI smears it
 into a shape that tracks the data tail but, as everywhere, misses the
 12.5 MeV peak from below.
 
-### GEM26_22a_05_000 — 2D SpectralFunc + Rosenbluth (FermiMover chain)
+### 2.2 GEM26_22a_05_000 — 2D SpectralFunc + Rosenbluth (FermiMover chain)
 
 | piece | algorithm |
 |---|---|
@@ -101,7 +101,7 @@ the sampled physics survives only in `GHepParticle::RemovalEnergy`, section 1).
 I2r = I3r = 23.423; FSI in-window survival 0.384 with the post-FSI shape
 tracking the data above ~20 MeV.
 
-### GEM26_22b_05_000 — 2D SpectralFunc + UnifiedQEL (QELEventGenerator)
+### 2.3 GEM26_22b_05_000 — 2D SpectralFunc + UnifiedQEL (QELEventGenerator)
 
 | piece | algorithm |
 |---|---|
@@ -130,7 +130,7 @@ closest in shape to the data. QEL fraction is 9.3% vs 22a's 12.7%,
 consistent with the SF-folded UnifiedQEL cross section being smaller than
 Rosenbluth (spline QE σ 1.85 vs 2.75 ×10⁻⁴).
 
-### GEM21_11a_05_000 — LocalFGM + SuSAv2 (scaled-C12 surrogate)
+### 2.4 GEM21_11a_05_000 — LocalFGM + SuSAv2 (scaled-C12 surrogate)
 
 | piece | algorithm |
 |---|---|
@@ -147,7 +147,7 @@ box-like distribution up to ~35 MeV (LFG kinematics through SuSA's own
 binding prescription), and FSI degrades it further. The scaled-C12 surrogate
 caveat applies to any physics conclusion drawn from this tune on iron.
 
-## Missing momentum: table vs QEL struck-nucleon record
+## 3. Missing momentum: table vs QEL struck-nucleon record
 
 ![Fe56 P_miss, input table vs QEL struck-nucleon record, all t05 tunes](pmiss_struck_fe56_t05.png)
 
@@ -184,7 +184,7 @@ Reading:
 Regenerate: `pixi run python results/template/make_pmiss_fe56.py`
 (reads the `cache/ladder_fe56/` caches).
 
-## Signed missing momentum (± asymmetry) — GEM26_22a_05_000
+## 4. Signed missing momentum (± asymmetry) — GEM26_22a_05_000
 
 ![Fe56 signed p_m, GEM26_22a_05_000, 4pi](pmiss_signed_fe56_GEM26_22a_05_000.png)
 
