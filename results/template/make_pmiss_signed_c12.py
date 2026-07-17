@@ -13,6 +13,12 @@ Sign convention and expectation: identical to the Fe56 script (sign of
 p_m . x_hat, x_hat = e' transverse-to-q, positive = toward the e' side;
 the 22a chain carries a kinematic asymmetry, no W_LT).
 
+Data overlay: fig6_top + fig6_bot (q1p2) COMBINED -- the C12 momentum
+distributions are published per E_m shell window (p-shell 10-25, s-shell
+30-50 MeV), so their sum covers E_m in (10,25) u (30,50) with a gap at
+25-30 and nothing outside; the MC window stays 0-80 MeV (per user: combine,
+leave the gap). Shape only, scaled to the post-FSI integral; symmetrized.
+
 Usage:
   pixi run python results/template/make_pmiss_signed_c12.py --gst <local .gst.root>
 """
@@ -110,6 +116,14 @@ if __name__ == "__main__":
         print(f"  sign-shuffle control: A = "
               f"{(cs[len(cs)//2:].sum() - cs[:len(cs)//2].sum()) / cs.sum():+.4f}")
 
+    # combined fig6 data: p-shell + s-shell (E_m 10-25 u 30-50, gap at 25-30)
+    DATA_DIR = REPO / "data/Dipingkar-dutta-data-prc_figs"
+    dx, y_p, _, e_p = np.loadtxt(DATA_DIR / "fig6_top_q1p2.dat", unpack=True)
+    _, y_s, _, e_s = np.loadtxt(DATA_DIR / "fig6_bot_q1p2.dat", unpack=True)
+    dy = y_p + y_s
+    de = np.sqrt(e_p ** 2 + e_s ** 2)
+    scale = stages[4][2].sum() / dy.sum()
+
     apply_style()
     import matplotlib.pyplot as plt
     fig, (ax, axA) = plt.subplots(2, 1, figsize=(8.5, 8.6), sharex=True,
@@ -118,14 +132,16 @@ if __name__ == "__main__":
               label="pre-FSI primary p")
     ax.stairs(stages[4][2], EDGES, color="C3", linewidth=1.8,
               label="post-FSI leading p")
+    ax.errorbar(dx, dy * scale, yerr=de * scale, fmt="s", ms=4, color="0.5",
+                capsize=2, zorder=8,
+                label="fig6 top+bot (symm., $E_m$ 10–25$\\cup$30–50, shape)")
     style_axis(ax, title="signed missing momentum, 0 < $E_m$ < 80 MeV",
                logx=False, logy=False, ymin=None)
     ax.set_ylim(0, None)
     ax.set_ylabel(r"$Z\cdot$ d$N/$d$^3p_m\,/\,N_{sel}$   [(MeV/c)$^{-3}$]",
                   fontsize=FS_LABEL)
     ax.legend(fontsize=FS_LEGEND - 3, loc="upper right",
-              title="sign: $p_m\\cdot\\hat{x}_{e'}$ (toward e$'$ side = +)\n"
-                    "no data overlay: fig6 is shell-split",
+              title="sign: $p_m\\cdot\\hat{x}_{e'}$ (toward e$'$ side = +)",
               title_fontsize=FS_LEGEND_TITLE - 3)
 
     centers = (EDGES[len(EDGES)//2:-1] + EDGES[len(EDGES)//2 + 1:]) / 2.0

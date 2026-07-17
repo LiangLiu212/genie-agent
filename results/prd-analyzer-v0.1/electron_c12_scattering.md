@@ -150,9 +150,15 @@ patched genie_inclxx install: local EMQE spline
 `gevgen-eminus_C12_20260717-104229-e7e-894744` (500k events, seed 20260717,
 671 s; 349k hit-proton). Same sign convention and construction as the Fe56
 section (sign of p_m·x̂, density with 4πp² divided out, B11 recoil,
-0 < E_m < 80 MeV); no data overlay — the digitized fig6 momentum
-distributions are shell-split (10–25 / 30–50 MeV) and symmetrized, so no
-0–80 MeV signed reference exists.
+0 < E_m < 80 MeV). Data overlay: **fig6 top + bottom combined** (p-shell
+10–25 ⊕ s-shell 30–50 MeV, summed, errors in quadrature; shape-scaled to
+the post-FSI integral). The combined windows cover E_m ∈ (10,25) ∪ (30,50)
+with a gap at 25–30 and nothing outside, while the MC window is 0–80 — the
+mismatch is deliberate and left as-is. The overlay exposes a real feature
+the MC lacks: the **p-shell dip at p_m = 0** (the l = 1 node — the
+±20 MeV/c points sit below their ±60–100 neighbors), while both GENIE
+curves peak at zero; the wings (|p| ≳ 150 MeV/c) track the post-FSI curve
+well.
 
 Findings — the Fe56 story repeats on carbon:
 
