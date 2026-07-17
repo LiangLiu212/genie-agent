@@ -41,6 +41,23 @@ Mn55), selection `qel && hitnuc==2212` (explicit here; implicit in the EMQE C12
 samples), p_m < 300 MeV/c, occupancy normalization Z·hist/(N_sel·5 MeV) with
 Z = 26. Sample: 254k selected of 2M streamed events (20 gst files).
 
+**Model configuration (GEM26_22a_05_000)** — from
+`genie-agent/tunes/GEM26_22a/ModelConfiguration.xml` and the install
+`config/EventGenerator.xml`; only the QEL-EM chain enters this plot (`qel` cut):
+
+| piece | algorithm |
+|---|---|
+| Fe56 ground state | `genie::SpectralFunc/Default` → `pke56_tot.data` (Benhar 2D; `NuclearModel@Pdg=1000260560`) |
+| QEL-EM cross section | `genie::RosenbluthPXSec/Default` |
+| QEL-EM event chain | install default: `FermiMover/Default` → `genie::QELKinematicsGenerator/EM-Default` (classic 12-module thread; no tune `EventGenerator.xml` override) |
+| FSI | `genie::HAIntranuke2018/Default` (hA2018) |
+| Q² cut (t05) | `EM-MinQ2Limit = 1.18` GeV² (`GEM26_22a_05_000/CommonParam.xml`) |
+
+The FermiMover step in that chain is precisely why panel 2 is a δ: it samples
+(p, w) from the 2D SF but writes `En = M_A − √(p² + M²_Mn55,gs)` into the
+record (w kept only in `GHepParticle::RemovalEnergy`). RES/DIS/MEC models are
+configured identically to the other GEM26 tunes but are excluded here.
+
 - **Panel 1** — `pke56_tot.data` marginal f_{k<300}(E). The raw table integrates
   to 25.998 ≈ Z: the file is proton-number normalized, same convention as C12.
   In-window occupancy I1 = 22.58 of 26 (the rest is the k > 300 MeV/c SRC tail).
