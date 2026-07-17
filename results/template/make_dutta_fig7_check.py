@@ -67,3 +67,22 @@ fig.suptitle("Dutta Fig. 7 — Fe56 missing momentum (0 < $E_m$ < 80 MeV): "
              "digitized data vs published figure", fontsize=FS_SUPTITLE - 2)
 fig.savefig(OUT, dpi=DPI)
 print("wrote", OUT)
+
+# ---- linear-y version of the digitized data (single panel) ------------------------
+OUT_LIN = REPO / "results/prd-analyzer-v0.1/dutta_fig7_linear.png"
+fig2, ax = plt.subplots(figsize=(8.5, 6.0), layout="constrained")
+for tag, label, marker, color in QSETS:
+    x, y, _, e = np.loadtxt(DATA / f"fig7_{tag}.dat", unpack=True)
+    ax.errorbar(x, y * 1e7, yerr=e * 1e7, fmt=marker, color=color,
+                ms=10 if marker == "*" else 6, lw=1, capsize=0, label=label)
+style_axis(ax, title="digitized fig7_*.dat — linear scale",
+           xlabel=r"$P_{\rm miss}$  [MeV/c]", logx=False, logy=False, ymin=None)
+ax.set_xlim(-330, 330)
+ax.set_ylim(0, 4.2)
+ax.set_ylabel(r"$\int S^D(E_m,p_m)\,dE_m$   ($10^{-7}$ MeV$^{-3}$)",
+              fontsize=FS_TITLE)
+ax.legend(fontsize=FS_LEGEND - 2, ncols=2, frameon=False, loc="upper right")
+fig2.suptitle("Dutta Fig. 7 — Fe56 missing momentum (0 < $E_m$ < 80 MeV)",
+              fontsize=FS_SUPTITLE - 2)
+fig2.savefig(OUT_LIN, dpi=DPI)
+print("wrote", OUT_LIN)
