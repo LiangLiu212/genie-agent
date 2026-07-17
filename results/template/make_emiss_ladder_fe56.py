@@ -2,13 +2,16 @@
 
 Plot 3 of the electron-Fe56 series: replicate the C12 restored ladder
 (results/prd-analyzer-v0/plot_em_ladder_restored.py + build_cache_ladder.py,
-v0 README section 12) for GEM26_22a_05_000 on Fe56 at Q^2 = 1.28 (GeV/c)^2,
-beam 2.445 GeV -- the kinematics of the digitized Fe56 missing-energy spectral
-function (paper Fig. 11, data/Dipingkar-dutta-data-prc_figs/fig11_q1p2.dat).
+v0 README section 12) for the four t05 campaign tunes on Fe56 at
+Q^2 = 1.28 (GeV/c)^2, beam 2.445 GeV -- the kinematics of the digitized Fe56
+missing-energy spectral function (paper Fig. 11,
+data/Dipingkar-dutta-data-prc_figs/fig11_q1p2.dat). One four-panel figure per
+tune (note section 2 has one sub-section per tune).
 
 Stages, identical formulas to the C12 ladder with the Fe56 constants
 (remnant = Mn55 for proton knockout; Z = 26):
-  1  input table f_{k<300}(E)  from pke56_tot.data (proton-occupancy scale)
+  1  input table f_{k<300}(E)  from pke56_tot.data (proton-occupancy scale);
+     LocalFGM tunes have no 2D SF table -> panel 1 shows the data only
   2  struck nucleon (record), restored  E2 + T_rec(p_n)  = m_N - E_n
   3  pre-FSI primary proton,  restored  E3 + T_rec(p_m)  = omega - T_p
   4  post-FSI leading proton, restored  E4 + T_rec(p_m)  = omega - T_p
@@ -16,10 +19,11 @@ Selection: qel && hitnuc==2212, no other cuts (the C12 samples were EMQE so the
 qel cut was implicit there; the Fe56 campaign samples are full-EM). p_s < 300
 MeV/c window per stage; occupancy normalization y = Z*hist/(N_sel*5 MeV).
 
-Expected physics (agreed reading): 22a is Rosenbluth QE through the classic
-FermiMover chain, so the record drops the sampled removal energy -- panel 2 is
-a near-delta at S_p ~ 10.2 MeV (the a-tune finding of the C12 study), NOT the
-sampled table. Panel 1 shows what was actually sampled.
+Expected record behavior (panel 2), the per-tune finding:
+  11a/22a (FermiMover chain)      delta at S_p ~ 10.2 MeV (sampled w dropped)
+  22b (QELEventGenerator)         lands ON the input table (b-tune restoration)
+  GEM21 (QELEventGeneratorSuSA)   m_N - E_n = -T_N < 0, off scale left
+GEM21 caveat: Fe56 EM SuSAv2 is a scaled-C12 surrogate (open_questions.md).
 
 Data caveats (same as C12): the published Dutta E_m is recoil-SUBTRACTED, so on
 this axis the data sit low by an event-wise T_rec <= ~4.5 MeV (sub-bin at 5-MeV
@@ -30,9 +34,8 @@ C12 loader; no pixel-measured overrides exist for Fe).
 
 Usage:
   export BEARER_TOKEN_FILE=/tmp/bt_u$(id -u)
-  pixi run python results/template/make_emiss_ladder_fe56.py [--max-files 20]
-Cache: results/prd-analyzer-v0.1/cache/ladder_fe56/GEM26_22a_05_000.npz
-(delete to re-stream).
+  pixi run python results/template/make_emiss_ladder_fe56.py [--tune T] [--all-tunes]
+Cache: results/prd-analyzer-v0.1/cache/ladder_fe56/<tune>.npz (delete to re-stream).
 """
 import argparse
 import glob
@@ -47,12 +50,18 @@ from plot_style import (apply_style, new_panels, style_axis,
 from make_sf2d_table import resolve_sf_table, read_pke_table  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
-TUNE = "GEM26_22a_05_000"
-GRIDLOG = REPO / ("jobsub-agent/jobsub-runs/gevgen_grid-2026-07-16/"
-                  "eminus_Fe56_20260716-141800.gridlog")
+GRIDLOG_DIR = REPO / "jobsub-agent/jobsub-runs/gevgen_grid-2026-07-16"
 DATA = REPO / "data/Dipingkar-dutta-data-prc_figs/fig11_q1p2.dat"
-CACHE = REPO / "results/prd-analyzer-v0.1/cache/ladder_fe56" / f"{TUNE}.npz"
-OUT = REPO / "results/prd-analyzer-v0.1" / f"em_ladder_restored_fe56_{TUNE}.png"
+CACHE_DIR = REPO / "results/prd-analyzer-v0.1/cache/ladder_fe56"
+OUT_DIR = REPO / "results/prd-analyzer-v0.1"
+
+# tune -> (gridlog stem, has 2D SF table, ground-state label)
+RUNS = {
+    "GEM26_11a_05_000": ("eminus_Fe56_20260716-113802", False, "LocalFGM"),
+    "GEM26_22a_05_000": ("eminus_Fe56_20260716-141800", True,  "SpectralFunc (pke56_tot)"),
+    "GEM26_22b_05_000": ("eminus_Fe56_20260716-141807", True,  "SpectralFunc (pke56_tot)"),
+    "GEM21_11a_05_000": ("eminus_Fe56_20260716-113817", False, "LocalFGM"),
+}
 
 Z = 26                                # Fe protons (occupancy scale)
 TGT_PDG = 1000260560
@@ -69,9 +78,9 @@ EDGES = np.arange(0.0, 85.0, 5.0)     # 16 data bins [0,80)
 
 
 # ---- stage 1: input table (proton-occupancy scale) --------------------------------
-def load_table():
+def load_table(tune):
     """pke56_tot.data -> (k, E, P_per_proton, dk, dE); prints the raw norm."""
-    path = resolve_sf_table(TUNE, TGT_PDG, 2212)
+    path = resolve_sf_table(tune, TGT_PDG, 2212)
     k, E, k_edges, E_edges, S = read_pke_table(path)   # S raw [MeV^-4], (n_k, n_E)
     dk = float(np.diff(k_edges).mean())
     dE = float(np.diff(E_edges).mean())
@@ -119,12 +128,14 @@ def xrootd_url(p, door="fndca1.fnal.gov:1094"):
     return f"root://{door}/" + p.replace("/pnfs/", "/pnfs/fnal.gov/usr/", 1)
 
 
-def build_cache(max_files):
+def build_cache(tune, max_files):
     import uproot
     import awkward as ak
-    pnfs_dir = json.load(open(GRIDLOG))["pnfs_output_dir"]
+    cache = CACHE_DIR / f"{tune}.npz"
+    gridlog = GRIDLOG_DIR / f"{RUNS[tune][0]}.gridlog"
+    pnfs_dir = json.load(open(gridlog))["pnfs_output_dir"]
     paths = sorted(glob.glob(pnfs_dir + "/*/*.gst.root"))[:max_files]
-    print(f"[{TUNE}] streaming {len(paths)} gst file(s) (qel && hitnuc==p)")
+    print(f"[{tune}] streaming {len(paths)} gst file(s) (qel && hitnuc==p)")
     parts, ntot, nsel = [], 0, 0
     for ipath, p in enumerate(paths):
         a = uproot.open(xrootd_url(p))["gst"].arrays(BRANCHES, library="ak")
@@ -163,11 +174,11 @@ def build_cache(max_files):
               f"{nsel:,} selected", flush=True)
     out = {k: np.concatenate([q[k] for q in parts]) for k in parts[0]}
     out["ntot"], out["n_sel"] = np.array([ntot]), np.array([nsel])
-    CACHE.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(CACHE, **out)
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(cache, **out)
     surv = float(np.mean(np.isfinite(out["E4"])))
-    print(f"[{TUNE}] ntot={ntot}  qel&&hitp={nsel} ({100.0 * nsel / ntot:.1f}%)"
-          f"  post-FSI-p survival {100.0 * surv:.1f}%  -> {CACHE}")
+    print(f"[{tune}] ntot={ntot}  qel&&hitp={nsel} ({100.0 * nsel / ntot:.1f}%)"
+          f"  post-FSI-p survival {100.0 * surv:.1f}%  -> {cache}")
 
 
 def occ_hist(E, p, n_sel):
@@ -176,37 +187,34 @@ def occ_hist(E, p, n_sel):
     return Z * cnt / (n_sel * BINW)
 
 
-# ---- main ---------------------------------------------------------------------------
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--max-files", type=int, default=20)
-    args = ap.parse_args()
-
-    if not CACHE.exists():
-        build_cache(args.max_files)
-    c = dict(np.load(CACHE))
+def make_figure(tune, max_files, dutta, table):
+    cache = CACHE_DIR / f"{tune}.npz"
+    if not cache.exists():
+        build_cache(tune, max_files)
+    c = dict(np.load(cache))
     n_sel = float(c["n_sel"][0])
     with np.errstate(invalid="ignore"):
         for s in (2, 3, 4):          # restored axis: E_s + p_s^2/(2 M_Mn55)
             c[f"E{s}r"] = c[f"E{s}"] + c[f"p{s}"] ** 2 / (2.0 * M_MEV)
 
-    k, E, P, dk, dE = load_table()
-    y_in = rebin(E, f_restricted(k, P, dk), dE, EDGES)
-    dem, dsf, dstat, dtot = load_dutta()
+    has_table = RUNS[tune][1]
+    y_in = None
+    if has_table:
+        k, E, P, dk, dE = table
+        y_in = rebin(E, f_restricted(k, P, dk), dE, EDGES)
+    dem, dsf, dstat, dtot = dutta
 
     h = {s: occ_hist(c[f"E{s}r"], c[f"p{s}"], n_sel) for s in (2, 3, 4)}
-    print("restored ladder bookkeeping (E<80, p_s<300; occupancy units):")
-    print(f"  I1(table,k<300)={y_in.sum() * BINW:.3f}  "
-          + "  ".join(f"I{s}r={h[s].sum() * BINW:.3f}" for s in (2, 3, 4))
-          + f"  I4r/I3r={h[4].sum() / max(h[3].sum(), 1e-12):.3f}")
-    print(f"  data integral {np.sum(dsf) * BINW:.3f} (published fig11 scale, "
-          "in-window IPSM strength; recoil-subtracted axis)")
     w2 = c["p2"] < PM_MAX
+    print(f"[{tune}] restored ladder (E<80, p_s<300; occupancy units):")
+    if y_in is not None:
+        print(f"  I1(table,k<300)={y_in.sum() * BINW:.3f}", end="  ")
+    print("  ".join(f"I{s}r={h[s].sum() * BINW:.3f}" for s in (2, 3, 4))
+          + f"  I4r/I3r={h[4].sum() / max(h[3].sum(), 1e-12):.3f}")
     print(f"  stage-2 record: median {np.median(c['E2r'][w2]):.2f} MeV, "
           f"p5-p95 [{np.percentile(c['E2r'][w2], 5):.2f}, "
-          f"{np.percentile(c['E2r'][w2], 95):.2f}] MeV (S_p delta check)")
+          f"{np.percentile(c['E2r'][w2], 95):.2f}] MeV")
 
-    apply_style()
     fig, axes = new_panels(ncols=2, nrows=2, sharey=False)
     TITLES = ["1 — input table  $f_{k<300}(E)$",
               "2 — struck nucleon (record),  $m_N-E_n$",
@@ -221,31 +229,44 @@ if __name__ == "__main__":
                     label="Dutta Fig. 11 (publ. scale)" if with_label else None)
 
     ax = axes[0]
-    ax.stairs(y_in, EDGES, color="C1", linewidth=2.0, zorder=4,
-              label="Benhar SF pke56_tot (22a input)")
+    if y_in is not None:
+        ax.stairs(y_in, EDGES, color="C1", linewidth=2.0, zorder=4,
+                  label="Benhar SF pke56_tot (input)")
+    else:
+        ax.annotate(f"{RUNS[tune][2]}:\nno 2D SF input table",
+                    xy=(0.40, 0.55), xycoords="axes fraction",
+                    fontsize=FS_LEGEND - 2, color="0.35")
     draw_data(ax, with_label=True)
     ax.legend(fontsize=FS_LEGEND - 3, title="table axis = restored axis",
               title_fontsize=FS_LEGEND_TITLE - 3, loc="upper right")
 
     for i, s in zip((1, 2, 3), (2, 3, 4)):
         ax = axes[i]
-        ax.stairs(y_in, EDGES, color="C1", linewidth=1.0, linestyle="--",
-                  alpha=0.8, zorder=2)
+        if y_in is not None:
+            ax.stairs(y_in, EDGES, color="C1", linewidth=1.0, linestyle="--",
+                      alpha=0.8, zorder=2)
         ax.stairs(h[s], EDGES, color="C0", linewidth=1.8, zorder=5,
-                  label=TUNE if i == 3 else None)
+                  label=tune if i == 3 else None)
         draw_data(ax)
+
+    med2 = float(np.median(c["E2r"][w2]))
     pk = max(h[2].max(), h[3].max())
-    axes[1].annotate("a-tune record: FermiMover drops the\nsampled $w$ — "
-                     "$\\delta$ at $S_p\\approx10.2$ MeV\n(off scale: "
-                     f"[10,15) bin = {pk:.1f}), not the\ndashed table",
-                     xy=(0.30, 0.52), xycoords="axes fraction",
-                     fontsize=FS_LEGEND - 3, color="0.35")
-    axes[2].annotate("$\\equiv$ stage 2 (energy-conserving\nchain: "
-                     "$\\omega-T_p = m_N-E_n$)",
-                     xy=(0.35, 0.60), xycoords="axes fraction",
+    if tune == "GEM26_22b_05_000":
+        note = ("b-tune record: QELEventGenerator keeps\nthe sampled $w$ — "
+                "broadly restores the dashed\ntable, but shifted low "
+                "(BindHitNucleon\nconvention; strength below $S_p$)")
+    elif tune == "GEM21_11a_05_000":
+        note = ("SuSA record: $m_N-E_n=-T_N<0$,\noff scale left "
+                f"(median {med2:.1f} MeV).\nFe56 EM SuSAv2 = scaled-C12 surrogate")
+    else:
+        note = ("record: FermiMover drops the sampled $w$\n— $\\delta$ at "
+                f"$S_p\\approx10.2$ MeV (off scale:\n[10,15) bin = {pk:.1f})")
+    axes[1].annotate(note, xy=(0.28, 0.55), xycoords="axes fraction",
                      fontsize=FS_LEGEND - 3, color="0.35")
     axes[3].legend(fontsize=FS_LEGEND - 3,
-                   title="thin dashed: input table\n(data axis: $-T_{rec}$, sub-bin)",
+                   title=("thin dashed: input table\n(data axis: $-T_{rec}$, sub-bin)"
+                          if y_in is not None else
+                          "(data axis: $-T_{rec}$, sub-bin)"),
                    title_fontsize=FS_LEGEND_TITLE - 3, loc="upper right")
 
     for i, ax in enumerate(axes):
@@ -258,9 +279,25 @@ if __name__ == "__main__":
             ax.set_ylabel(r"$Z\cdot$ d$N/$d$(E_m+T_{rec})\,/\,N_{sel}$   (MeV$^{-1}$)",
                           fontsize=FS_LABEL)
 
-    fig.suptitle("Fe56 restored E$_m$ ladder — " + TUNE +
-                 "\nqel && hit p, $p_m<300$ MeV/$c$; Dutta Fig. 11 at publ. scale",
+    fig.suptitle(f"Fe56 restored E$_m$ ladder — {tune}  ({RUNS[tune][2]})\n"
+                 "qel && hit p, $p_m<300$ MeV/$c$; Dutta Fig. 11 at publ. scale",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    fig.savefig(OUT, dpi=DPI)
-    print("wrote", OUT)
+    out = OUT_DIR / f"em_ladder_restored_fe56_{tune}.png"
+    fig.savefig(out, dpi=DPI)
+    print("wrote", out)
+
+
+# ---- main ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--tune", default="GEM26_22a_05_000", choices=sorted(RUNS))
+    ap.add_argument("--all-tunes", action="store_true")
+    ap.add_argument("--max-files", type=int, default=20)
+    args = ap.parse_args()
+
+    apply_style()
+    dutta = load_dutta()
+    table = load_table("GEM26_22a_05_000")   # pke56_tot, shared by 22a/22b
+    for t in (list(RUNS) if args.all_tunes else [args.tune]):
+        make_figure(t, args.max_files, dutta, table)
