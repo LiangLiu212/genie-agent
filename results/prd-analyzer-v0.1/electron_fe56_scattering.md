@@ -183,3 +183,48 @@ Reading:
 
 Regenerate: `pixi run python results/template/make_pmiss_fe56.py`
 (reads the `cache/ladder_fe56/` caches).
+
+## Signed missing momentum (± asymmetry) — GEM26_22a_05_000
+
+![Fe56 signed p_m, GEM26_22a_05_000, 4pi](pmiss_signed_fe56_GEM26_22a_05_000.png)
+
+The published Figs. 6–8 momentum distributions carry a left–right (±p_m)
+asymmetry that the paper attributes to W_LT interference beyond deForest
+σ_cc1 and/or Coulomb distortion (tex 1144–1155). The digitized `fig7_*.dat`
+files are exactly symmetrized, so this is simulation-side only (4π, no
+spectrometer acceptance; `qel && hitnuc==2212`, Dutta window 0 < E_m < 80 MeV,
+2M streamed events → 232k pre-FSI / 90k post-FSI in-window).
+
+**Sign convention** (the paper never states its own): ẑ = q̂, x̂ = the
+scattered electron's transverse-to-q direction (in-plane, e′ side);
+signed p_m = sign(p_m·x̂)·|p_m| with p_m = p_p′ − q. Positive = p_m tilted
+toward the e′ side. If the print's asymmetry turns out mirrored, flip.
+
+**Units**: the top panel is a *density* (counts with the 4π p² phase-space
+factor divided out, per d³p_m) — the published fig7 y-axis is ∫S^D dE_m per
+d³p_m, which peaks at p_m = 0; raw signed-p_m counts dip at 0 by phase space.
+
+Findings:
+
+- **GEM26_22a does produce an intrinsic ± asymmetry**: integrated
+  A = −0.0546 ± 0.0021 (pre-FSI) and −0.0554 ± 0.0033 (post-FSI);
+  sign-shuffle controls ±0.001. A(|p|) grows from ~0 at 20 MeV/c to ≈ −8%
+  at 300 MeV/c. The plan expectation (A ≈ 0 for the factorized chain) was
+  wrong: since pre-FSI p_m ≡ p_n exactly, this is a **kinematic** asymmetry —
+  the flux/Q²-window weighting favors initial nucleons moving *away* from
+  the e′ side — not a W_LT response effect (the chain has none by
+  construction).
+- **FSI does not touch the asymmetry** (−5.46% → −5.54%): hA2018 redistributes
+  magnitude, not the ± balance.
+- **The post-FSI density reproduces the (symmetrized) data shape closely**
+  (gray points scaled to the post-FSI integral sit on the red curve) — the
+  FSI-distorted GENIE density has the right p_m profile even though the
+  E_m profile (ladder section) misses the peak.
+
+Follow-ups (not done): the HMS×SOS in-acceptance version for a direct print
+comparison; the other three tunes (22b's QELEventGenerator samples full COM
+angles — its intrinsic asymmetry may differ); pixel-measuring the published
+fig7 asymmetry.
+
+Regenerate: `pixi run python results/template/make_pmiss_signed_fe56.py`
+(cache: `cache/pmiss_signed_fe56/`).
