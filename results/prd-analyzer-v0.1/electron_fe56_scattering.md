@@ -146,3 +146,40 @@ record sits entirely **below the axis** (median −14.4 MeV; I2r = 0 in-window)
 box-like distribution up to ~35 MeV (LFG kinematics through SuSA's own
 binding prescription), and FSI degrades it further. The scaled-C12 surrogate
 caveat applies to any physics conclusion drawn from this tune on iron.
+
+## Missing momentum: table vs QEL struck-nucleon record
+
+![Fe56 P_miss, input table vs QEL struck-nucleon record, all t05 tunes](pmiss_struck_fe56_t05.png)
+
+The momentum companion of the E_m ladder: unlike the removal energy, the
+struck-nucleon 3-momentum survives into the record for every tune, so the
+record |p_n| distribution (same caches/selection: `qel && hitnuc==2212`, no
+other cuts) is meaningful for all four. Both curves on the table's **native**
+20 MeV/c grid (no rebinning — the E_miss half-bin lesson), occupancy scale
+(every curve integrates to Z = 26 by construction).
+
+| tune | median |p_n| [MeV/c] | P(p > 250 MeV/c) |
+|---|---|---|
+| table (sampling weight) | — | 0.158 |
+| GEM26_11a_05_000 (LFG) | 165.0 | 0.017 |
+| GEM26_22a_05_000 (SF) | 183.6 | 0.185 |
+| GEM26_22b_05_000 (SF) | 178.6 | 0.142 |
+| GEM21_11a_05_000 (LFG) | 164.9 | 0.017 |
+
+Reading:
+
+- **22a ≈ table over four decades**: the classic FermiMover chain samples k
+  *unweighted* from the SF, so the record momentum distribution is essentially
+  the table itself. The residual tail enhancement (P(p>250) = 0.185 vs the
+  table's 0.158) is the Q² ≥ 1.18 phase-space retry mildly favoring high-k
+  configurations.
+- **22b follows at low k but its SRC tail is progressively suppressed** (about
+  two decades down by 800 MeV/c): `QELEventGenerator` weights the sampled
+  kinematics by the UnifiedQEL cross section, which disfavors deep off-shell
+  high-k configurations.
+- **11a and GEM21 coincide** (both LocalFGM): the LFG shape with the sharp
+  cutoff at the local Fermi momentum ≈ 260 MeV/c and no SRC tail —
+  P(p > 250) = 1.7% vs 14–19% for the SF tunes.
+
+Regenerate: `pixi run python results/template/make_pmiss_fe56.py`
+(reads the `cache/ladder_fe56/` caches).
