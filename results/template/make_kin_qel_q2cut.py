@@ -1,0 +1,134 @@
+"""(e,e'p) QEL kinematics WITH the Dutta Q^2 cut, per campaign tune — v0.2.
+
+The prd-analyzer-v0.2 counterpart of v0.1's uncut kinematics figures
+(make_kin_qel.py): same five variables (El, theta_e', T_p, theta_p, Q^2),
+same samples and construction, with the selection now
+
+    qel  &&  |Q^2 / 1.28 - 1| <= 5 %      (Q^2 in [1.216, 1.344] GeV^2)
+
+i.e. the Dutta Q^2 = 1.28 slice APPLIED (grey dashed lines on the Q^2 panel =
+the applied window). No other electron/proton cuts; leading proton =
+highest-momentum final-state proton; T_p/theta_p panels drop no-proton events.
+
+Reads the v0.1 caches (cache/kin_qel_<target>/<tune>.npz, built by
+make_kin_qel.py from the full-EM t05 campaign samples — run that first if
+missing) and masks at plot time; no streaming here.
+
+Two figures per target, written to results/prd-analyzer-v0.2/:
+    kin_qel_q2cut_<target>.png         area-normalized (shape comparison)
+    kin_qel_q2cut_<target>_counts.png  raw events/bin (equal ntot = 2M/tune)
+
+Usage:
+  pixi run python results/template/make_kin_qel_q2cut.py --target Fe56
+  pixi run python results/template/make_kin_qel_q2cut.py --target C12
+"""
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "results/template")
+import numpy as np
+from plot_style import (apply_style, new_panels, style_axis,
+                        FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE)
+
+REPO = Path(__file__).resolve().parents[2]
+CACHE_ROOT = REPO / "results/prd-analyzer-v0.1/cache"    # v0.1 caches, reused
+OUT_DIR = REPO / "results/prd-analyzer-v0.2"
+
+Q2_CENTER, Q2_FRAC = 1.28, 0.05
+Q2_LO, Q2_HI = Q2_CENTER * (1 - Q2_FRAC), Q2_CENTER * (1 + Q2_FRAC)
+KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2"]
+
+# tune -> (color, linestyle, ground-state label): the v0.1 series convention
+TUNES = {
+    "GEM26_11a_05_000": ("C0", "-",  "LocalFGM"),
+    "GEM26_22a_05_000": ("C2", "-",  "SF"),
+    "GEM26_22b_05_000": ("C3", "-",  "SF"),
+    "GEM21_11a_05_000": ("C4", "--", "LocalFGM"),
+}
+
+# panel -> (cache key, axis label, nice range step, nbins)
+PANELS = [
+    ("El",      r"E$_{e'}$  [GeV]",       0.1,   60),
+    ("theta_e", r"$\theta_{e'}$  [deg]",  1.0,   60),
+    ("Tp",      r"T$_p$  [GeV]",          0.1,   60),
+    ("theta_p", r"$\theta_p$  [deg]",     5.0,   56),
+    ("Q2",      r"Q$^2$  [(GeV/c)$^2$]",  0.02,  56),
+]
+
+
+def load_cut_cache(target, tune):
+    """v0.1 kin_qel cache -> dict masked to the Q^2 window."""
+    path = CACHE_ROOT / f"kin_qel_{target.lower()}" / f"{tune}.npz"
+    if not path.exists():
+        raise SystemExit(f"missing v0.1 cache {path} — run make_kin_qel.py "
+                         f"--target {target} first")
+    c = dict(np.load(path))
+    m = np.abs(c["Q2"] / Q2_CENTER - 1.0) <= Q2_FRAC
+    out = {k: c[k][m] for k in KEYS}
+    out["has_p"] = c["has_p"][m]
+    out["ntot"] = c["ntot"]
+    out["n_qel"] = np.array([len(c["Q2"])])
+    return out
+
+
+def panel_range(cache, key, step):
+    """Pooled p0.2-p99.8 across tunes, rounded outward to `step`."""
+    x = np.concatenate([cache[t][key] for t in TUNES])
+    x = x[np.isfinite(x)]
+    lo, hi = np.percentile(x, [0.2, 99.8])
+    lo = np.floor(lo / step) * step
+    hi = np.ceil(hi / step) * step
+    return float(lo), float(hi)
+
+
+def make_fig(target, cache, density):
+    fig, axes = new_panels(ncols=3, nrows=2, sharey=False)
+    for ax, (key, lab, step, nb) in zip(axes, PANELS):
+        rng = panel_range(cache, key, step)
+        if density:
+            print(f"  panel {key}: range [{rng[0]:g}, {rng[1]:g}]")
+        bins = np.linspace(rng[0], rng[1], nb)
+        for tune, (color, ls, gs) in TUNES.items():
+            x = cache[tune][key]
+            x = x[np.isfinite(x)]
+            ax.hist(x, bins=bins, histtype="step", linewidth=1.8, color=color,
+                    ls=ls, density=density,
+                    label=f"{tune} ({gs}, N={len(cache[tune]['Q2']):,})")
+        if key == "Q2":                       # the applied window
+            for v in (Q2_LO, Q2_HI):
+                ax.axvline(v, color="0.5", ls="--", lw=1.0)
+        style_axis(ax, title=None, xlabel=lab, logx=False, logy=False, ymin=None)
+        ax.set_ylabel("normalized / bin" if density else "events / bin",
+                      fontsize=FS_LABEL)
+    axes[5].axis("off")
+    handles, labels = axes[0].get_legend_handles_labels()
+    axes[5].legend(handles, labels, title="campaign tune", loc="center",
+                   fontsize=FS_LEGEND - 1, title_fontsize=FS_LEGEND_TITLE)
+    norm_note = ("area-normalized" if density
+                 else "raw events/bin (equal ntot = 2M/tune)")
+    fig.suptitle(f"(e,e'p) QEL kinematics, Q² = 1.28 ± 5 % APPLIED (qel && "
+                 f"window)  —  e⁻ on {target} (t05, genlist EM), {norm_note}\n"
+                 "grey dashed on Q² = the applied window edges",
+                 fontsize=FS_SUPTITLE - 1)
+    fig.tight_layout()
+    suffix = "" if density else "_counts"
+    out = OUT_DIR / f"kin_qel_q2cut_{target.lower()}{suffix}.png"
+    fig.savefig(out, dpi=130)
+    print("wrote", out)
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--target", default="Fe56", choices=["Fe56", "C12"])
+    args = ap.parse_args()
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    apply_style()
+    cache = {t: load_cut_cache(args.target, t) for t in TUNES}
+    make_fig(args.target, cache, density=True)
+    make_fig(args.target, cache, density=False)
+    for t in TUNES:
+        c = cache[t]
+        print(f"  {t:18s} N={len(c['Q2']):7,d} of qel={int(c['n_qel'][0]):,} "
+              f"of ntot={int(c['ntot'][0]):,}  has_p={100*np.mean(c['has_p']):.1f}%")
