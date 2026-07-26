@@ -94,7 +94,8 @@ a nuclear-model property:
 Regenerate: build `dump_hitnuc` (recipe in `results/template/dump_hitnuc.cxx`),
 dump the same 20-file lists to `cache/hitnuc_fe56/<tune>.csv`, then
 `pixi run python results/template/make_sf2d_events.py --dump-dir results/prd-analyzer-v0.1/cache/hitnuc_fe56 --all-tunes`
-and the same for `make_struck_pr_fe56.py`.
+and the same for `make_struck_pr.py` (both default to `--target Fe56`; the C12
+note's section 2 runs the same scripts with `--target C12`).
 
 ## 3. Missing energy: table vs simulation vs Dutta Fig. 11
 
