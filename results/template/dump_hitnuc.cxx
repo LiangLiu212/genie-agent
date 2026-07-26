@@ -1,10 +1,13 @@
-// Dump struck-nucleon kinematics + the SAMPLED removal energy from GHEP files.
+// Dump struck-nucleon kinematics + the SAMPLED removal energy + the in-nucleus
+// position from GHEP files.
 //
 // gst does not carry the nuclear-model removal energy (FermiMover's default
 // branch encodes En = M_A - sqrt(p^2 + M_rem_gs^2), a pure function of p), but
-// GHepParticle::RemovalEnergy() stores the sampled w for every event. This
-// dumper writes one CSV line per single-nucleon event:
-//     pdg,px,py,pz,E,w,scattering_type
+// GHepParticle::RemovalEnergy() stores the sampled w for every event; likewise
+// gst has no in-nucleus vertex, but the hit nucleon's X4() carries the radial
+// position r [fm] set by VertexGenerator. This dumper writes one CSV line per
+// single-nucleon event:
+//     pdg,px,py,pz,E,w,scattering_type,r
 // Usage: dump_hitnuc <out.csv> <ghep1.root> [ghep2.root ...]
 #include <cstdio>
 #include <TFile.h>
@@ -17,7 +20,7 @@
 int main(int argc, char** argv) {
   if (argc < 3) { fprintf(stderr, "usage: %s out.csv ghep...\n", argv[0]); return 1; }
   FILE* out = fopen(argv[1], "w");
-  fprintf(out, "pdg,px,py,pz,E,w,scat\n");
+  fprintf(out, "pdg,px,py,pz,E,w,scat,r\n");
   long n_tot = 0, n_kept = 0;
   for (int i = 2; i < argc; ++i) {
     TFile* f = TFile::Open(argv[i], "READ");
@@ -33,9 +36,9 @@ int main(int argc, char** argv) {
       genie::GHepParticle* nuc = event->HitNucleon();
       if (nuc && (nuc->Pdg() == 2212 || nuc->Pdg() == 2112)) {
         int scat = event->Summary()->ProcInfo().ScatteringTypeId();
-        fprintf(out, "%d,%.6g,%.6g,%.6g,%.6g,%.6g,%d\n",
+        fprintf(out, "%d,%.6g,%.6g,%.6g,%.6g,%.6g,%d,%.6g\n",
                 nuc->Pdg(), nuc->Px(), nuc->Py(), nuc->Pz(), nuc->E(),
-                nuc->RemovalEnergy(), scat);
+                nuc->RemovalEnergy(), scat, nuc->X4()->Vect().Mag());
         ++n_kept;
       }
       mcrec->Clear();
