@@ -1,33 +1,35 @@
-"""(e,e'p) QEL kinematics in the Q^2 = 1.28 +- 5 % slice, per campaign tune.
+"""(e,e'p) QEL kinematics, uncut, per campaign tune — El, theta_e', T_p, theta_p, Q^2.
 
-v0.1 analog of prd-analyzer-v0 README section 6 (plot_dists_q2.py), replicated
-per target on the full-EM t05 campaign samples (e- 2.445 GeV, genlist EM;
-Fe56 = grid jobs of 2026-07-16, C12 = grid jobs of 2026-07-26): the five
-kinematic variables El, theta_e', T_p, theta_p, Q^2 with NO electron/proton
-cuts, only
+v0.1 descendant of prd-analyzer-v0 README section 6 (plot_dists_q2.py), on the
+full-EM t05 campaign samples (e- 2.445 GeV, genlist EM; Fe56 = grid jobs of
+2026-07-16, C12 = grid jobs of 2026-07-26), with the selection reduced to
 
-    |Q^2 / 1.28 - 1| <= 5 %   (in [1.216, 1.344], inside the t05 cut)  AND  qel
+    qel                (EMQE-equivalent on the full-EM samples; RES/DIS/MEC
+                        dropped, NO Q^2 window and no electron/proton cuts)
 
-The explicit `qel` makes the selection EMQE-equivalent — the v0 samples were
-genlist EMQE (every event QEL); the campaign samples are full EM, so RES/DIS/
-MEC are dropped here. Construction is shared with v0: selection.load_events
-(leading proton = highest-momentum final-state proton; proton panels
-implicitly drop no-proton events), acceptance.py HMS/SOS in-plane windows
-drawn grey-dashed on El/theta_e'/T_p/theta_p (NOT applied; the Q^2 lines are
-the applied window). File lists are built over XRootD (dirlist), not the NFS
+The Q^2 = 1.28 +- 5 % slice of the Dutta setting is drawn on the Q^2 panel as
+grey-dashed REFERENCE lines only (nothing is applied); the t05 generation cut
+EM-MinQ2Limit = 1.18 GeV^2 is the hard lower edge visible in the Q^2 panel.
+Construction otherwise as v0: selection.load_events (leading proton =
+highest-momentum final-state proton; T_p/theta_p panels implicitly drop
+no-proton events). File lists are built over XRootD (dirlist), not the NFS
 mount, so this runs with an expired Kerberos key; needs BEARER_TOKEN_FILE.
 
-Two figures per target:
-    kin_q2window_<target>.png         area-normalized (shape comparison)
-    kin_q2window_<target>_counts.png  raw events/bin (equal ntot = 2M/tune)
+Panel ranges are computed from the pooled tunes (p0.2-p99.8, rounded to nice
+steps) and printed, so the two targets stay directly readable without
+hand-tuned windows.
 
-Cache: results/prd-analyzer-v0.1/cache/q2window_<target>/<tune>.npz
-(El, theta_e, Tp, theta_p, Q2, has_p + ntot, n_win_all). Delete to re-stream.
+Two figures per target:
+    kin_qel_<target>.png         area-normalized (shape comparison)
+    kin_qel_<target>_counts.png  raw events/bin (equal ntot = 2M/tune)
+
+Cache: results/prd-analyzer-v0.1/cache/kin_qel_<target>/<tune>.npz
+(El, theta_e, Tp, theta_p, Q2, has_p + ntot). Delete to re-stream.
 
 Usage:
-  pixi run python results/template/make_kin_q2window.py --target Fe56
-  pixi run python results/template/make_kin_q2window.py --target C12
-  MAX_FILES=2 WORKERS=4 pixi run python results/template/make_kin_q2window.py --target C12
+  pixi run python results/template/make_kin_qel.py --target Fe56
+  pixi run python results/template/make_kin_qel.py --target C12 --plot-only
+  MAX_FILES=2 WORKERS=4 pixi run python results/template/make_kin_qel.py --target C12
 """
 import argparse
 import json
@@ -49,7 +51,7 @@ CACHE_ROOT = REPO / "results/prd-analyzer-v0.1/cache"
 OUT_DIR = REPO / "results/prd-analyzer-v0.1"
 DOOR = "root://fndca1.fnal.gov:1094"
 
-Q2_CENTER, Q2_FRAC = 1.28, 0.05
+Q2_CENTER, Q2_FRAC = 1.28, 0.05          # Dutta slice, drawn as reference only
 Q2_LO, Q2_HI = Q2_CENTER * (1 - Q2_FRAC), Q2_CENTER * (1 + Q2_FRAC)
 KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2"]
 
@@ -76,32 +78,14 @@ RUNS = {
     }),
 }
 
-# panel -> (cache key, axis label, (lo, hi), nbins) — v0 plot_dists_q2.py ranges
+# panel -> (cache key, axis label, nice range step, nbins)
 PANELS = [
-    ("El",      r"E$_{e'}$  [GeV]",       (1.0, 2.2),    60),
-    ("theta_e", r"$\theta_{e'}$  [deg]",  (28.0, 40.0),  60),
-    ("Tp",      r"T$_p$  [GeV]",          (0.0, 1.2),    60),
-    ("theta_p", r"$\theta_p$  [deg]",     (0.0, 140.0),  56),
-    ("Q2",      r"Q$^2$  [(GeV/c)$^2$]",  (1.20, 1.36),  56),
+    ("El",      r"E$_{e'}$  [GeV]",       0.1,  60),
+    ("theta_e", r"$\theta_{e'}$  [deg]",  2.0,  60),
+    ("Tp",      r"T$_p$  [GeV]",          0.1,  60),
+    ("theta_p", r"$\theta_p$  [deg]",     5.0,  56),
+    ("Q2",      r"Q$^2$  [(GeV/c)$^2$]",  0.1,  60),
 ]
-
-
-def accept_windows():
-    """HMS/SOS in-plane acceptance windows, derived exactly as plot_dists_q2.py."""
-    import acceptance as acc
-    from selection import M_P
-    p_lo = acc.P0_P * (1 - acc.DELTA_P_HW / 100)
-    p_hi = acc.P0_P * (1 + acc.DELTA_P_HW / 100)
-    return {
-        "El":      (acc.P0_E * (1 - acc.DELTA_E_HW / 100),
-                    acc.P0_E * (1 + acc.DELTA_E_HW / 100)),
-        "theta_e": tuple(np.degrees(acc.TH0_E) + s * np.degrees(np.arctan(acc.YPTAR_E_HW))
-                         for s in (-1, +1)),
-        "Tp":      tuple(np.hypot(p, M_P) - M_P for p in (p_lo, p_hi)),
-        "theta_p": tuple(np.degrees(acc.TH0_P) + s * np.degrees(np.arctan(acc.YPTAR_P_HW))
-                         for s in (-1, +1)),
-        "Q2":      (Q2_LO, Q2_HI),          # the only cut actually applied
-    }
 
 
 def gst_urls(target: str, tune: str, max_files: int):
@@ -127,48 +111,56 @@ def gst_urls(target: str, tune: str, max_files: int):
 def _build_one_file(url):
     from selection import load_events
     ev = load_events(url)
-    m = (np.abs(ev["Q2"] / Q2_CENTER - 1.0) <= Q2_FRAC) & ev["qel"]
+    m = ev["qel"]
     out = {k: ev[k][m] for k in KEYS}
     out["has_p"] = ev["has_p"][m]
-    n_win_all = int((np.abs(ev["Q2"] / Q2_CENTER - 1.0) <= Q2_FRAC).sum())
-    return out, len(ev["Q2"]), n_win_all
+    return out, len(ev["Q2"])
 
 
 def build(target, tune, max_files, workers):
     urls = gst_urls(target, tune, max_files)
     print(f"[{tune}] streaming {len(urls)} gst file(s) over XRootD "
-          f"(Q2 = {Q2_CENTER} +- {100*Q2_FRAC:.0f} % && qel, {workers} workers)",
-          flush=True)
-    parts, ntot, n_win_all = [], 0, 0
+          f"(selection: qel only, {workers} workers)", flush=True)
+    parts, ntot = [], 0
     t0 = time.time()
     ctx = multiprocessing.get_context("spawn")
     with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as ex:
         futs = {ex.submit(_build_one_file, u): u for u in urls}
         for fut in as_completed(futs):
-            part, n, nw = fut.result()
+            part, n = fut.result()
             parts.append(part)
             ntot += n
-            n_win_all += nw
     out = {k: np.concatenate([p[k] for p in parts]) for k in parts[0]}
     out["ntot"] = np.array([ntot])
-    out["n_win_all"] = np.array([n_win_all])
-    cache_dir = CACHE_ROOT / f"q2window_{target.lower()}"
+    cache_dir = CACHE_ROOT / f"kin_qel_{target.lower()}"
     cache_dir.mkdir(parents=True, exist_ok=True)
     path = cache_dir / f"{tune}.npz"
     np.savez_compressed(path, **out)
-    print(f"[{tune}] ntot={ntot}  Q2-window(all)={n_win_all}  "
-          f"selected(qel)={len(out['Q2'])} ({100.0*len(out['Q2'])/max(ntot,1):.2f}%)"
-          f"  ->  {path}  ({time.time()-t0:.0f}s)", flush=True)
+    print(f"[{tune}] ntot={ntot}  selected(qel)={len(out['Q2'])} "
+          f"({100.0*len(out['Q2'])/max(ntot,1):.2f}%)  ->  {path}  "
+          f"({time.time()-t0:.0f}s)", flush=True)
 
 
 def load_cache(target, tune):
-    return dict(np.load(CACHE_ROOT / f"q2window_{target.lower()}" / f"{tune}.npz"))
+    return dict(np.load(CACHE_ROOT / f"kin_qel_{target.lower()}" / f"{tune}.npz"))
+
+
+def panel_range(cache, key, step):
+    """Pooled p0.2-p99.8 across tunes, rounded outward to `step`."""
+    x = np.concatenate([cache[t][key] for t in TUNES])
+    x = x[np.isfinite(x)]
+    lo, hi = np.percentile(x, [0.2, 99.8])
+    lo = np.floor(lo / step) * step
+    hi = np.ceil(hi / step) * step
+    return float(lo), float(hi)
 
 
 def make_fig(target, cache, density):
-    accept = accept_windows()
     fig, axes = new_panels(ncols=3, nrows=2, sharey=False)
-    for ax, (key, lab, rng, nb) in zip(axes, PANELS):
+    for ax, (key, lab, step, nb) in zip(axes, PANELS):
+        rng = panel_range(cache, key, step)
+        if density:
+            print(f"  panel {key}: range [{rng[0]:g}, {rng[1]:g}]")
         bins = np.linspace(rng[0], rng[1], nb)
         for tune, (color, ls, gs) in TUNES.items():
             x = cache[tune][key]
@@ -176,8 +168,9 @@ def make_fig(target, cache, density):
             ax.hist(x, bins=bins, histtype="step", linewidth=1.8, color=color,
                     ls=ls, density=density,
                     label=f"{tune} ({gs}, N={len(cache[tune]['Q2']):,})")
-        for v in accept[key]:
-            ax.axvline(v, color="0.5", ls="--", lw=1.0)
+        if key == "Q2":                       # reference only, nothing applied
+            for v in (Q2_LO, Q2_HI):
+                ax.axvline(v, color="0.5", ls="--", lw=1.0)
         style_axis(ax, title=None, xlabel=lab, logx=False, logy=False, ymin=None)
         ax.set_ylabel("normalized / bin" if density else "events / bin",
                       fontsize=FS_LABEL)
@@ -187,14 +180,14 @@ def make_fig(target, cache, density):
                    fontsize=FS_LEGEND - 1, title_fontsize=FS_LEGEND_TITLE)
     norm_note = ("area-normalized" if density
                  else "raw events/bin (equal ntot = 2M/tune)")
-    fig.suptitle(f"(e,e'p) QEL kinematics, Q² = 1.28 ± 5 % && qel — no e′/p cuts"
-                 f"  —  e⁻ on {target} (t05, genlist EM), {norm_note}\n"
-                 "grey dashed = Q² window (applied) + HMS/SOS acceptance, "
-                 "in-plane projection (NOT applied)",
+    fig.suptitle(f"(e,e'p) QEL kinematics, uncut (qel only)  —  e⁻ on {target} "
+                 f"(t05, genlist EM), {norm_note}\n"
+                 "grey dashed on Q² = the Dutta Q² = 1.28 ± 5 % slice, "
+                 "reference only (NOT applied)",
                  fontsize=FS_SUPTITLE - 1)
     fig.tight_layout()
     suffix = "" if density else "_counts"
-    out = OUT_DIR / f"kin_q2window_{target.lower()}{suffix}.png"
+    out = OUT_DIR / f"kin_qel_{target.lower()}{suffix}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
@@ -210,7 +203,7 @@ if __name__ == "__main__":
 
     if not args.plot_only:
         for tune in TUNES:
-            if (CACHE_ROOT / f"q2window_{args.target.lower()}" / f"{tune}.npz").exists():
+            if (CACHE_ROOT / f"kin_qel_{args.target.lower()}" / f"{tune}.npz").exists():
                 print(f"[{tune}] cache exists, skipping stream")
                 continue
             build(args.target, tune, max_files, workers)
@@ -222,5 +215,4 @@ if __name__ == "__main__":
     for t in TUNES:
         c = cache[t]
         print(f"  {t:18s} N={len(c['Q2']):7,d} of ntot={int(c['ntot'][0]):,}  "
-              f"(Q2-window all-proc: {int(c['n_win_all'][0]):,})  "
               f"has_p={100*np.mean(c['has_p']):.1f}%")

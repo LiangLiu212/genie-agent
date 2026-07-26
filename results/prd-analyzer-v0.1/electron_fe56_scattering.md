@@ -97,44 +97,42 @@ dump the same 20-file lists to `cache/hitnuc_fe56/<tune>.csv`, then
 and the same for `make_struck_pr.py` (both default to `--target Fe56`; the C12
 note's section 2 runs the same scripts with `--target C12`).
 
-## 3. QEL kinematics in the Q² slice — E_e′, θ_e′, T_p, θ_p, Q²
+## 3. QEL kinematics — E_e′, θ_e′, T_p, θ_p, Q²
 
-![Fe56 QEL kinematics in the Q² = 1.28 slice](kin_q2window_fe56.png)
+![Fe56 QEL kinematics, uncut](kin_qel_fe56.png)
 
-v0 README §6 replicated on the campaign sample (same 20-file gst streams as
-the ladder, section 4): the five kinematic variables with **no electron or
-proton cuts**, only `|Q²/1.28 − 1| ≤ 5 %` (Q² ∈ [1.216, 1.344], inside the t05
-generation cut) **&& `qel`** — the explicit `qel` makes the selection
-EMQE-equivalent on the full-EM sample (QEL is 13–19 % of the Q² window; the
-window itself keeps ~28 % of all generated events). Leading proton =
-highest-momentum final-state proton; T_p/θ_p panels implicitly drop no-proton
-events. Grey dashed = the applied Q² window plus the HMS/SOS in-plane
-acceptance projections (E_e′ ∈ [1.587, 1.863] GeV, θ_e′ = 32.0 ± 1.58°,
-T_p ∈ [0.487, 0.924] GeV, θ_p = 43.5 ± 3.26°, derived from v0 `acceptance.py`
-— displayed, **not** applied). Area-normalized above; raw-counts companion
-`kin_q2window_fe56_counts.png` (equal ntot = 2M/tune).
+v0 README §6 descendant on the campaign sample (same 20-file gst streams as
+the ladder, section 4): the five kinematic variables **uncut** — the only
+selection is `qel` (EMQE-equivalent on the full-EM sample; RES/DIS/MEC
+dropped). No Q² window is applied: the grey dashed lines on the Q² panel mark
+the Dutta Q² = 1.28 ± 5 % slice as **reference only**, and the hard lower edge
+at 1.18 GeV² is the t05 generation cut. Leading proton = highest-momentum
+final-state proton; T_p/θ_p panels implicitly drop no-proton events. Panel
+ranges are pooled p0.2–p99.8. Area-normalized above; raw-counts companion
+`kin_qel_fe56_counts.png` (equal ntot = 2M/tune).
 
-| tune | N (qel ∧ Q² window) | qel share of window | has_p |
-|---|---|---|---|
-| GEM26_11a_05_000 | 101,377 | 18.5 % | 80.8 % |
-| GEM26_22a_05_000 | 102,623 | 18.6 % | 79.4 % |
-| GEM26_22b_05_000 | 74,818 | 13.5 % | 82.8 % |
-| GEM21_11a_05_000 | 95,162 | 17.1 % | 82.2 % |
+| tune | N (qel, of 2M) | has_p |
+|---|---|---|
+| GEM26_11a_05_000 | 377,563 (18.9 %) | 80.3 % |
+| GEM26_22a_05_000 | 380,979 (19.0 %) | 79.3 % |
+| GEM26_22b_05_000 | 275,485 (13.8 %) | 82.4 % |
+| GEM21_11a_05_000 | 321,696 (16.1 %) | 81.8 % |
 
-Read: E_e′/θ_e′ are the smooth QE peak (≈1.75 GeV, ≈31.5°) — 11a sharpest,
-GEM21 broadest with the largest low-E_e′ (high-ω) tail. **T_p is double-peaked
-and on iron the low-T_p (≈0.1 GeV) FSI-rescattered population *dominates* the
-QE bump at ≈0.65 GeV** — the kinematic face of the ladder's ~0.40 in-window
-survival (section 4); correspondingly θ_p has most of its strength in the tail
-beyond the ≈45° conjugate peak. 22b's lower N (75k vs ~100k) is the smaller
-SF-folded UnifiedQEL cross section (QEL fraction 9.3 % in section 4); GEM21's
-mild deficit (95k) is the SuSAv2 σ. Within the acceptance windows the four
-tunes are shape-similar in the electron arm — the model discrimination lives
-in the proton arm and in E_m/p_m (sections 4–6), not in the inclusive
-electron kinematics.
+Read: Q² falls steeply from the 1.18 generation edge — the Dutta slice sits
+right at its peak. E_e′ peaks at ≈1.7 GeV with a long low-E_e′ (high-ω) tail
+and θ_e′ at ≈32° with a fall-off to backward angles; **GEM21 is the outlier
+in coverage**, with essentially no E_e′ < 0.9 GeV tail and the shortest Q²
+tail (gone by ≈2.6 GeV²) — the kinematic reach of the SuSAv2 tensor tables.
+**T_p is double-peaked and on iron the low-T_p (≈0.1 GeV) FSI-rescattered
+population *dominates* the QE bump at ≈0.65 GeV** — the kinematic face of the
+ladder's ~0.40 in-window survival (section 4); θ_p peaks at the ≈42°
+conjugate angle with a long tail. 22b's lower N (275k vs ~380k) is the
+smaller SF-folded UnifiedQEL cross section (QEL fraction 9.3 % in section 4).
+The electron arm is otherwise nearly tune-degenerate — the discrimination
+lives in the proton arm and in E_m/p_m (sections 4–6).
 
-Regenerate: `pixi run python results/template/make_kin_q2window.py --target Fe56`
-(cache: `cache/q2window_fe56/`; delete to re-stream).
+Regenerate: `pixi run python results/template/make_kin_qel.py --target Fe56`
+(cache: `cache/kin_qel_fe56/`; delete to re-stream).
 
 ## 4. Missing energy: table vs simulation vs Dutta Fig. 11
 
