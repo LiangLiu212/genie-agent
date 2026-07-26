@@ -5,9 +5,10 @@
 // branch encodes En = M_A - sqrt(p^2 + M_rem_gs^2), a pure function of p), but
 // GHepParticle::RemovalEnergy() stores the sampled w for every event; likewise
 // gst has no in-nucleus vertex, but the hit nucleon's X4() carries the radial
-// position r [fm] set by VertexGenerator. This dumper writes one CSV line per
-// single-nucleon event:
-//     pdg,px,py,pz,E,w,scattering_type,r
+// position r [fm] set by VertexGenerator. q2 is the experimental-like Q^2
+// from the event lepton, -(p_probe - p_fsl)^2, matching the gst Q2 branch.
+// This dumper writes one CSV line per single-nucleon event:
+//     pdg,px,py,pz,E,w,scattering_type,r,q2
 // Usage: dump_hitnuc <out.csv> <ghep1.root> [ghep2.root ...]
 #include <cstdio>
 #include <TFile.h>
@@ -20,7 +21,7 @@
 int main(int argc, char** argv) {
   if (argc < 3) { fprintf(stderr, "usage: %s out.csv ghep...\n", argv[0]); return 1; }
   FILE* out = fopen(argv[1], "w");
-  fprintf(out, "pdg,px,py,pz,E,w,scat,r\n");
+  fprintf(out, "pdg,px,py,pz,E,w,scat,r,q2\n");
   long n_tot = 0, n_kept = 0;
   for (int i = 2; i < argc; ++i) {
     TFile* f = TFile::Open(argv[i], "READ");
@@ -36,9 +37,13 @@ int main(int argc, char** argv) {
       genie::GHepParticle* nuc = event->HitNucleon();
       if (nuc && (nuc->Pdg() == 2212 || nuc->Pdg() == 2112)) {
         int scat = event->Summary()->ProcInfo().ScatteringTypeId();
-        fprintf(out, "%d,%.6g,%.6g,%.6g,%.6g,%.6g,%d,%.6g\n",
+        genie::GHepParticle* probe = event->Probe();
+        genie::GHepParticle* fsl   = event->FinalStatePrimaryLepton();
+        TLorentzVector qvec = *(probe->P4()) - *(fsl->P4());
+        fprintf(out, "%d,%.6g,%.6g,%.6g,%.6g,%.6g,%d,%.6g,%.6g\n",
                 nuc->Pdg(), nuc->Px(), nuc->Py(), nuc->Pz(), nuc->E(),
-                nuc->RemovalEnergy(), scat, nuc->X4()->Vect().Mag());
+                nuc->RemovalEnergy(), scat, nuc->X4()->Vect().Mag(),
+                -qvec.M2());
         ++n_kept;
       }
       mcrec->Clear();

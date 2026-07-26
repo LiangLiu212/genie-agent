@@ -42,10 +42,12 @@ from make_sf2d_table import (resolve_ground_state, resolve_sf_table,
                              read_pke_table)        # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
+OUT_DEFAULT = REPO / "results" / "prd-analyzer-v0.1"
 TUNES = ["GEM26_11a_05_000", "GEM26_22a_05_000",
          "GEM26_22b_05_000", "GEM21_11a_05_000"]
 SF_TUNE = "GEM26_22a_05_000"          # any tune resolving to the 2D SF table
 R_MAX = {"Fe56": 8.0, "C12": 6.0}     # fm, ~1.6x the hard-sphere radius
+Q2_CENTER, Q2_FRAC = 1.28, 0.05       # --sel-qel-q2 window (Dutta slice)
 
 
 def target_setup(target: str):
@@ -62,9 +64,15 @@ def target_setup(target: str):
     return r_edges, p_edges, gs
 
 
-def load_hist(csv: Path, R_edges, P_edges):
-    """CSV from dump_hitnuc -> (H fraction/bin [r, p], profile, counts)."""
+def load_hist(csv: Path, R_edges, P_edges, sel_qel_q2=False):
+    """CSV from dump_hitnuc -> (H fraction/bin [r, p], profile, counts).
+
+    sel_qel_q2: keep only scat==1 (QEL) events inside the Dutta Q^2 window
+    (needs the q2 column of the extended dumper)."""
     d = np.genfromtxt(csv, delimiter=",", names=True)
+    if sel_qel_q2:
+        m = (d["scat"] == 1) & (np.abs(d["q2"] / Q2_CENTER - 1.0) <= Q2_FRAC)
+        d = d[m]
     p = np.sqrt(d["px"]**2 + d["py"]**2 + d["pz"]**2) * 1000.0   # MeV/c
     r = d["r"]                                                   # fm
     H, _, _ = np.histogram2d(r, p, bins=[R_edges, P_edges])
@@ -100,7 +108,8 @@ def draw_panel(ax, fig, H, prof, R_edges, P_edges, norm, add_cbar=True):
     return pc
 
 
-def single_figure(target, tune, H, prof, c, R_edges, P_edges, gs):
+def single_figure(target, tune, H, prof, c, R_edges, P_edges, gs,
+                  out_dir=OUT_DEFAULT, sel_note=""):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LogNorm
     w, h = PANEL_SIZE
@@ -109,18 +118,18 @@ def single_figure(target, tune, H, prof, c, R_edges, P_edges, gs):
     draw_panel(ax, fig, H, prof, R_edges, P_edges, norm)
     ax.set_ylabel(r"$r$  [fm]", fontsize=FS_LABEL)
     ax.legend(loc="upper right", fontsize=FS_TICK)
-    ax.set_title(f"N = {c['n_kept']:,} single-nucleon events,  "
+    ax.set_title(f"N = {c['n_kept']:,}{sel_note or ' single-nucleon'} events,  "
                  f"corr(p, r) = {c['corr']:+.3f}", fontsize=FS_TITLE - 3)
     fig.suptitle(f"{target} struck nucleon: momentum vs sampled position\n"
                  f"{tune}  ({gs[tune]}),  e$^-$ 2.445 GeV, genlist EM",
                  fontsize=FS_SUPTITLE - 2)
-    out = (REPO / "results" / "prd-analyzer-v0.1" /
-           f"struck_pr_{target.lower()}_{tune}.png")
+    out = Path(out_dir) / f"struck_pr_{target.lower()}_{tune}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
 
-def combined_figure(target, results, R_edges, P_edges, gs):
+def combined_figure(target, results, R_edges, P_edges, gs,
+                    out_dir=OUT_DEFAULT, sel_note=""):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LogNorm
     w, h = PANEL_SIZE
@@ -139,10 +148,10 @@ def combined_figure(target, results, R_edges, P_edges, gs):
     cb.set_label("fraction of events / bin", fontsize=FS_TITLE - 2)
     cb.ax.tick_params(labelsize=FS_TICK)
     fig.suptitle(f"{target} struck nucleon: momentum vs sampled position  "
-                 "(e$^-$ 2.445 GeV, genlist EM, t05 tunes, shared color scale)",
+                 f"(e$^-$ 2.445 GeV, genlist EM{sel_note}, t05 tunes, "
+                 "shared color scale)",
                  fontsize=FS_SUPTITLE - 2)
-    out = (REPO / "results" / "prd-analyzer-v0.1" /
-           f"struck_pr_{target.lower()}_all_t05.png")
+    out = Path(out_dir) / f"struck_pr_{target.lower()}_all_t05.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
@@ -154,17 +163,25 @@ if __name__ == "__main__":
                     help="dir with <tune>.csv files from dump_hitnuc")
     ap.add_argument("--all-tunes", action="store_true")
     ap.add_argument("--target", default="Fe56", choices=["Fe56", "C12"])
+    ap.add_argument("--sel-qel-q2", action="store_true",
+                    help="keep only QEL events in the Dutta Q2=1.28+-5%% window")
+    ap.add_argument("--out-dir", default=str(OUT_DEFAULT),
+                    help="figure output dir (v0.2: results/prd-analyzer-v0.2)")
     args = ap.parse_args()
 
     apply_style()
+    sel_note = ", qel && $Q^2=1.28\\pm5\\%$" if args.sel_qel_q2 else ""
     R_edges, P_edges, gs = target_setup(args.target)
     tunes = TUNES if args.all_tunes else [args.tune]
     results = []
     for t in tunes:
-        H, prof, c = load_hist(Path(args.dump_dir) / f"{t}.csv", R_edges, P_edges)
+        H, prof, c = load_hist(Path(args.dump_dir) / f"{t}.csv", R_edges, P_edges,
+                               sel_qel_q2=args.sel_qel_q2)
         print(f"{t}: N={c['n_kept']:,}  in-grid={c['in_range']:,}  "
               f"corr(p,r)={c['corr']:+.3f}  <r>={c['mean_r']:.2f} fm")
-        single_figure(args.target, t, H, prof, c, R_edges, P_edges, gs)
+        single_figure(args.target, t, H, prof, c, R_edges, P_edges, gs,
+                      out_dir=args.out_dir, sel_note=sel_note and " qel-window")
         results.append((t, H, prof, c))
     if args.all_tunes:
-        combined_figure(args.target, results, R_edges, P_edges, gs)
+        combined_figure(args.target, results, R_edges, P_edges, gs,
+                        out_dir=args.out_dir, sel_note=sel_note)
