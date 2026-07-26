@@ -35,7 +35,7 @@ Regenerate: `pixi run python results/template/make_sf2d_table.py --all-tunes`
 Two event-level 2D companions to the section-1 table: what the generated
 records actually carry for the struck nucleon — momentum vs **sampled removal
 energy**, and momentum vs **in-nucleus position**. Sample: the ghep siblings of
-the ladder's gst streams (section 3; 20 files = 2M events/tune, 2026-07-16 grid
+the ladder's gst streams (section 4; 20 files = 2M events/tune, 2026-07-16 grid
 campaigns), all single-nucleon events (~1.91M/tune — MEC's 2-nucleon cluster
 carries no single hit nucleon), both species, no other cuts. gst carries
 neither quantity — the sampled w lives only in `GHepParticle::RemovalEnergy`
@@ -52,7 +52,7 @@ continuum, and the rectangular mean-field/correlation seam of section 1 —
 with realized tail weights P(p > 250 MeV/c) = 0.150/0.143 and
 P(E > 100 MeV) = 0.074/0.068 (22a/22b) vs the table's sampling weights
 0.158/0.080; the residual difference is per-process kinematic acceptance (the
-QEL-only selection of section 4 pulls 22a the *other* way, to 0.185). The LFG
+QEL-only selection of section 5 pulls 22a the *other* way, to 0.185). The LFG
 tunes collapse onto a band at the near-fixed LFG removal energy (median
 w = 23.0 MeV in both) with the sharp k_F cutoff at ≈ 270 MeV/c. **GEM21
 caveat**: its QEL events (17% of the single-nucleon sample, scat = 1) store
@@ -89,7 +89,7 @@ a nuclear-model property:
   (p, E) — SRC tail included — is statistically independent of the starting
   radius: a 600 MeV/c SRC nucleon draws the same r distribution as a
   shell-model one, worth keeping in mind when reading the FSI in-window
-  survival of section 3.
+  survival of section 4.
 
 Regenerate: build `dump_hitnuc` (recipe in `results/template/dump_hitnuc.cxx`),
 dump the same 20-file lists to `cache/hitnuc_fe56/<tune>.csv`, then
@@ -97,7 +97,46 @@ dump the same 20-file lists to `cache/hitnuc_fe56/<tune>.csv`, then
 and the same for `make_struck_pr.py` (both default to `--target Fe56`; the C12
 note's section 2 runs the same scripts with `--target C12`).
 
-## 3. Missing energy: table vs simulation vs Dutta Fig. 11
+## 3. QEL kinematics in the Q² slice — E_e′, θ_e′, T_p, θ_p, Q²
+
+![Fe56 QEL kinematics in the Q² = 1.28 slice](kin_q2window_fe56.png)
+
+v0 README §6 replicated on the campaign sample (same 20-file gst streams as
+the ladder, section 4): the five kinematic variables with **no electron or
+proton cuts**, only `|Q²/1.28 − 1| ≤ 5 %` (Q² ∈ [1.216, 1.344], inside the t05
+generation cut) **&& `qel`** — the explicit `qel` makes the selection
+EMQE-equivalent on the full-EM sample (QEL is 13–19 % of the Q² window; the
+window itself keeps ~28 % of all generated events). Leading proton =
+highest-momentum final-state proton; T_p/θ_p panels implicitly drop no-proton
+events. Grey dashed = the applied Q² window plus the HMS/SOS in-plane
+acceptance projections (E_e′ ∈ [1.587, 1.863] GeV, θ_e′ = 32.0 ± 1.58°,
+T_p ∈ [0.487, 0.924] GeV, θ_p = 43.5 ± 3.26°, derived from v0 `acceptance.py`
+— displayed, **not** applied). Area-normalized above; raw-counts companion
+`kin_q2window_fe56_counts.png` (equal ntot = 2M/tune).
+
+| tune | N (qel ∧ Q² window) | qel share of window | has_p |
+|---|---|---|---|
+| GEM26_11a_05_000 | 101,377 | 18.5 % | 80.8 % |
+| GEM26_22a_05_000 | 102,623 | 18.6 % | 79.4 % |
+| GEM26_22b_05_000 | 74,818 | 13.5 % | 82.8 % |
+| GEM21_11a_05_000 | 95,162 | 17.1 % | 82.2 % |
+
+Read: E_e′/θ_e′ are the smooth QE peak (≈1.75 GeV, ≈31.5°) — 11a sharpest,
+GEM21 broadest with the largest low-E_e′ (high-ω) tail. **T_p is double-peaked
+and on iron the low-T_p (≈0.1 GeV) FSI-rescattered population *dominates* the
+QE bump at ≈0.65 GeV** — the kinematic face of the ladder's ~0.40 in-window
+survival (section 4); correspondingly θ_p has most of its strength in the tail
+beyond the ≈45° conjugate peak. 22b's lower N (75k vs ~100k) is the smaller
+SF-folded UnifiedQEL cross section (QEL fraction 9.3 % in section 4); GEM21's
+mild deficit (95k) is the SuSAv2 σ. Within the acceptance windows the four
+tunes are shape-similar in the electron arm — the model discrimination lives
+in the proton arm and in E_m/p_m (sections 4–6), not in the inclusive
+electron kinematics.
+
+Regenerate: `pixi run python results/template/make_kin_q2window.py --target Fe56`
+(cache: `cache/q2window_fe56/`; delete to re-stream).
+
+## 4. Missing energy: table vs simulation vs Dutta Fig. 11
 
 The C12 four-stage **restored ladder** (v0 README §12) replicated on Fe56 for
 each campaign tune, at the digitized data's kinematics (Q² = 1.28 (GeV/c)²,
@@ -133,7 +172,7 @@ an in-window statement — its record sits entirely below E = 0). FSI keeps only
 `pixi run python results/template/make_emiss_ladder_fe56.py --all-tunes`
 (cache: `cache/ladder_fe56/`; delete to re-stream).
 
-### 3.1 GEM26_11a_05_000 — LocalFGM + Rosenbluth
+### 4.1 GEM26_11a_05_000 — LocalFGM + Rosenbluth
 
 | piece | algorithm |
 |---|---|
@@ -150,7 +189,7 @@ never exceed 300 MeV/c). The pre-FSI proton reproduces the δ; FSI smears it
 into a shape that tracks the data tail but, as everywhere, misses the
 12.5 MeV peak from below.
 
-### 3.2 GEM26_22a_05_000 — 2D SpectralFunc + Rosenbluth (FermiMover chain)
+### 4.2 GEM26_22a_05_000 — 2D SpectralFunc + Rosenbluth (FermiMover chain)
 
 | piece | algorithm |
 |---|---|
@@ -168,7 +207,7 @@ the sampled physics survives only in `GHepParticle::RemovalEnergy`, section 1).
 I2r = I3r = 23.423; FSI in-window survival 0.384 with the post-FSI shape
 tracking the data above ~20 MeV.
 
-### 3.3 GEM26_22b_05_000 — 2D SpectralFunc + UnifiedQEL (QELEventGenerator)
+### 4.3 GEM26_22b_05_000 — 2D SpectralFunc + UnifiedQEL (QELEventGenerator)
 
 | piece | algorithm |
 |---|---|
@@ -197,7 +236,7 @@ closest in shape to the data. QEL fraction is 9.3% vs 22a's 12.7%,
 consistent with the SF-folded UnifiedQEL cross section being smaller than
 Rosenbluth (spline QE σ 1.85 vs 2.75 ×10⁻⁴).
 
-### 3.4 GEM21_11a_05_000 — LocalFGM + SuSAv2 (scaled-C12 surrogate)
+### 4.4 GEM21_11a_05_000 — LocalFGM + SuSAv2 (scaled-C12 surrogate)
 
 | piece | algorithm |
 |---|---|
@@ -214,7 +253,7 @@ box-like distribution up to ~35 MeV (LFG kinematics through SuSA's own
 binding prescription), and FSI degrades it further. The scaled-C12 surrogate
 caveat applies to any physics conclusion drawn from this tune on iron.
 
-## 4. Missing momentum: table vs QEL struck-nucleon record
+## 5. Missing momentum: table vs QEL struck-nucleon record
 
 ![Fe56 P_miss, input table vs QEL struck-nucleon record, all t05 tunes](pmiss_struck_fe56_t05.png)
 
@@ -251,7 +290,7 @@ Reading:
 Regenerate: `pixi run python results/template/make_pmiss_fe56.py`
 (reads the `cache/ladder_fe56/` caches).
 
-## 5. Signed missing momentum (± asymmetry)
+## 6. Signed missing momentum (± asymmetry)
 
 The published Figs. 6–8 momentum distributions carry a left–right (±p_m)
 asymmetry the paper attributes to W_LT interference beyond deForest σ_cc1
@@ -289,7 +328,7 @@ it; the SuSA generator samples symmetrically and gives zero. Whatever the true
 W_LT/Coulomb asymmetry of the data is, it would sit *on top of* this
 generator artifact — so the signed p_m is not yet a clean model discriminator.
 
-### 5.1 GEM26_11a_05_000 — LocalFGM, QELKinematicsGenerator
+### 6.1 GEM26_11a_05_000 — LocalFGM, QELKinematicsGenerator
 
 ![Fe56 signed p_m, GEM26_11a_05_000](pmiss_signed_fe56_GEM26_11a_05_000.png)
 
@@ -297,7 +336,7 @@ A = −0.047 (pre) → −0.037 (post): the classic FermiMover +
 `QELKinematicsGenerator` chain on a Fermi-gas ground state. A(|p|) grows to
 ≈ −7% at 300 MeV/c; FSI slightly *reduces* the magnitude.
 
-### 5.2 GEM26_22a_05_000 — 2D SpectralFunc, QELKinematicsGenerator
+### 6.2 GEM26_22a_05_000 — 2D SpectralFunc, QELKinematicsGenerator
 
 ![Fe56 signed p_m, GEM26_22a_05_000](pmiss_signed_fe56_GEM26_22a_05_000.png)
 
@@ -306,7 +345,7 @@ ground state — the near-identical asymmetry (−0.047 vs −0.055) shows the
 ground-state model is a minor lever compared to the generator. The post-FSI
 density tracks the symmetrized fig7 shape closely.
 
-### 5.3 GEM26_22b_05_000 — 2D SpectralFunc, QELEventGenerator
+### 6.3 GEM26_22b_05_000 — 2D SpectralFunc, QELEventGenerator
 
 ![Fe56 signed p_m, GEM26_22b_05_000](pmiss_signed_fe56_GEM26_22b_05_000.png)
 
@@ -318,7 +357,7 @@ cross section, which imprints a much stronger direction–acceptance
 correlation. This is the tune where the signed p_m most departs from the
 others.
 
-### 5.4 GEM21_11a_05_000 — LocalFGM, QELEventGeneratorSuSA
+### 6.4 GEM21_11a_05_000 — LocalFGM, QELEventGeneratorSuSA
 
 ![Fe56 signed p_m, GEM21_11a_05_000](pmiss_signed_fe56_GEM21_11a_05_000.png)
 
