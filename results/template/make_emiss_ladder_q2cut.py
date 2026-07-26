@@ -313,6 +313,58 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
 
+    make_shape_figure(target, tune, c, dutta)
+
+
+def make_shape_figure(target, tune, c, dutta):
+    """Per-tune SHAPE comparison: the post-FSI in-window distribution
+    normalized by its own in-window event count (unit integral over
+    [0, 80) MeV), against the data and the pre-FSI shape normalized the same
+    way — the FSI shape distortion with the ~Z x survival scale divided out."""
+    import matplotlib.pyplot as plt
+    cfg = TGT[target]
+    tlow = target.lower()
+    dem, dsf, dstat, dtot = dutta
+
+    n_win, y = {}, {}
+    for s in (3, 4):
+        Er, p = c[f"E{s}r"], c[f"p{s}"]
+        win = np.isfinite(Er) & (p < PM_MAX) & (Er >= EDGES[0]) & (Er < EDGES[-1])
+        cnt, _ = np.histogram(Er[win], bins=EDGES)
+        n_win[s] = int(cnt.sum())
+        y[s] = cnt / (n_win[s] * BINW)          # unit integral over the window
+    dnorm = 1.0 / (dsf.sum() * BINW)            # data to unit integral too
+    print(f"  shape fig: N_in-win pre-FSI={n_win[3]:,}  post-FSI={n_win[4]:,}")
+
+    fig, ax = plt.subplots(figsize=(8.0, 5.8), layout="constrained")
+    ax.stairs(y[3], EDGES, color="C0", linewidth=1.6, linestyle="--", zorder=4,
+              label=f"pre-FSI shape (N={n_win[3]:,})")
+    ax.stairs(y[4], EDGES, color="C3", linewidth=2.0, zorder=5,
+              label=f"post-FSI shape (N={n_win[4]:,})")
+    ax.errorbar(dem, dsf * dnorm, yerr=dtot * dnorm, fmt="none", ecolor="0.6",
+                elinewidth=3, alpha=0.8, zorder=8)
+    ax.errorbar(dem, dsf * dnorm, yerr=dstat * dnorm, fmt="s", ms=4,
+                color="black", capsize=2, zorder=9,
+                label=cfg["data_label"].replace("publ. scale",
+                                                "unit-normalized"))
+    style_axis(ax, title=None, xlabel=r"$E_m+T_{rec}$  (MeV)",
+               logx=False, logy=False, ymin=None)
+    ax.set_xlim(0, 85)
+    ax.set_ylim(0, None)
+    ax.set_ylabel(r"d$N/$d$(E_m+T_{rec})\,/\,N_{\rm in-win}$   (MeV$^{-1}$)",
+                  fontsize=FS_LABEL)
+    ax.legend(fontsize=FS_LEGEND - 3, loc="upper right",
+              title="each curve: unit integral over [0, 80)",
+              title_fontsize=FS_LEGEND_TITLE - 3)
+    fig.suptitle(f"{target} post-FSI E$_m$ shape — {tune}  "
+                 f"({TUNE_GS[tune][1]})\n"
+                 "qel && hit p && $Q^2$ slice; unit-normalized shapes",
+                 fontsize=FS_SUPTITLE - 3)
+    out = OUT_DIR / f"em_postfsi_shape_{tlow}_{tune}.png"
+    fig.savefig(out, dpi=DPI)
+    plt.close(fig)
+    print("  wrote", out)
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

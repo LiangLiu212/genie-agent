@@ -109,8 +109,44 @@ reshapes acceptance, not the sampled removal energy), and the FSI in-window
 survival 0.39–0.42 is statistically unchanged from the uncut 0.38–0.41 —
 **the E_m ladder physics is Q²-slice-stable on iron**.
 
+**Event counts, before and after FSI.** A pre-FSI primary proton exists in
+100 % of selected events and a post-FSI leading proton in ~100 % (22a loses
+162 events, 0.2 %): FSI relocates events out of the window rather than
+destroying protons, and the in-window ratios reproduce I4r/I3r exactly:
+
+| tune | N_sel | pre-FSI p (in-window) | post-FSI p (in-window) | in-window survival |
+|---|---|---|---|---|
+| GEM26_11a_05_000 | 68,047 | 68,047 (68,047) | 68,047 (28,588) | 0.420 |
+| GEM26_22a_05_000 | 68,724 | 68,724 (61,692) | 68,562 (24,335) | 0.394 |
+| GEM26_22b_05_000 | 50,727 | 50,727 (46,732) | 50,727 (19,391) | 0.415 |
+| GEM21_11a_05_000 | 63,245 | 63,245 (58,874) | 63,245 (24,900) | 0.423 |
+
+**Post-FSI shape, self-normalized** — each curve divided by its own
+in-window event count (unit integral over [0, 80) MeV), data
+unit-normalized too, so the ~0.4 survival scale is divided out and only the
+shape remains:
+
+![Fe56 post-FSI shape, GEM26_11a](em_postfsi_shape_fe56_GEM26_11a_05_000.png)
+![Fe56 post-FSI shape, GEM26_22a](em_postfsi_shape_fe56_GEM26_22a_05_000.png)
+![Fe56 post-FSI shape, GEM26_22b](em_postfsi_shape_fe56_GEM26_22b_05_000.png)
+![Fe56 post-FSI shape, GEM21_11a](em_postfsi_shape_fe56_GEM21_11a_05_000.png)
+
+This normalization exposes what the fixed-y-range ladder panels clip:
+**hA2018 shifts every surviving proton by a constant ΔT_p** — the per-event
+E4r − E3r distribution is a 1-MeV-sharp line at **+23.4 MeV** holding 39 %
+of events (exactly the in-window survival), with *zero* events passing
+unshifted. For the δ-record tunes (11a, 22a; GEM21's box likewise) the
+"FSI-survived" population is therefore a **rigidly displaced δ** at
+≈ 33.5 MeV (record 10.45 + 23.0) — not a smeared peak — and the data-like
+tail is entirely the rescattered remainder (the v0.1 "FSI smears the δ"
+reading described only that sub-clip part). 22b, whose pre-FSI shape is
+already broad, absorbs the same shift almost invisibly: post-FSI ≈ pre-FSI
+≈ data in shape. The code origin of the constant is not yet traced
+(`INUKE-NucRemovalE` = 0.00 in `HAIntranuke2018.xml`) — open question.
+
 Regenerate: `pixi run python results/template/make_emiss_ladder_q2cut.py --target Fe56 --all-tunes`
-(cache: `cache/ladder_fe56/`; delete to re-stream).
+(cache: `cache/ladder_fe56/`; delete to re-stream; also writes the
+`em_postfsi_shape_fe56_*` figures).
 
 ## 5. Missing momentum: table vs QEL struck-nucleon record
 

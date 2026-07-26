@@ -104,8 +104,41 @@ digit that matters**: I2r = I3r exact, record medians identical
 fresh-EM-qel equivalence and the Q²-slice stability; the C12 > Fe56
 transparency ordering (0.56–0.61 vs 0.39–0.42) is untouched.
 
+**Event counts, before and after FSI.** A pre-FSI primary proton exists in
+100 % of selected events and a post-FSI leading proton in ~100 % (22a loses
+174 events, 0.2 %): FSI relocates events out of the window, and the
+in-window ratios reproduce I4r/I3r exactly:
+
+| tune | N_sel | pre-FSI p (in-window) | post-FSI p (in-window) | in-window survival |
+|---|---|---|---|---|
+| GEM26_11a_05_000 | 72,490 | 72,490 (72,490) | 72,490 (43,478) | 0.600 |
+| GEM26_22a_05_000 | 72,953 | 72,953 (65,960) | 72,779 (36,629) | 0.555 |
+| GEM26_22b_05_000 | 53,517 | 53,517 (49,321) | 53,517 (29,201) | 0.592 |
+| GEM21_11a_05_000 | 71,630 | 71,630 (64,031) | 71,630 (38,804) | 0.606 |
+
+**Post-FSI shape, self-normalized** — each curve divided by its own
+in-window event count (unit integral over [0, 80) MeV), data
+unit-normalized too:
+
+![C12 post-FSI shape, GEM26_11a](em_postfsi_shape_c12_GEM26_11a_05_000.png)
+![C12 post-FSI shape, GEM26_22a](em_postfsi_shape_c12_GEM26_22a_05_000.png)
+![C12 post-FSI shape, GEM26_22b](em_postfsi_shape_c12_GEM26_22b_05_000.png)
+![C12 post-FSI shape, GEM21_11a](em_postfsi_shape_c12_GEM21_11a_05_000.png)
+
+The carbon instance of the Fe56 finding: **hA2018 shifts every surviving
+proton by a constant ΔT_p = +20.3 MeV** (1-MeV-sharp per-event E4r − E3r
+line holding 58 % of events = the in-window survival; zero events pass
+unshifted), so the δ-record tunes' survivors are a **rigidly displaced δ**
+at ≈ 37.4 MeV (record 17.09 + 20.3) sitting past the data's s-shell bump,
+with the rescattered remainder as the tail. 22b's broad restored shape
+absorbs the shift: post-FSI ≈ pre-FSI ≈ data (its shape figure is the
+cleanest data match of the four). Constant's code origin untraced
+(`INUKE-NucRemovalE` = 0.00) — open question, shared with Fe56
+(+23.4 MeV there).
+
 Regenerate: `pixi run python results/template/make_emiss_ladder_q2cut.py --target C12 --all-tunes`
-(cache: `cache/ladder_c12/`).
+(cache: `cache/ladder_c12/`; also writes the `em_postfsi_shape_c12_*`
+figures).
 
 ## 5. Missing momentum: table vs QEL struck-nucleon record
 
