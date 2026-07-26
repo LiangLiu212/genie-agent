@@ -122,19 +122,27 @@ def build_cache(target, tune, max_files):
         omega = nz("Ev") - nz("El")
         qx, qy, qz = nz("pxv") - lx, nz("pyv") - ly, nz("pzv") - lz
 
+        # has-proton guards: unguarded argmax(where(is_p, x, -1)) returns
+        # index 0 when no proton exists (see make_emiss_ladder_q2cut.py)
         isp = (a.pdgi == 2212)
+        has3 = ak.to_numpy(ak.any(isp, axis=1))
         lead = ak.argmax(ak.where(isp, a.Ei, -1.0), axis=1, keepdims=True)
         g = lambda b: ak.to_numpy(ak.fill_none(ak.firsts(b[lead]), np.nan))
         E3p, px3, py3, pz3 = g(a.Ei), g(a.pxi), g(a.pyi), g(a.pzi)
         pm3 = signed_pm(px3, py3, pz3, qx, qy, qz, lx, ly, lz) * 1000.0
         Em3 = (omega - (E3p - M_P) - (pm3 / 1000.0) ** 2 / (2.0 * m_rec)) * 1000.0
+        pm3[~has3] = np.nan
+        Em3[~has3] = np.nan
 
         isf = (a.pdgf == 2212)
+        has4 = ak.to_numpy(ak.any(isf, axis=1))
         leadf = ak.argmax(ak.where(isf, a.pf, -1.0), axis=1, keepdims=True)
         gf = lambda b: ak.to_numpy(ak.fill_none(ak.firsts(b[leadf]), np.nan))
         E4p, px4, py4, pz4 = gf(a.Ef), gf(a.pxf), gf(a.pyf), gf(a.pzf)
         pm4 = signed_pm(px4, py4, pz4, qx, qy, qz, lx, ly, lz) * 1000.0
         Em4 = (omega - (E4p - M_P) - (pm4 / 1000.0) ** 2 / (2.0 * m_rec)) * 1000.0
+        pm4[~has4] = np.nan
+        Em4[~has4] = np.nan
 
         parts.append(dict(pm3=pm3[keep], Em3=Em3[keep],
                           pm4=pm4[keep], Em4=Em4[keep]))

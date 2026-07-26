@@ -92,29 +92,31 @@ table grid is aligned with the plot grid, no half-bin correction):
 
 | tune | N_sel (of 2M) | I1 (table) | I2r = I3r | I4r | I4r/I3r | record median [p5, p95] MeV |
 |---|---|---|---|---|---|---|
-| GEM26_11a_05_000 | 72,490 (3.62 %) | — | 6.000 | 3.599 | 0.600 | 17.09 [16.09, 18.79] |
-| GEM26_22a_05_000 | 72,953 (3.65 %) | 5.249 | 5.425 | 3.013 | 0.555 | 17.16 [16.18, 19.34] |
+| GEM26_11a_05_000 | 72,490 (3.62 %) | — | 6.000 | 3.555 | 0.592 | 17.09 [16.09, 18.79] |
+| GEM26_22a_05_000 | 72,953 (3.65 %) | 5.249 | 5.425 | 2.973 | 0.548 | 17.16 [16.18, 19.34] |
 | GEM26_22b_05_000 | 53,517 (2.68 %) | 5.249 | 5.530 | 3.274 | 0.592 | 20.48 [15.50, 62.05] |
 | GEM21_11a_05_000 | 71,630 (3.58 %) | — | 0.000 / 5.363 | 3.250 | 0.606 | −12.31 [−30.49, −1.49] |
 
-**The fresh-sample, windowed ladder reproduces the v0.1 numbers to the last
-digit that matters**: I2r = I3r exact, record medians identical
-(17.09/17.16/20.48/−12.31 vs v0.1's 17.09/17.15/20.37/−12.28), survivals
-0.555–0.606 vs v0.1's 0.545–0.602 — validating both the June-EMQE ≡
-fresh-EM-qel equivalence and the Q²-slice stability; the C12 > Fe56
-transparency ordering (0.56–0.61 vs 0.39–0.42) is untouched.
+**The fresh-sample, windowed ladder reproduces the v0.1 numbers**: I2r = I3r
+exact, record medians identical (17.09/17.16/20.48/−12.31 vs v0.1's
+17.09/17.15/20.37/−12.28), survivals 0.548–0.606 vs v0.1's 0.545–0.602 —
+validating both the June-EMQE ≡ fresh-EM-qel equivalence and the Q²-slice
+stability; the C12 > Fe56 transparency ordering (0.55–0.61 vs 0.39–0.42) is
+untouched. (Numbers here carry the leading-proton **has-proton fix** — see
+the Fe56 note section 4; the v0.1 stage-4/signed numbers, including the
+survivals just quoted, still carry the ~2–4 % unguarded-argmax defect.)
 
 **Event counts, before and after FSI.** A pre-FSI primary proton exists in
-100 % of selected events and a post-FSI leading proton in ~100 % (22a loses
-174 events, 0.2 %): FSI relocates events out of the window, and the
-in-window ratios reproduce I4r/I3r exactly:
+100 % of selected events; a post-FSI proton exists in **95.7–98.2 %** — FSI
+destroys the proton outright (absorption or charge exchange, section 5) in
+the remainder. In-window ratios ≡ I4r/I3r:
 
 | tune | N_sel | pre-FSI p (in-window) | post-FSI p (in-window) | in-window survival |
 |---|---|---|---|---|
-| GEM26_11a_05_000 | 72,490 | 72,490 (72,490) | 72,490 (43,478) | 0.600 |
-| GEM26_22a_05_000 | 72,953 | 72,953 (65,960) | 72,779 (36,629) | 0.555 |
-| GEM26_22b_05_000 | 53,517 | 53,517 (49,321) | 53,517 (29,201) | 0.592 |
-| GEM21_11a_05_000 | 71,630 | 71,630 (64,031) | 71,630 (38,804) | 0.606 |
+| GEM26_11a_05_000 | 72,490 | 72,490 (72,490) | 70,366 = 97.1 % (42,946) | 0.592 |
+| GEM26_22a_05_000 | 72,953 | 72,953 (65,960) | 69,803 = 95.7 % (36,154) | 0.548 |
+| GEM26_22b_05_000 | 53,517 | 53,517 (49,321) | 52,534 = 98.2 % (29,198) | 0.592 |
+| GEM21_11a_05_000 | 71,630 | 71,630 (64,031) | 70,311 = 98.2 % (38,804) | 0.606 |
 
 **Post-FSI shape, self-normalized** — each curve divided by its own
 in-window event count (unit integral over [0, 80) MeV), data
@@ -127,8 +129,9 @@ unit-normalized too:
 
 The carbon instance of the Fe56 finding: **hA2018 shifts every surviving
 proton by a constant ΔT_p = +20.3 MeV** (1-MeV-sharp per-event E4r − E3r
-line holding 58 % of events = the in-window survival; zero events pass
-unshifted), so the δ-record tunes' survivors are a **rigidly displaced δ**
+line holding the entire non-rescattered population = the in-window survival;
+zero events pass unshifted), so the δ-record tunes' survivors are a
+**rigidly displaced δ**
 at ≈ 37.4 MeV (record 17.09 + 20.3) sitting past the data's s-shell bump,
 with the rescattered remainder as the tail. 22b's broad restored shape
 absorbs the shift: post-FSI ≈ pre-FSI ≈ data (its shape figure is the
@@ -140,7 +143,41 @@ Regenerate: `pixi run python results/template/make_emiss_ladder_q2cut.py --targe
 (cache: `cache/ladder_c12/`; also writes the `em_postfsi_shape_c12_*`
 figures).
 
-## 5. Missing momentum: table vs QEL struck-nucleon record
+## 5. Post-FSI proton provenance: leading vs primary-vertex proton
+
+C12 instance of the Fe56 note's section 5: the GHEP daughter-tracing check
+(`dump_fsiproton.cxx`) of the leading-proton choice against the
+**primary-vertex** proton (the leading final-state descendant of the
+status-14 QEL proton), on section 4's windowed selection (the dumper
+reproduces N_sel exactly; comparison set = the post-FSI in-window events).
+
+![C12 proton choice, GEM26_11a](fsi_proton_choice_c12_GEM26_11a_05_000.png)
+![C12 proton choice, GEM26_22a](fsi_proton_choice_c12_GEM26_22a_05_000.png)
+![C12 proton choice, GEM26_22b](fsi_proton_choice_c12_GEM26_22b_05_000.png)
+![C12 proton choice, GEM21_11a](fsi_proton_choice_c12_GEM21_11a_05_000.png)
+
+**Identical curves in every tune — within the window the leading proton IS
+the primary-vertex proton in 100.0 % of events**, and over the full windowed
+selection the breakdown is again binary:
+
+| tune | N_sel | no FS proton at all | secondary proton leads |
+|---|---|---|---|
+| GEM26_11a_05_000 | 72,490 | 2,124 (2.9 %) | 0 |
+| GEM26_22a_05_000 | 72,953 | 3,150 (4.3 %) | 0 |
+| GEM26_22b_05_000 | 53,517 | 983 (1.8 %) | 0 |
+| GEM21_11a_05_000 | 71,630 | 1,319 (1.8 %) | 0 |
+
+Same mechanism as on iron: in hA2018 every final-state proton descends from
+the primary (single-fate model), so the only FSI provenance effect is total
+proton loss (absorption / p → n charge exchange, 1.8–4.3 % — smaller than
+Fe56's 2.0–5.4 %, the transparency ordering again; largest for 22a). The
+leading-proton reconstruction is provenance-pure within hA2018.
+
+Regenerate: build `dump_fsiproton` (recipe in-file), dump per tune into
+`cache/fsiproton_c12/`, then
+`pixi run python results/template/make_fsi_proton_choice.py --target C12 --all-tunes`.
+
+## 6. Missing momentum: table vs QEL struck-nucleon record
 
 ![C12 P_miss windowed, all t05 tunes](pmiss_struck_c12_t05.png)
 
@@ -161,7 +198,7 @@ by ≲ 0.003.
 
 Regenerate: `pixi run python results/template/make_pmiss_q2cut.py --target C12`.
 
-## 6. Signed missing momentum (± asymmetry)
+## 7. Signed missing momentum (± asymmetry)
 
 Same construction as v0.1 section 6 (sign of p_m·x̂, 4πp² divided out,
 0 < E_m < 80 MeV, fig6 top+bottom combined overlay shape-scaled), now
@@ -175,8 +212,8 @@ with the Q² window applied:
 
 | tune | generator | A pre-FSI | A post-FSI | v0.1 A pre-FSI (uncut, local) |
 |---|---|---|---|---|
-| GEM26_11a_05_000 | `QELKinematicsGenerator` | −0.0568 ± 0.0037 | −0.0490 ± 0.0048 | −0.0467 |
-| GEM26_22a_05_000 | `QELKinematicsGenerator` | −0.0469 ± 0.0039 | −0.0490 ± 0.0052 | −0.0483 |
+| GEM26_11a_05_000 | `QELKinematicsGenerator` | −0.0568 ± 0.0037 | −0.0499 ± 0.0048 | −0.0467 |
+| GEM26_22a_05_000 | `QELKinematicsGenerator` | −0.0469 ± 0.0039 | −0.0493 ± 0.0052 | −0.0483 |
 | GEM26_22b_05_000 | `QELEventGenerator` | **−0.1318 ± 0.0044** | **−0.1264 ± 0.0058** | −0.1111 |
 | GEM21_11a_05_000 | `QELEventGeneratorSuSA` | **−0.0004 ± 0.0040** | **−0.0016 ± 0.0051** | +0.0030 |
 
