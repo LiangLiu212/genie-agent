@@ -137,44 +137,72 @@ shape remains:
 ![Fe56 post-FSI shape, GEM26_22b](em_postfsi_shape_fe56_GEM26_22b_05_000.png)
 ![Fe56 post-FSI shape, GEM21_11a](em_postfsi_shape_fe56_GEM21_11a_05_000.png)
 
-This normalization exposes what the fixed-y-range ladder panels clip:
-**hA2018 shifts every surviving proton by a constant ΔT_p** — the per-event
-E4r − E3r distribution is a 1-MeV-sharp line at **+23.4 MeV** holding the
-entire non-rescattered population (= the in-window survival), with *zero*
-events passing unshifted. For the δ-record tunes (11a, 22a; GEM21's box likewise) the
-"FSI-survived" population is therefore a **rigidly displaced δ** at
-≈ 33.5 MeV (record 10.45 + 23.0) — not a smeared peak — and the data-like
-tail is entirely the rescattered remainder (the v0.1 "FSI smears the δ"
-reading described only that sub-clip part). 22b, whose pre-FSI shape is
-already broad, absorbs the same shift almost invisibly: post-FSI ≈ pre-FSI
-≈ data in shape. The code origin of the constant is not yet traced
-(`INUKE-NucRemovalE` = 0.00 in `HAIntranuke2018.xml`) — open question.
+This normalization exposes what the fixed-y-range ladder panels clip, and
+the per-event pre/post comparison of section 5 resolves it **per chain**
+(not, as an earlier revision of this note claimed, as one universal shift):
+
+- **11a** — survivors are a **rigidly displaced δ**: ΔT_p = T_p(pre) −
+  T_p(post) is a sharp line at **+23.0 MeV** (95 % of survivors within
+  ±1 MeV) = the LFG removal energy (section 2's median w = 23.0 MeV,
+  exactly), moving the record δ from 10.45 to ≈ 33.5 MeV.
+- **22a** — the δ is **smeared, not displaced**: ΔT_p is broad
+  (median 21.2 MeV, only 12 % near the mode) = the sampled SF removal-energy
+  *distribution*; the post-FSI shape lands close to the data above the
+  p-shell even though its record was a δ.
+- **22b, GEM21** — survivors are **unshifted** (ΔT_p = 0.00, 94–95 % within
+  ±1 MeV): post-FSI ≈ pre-FSI in shape (22b ≈ data; GEM21's box passes
+  through).
+
+Reading: the final-state write-out charges the nuclear-model **removal
+energy to the outgoing proton exactly when the QEL vertex chain did not**
+(the FermiMover chains 11a/22a), and leaves it alone when the generator
+already paid it at the vertex (QELEventGenerator, SuSA). Post-FSI is thus
+the first stage where all four chains have paid w once — their energy
+bookkeeping converges while their shapes stay distinct. Both endpoint
+protons are exactly on-shell (|m − m_p| < 0.01 MeV, section-5 dump), so
+this is a real kinetic-energy debit, not off-shell bookkeeping; the precise
+code site (`INUKE-NucRemovalE` = 0.00, so not that parameter) is still an
+open question.
 
 Regenerate: `pixi run python results/template/make_emiss_ladder_q2cut.py --target Fe56 --all-tunes`
 (cache: `cache/ladder_fe56/`; delete to re-stream; also writes the
 `em_postfsi_shape_fe56_*` figures).
 
-## 5. Post-FSI proton provenance: leading vs primary-vertex proton
+## 5. Pre- vs post-FSI proton: the leading p against the primary-vertex p
 
-Truth-matched check of the leading-proton choice used everywhere in this
-series. A GHEP dumper (`results/template/dump_fsiproton.cxx`) walks the
-daughter links of the primary QEL proton (the status-14 hadron-in-nucleus
-whose mother is the hit nucleon) and records, per windowed event, both the
-**leading** final-state proton (highest |p|, any ancestry — the
-spectrometer-like choice) and the **primary-vertex** proton (the leading
-final-state proton among the primary's descendants). Selection at dump time
-= section 4's (`qel && hit p && Q² window`; the dumper reproduces N_sel
-exactly); the comparison set below = section 4's post-FSI in-window events.
+Event-by-event comparison of the **post-FSI leading proton** (highest-|p|
+final-state proton, the spectrometer-like choice used everywhere in this
+series) against the **pre-FSI primary proton** — the QEL vertex proton
+itself (the status-14 hadron-in-the-nucleus), before INTRANUKE. A GHEP
+dumper (`results/template/dump_fsiproton.cxx`) records both 4-momenta (plus
+the primary's post-FSI *descendant*, for the provenance check below) with
+the section-4 selection applied at dump time (`qel && hit p && Q² window`;
+the dumper reproduces N_sel exactly). Comparison set = section 4's post-FSI
+in-window events; each figure shows the restored axis ω − T_p and T_p for
+both protons (raw events/bin, log-y).
 
-![Fe56 proton choice, GEM26_11a](fsi_proton_choice_fe56_GEM26_11a_05_000.png)
-![Fe56 proton choice, GEM26_22a](fsi_proton_choice_fe56_GEM26_22a_05_000.png)
-![Fe56 proton choice, GEM26_22b](fsi_proton_choice_fe56_GEM26_22b_05_000.png)
-![Fe56 proton choice, GEM21_11a](fsi_proton_choice_fe56_GEM21_11a_05_000.png)
+![Fe56 pre/post proton, GEM26_11a](fsi_prepost_fe56_GEM26_11a_05_000.png)
+![Fe56 pre/post proton, GEM26_22a](fsi_prepost_fe56_GEM26_22a_05_000.png)
+![Fe56 pre/post proton, GEM26_22b](fsi_prepost_fe56_GEM26_22b_05_000.png)
+![Fe56 pre/post proton, GEM21_11a](fsi_prepost_fe56_GEM21_11a_05_000.png)
 
-Each figure: the restored axis ω − T_p and T_p for both reconstructions on
-the same event set (raw events/bin, log-y). **The two curves are identical
-in every tune: within the window the leading proton IS the primary-vertex
-proton in 100.0 % of events.** Over the full windowed selection the
+The per-event ΔT_p = T_p(pre) − T_p(post) of the surviving protons is the
+chain-resolved version of section 4's shape finding:
+
+| tune | ΔT_p (pre − post) of survivors |
+|---|---|
+| GEM26_11a_05_000 | sharp line at **+23.0 MeV** (95 % within ±1 MeV) = the LFG w |
+| GEM26_22a_05_000 | **broad**, median 21.2 MeV = the sampled SF w distribution |
+| GEM26_22b_05_000 | **0.00 MeV** (95 % within ±1 MeV) — w paid at the vertex |
+| GEM21_11a_05_000 | **0.00 MeV** (94 % within ±1 MeV) — SuSA's own prescription |
+
+Both protons are exactly on-shell (|m − m_p| < 0.01 MeV in every tune), so
+ΔT_p is a genuine kinetic-energy debit — the removal energy charged at the
+FSI write-out for the chains that skipped it at the vertex.
+
+**Provenance check.** The dump also traces the primary's daughters: within
+the window the post-FSI leading proton IS the primary's descendant in
+**100.0 % of events**, every tune. Over the full windowed selection the
 breakdown is binary:
 
 | tune | N_sel | no FS proton at all | secondary proton leads |

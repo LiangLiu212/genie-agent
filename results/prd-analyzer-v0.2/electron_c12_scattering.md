@@ -127,37 +127,55 @@ unit-normalized too:
 ![C12 post-FSI shape, GEM26_22b](em_postfsi_shape_c12_GEM26_22b_05_000.png)
 ![C12 post-FSI shape, GEM21_11a](em_postfsi_shape_c12_GEM21_11a_05_000.png)
 
-The carbon instance of the Fe56 finding: **hA2018 shifts every surviving
-proton by a constant ΔT_p = +20.3 MeV** (1-MeV-sharp per-event E4r − E3r
-line holding the entire non-rescattered population = the in-window survival;
-zero events pass unshifted), so the δ-record tunes' survivors are a
-**rigidly displaced δ**
-at ≈ 37.4 MeV (record 17.09 + 20.3) sitting past the data's s-shell bump,
-with the rescattered remainder as the tail. 22b's broad restored shape
-absorbs the shift: post-FSI ≈ pre-FSI ≈ data (its shape figure is the
-cleanest data match of the four). Constant's code origin untraced
-(`INUKE-NucRemovalE` = 0.00) — open question, shared with Fe56
-(+23.4 MeV there).
+The carbon instance of the Fe56 finding, chain-resolved by the per-event
+pre/post comparison of section 5 (an earlier revision claimed one universal
+shift — wrong):
+
+- **11a** — survivors are a **rigidly displaced δ**: ΔT_p = +20.0 MeV sharp
+  (98 % within ±1 MeV) = the LFG removal energy (section 2's median
+  w = 20.0 MeV, exactly), moving the record δ from 17.09 to ≈ 37 MeV, past
+  the data's s-shell bump.
+- **22a** — **smeared, not displaced**: ΔT_p broad (median 20.2 MeV, 20 %
+  near the mode) = the sampled SF removal-energy distribution.
+- **22b, GEM21** — survivors **unshifted** (ΔT_p = 0.00, 97 % within
+  ±1 MeV); 22b's post-FSI ≈ pre-FSI ≈ data remains the cleanest shape
+  match of the four.
+
+Same reading as the Fe56 note section 4: the FSI write-out charges the
+removal energy to the outgoing proton exactly when the FermiMover vertex
+chain did not; post-FSI all four chains have paid w once. Both endpoint
+protons exactly on-shell; precise code site still open
+(`INUKE-NucRemovalE` = 0.00).
 
 Regenerate: `pixi run python results/template/make_emiss_ladder_q2cut.py --target C12 --all-tunes`
 (cache: `cache/ladder_c12/`; also writes the `em_postfsi_shape_c12_*`
 figures).
 
-## 5. Post-FSI proton provenance: leading vs primary-vertex proton
+## 5. Pre- vs post-FSI proton: the leading p against the primary-vertex p
 
-C12 instance of the Fe56 note's section 5: the GHEP daughter-tracing check
-(`dump_fsiproton.cxx`) of the leading-proton choice against the
-**primary-vertex** proton (the leading final-state descendant of the
-status-14 QEL proton), on section 4's windowed selection (the dumper
-reproduces N_sel exactly; comparison set = the post-FSI in-window events).
+C12 instance of the Fe56 note's section 5: the **post-FSI leading proton**
+compared event-by-event against the **pre-FSI primary proton** (the
+status-14 QEL vertex proton, before INTRANUKE), via the
+`dump_fsiproton.cxx` GHEP dump on section 4's windowed selection (the
+dumper reproduces N_sel exactly; comparison set = the post-FSI in-window
+events; each figure: ω − T_p and T_p for both protons).
 
-![C12 proton choice, GEM26_11a](fsi_proton_choice_c12_GEM26_11a_05_000.png)
-![C12 proton choice, GEM26_22a](fsi_proton_choice_c12_GEM26_22a_05_000.png)
-![C12 proton choice, GEM26_22b](fsi_proton_choice_c12_GEM26_22b_05_000.png)
-![C12 proton choice, GEM21_11a](fsi_proton_choice_c12_GEM21_11a_05_000.png)
+![C12 pre/post proton, GEM26_11a](fsi_prepost_c12_GEM26_11a_05_000.png)
+![C12 pre/post proton, GEM26_22a](fsi_prepost_c12_GEM26_22a_05_000.png)
+![C12 pre/post proton, GEM26_22b](fsi_prepost_c12_GEM26_22b_05_000.png)
+![C12 pre/post proton, GEM21_11a](fsi_prepost_c12_GEM21_11a_05_000.png)
 
-**Identical curves in every tune — within the window the leading proton IS
-the primary-vertex proton in 100.0 % of events**, and over the full windowed
+| tune | ΔT_p (pre − post) of survivors |
+|---|---|
+| GEM26_11a_05_000 | sharp line at **+20.0 MeV** (98 % within ±1 MeV) = the LFG w |
+| GEM26_22a_05_000 | **broad**, median 20.2 MeV = the sampled SF w distribution |
+| GEM26_22b_05_000 | **0.00 MeV** (97 % within ±1 MeV) — w paid at the vertex |
+| GEM21_11a_05_000 | **0.00 MeV** (97 % within ±1 MeV) — SuSA's own prescription |
+
+Both protons exactly on-shell in every tune.
+
+**Provenance check** — within the window the leading proton IS the
+primary's descendant in **100.0 % of events**, and over the full windowed
 selection the breakdown is again binary:
 
 | tune | N_sel | no FS proton at all | secondary proton leads |
