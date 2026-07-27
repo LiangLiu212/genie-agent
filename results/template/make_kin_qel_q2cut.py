@@ -121,10 +121,11 @@ def make_fig(target, cache, density):
     print("wrote", out)
 
 
-def make_empm_fig(target, cache, density):
+def make_empm_fig(target, cache, density, logy=True):
     """Sub-figure 3.1: E_miss = omega - T_p and p_miss in the slice, with NO
     E_m/p_m cuts -- the section-4 window drawn grey-dashed as reference only
-    (E_m: 0 and 80 MeV; p_m: 300 MeV/c). Leading proton, has_p-masked."""
+    (E_m: 0 and 80 MeV; p_m: 300 MeV/c). Leading proton, has_p-masked.
+    logy=False writes the linear-y companion (suffix _lin)."""
     PANELS2 = [("E_miss", r"$E_m=\omega-T_p$  [MeV]",  20.0, 55, (0.0, 80.0)),
                ("p_miss", r"$p_m$  [MeV/c]",           50.0, 55, (300.0,))]
     fig, axes = new_panels(ncols=2, sharey=False)
@@ -144,7 +145,9 @@ def make_empm_fig(target, cache, density):
                     label=f"{tune} ({gs}, in-win {100*frac[tune]:.0f}%)")
         for v in refs:
             ax.axvline(v, color="0.5", ls="--", lw=1.0)
-        style_axis(ax, title=None, xlabel=lab, logx=False, logy=True, ymin=None)
+        style_axis(ax, title=None, xlabel=lab, logx=False, logy=logy, ymin=None)
+        if not logy:
+            ax.set_ylim(0, None)
         ax.set_ylabel("normalized / bin" if density else "events / bin",
                       fontsize=FS_LABEL)
     axes[0].legend(fontsize=FS_LEGEND - 4, loc="upper right",
@@ -156,11 +159,11 @@ def make_empm_fig(target, cache, density):
                  f"{target} (t05), {norm_note}",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    suffix = "" if density else "_counts"
+    suffix = ("" if density else "_counts") + ("" if logy else "_lin")
     out = OUT_DIR / f"empm_q2cut_{target.lower()}{suffix}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
-    if density:
+    if density and logy:
         for t, f in frac.items():
             print(f"  {t}: in-window fraction (of has_p) = {f:.3f}")
 
@@ -177,6 +180,7 @@ if __name__ == "__main__":
     make_fig(args.target, cache, density=False)
     make_empm_fig(args.target, cache, density=True)
     make_empm_fig(args.target, cache, density=False)
+    make_empm_fig(args.target, cache, density=True, logy=False)
     for t in TUNES:
         c = cache[t]
         print(f"  {t:18s} N={len(c['Q2']):7,d} of qel={int(c['n_qel'][0]):,} "

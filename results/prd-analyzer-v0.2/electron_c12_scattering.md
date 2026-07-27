@@ -83,6 +83,10 @@ Regenerate: `pixi run python results/template/make_kin_qel_q2cut.py --target C12
 
 ![C12 E_m/p_m in the slice, uncut](empm_q2cut_c12.png)
 
+![C12 E_m/p_m in the slice, uncut, linear y](empm_q2cut_c12_lin.png)
+
+(Log-y above for the tails; linear-y below for the true proportions.)
+
 C12 instance of the Fe56 note's 3.1 (E_m = ω − T_p ≡ the restored axis;
 leading proton, no-proton events dropped; section-4 window grey-dashed, not
 applied; raw-counts companion `empm_q2cut_c12_counts.png`). The

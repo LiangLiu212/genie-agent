@@ -89,6 +89,11 @@ also writes the 3.1 figures).
 
 ![Fe56 E_m/p_m in the slice, uncut](empm_q2cut_fe56.png)
 
+![Fe56 E_m/p_m in the slice, uncut, linear y](empm_q2cut_fe56_lin.png)
+
+(Log-y above for the tails; linear-y below for the true proportions of the
+QE peak vs the out-of-window strength.)
+
 The two remaining v0 §6 variables, with the section-4 window drawn
 grey-dashed but **not** applied (E_m = ω − T_p, the heavy-recoil convention
 ≡ the restored axis; leading proton, no-proton events dropped; raw-counts
