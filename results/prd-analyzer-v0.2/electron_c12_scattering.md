@@ -76,7 +76,21 @@ low-T_p FSI population** (mirror of Fe56; transparency, section 4). 22b's
 rate deficit is the smaller UnifiedQEL σ; GEM21 sits at full strength (its
 C12 SuSAv2 tensor is genuine).
 
-Regenerate: `pixi run python results/template/make_kin_qel_q2cut.py --target C12`.
+Regenerate: `pixi run python results/template/make_kin_qel_q2cut.py --target C12`
+(also writes the 3.1 figures).
+
+### 3.1 E_m and p_m in the slice — no E_m/p_m cuts
+
+![C12 E_m/p_m in the slice, uncut](empm_q2cut_c12.png)
+
+C12 instance of the Fe56 note's 3.1 (E_m = ω − T_p ≡ the restored axis;
+leading proton, no-proton events dropped; section-4 window grey-dashed, not
+applied; raw-counts companion `empm_q2cut_c12_counts.png`). The
+out-of-window strength — the E_m continuum and the uncorrelated-proton p_m
+bump at ≈ |q| — is visibly smaller than on iron: in-window fractions
+53 / 45 / 49 / 48 % (11a/22a/22b/GEM21) vs Fe56's 30–35 %, the transparency
+ordering again (slightly below section 4's 0.55–0.61 because this
+qel-both-species sample includes hit-neutron events).
 
 ## 4. Missing energy: table vs simulation vs Dutta Fig. 9
 
@@ -173,6 +187,17 @@ events; each figure: ω − T_p and T_p for both protons).
 | GEM21_11a_05_000 | **0.00 MeV** (97 % within ±1 MeV) — SuSA's own prescription |
 
 Both protons exactly on-shell in every tune.
+
+**Why T_p here is so much narrower than in section 3.** Same variable,
+different phase space: section 3 applies no E_m/p_m requirement, so its T_p
+panel includes the FSI-rescattered low-T_p population (subordinate on
+carbon but still large). Here E_m + T_rec = ω − T_p ∈ [0, 80) MeV pins T_p
+to within 80 MeV of the energy transfer (ω ≈ 0.6–0.9 GeV in the slice) and
+p_m < 300 MeV/c removes the same rescattered events on the momentum side —
+section 3's low-T_p hump and section 4's out-of-window strength are the
+same events on mirrored axes (T_p vs ω − T_p). The window keeps only the
+~60 % quasi-elastic-like survivors, which differ from their pre-FSI selves
+only by the removal-energy debit above.
 
 **Provenance check** — within the window the leading proton IS the
 primary's descendant in **100.0 % of events**, and over the full windowed

@@ -37,7 +37,7 @@ OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
 Q2_LO, Q2_HI = Q2_CENTER * (1 - Q2_FRAC), Q2_CENTER * (1 + Q2_FRAC)
-KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2"]
+KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2", "E_miss", "p_miss"]
 
 # tune -> (color, linestyle, ground-state label): the v0.1 series convention
 TUNES = {
@@ -121,6 +121,50 @@ def make_fig(target, cache, density):
     print("wrote", out)
 
 
+def make_empm_fig(target, cache, density):
+    """Sub-figure 3.1: E_miss = omega - T_p and p_miss in the slice, with NO
+    E_m/p_m cuts -- the section-4 window drawn grey-dashed as reference only
+    (E_m: 0 and 80 MeV; p_m: 300 MeV/c). Leading proton, has_p-masked."""
+    PANELS2 = [("E_miss", r"$E_m=\omega-T_p$  [MeV]",  20.0, 55, (0.0, 80.0)),
+               ("p_miss", r"$p_m$  [MeV/c]",           50.0, 55, (300.0,))]
+    fig, axes = new_panels(ncols=2, sharey=False)
+    frac = {}
+    for ax, (key, lab, step, nb, refs) in zip(axes, PANELS2):
+        rng = panel_range(cache, key, step)
+        bins = np.linspace(rng[0], rng[1], nb)
+        for tune, (color, ls, gs) in TUNES.items():
+            c = cache[tune]
+            m = np.isfinite(c[key]) & c["has_p"].astype(bool)
+            if tune not in frac:
+                w = (m & (c["E_miss"] >= 0) & (c["E_miss"] < 80)
+                     & (c["p_miss"] < 300))
+                frac[tune] = w.sum() / max(m.sum(), 1)
+            ax.hist(c[key][m], bins=bins, histtype="step", linewidth=1.8,
+                    color=color, ls=ls, density=density,
+                    label=f"{tune} ({gs}, in-win {100*frac[tune]:.0f}%)")
+        for v in refs:
+            ax.axvline(v, color="0.5", ls="--", lw=1.0)
+        style_axis(ax, title=None, xlabel=lab, logx=False, logy=True, ymin=None)
+        ax.set_ylabel("normalized / bin" if density else "events / bin",
+                      fontsize=FS_LABEL)
+    axes[0].legend(fontsize=FS_LEGEND - 4, loc="upper right",
+                   title="leading p; grey dashed =\nsec-4 window (NOT applied)",
+                   title_fontsize=FS_LEGEND_TITLE - 4)
+    norm_note = ("area-normalized" if density
+                 else "raw events/bin (equal ntot = 2M/tune)")
+    fig.suptitle(f"E$_m$ / p$_m$, Q² slice, E$_m$/p$_m$ uncut — "
+                 f"{target} (t05), {norm_note}",
+                 fontsize=FS_SUPTITLE - 2)
+    fig.tight_layout()
+    suffix = "" if density else "_counts"
+    out = OUT_DIR / f"empm_q2cut_{target.lower()}{suffix}.png"
+    fig.savefig(out, dpi=130)
+    print("wrote", out)
+    if density:
+        for t, f in frac.items():
+            print(f"  {t}: in-window fraction (of has_p) = {f:.3f}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", default="Fe56", choices=["Fe56", "C12"])
@@ -131,6 +175,8 @@ if __name__ == "__main__":
     cache = {t: load_cut_cache(args.target, t) for t in TUNES}
     make_fig(args.target, cache, density=True)
     make_fig(args.target, cache, density=False)
+    make_empm_fig(args.target, cache, density=True)
+    make_empm_fig(args.target, cache, density=False)
     for t in TUNES:
         c = cache[t]
         print(f"  {t:18s} N={len(c['Q2']):7,d} of qel={int(c['n_qel'][0]):,} "

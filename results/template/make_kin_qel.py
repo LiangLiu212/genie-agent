@@ -53,7 +53,9 @@ DOOR = "root://fndca1.fnal.gov:1094"
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05          # Dutta slice, drawn as reference only
 Q2_LO, Q2_HI = Q2_CENTER * (1 - Q2_FRAC), Q2_CENTER * (1 + Q2_FRAC)
-KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2"]
+# E_miss = omega - T_p [MeV] (leading proton, heavy-recoil convention of
+# selection.py -- identical to the restored axis E_m + T_rec); p_miss [MeV/c]
+KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2", "E_miss", "p_miss"]
 
 # tune -> (color, linestyle, ground-state label): the v0.1 series convention
 TUNES = {

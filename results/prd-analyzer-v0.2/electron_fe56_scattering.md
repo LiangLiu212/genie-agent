@@ -82,7 +82,25 @@ events: float32 gst `Q2` vs the dumper's double precision at the window
 edges.)
 
 Regenerate: `pixi run python results/template/make_kin_qel_q2cut.py --target Fe56`
-(masks the v0.1 `kin_qel_fe56` caches; run `make_kin_qel.py` first if absent).
+(masks the v0.1 `kin_qel_fe56` caches; run `make_kin_qel.py` first if absent;
+also writes the 3.1 figures).
+
+### 3.1 E_m and p_m in the slice — no E_m/p_m cuts
+
+![Fe56 E_m/p_m in the slice, uncut](empm_q2cut_fe56.png)
+
+The two remaining v0 §6 variables, with the section-4 window drawn
+grey-dashed but **not** applied (E_m = ω − T_p, the heavy-recoil convention
+≡ the restored axis; leading proton, no-proton events dropped; raw-counts
+companion `empm_q2cut_fe56_counts.png`). This is where section 4's
+out-of-window strength lives: the E_m continuum runs to ≈ 1.3 GeV, and p_m
+has a second bump at ≈ 1.05 GeV/c ≈ |q| — leading protons essentially
+uncorrelated with the primary vertex (hard rescatters, plus the stray
+protons of hit-*neutron* events, which this qel-both-species sample
+includes). In-window fractions of the proton-carrying events:
+35 / 30 / 32 / 33 % (11a/22a/22b/GEM21) — lower than section 4's 0.39–0.42
+because of that hit-neutron admixture. The window is what turns these
+inclusive distributions into the quasi-elastic-like sample of sections 4–5.
 
 ## 4. Missing energy: table vs simulation vs Dutta Fig. 11
 
@@ -199,6 +217,18 @@ chain-resolved version of section 4's shape finding:
 Both protons are exactly on-shell (|m − m_p| < 0.01 MeV in every tune), so
 ΔT_p is a genuine kinetic-energy debit — the removal energy charged at the
 FSI write-out for the chains that skipped it at the vertex.
+
+**Why T_p here is so much narrower than in section 3.** Same variable,
+different phase space: section 3 applies no E_m/p_m requirement, so its T_p
+panel includes the FSI-rescattered protons — the dominant low-T_p
+(≈0.1–0.2 GeV) population on iron. Here the comparison set is section 4's
+in-window events, and E_m + T_rec = ω − T_p ∈ [0, 80) MeV pins T_p to
+within 80 MeV of the energy transfer (ω ≈ 0.6–0.9 GeV in the slice), while
+p_m < 300 MeV/c removes the same rescattered events on the momentum side.
+Section 3's low-T_p hump and section 4's out-of-window strength are the
+same events on mirrored axes (T_p vs ω − T_p); the window keeps only the
+~40 % quasi-elastic-like survivors, which differ from their pre-FSI selves
+only by the removal-energy debit above.
 
 **Provenance check.** The dump also traces the primary's daughters: within
 the window the post-FSI leading proton IS the primary's descendant in
