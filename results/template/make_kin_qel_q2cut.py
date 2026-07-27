@@ -37,7 +37,8 @@ OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
 Q2_LO, Q2_HI = Q2_CENTER * (1 - Q2_FRAC), Q2_CENTER * (1 + Q2_FRAC)
-KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2", "E_miss", "p_miss"]
+KEYS = ["El", "theta_e", "Tp", "theta_p", "Q2", "E_miss", "p_miss", "n_p"]
+PROTON_SEL = "leading"                # or "1p" (exactly one FS proton, v0.3)
 
 # tune -> (color, linestyle, ground-state label): the v0.1 series convention
 TUNES = {
@@ -92,8 +93,9 @@ def make_fig(target, cache, density):
         for tune, (color, ls, gs) in TUNES.items():
             x = cache[tune][key]
             m = np.isfinite(x)
-            if key in ("Tp", "theta_p"):     # proton panels: real protons only
-                m &= cache[tune]["has_p"].astype(bool)
+            if key in ("Tp", "theta_p"):     # proton panels
+                m &= (cache[tune]["n_p"] == 1) if PROTON_SEL == "1p" \
+                     else cache[tune]["has_p"].astype(bool)
             x = x[m]
             ax.hist(x, bins=bins, histtype="step", linewidth=1.8, color=color,
                     ls=ls, density=density,
@@ -110,8 +112,9 @@ def make_fig(target, cache, density):
                    fontsize=FS_LEGEND - 1, title_fontsize=FS_LEGEND_TITLE)
     norm_note = ("area-normalized" if density
                  else "raw events/bin (equal ntot = 2M/tune)")
+    tag = " && N$_p$=1" if PROTON_SEL == "1p" else ""
     fig.suptitle(f"(e,e'p) QEL kinematics, Q² = 1.28 ± 5 % APPLIED (qel && "
-                 f"window)  —  e⁻ on {target} (t05, genlist EM), {norm_note}\n"
+                 f"window{tag})  —  e⁻ on {target} (t05, genlist EM), {norm_note}\n"
                  "grey dashed on Q² = the applied window edges",
                  fontsize=FS_SUPTITLE - 1)
     fig.tight_layout()
@@ -135,7 +138,9 @@ def make_empm_fig(target, cache, density, logy=True):
         bins = np.linspace(rng[0], rng[1], nb)
         for tune, (color, ls, gs) in TUNES.items():
             c = cache[tune]
-            m = np.isfinite(c[key]) & c["has_p"].astype(bool)
+            psel = (c["n_p"] == 1) if PROTON_SEL == "1p" \
+                   else c["has_p"].astype(bool)
+            m = np.isfinite(c[key]) & psel
             if tune not in frac:
                 w = (m & (c["E_miss"] >= 0) & (c["E_miss"] < 80)
                      & (c["p_miss"] < 300))
@@ -150,8 +155,9 @@ def make_empm_fig(target, cache, density, logy=True):
             ax.set_ylim(0, None)
         ax.set_ylabel("normalized / bin" if density else "events / bin",
                       fontsize=FS_LABEL)
+    pnote = "the unique p (N$_p$=1)" if PROTON_SEL == "1p" else "leading p"
     axes[0].legend(fontsize=FS_LEGEND - 4, loc="upper right",
-                   title="leading p; grey dashed =\nsec-4 window (NOT applied)",
+                   title=pnote + "; grey dashed =\nsec-4 window (NOT applied)",
                    title_fontsize=FS_LEGEND_TITLE - 4)
     norm_note = ("area-normalized" if density
                  else "raw events/bin (equal ntot = 2M/tune)")
@@ -171,11 +177,21 @@ def make_empm_fig(target, cache, density, logy=True):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", default="Fe56", choices=["Fe56", "C12"])
+    ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
+                    help="1p: exactly one FS proton (v0.3), outputs to v0.3")
     args = ap.parse_args()
+    PROTON_SEL = args.proton_sel
+    if PROTON_SEL == "1p":
+        OUT_DIR = REPO / "results/prd-analyzer-v0.3"
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     apply_style()
     cache = {t: load_cut_cache(args.target, t) for t in TUNES}
+    if PROTON_SEL == "1p":
+        for t in TUNES:
+            npc = cache[t]["n_p"]
+            print(f"  {t}: window multiplicity 0p={np.mean(npc==0):.3f} "
+                  f"1p={np.mean(npc==1):.3f} 2p+={np.mean(npc>=2):.3f}")
     make_fig(args.target, cache, density=True)
     make_fig(args.target, cache, density=False)
     make_empm_fig(args.target, cache, density=True)

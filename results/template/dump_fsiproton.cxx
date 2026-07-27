@@ -13,7 +13,8 @@
 // Selection at dump time: ScatteringTypeId == kScQuasiElastic, hit nucleon =
 // proton, |Q^2/1.28 - 1| <= 5 % (Q^2 = -(p_probe - p_fsl)^2, gst-like).
 // One CSV line per selected event:
-//   q2,omega,qx,qy,qz,le,lpx,lpy,lpz,ve,vpx,vpy,vpz,pe,ppx,ppy,ppz,same
+//   q2,omega,qx,qy,qz,le,lpx,lpy,lpz,ve,vpx,vpy,vpz,pe,ppx,ppy,ppz,same,np
+// (np = number of status-1 final-state protons, for the v0.3 N_p=1 selection)
 // (v* = 0 when the primary proton has no final-state proton descendant --
 // absorption or charge exchange; p* = the pre-FSI primary, 0 if not found;
 // same = 1 when LEADING and VERTEX are the same GHEP particle.)
@@ -33,7 +34,7 @@ static const double Q2_CENTER = 1.28, Q2_FRAC = 0.05;
 int main(int argc, char** argv) {
   if (argc < 3) { fprintf(stderr, "usage: %s out.csv ghep...\n", argv[0]); return 1; }
   FILE* out = fopen(argv[1], "w");
-  fprintf(out, "q2,omega,qx,qy,qz,le,lpx,lpy,lpz,ve,vpx,vpy,vpz,pe,ppx,ppy,ppz,same\n");
+  fprintf(out, "q2,omega,qx,qy,qz,le,lpx,lpy,lpz,ve,vpx,vpy,vpz,pe,ppx,ppy,ppz,same,np\n");
   long n_tot = 0, n_kept = 0, n_novtx = 0;
   for (int i = 2; i < argc; ++i) {
     TFile* f = TFile::Open(argv[i], "READ");
@@ -80,11 +81,12 @@ int main(int argc, char** argv) {
         }
       }
 
-      int lead = -1, vtx = -1;
+      int lead = -1, vtx = -1, n_p = 0;
       double plead = -1.0, pvtx = -1.0;
       for (int ip = 0; ip < npart; ++ip) {
         genie::GHepParticle* p = event->Particle(ip);
         if (p->Status() != genie::kIStStableFinalState || p->Pdg() != 2212) continue;
+        ++n_p;
         double pm = p->P4()->Vect().Mag();
         if (pm > plead) { plead = pm; lead = ip; }
         if (desc[ip] && pm > pvtx) { pvtx = pm; vtx = ip; }
@@ -106,10 +108,10 @@ int main(int argc, char** argv) {
       }
 
       fprintf(out, "%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,%.6g,"
-              "%.6g,%.6g,%.6g,%.6g,%d\n",
+              "%.6g,%.6g,%.6g,%.6g,%d,%d\n",
               q2, probe->E() - fsl->E(), qv.Px(), qv.Py(), qv.Pz(),
               le, lx, ly, lz, ve, vx, vy, vz, pe, px, py, pz,
-              (lead >= 0 && lead == vtx) ? 1 : 0);
+              (lead >= 0 && lead == vtx) ? 1 : 0, n_p);
       ++n_kept;
       mcrec->Clear();
     }

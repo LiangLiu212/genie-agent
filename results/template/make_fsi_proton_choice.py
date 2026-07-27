@@ -43,6 +43,7 @@ OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 _nuc = json.load(open(REPO / "shared/pdg.json"))["nucleons"]
 M_P = next(v["mass_gev"] for v in _nuc.values() if v["code"] == 2212)
 
+PROTON_SEL = "leading"          # or "1p": exactly one FS proton (v0.3)
 EDGES_E = np.arange(0.0, 82.0, 2.0)      # restored axis [MeV], 2 MeV bins
 PM_MAX = 300.0                           # MeV/c, section-4 window
 EM_LO, EM_HI = 0.0, 80.0
@@ -68,6 +69,7 @@ def load(target, tune):
         out[tag] = dict(Tp=Tp, pm=pm * 1000.0,
                         Er=(d["omega"] - Tp) * 1000.0, has=has)
     out["same"] = d["same"].astype(bool)
+    out["np"] = d["np"].astype(int)
     return out
 
 
@@ -75,8 +77,13 @@ def make_figure(target, tune):
     ev = load(target, tune)
     # section-4 post-FSI in-window set, defined with the LEADING proton
     l, p = ev["l"], ev["p"]
-    win = (l["has"] & (l["pm"] < PM_MAX)
+    psel = (ev["np"] == 1) if PROTON_SEL == "1p" else l["has"]
+    win = (psel & (l["pm"] < PM_MAX)
            & (l["Er"] >= EM_LO) & (l["Er"] < EM_HI))
+    if PROTON_SEL == "1p":
+        npc = ev["np"]
+        print(f"[{tune}] window multiplicity: 0p={np.mean(npc==0):.3f} "
+              f"1p={np.mean(npc==1):.3f} 2p+={np.mean(npc>=2):.3f}")
     n = int(win.sum())
     n_same = int((win & ev["same"]).sum())
     dT = (p["Tp"][win] - l["Tp"][win]) * 1000.0        # pre - post [MeV]
@@ -128,7 +135,8 @@ def make_figure(target, tune):
 
     fig.suptitle(f"{target} pre- vs post-FSI proton — {tune}  "
                  f"({TUNE_GS[tune]})\n"
-                 "section-4 in-window events (qel && hit p && $Q^2$ slice)",
+                 "section-4 in-window events (qel && hit p && $Q^2$ slice"
+                 + (" && N$_p$=1)" if PROTON_SEL == "1p" else ")"),
                  fontsize=FS_SUPTITLE - 3)
     fig.tight_layout()
     out = OUT_DIR / f"fsi_prepost_{target.lower()}_{tune}.png"
@@ -141,7 +149,13 @@ if __name__ == "__main__":
     ap.add_argument("--target", default="Fe56", choices=["Fe56", "C12"])
     ap.add_argument("--tune", default="GEM26_22a_05_000", choices=sorted(TUNE_GS))
     ap.add_argument("--all-tunes", action="store_true")
+    ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
+                    help="1p: exactly one FS proton, outputs to v0.3")
     args = ap.parse_args()
+    PROTON_SEL = args.proton_sel
+    if PROTON_SEL == "1p":
+        OUT_DIR = REPO / "results/prd-analyzer-v0.3"
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     apply_style()
     for t in (sorted(TUNE_GS) if args.all_tunes else [args.tune]):

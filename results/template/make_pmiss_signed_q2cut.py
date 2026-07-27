@@ -42,6 +42,7 @@ OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 DATA_DIR = REPO / "data/Dipingkar-dutta-data-prc_figs"
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
+PROTON_SEL = "leading"          # or "1p": stage 4 requires exactly one FS proton
 EDGES = np.arange(-320.0, 321.0, 40.0)   # fig7 grid: 16 bins, centers +-20..+-300
 BINW = 40.0
 EM_MAX = 80.0
@@ -135,7 +136,8 @@ def build_cache(target, tune, max_files):
         Em3[~has3] = np.nan
 
         isf = (a.pdgf == 2212)
-        has4 = ak.to_numpy(ak.any(isf, axis=1))
+        has4 = (ak.to_numpy(ak.sum(isf, axis=1)) == 1) if PROTON_SEL == "1p" \
+               else ak.to_numpy(ak.any(isf, axis=1))
         leadf = ak.argmax(ak.where(isf, a.pf, -1.0), axis=1, keepdims=True)
         gf = lambda b: ak.to_numpy(ak.fill_none(ak.firsts(b[leadf]), np.nan))
         E4p, px4, py4, pz4 = gf(a.Ef), gf(a.pxf), gf(a.pyf), gf(a.pzf)
@@ -230,7 +232,8 @@ def make_figure(target, tune, max_files, dutta):
 
     fig.suptitle(f"{target} signed $p_m$ — {tune}\n({gs}, {gen}); "
                  f"A(post-FSI) = {stages[4][5]:+.3f}, 4$\\pi$, "
-                 "qel && hit p && $Q^2$ slice",
+                 "qel && hit p && $Q^2$ slice"
+                 + (" && N$_p$=1" if PROTON_SEL == "1p" else ""),
                  fontsize=FS_SUPTITLE - 3)
     out = OUT_DIR / f"pmiss_signed_{tlow}_{tune}.png"
     fig.savefig(out, dpi=DPI)
@@ -245,7 +248,14 @@ if __name__ == "__main__":
     ap.add_argument("--tune", default="GEM26_22a_05_000", choices=sorted(TUNE_INFO))
     ap.add_argument("--all-tunes", action="store_true")
     ap.add_argument("--max-files", type=int, default=20)
+    ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
+                    help="1p: stage 4 = exactly one FS proton, outputs to v0.3")
     args = ap.parse_args()
+    PROTON_SEL = args.proton_sel
+    if PROTON_SEL == "1p":
+        CACHE_ROOT = REPO / "results/prd-analyzer-v0.3/cache"
+        OUT_DIR = REPO / "results/prd-analyzer-v0.3"
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     apply_style()
     dutta = TGT[args.target]["dutta"]()
