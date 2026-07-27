@@ -54,8 +54,11 @@ dominant.
 
 ![Fe56 E_m/p_m in the slice, N_p=1](empm_q2cut_fe56.png)
 
-As v0.2 subsection 3.1 with N_p = 1 (`empm_q2cut_fe56_counts.png`,
-`empm_q2cut_fe56_lin.png` companions). The uncorrelated-proton p_m bump at
+![Fe56 E_m/p_m in the slice, N_p=1, linear y](empm_q2cut_fe56_lin.png)
+
+As v0.2 subsection 3.1 with N_p = 1 (log-y above for the tails, linear-y
+below for the true proportions; raw-counts companion
+`empm_q2cut_fe56_counts.png`). The uncorrelated-proton p_m bump at
 ≈ |q| shrinks relative to v0.2 (much of it was multi-proton), raising the
 in-window fractions to 49 / 42 / 45 / 45 % (11a/22a/22b/GEM21) from v0.2's
 35 / 30 / 32 / 33 %.

@@ -47,8 +47,11 @@ showed.
 
 ![C12 E_m/p_m in the slice, N_p=1](empm_q2cut_c12.png)
 
-As v0.2 subsection 3.1 with N_p = 1 (`empm_q2cut_c12_counts.png`,
-`empm_q2cut_c12_lin.png` companions). In-window fractions rise to
+![C12 E_m/p_m in the slice, N_p=1, linear y](empm_q2cut_c12_lin.png)
+
+As v0.2 subsection 3.1 with N_p = 1 (log-y above for the tails, linear-y
+below for the true proportions; raw-counts companion
+`empm_q2cut_c12_counts.png`). In-window fractions rise to
 66 / 56 / 61 / 60 % (11a/22a/22b/GEM21) from v0.2's 53 / 45 / 49 / 48 % —
 the removed ≥2p events were dominantly out-of-window (the uncorrelated
 p_m ≈ |q| bump).
