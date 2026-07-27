@@ -158,19 +158,28 @@ def build_cache(tune, max_files):
         E2 = (M_P - En - pn ** 2 / (2.0 * M_REC)) * 1000.0
         p2 = pn * 1000.0
 
+        # has-proton guards (fixed 2026-07-26): unguarded argmax(where(is_p,
+        # x, -1)) returns index 0 when no proton exists, promoting a
+        # non-proton to "leading proton" (~2-5% of events in stage 4)
         isp = (a.pdgi == 2212)
+        has3 = ak.to_numpy(ak.any(isp, axis=1))
         lead = ak.argmax(ak.where(isp, a.Ei, -1.0), axis=1, keepdims=True)
         g = lambda b: ak.to_numpy(ak.fill_none(ak.firsts(b[lead]), np.nan))
         Ep, pxp, pyp, pzp = g(a.Ei), g(a.pxi), g(a.pyi), g(a.pzi)
         p3 = np.sqrt((pxp - qx) ** 2 + (pyp - qy) ** 2 + (pzp - qz) ** 2)
         E3 = (omega - (Ep - M_P) - p3 ** 2 / (2.0 * M_REC)) * 1000.0
+        E3[~has3] = np.nan
+        p3[~has3] = np.nan
 
         isf = (a.pdgf == 2212)
+        has4 = ak.to_numpy(ak.any(isf, axis=1))
         leadf = ak.argmax(ak.where(isf, a.pf, -1.0), axis=1, keepdims=True)
         gf = lambda b: ak.to_numpy(ak.fill_none(ak.firsts(b[leadf]), np.nan))
         Efp, pxf, pyf, pzf = gf(a.Ef), gf(a.pxf), gf(a.pyf), gf(a.pzf)
         p4 = np.sqrt((pxf - qx) ** 2 + (pyf - qy) ** 2 + (pzf - qz) ** 2)
         E4 = (omega - (Efp - M_P) - p4 ** 2 / (2.0 * M_REC)) * 1000.0
+        E4[~has4] = np.nan
+        p4[~has4] = np.nan
 
         parts.append(dict(E2=E2[keep], p2=p2[keep],
                           E3=E3[keep], p3=p3[keep] * 1000.0,

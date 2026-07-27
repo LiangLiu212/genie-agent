@@ -112,7 +112,7 @@ the leading-proton **has-proton fix**: the unguarded
 `argmax(where(is_p, pf, −1))` idiom of the v0.1 builders silently promotes
 the particle at index 0 — often a neutron — to "leading proton" in events
 with *no* final-state proton, ~2–5 % here; found via the section-5 GHEP
-provenance check. The v0.1 stage-4/signed numbers still carry the defect.)
+provenance check. The v0.1 Fe56 stage-4/signed numbers were re-derived with the fix on 2026-07-26.)
 
 **Event counts, before and after FSI.** A pre-FSI primary proton exists in
 100 % of selected events; a post-FSI proton exists in **94.6–98.0 %** — FSI

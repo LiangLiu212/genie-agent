@@ -91,7 +91,10 @@ def make_fig(target, cache, density):
         bins = np.linspace(rng[0], rng[1], nb)
         for tune, (color, ls, gs) in TUNES.items():
             x = cache[tune][key]
-            x = x[np.isfinite(x)]
+            m = np.isfinite(x)
+            if key in ("Tp", "theta_p"):     # proton panels: real protons only
+                m &= cache[tune]["has_p"].astype(bool)
+            x = x[m]
             ax.hist(x, bins=bins, histtype="step", linewidth=1.8, color=color,
                     ls=ls, density=density,
                     label=f"{tune} ({gs}, N={len(cache[tune]['Q2']):,})")

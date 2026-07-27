@@ -131,6 +131,12 @@ smaller SF-folded UnifiedQEL cross section (QEL fraction 9.3 % in section 4).
 The electron arm is otherwise nearly tune-degenerate — the discrimination
 lives in the proton arm and in E_m/p_m (sections 4–6).
 
+Figures regenerated 2026-07-26 with the **has-proton fix**: the T_p/θ_p
+panels previously included the event's index-0 particle (usually the
+final-state neutron) for the ~20 % no-proton events — `selection.py`'s
+unguarded leading-proton argmax. Electron-arm panels and the table are
+unaffected.
+
 Regenerate: `pixi run python results/template/make_kin_qel.py --target Fe56`
 (cache: `cache/kin_qel_fe56/`; delete to re-stream).
 
@@ -157,16 +163,21 @@ Summary (occupancy units, E < 80 MeV, p_s < 300 MeV/c):
 
 | tune | N_sel (of 2M) | I1 (table) | I2r = I3r | I4r | I4r/I3r | record median [p5, p95] MeV |
 |---|---|---|---|---|---|---|
-| GEM26_11a_05_000 | 251,502 (12.6%) | — | 26.000 | 10.619 | 0.408 | 10.45 [10.22, 10.75] |
-| GEM26_22a_05_000 | 254,047 (12.7%) | 22.630 | 23.423 | 8.997 | 0.384 | 10.48 [10.24, 10.88] |
+| GEM26_11a_05_000 | 251,502 (12.6%) | — | 26.000 | 10.327 | 0.397 | 10.45 [10.22, 10.75] |
+| GEM26_22a_05_000 | 254,047 (12.7%) | 22.630 | 23.423 | 8.807 | 0.376 | 10.48 [10.24, 10.88] |
 | GEM26_22b_05_000 | 186,694 (9.3%) | 22.630 | 23.976 | 9.621 | 0.401 | 20.47 [8.32, 59.29] |
 | GEM21_11a_05_000 | 213,209 (10.7%) | — | 0.000 / 24.448 | 10.037 | 0.411 | −14.38 [−30.52, −1.78] |
 
 I2r = I3r in every tune (energy-conserving pre-FSI chain; GEM21's I2r = 0 is
 an in-window statement — its record sits entirely below E = 0). FSI keeps only
 ~40% of strength in-window everywhere, while a post-FSI proton exists in
-~100% of events: strength leaves the window, not the event. Data integral
-18.200 on its own published scale. Regenerate:
+**94.2–97.4 %** of events (the remainder lose the proton to absorption or
+p → n charge exchange): most strength leaves the window, not the event.
+(Stage-4 numbers re-derived 2026-07-26 with the **has-proton fix** — the
+unguarded `argmax(where(is_p, pf, −1))` idiom had promoted a non-proton to
+"leading proton" in no-proton events, ~3–6 % here, inflating I4r by ≤ 0.03;
+22b/GEM21 unchanged. Chain-resolved survivor analysis: v0.2 sections 4–5.)
+Data integral 18.200 on its own published scale. Regenerate:
 `pixi run python results/template/make_emiss_ladder_fe56.py --all-tunes`
 (cache: `cache/ladder_fe56/`; delete to re-stream).
 
@@ -202,7 +213,7 @@ The Fe56 instance of the C12 **a-tune finding**: the tune samples the 2D SF
 tail), but FermiMover writes `En = M_A − √(p² + M²_Mn55,gs)` into the record,
 dropping the sampled w — panel 2 is a δ at S_p ([10,15) bin = 4.7, off scale;
 the sampled physics survives only in `GHepParticle::RemovalEnergy`, section 1).
-I2r = I3r = 23.423; FSI in-window survival 0.384 with the post-FSI shape
+I2r = I3r = 23.423; FSI in-window survival 0.376 with the post-FSI shape
 tracking the data above ~20 MeV.
 
 ### 4.3 GEM26_22b_05_000 — 2D SpectralFunc + UnifiedQEL (QELEventGenerator)
@@ -363,6 +374,9 @@ A = **+0.003 ± 0.002 (pre), +0.001 ± 0.004 (post)** — consistent with **zero
 `QELEventGeneratorSuSA` samples the proton azimuth symmetrically about q, so
 the SuSA chain produces no intrinsic ± asymmetry at all — the opposite extreme
 from 22b. (Reminder: Fe56 EM SuSAv2 is a scaled-C12 surrogate.)
+
+(2026-07-26: caches and figures regenerated with the has-proton fix; the A
+values are unchanged to the quoted precision.)
 
 Regenerate: `pixi run python results/template/make_pmiss_signed_fe56.py --all-tunes`
 (cache: `cache/pmiss_signed_fe56/`).

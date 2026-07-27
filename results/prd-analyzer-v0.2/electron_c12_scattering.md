@@ -103,8 +103,8 @@ exact, record medians identical (17.09/17.16/20.48/−12.31 vs v0.1's
 validating both the June-EMQE ≡ fresh-EM-qel equivalence and the Q²-slice
 stability; the C12 > Fe56 transparency ordering (0.55–0.61 vs 0.39–0.42) is
 untouched. (Numbers here carry the leading-proton **has-proton fix** — see
-the Fe56 note section 4; the v0.1 stage-4/signed numbers, including the
-survivals just quoted, still carry the ~2–4 % unguarded-argmax defect.)
+the Fe56 note section 4; v0.1 was re-derived with the fix on 2026-07-26 except its
+C12 ladder, whose purged-June v0 caches — the survivals just quoted — retain the ~2–4 % defect.)
 
 **Event counts, before and after FSI.** A pre-FSI primary proton exists in
 100 % of selected events; a post-FSI proton exists in **95.7–98.2 %** — FSI

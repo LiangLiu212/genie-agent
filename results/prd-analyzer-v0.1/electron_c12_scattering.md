@@ -122,6 +122,11 @@ UnifiedQEL σ; GEM21's mild deficit (345k, cf. its 322k on iron) is the SuSAv2
 σ. The electron arm is otherwise nearly tune-degenerate — the discrimination
 lives in the proton arm and in E_m/p_m (sections 4–6).
 
+Figures regenerated 2026-07-26 with the **has-proton fix** (see the Fe56
+note section 3): the T_p/θ_p panels previously included the index-0 particle
+for the ~20 % no-proton events. Electron-arm panels and the table are
+unaffected.
+
 Regenerate: `pixi run python results/template/make_kin_qel.py --target C12`
 (cache: `cache/kin_qel_c12/`; delete to re-stream).
 
@@ -151,6 +156,12 @@ Same structure as Fe56 — I2r = I3r everywhere (energy-conserving chain;
 GEM21's I2r = 0 is in-window only, its record is entirely below E = 0) — with
 one clean nuclear-size difference: **FSI in-window survival is 0.55–0.60 on
 C12 vs 0.38–0.41 on Fe56** (transparency ordering).
+**Caveat (2026-07-26):** these stage-4 numbers are built from the surviving
+v0 caches, which carry the unguarded-argmax defect (a non-proton posing as
+"leading proton" in the ~2–4 % no-proton events; see the Fe56 note section
+4). The June source samples are purged, so they cannot be re-derived — the
+fixed C12 ladder (fresh sample, windowed) lives in v0.2 section 4.
+
 Regenerate: `pixi run python results/template/make_emiss_ladder_c12.py --all-tunes`
 
 ### 4.1 GEM26_11a_05_000 — LocalFGM + Rosenbluth
@@ -260,7 +271,7 @@ dip at p_m = 0** (l = 1 node); all chains peak at zero.
 | tune | ground state | QEL kinematics generator | A pre-FSI | A post-FSI | Fe56 A pre-FSI |
 |---|---|---|---|---|---|
 | GEM26_11a_05_000 | LFG | `QELKinematicsGenerator` | −0.0467 ± 0.0017 | −0.0414 ± 0.0022 | −0.0466 |
-| GEM26_22a_05_000 | SF | `QELKinematicsGenerator` | −0.0483 ± 0.0018 | −0.0447 ± 0.0024 | −0.0546 |
+| GEM26_22a_05_000 | SF | `QELKinematicsGenerator` | −0.0483 ± 0.0018 | −0.0452 ± 0.0024 | −0.0546 |
 | GEM26_22b_05_000 | SF | `QELEventGenerator` | **−0.1111 ± 0.0017** | **−0.1084 ± 0.0023** | −0.1283 |
 | GEM21_11a_05_000 | LFG | `QELEventGeneratorSuSA` | **+0.0030 ± 0.0018** | **+0.0037 ± 0.0023** | +0.0028 |
 
@@ -303,5 +314,7 @@ SuSA generator samples the proton azimuth symmetrically about q. On C12 the
 SuSAv2 tensor is genuine (no surrogate caveat).
 
 Regenerate: per-tune local spline+gevgen+gntpc as above, then
+(2026-07-26: regenerated with the has-proton fix — only 22a's post-FSI A
+moved, −0.0447 → −0.0452.)
 `pixi run python results/template/make_pmiss_signed_c12.py --all-tunes`
 (gst files auto-resolved from the genie-runs logs).

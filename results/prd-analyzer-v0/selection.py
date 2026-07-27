@@ -42,8 +42,15 @@ def load_events(path):
 
     isp = (a.pdgf == 2212)
     has_p = ak.to_numpy(ak.any(isp, axis=1))
+    # NB has_p guard (fixed 2026-07-26): argmax(where(isp, pf, -1)) returns
+    # index 0 -- NOT None -- when an event has no proton at all, silently
+    # promoting the first final-state particle (often a neutron) to "leading
+    # proton". Guarded here so the leading-proton columns really are NaN for
+    # no-proton events, as documented.
     lead = ak.argmax(ak.where(isp, a.pf, -1.0), axis=1, keepdims=True)   # leading-proton index
-    g = lambda b: ak.to_numpy(ak.fill_none(ak.firsts(b[lead]), np.nan))
+    g = lambda b: np.where(has_p,
+                           ak.to_numpy(ak.fill_none(ak.firsts(b[lead]), np.nan)),
+                           np.nan)
     Ep, pxp, pyp, pzp, pp = g(a.Ef), g(a.pxf), g(a.pyf), g(a.pzf), g(a.pf)
 
     nz = lambda b: ak.to_numpy(a[b])
@@ -55,7 +62,8 @@ def load_events(path):
     omega = Ev - El
     Tp = Ep - M_P
     theta_e = np.degrees(np.arccos(np.clip(cthl, -1.0, 1.0)))
-    theta_p = np.degrees(np.arccos(np.clip(np.where(pp > 0, pzp / pp, 1.0), -1.0, 1.0)))
+    theta_p = np.where(has_p, np.degrees(np.arccos(
+        np.clip(np.where(pp > 0, pzp / pp, 1.0), -1.0, 1.0))), np.nan)
     qx, qy, qz = pxv - pxl, pyv - pyl, pzv - pzl                 # 3-momentum transfer q
     p_miss = np.sqrt((pxp - qx)**2 + (pyp - qy)**2 + (pzp - qz)**2)
     E_miss = omega - Tp

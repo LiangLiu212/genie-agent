@@ -36,7 +36,7 @@ chains have paid w once; the GHEP provenance check shows leading ≡
 primary-vertex proton in 100 % of in-window events, the only FSI provenance
 effect being total proton loss (2–5 %), and exposed an unguarded-argmax
 defect (non-proton posing as "leading proton" in no-proton events) now fixed
-in the v0.2 builders — the v0.1 stage-4/signed numbers still carry it.
+in the v0.2 and v0.1 builders (v0.1 re-derived 2026-07-26; only the C12 ladder, built from purged-June v0 caches, retains it).
 
 Scripts (all in `results/template/`, caches under `cache/` here):
 `make_kin_qel_q2cut.py`, `make_emiss_ladder_q2cut.py`, `make_pmiss_q2cut.py`,
