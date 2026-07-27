@@ -88,7 +88,7 @@ and the same for `make_struck_pr.py`.
 
 ## 3. QEL kinematics — E_e′, θ_e′, T_p, θ_p, Q²
 
-![C12 QEL kinematics, uncut](kin_qel_c12.png)
+![C12 QEL kinematics, uncut, events/bin](kin_qel_c12_counts.png)
 
 v0 README §6 descendant on the fresh campaign sample (same 20-file gst streams
 as section 2's ghep dumps): the five kinematic variables **uncut** — the only
@@ -98,8 +98,8 @@ is **not** applied here). The grey dashed lines on the Q² panel mark the Dutta
 Q² = 1.28 ± 5 % slice as **reference only**; the hard lower edge at 1.18 GeV²
 is the t05 generation cut. Leading proton = highest-momentum final-state
 proton; T_p/θ_p panels drop no-proton events. Panel ranges are pooled
-p0.2–p99.8. Area-normalized above; raw-counts companion
-`kin_qel_c12_counts.png` (equal ntot = 2M/tune).
+p0.2–p99.8. **Events/bin above** (equal ntot = 2M/tune, direct rates); area-normalized
+shape companion `kin_qel_c12.png`.
 
 | tune | N (qel, of 2M) | has_p |
 |---|---|---|

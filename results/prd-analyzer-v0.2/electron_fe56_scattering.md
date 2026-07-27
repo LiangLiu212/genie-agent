@@ -58,11 +58,12 @@ Regenerate: re-dump with the extended dumper into
 
 ## 3. QEL kinematics in the slice — E_e′, θ_e′, T_p, θ_p, Q²
 
-![Fe56 QEL kinematics, Q² window applied](kin_qel_q2cut_fe56.png)
+![Fe56 QEL kinematics, Q² window applied, events/bin](kin_qel_q2cut_fe56_counts.png)
 
 The window applied to the five-variable kinematics (v0.1 section 3 is the
-uncut baseline; raw-counts companion `kin_qel_q2cut_fe56_counts.png`,
-equal ntot = 2M/tune; grey dashed = the applied window edges; leading proton
+uncut baseline; **events/bin above**, equal ntot = 2M/tune — heights are
+direct rates; area-normalized shape companion `kin_qel_q2cut_fe56.png`;
+grey dashed = the applied window edges; leading proton
 = highest-momentum final-state proton, T_p/θ_p panels drop no-proton events):
 
 | tune | N (qel ∧ window) | of qel | has_p |

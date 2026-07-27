@@ -30,11 +30,11 @@ Record-level (pre-FSI) — independent of the FS-proton choice; see
 
 ## 3. QEL kinematics in the slice — E_e′, θ_e′, T_p, θ_p, Q²
 
-![Fe56 QEL kinematics, Q² window && N_p=1](kin_qel_q2cut_fe56.png)
+![Fe56 QEL kinematics, Q² window && N_p=1, events/bin](kin_qel_q2cut_fe56_counts.png)
 
 As v0.2 section 3 with the T_p/θ_p panels restricted to N_p = 1 events
-(electron-arm panels unchanged; raw-counts companion
-`kin_qel_q2cut_fe56_counts.png`). Multiplicity split of the qel ∧ window
+(electron-arm panels unchanged; **events/bin above**, equal ntot = 2M/tune;
+area-normalized shape companion `kin_qel_q2cut_fe56.png`). Multiplicity split of the qel ∧ window
 sample (both hit-nucleon species):
 
 | tune | 0p | 1p | ≥2p |

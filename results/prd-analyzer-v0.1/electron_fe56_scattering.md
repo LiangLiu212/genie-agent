@@ -99,7 +99,7 @@ note's section 2 runs the same scripts with `--target C12`).
 
 ## 3. QEL kinematics — E_e′, θ_e′, T_p, θ_p, Q²
 
-![Fe56 QEL kinematics, uncut](kin_qel_fe56.png)
+![Fe56 QEL kinematics, uncut, events/bin](kin_qel_fe56_counts.png)
 
 v0 README §6 descendant on the campaign sample (same 20-file gst streams as
 the ladder, section 4): the five kinematic variables **uncut** — the only
@@ -108,8 +108,9 @@ dropped). No Q² window is applied: the grey dashed lines on the Q² panel mark
 the Dutta Q² = 1.28 ± 5 % slice as **reference only**, and the hard lower edge
 at 1.18 GeV² is the t05 generation cut. Leading proton = highest-momentum
 final-state proton; T_p/θ_p panels implicitly drop no-proton events. Panel
-ranges are pooled p0.2–p99.8. Area-normalized above; raw-counts companion
-`kin_qel_fe56_counts.png` (equal ntot = 2M/tune).
+ranges are pooled p0.2–p99.8. **Events/bin above** (equal ntot = 2M/tune,
+so heights are direct rates ∝ σ × efficiency); area-normalized shape
+companion `kin_qel_fe56.png`.
 
 | tune | N (qel, of 2M) | has_p |
 |---|---|---|
