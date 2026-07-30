@@ -69,10 +69,10 @@ against the corresponding Dutta strengths:
 - The 2024 refit moves ≈ 0.08 protons out of the p-shell window (3.305 → 3.226)
   with ≈ 0.03 reappearing in the s-shell window — a within-acceptance
   reshuffle, matching the near-identical full-window totals above.
-- **The fig 6 strengths (on the unrescaled Q² = 1.8 reference scale) sit at
-  0.50–0.54 of the input-table strength in *both* shells** — a
-  shell-independent suppression consistent with the FSI absorption the
-  distorted S^D retains (T = 0.60 at these kinematics).
+- The fig 6 strengths sit at ≈ ½ of the input-table strength in both shells
+  *as tabulated* — **but that is the signed-axis convention (each side carries
+  half the `|p_m|` density), not absorption**: folded left+right they match
+  the tables to 6–16% (see the folded overlay below).
 - fig 9's renormalized scale conversely *exceeds* the input tables in-window
   (×1.27–1.30 in the p window, ×1.07–1.10 in the s window).
 
@@ -187,11 +187,16 @@ half covers `|p_m| ∈ [0, 320)` MeV/c once):
 | fig 6 top — C12 p-shell `p_m` | 2.37 / **1.77 / 1.75 / 1.74** | the three Q² ≥ 1.28 sets agree to 2%; **the Q² = 0.64 file is anomalous** (×1.35 high — excluded from quantitative use, see the report §3) |
 | fig 6 bot — C12 s-shell `p_m` | 0.82 / 0.69 / 0.61 / 0.78 | 〃 (q0p6 high again) |
 
-The `p_m` strengths do **not** match the corresponding `E_m`-spectrum windows
-(fig 9 gives 4.20 in the p-shell window and 1.30 in the s-shell window; fig 11
-gives 18.2 vs fig 7's ≈ 8.2–9.6): the two projections were published on
-*different* renormalized scales (rescale-to-Q²=1.8 vs in-window model
-strength), consistently a factor ≈ 2.2–2.4 apart.
+At face value the `p_m` strengths sit ≈ ×2 below the corresponding
+`E_m`-spectrum windows — but that factor is a **convention, not a scale
+difference**: the signed-axis files tabulate *half* the `|p_m|` density on
+each side. Summing left+right makes fig 7 match fig 11 exactly
+(2 × 9.103 = 18.206 vs 18.200 — **0.03%**): the two projections of the same
+S^D are mutually consistent on one published scale. For C12, 2× the fig 6
+windows lands within +19% / −6% of the fig 9 sub-window sums (3.53 vs 4.20 in
+10–25 MeV; 1.39 vs 1.30 in 30–50 MeV) — residuals plausibly from the
+rescale-to-Q² = 1.8 convention and shell cross-talk, not a different scale.
+See the folded overlay below.
 
 Unlike the pke tables, these integrals are **not** data-integrity checks of a
 sampling input — they document which published normalization each dataset
@@ -228,16 +233,40 @@ table above):
   measured shape well; the largest shape difference is at `E_m` = 22.5 MeV,
   where the data hold more strength than the tables — the same s–p-dip excess
   the paper notes against IPSM.
-- **C12 p-shell vs fig 6 top: 0.53 / 0.54; s-shell vs fig 6 bot: 0.58 / 0.57.**
-  Roughly shell-independent ≈ 0.55 suppression (FSI absorption; T = 0.60 at
-  these kinematics). In the p-shell window the data's ℓ = 1 dip at `p_m` = 0 is
-  visibly *deeper* than the undistorted tables'.
+- **C12 p-shell vs fig 6 top: 0.53 / 0.54; s-shell vs fig 6 bot: 0.58 / 0.57**
+  — *per-side* ratios: the signed axis carries half the `|p_m|` density on
+  each side, so these double to ≈ 1.06–1.16 once folded (next subsection).
+  In the p-shell window the data's ℓ = 1 dip at `p_m` = 0 is visibly *deeper*
+  than the undistorted tables'.
 - **Fe56 `E_m` vs fig 11: 0.80.** The table tracks the measured tail closely;
   the deficit concentrates near the peak, where the data are broader than the
   Benhar-table shell structure (the paper's spreading-width remark).
-- **Fe56 `p_m` vs fig 7: 0.40.** Stronger suppression than C12, as expected
-  for the larger nucleus, and the measured distribution is flatter than the
-  table's.
+- **Fe56 `p_m` vs fig 7: 0.40 per side → 0.80 folded** — identical to the
+  fig 11 ratio, and the measured distribution is flatter than the table's.
+
+### Folded `|p_m|`: left + right summed
+
+![folded pm data vs input tables](dutta_folded_pm.png)
+*Script: [`make_dutta_folded.py`](make_dutta_folded.py). Folded value =
+`y(+p) + y(−p)` = 2 `y(+p)` (the files are exactly symmetrized; error bars
+drawn as 2× the stat column since the sides are duplicated, not independent),
+against the tables' native-grid `∫_window P dE` — directly comparable, with
+no factor-2 convention in between.*
+
+- **The fold closes the apparent scale gap.** 2×fig 7 ≡ fig 11 to 0.03%, and
+  the folded ratios line up with the `E_m` panels: **C12 1.06 / 1.08
+  (p-shell) and 1.16 / 1.14 (s-shell) vs fig 9's 1.16; Fe56 0.80 vs
+  fig 11's 0.80.** All four Q² = 1.28 projections sit on one renormalized
+  scale relative to the tables.
+- Consequently the ≈ ×0.55 in the per-side panels above is **not FSI
+  absorption** — it is the ×½ side-splitting. (The confusion is easy: the raw
+  distorted yield ≈ T/1.11 ≈ 0.54 of the table would look identical per side;
+  the published, renormalized data just don't sit on that raw scale.)
+- Shape-wise, the folded C12 data track the tables bin by bin, including the
+  low-`|p_m|` ℓ = 1 depletion in the p-shell window; the s-shell runs
+  slightly high with the largest excess in the outermost (300 MeV/c) bin.
+  Fe56 shows a real shape difference: the data are flatter, with the deficit
+  concentrated at mid-`|p_m|`.
 
 ## Method
 
@@ -263,4 +292,5 @@ pixi run python results/normalization/make_sf_profiles.py             # marginal
 pixi run python results/normalization/make_dutta_prc.py               # Dutta data
 pixi run python results/normalization/make_dutta_overlay.py           # overlay
 pixi run python results/normalization/make_dutta_overlay.py --native  # native bins
+pixi run python results/normalization/make_dutta_folded.py            # folded |p_m|
 ```
