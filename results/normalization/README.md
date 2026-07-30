@@ -51,6 +51,43 @@ an overall factor of the nucleon count of the tabulated species, which
   from the *shape* (area-normalized `TH2::GetRandom2`), so an overall scale
   factor cancels; the integral is a data-integrity check, not a physics knob.
 
+## 2D views
+
+One figure per table (script: [`make_sf2d_all.py`](make_sf2d_all.py)), same
+orientation as the [tune-resolved SF figures](../template/make_sf2d_table.py):
+left = the tabulated density `P(P_miss, E_miss)` (N·P convention), right = the
+**sampled density** `4πk²P/I`, area-normalized with this page's integral. The
+right panel carries no bin-width factor, so it is grid-independent — which is
+why the `.origin` figure below is pixel-identical to the converted one. The
+linear E axis squashes the 2024 table's 0.025-MeV p-shell peaks into the thin
+strip at the bottom; the
+[2024 SF page](../prd-analyzer-v0/spectral_function_c12_2024.md) resolves them.
+
+![pke12_tot 2D](sf2d_pke12_tot.png)
+*`pke12_tot.data` — stock Benhar C12 proton SF (I = 5.999988).*
+
+![pke12_2024 2D](sf2d_pke12_2024.png)
+*`pke12_2024.table` — 2024 Ankowski–Benhar–Sakuda C12 proton SF, uniform-grid
+conversion (I = 5.999783).*
+
+![pke12_2024 origin 2D](sf2d_pke12_2024_origin.png)
+*`pke12_2024.table.origin` — the non-uniform-grid source; identical to the
+converted figure above, the visual lossless-conversion check.*
+
+![pke16_tot 2D](sf2d_pke16_tot.png)
+*`pke16_tot.data` — stock O16 proton SF (I = 7.999143).*
+
+![pke40p_tot 2D](sf2d_pke40p_tot.png)
+*`pke40p_tot.data` — stock Ar40 proton SF (I = 18.107865, the +0.60% pair).
+Note the wider grid: k to 2000 MeV/c, E to 500 MeV.*
+
+![pke40n_tot 2D](sf2d_pke40n_tot.png)
+*`pke40n_tot.data` — stock Ar40 neutron SF (I = 22.131857, the +0.60% pair).*
+
+![pke56_tot 2D](sf2d_pke56_tot.png)
+*`pke56_tot.data` — Fe56 proton SF converted from `benhar-sf-56fe.data`
+(I = 25.998110).*
+
 ## Method
 
 - Uniform-format tables (`pke*_tot.data`, `pke12_2024.table`) are parsed
@@ -68,4 +105,5 @@ an overall factor of the nucleon count of the tabulated species, which
 ```bash
 pixi run python results/normalization/integrate_all_pke.py            # active install
 pixi run python results/normalization/integrate_all_pke.py <data_dir> # explicit dir
+pixi run python results/normalization/make_sf2d_all.py                # 2D figures
 ```

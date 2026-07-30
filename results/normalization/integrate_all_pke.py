@@ -15,6 +15,8 @@ The tables are tabulated in GENIE's "N*P" convention (SpectralFunc divides by
 targetN at read time), so I should equal the nucleon count of the tabulated
 species: Z for proton SFs, N for the Ar40 neutron table.
 
+The parse/integrate helpers are imported by make_sf2d_all.py (2D figures).
+
 Usage:
   pixi run python results/normalization/integrate_all_pke.py [data_dir]
 """
@@ -45,7 +47,7 @@ def default_data_dir() -> Path:
             / "data" / "evgen" / "nucl" / "spectral_functions")
 
 
-def integrate_uniform(tok):
+def parse_uniform(tok):
     n_E, n_p = int(tok[0]), int(tok[1])
     E_min, p_min, E_max, p_max = tok[2], tok[3], tok[4], tok[5]
     if tok.size != 6 + n_p * (1 + 2 * n_E):
@@ -55,13 +57,16 @@ def integrate_uniform(tok):
     P = body[:, 2::2]
     dk = (p_max - p_min) / n_p
     dE = (E_max - E_min) / n_E
-    I = float((4.0 * np.pi * k[:, None] ** 2 * P * dk * dE).sum())
+    k_edges = np.linspace(p_min, p_max, n_p + 1)
+    E_edges = np.linspace(E_min, E_max, n_E + 1)
+    dk_w = np.full(n_p, dk)
+    dE_w = np.full(n_E, dE)
     grid = (f"{n_p} k x {n_E} E  (k [{p_min:.0f},{p_max:.0f}] dk={dk:g}, "
             f"E [{E_min:.0f},{E_max:.0f}] dE={dE:g})")
-    return I, grid
+    return k, P, k_edges, E_edges, dk_w, dE_w, grid
 
 
-def integrate_origin(tok):
+def parse_origin(tok):
     n_k, dk = int(tok[0]), tok[1]
     n1, d1, n2, d2 = int(tok[2]), tok[3], int(tok[4]), tok[5]
     n_E = n1 + n2
@@ -70,11 +75,25 @@ def integrate_origin(tok):
     body = tok[6:].reshape(n_k, 1 + 2 * n_E)
     k = body[:, 0]
     P = body[:, 2::2]
-    dE = np.concatenate([np.full(n1, d1), np.full(n2, d2)])
-    I = float((4.0 * np.pi * k[:, None] ** 2 * P * dk * dE).sum())
+    dk_w = np.full(n_k, dk)
+    dE_w = np.concatenate([np.full(n1, d1), np.full(n2, d2)])
+    k_edges = np.concatenate([k - dk / 2, [k[-1] + dk / 2]])
+    E0 = body[0, 1] - d1 / 2
+    E_edges = np.concatenate([[E0], E0 + np.cumsum(dE_w)])
     grid = (f"{n_k} k x {n_E} E  (dk={dk:g}, "
             f"E segments {n1}x{d1:g} + {n2}x{d2:g} MeV)")
-    return I, grid
+    return k, P, k_edges, E_edges, dk_w, dE_w, grid
+
+
+def parse_table(path: Path):
+    """Returns (k, P, k_edges, E_edges, dk_widths, dE_widths, grid_str) or None."""
+    tok = np.fromstring(path.read_text(), sep=" ")
+    return parse_uniform(tok) or parse_origin(tok)
+
+
+def integral(k, P, dk_w, dE_w) -> float:
+    return float((4.0 * np.pi * k[:, None] ** 2 * P
+                  * dk_w[:, None] * dE_w[None, :]).sum())
 
 
 def main():
@@ -85,12 +104,12 @@ def main():
     for f in sorted(data_dir.glob("pke*")):
         if f.suffix == ".py" or f.is_dir():
             continue
-        tok = np.fromstring(f.read_text(), sep=" ")
-        res = integrate_uniform(tok) or integrate_origin(tok)
+        res = parse_table(f)
         if res is None:
             print(f"{f.name:30s} UNRECOGNIZED FORMAT")
             continue
-        I, grid = res
+        k, P, _, _, dk_w, dE_w, grid = res
+        I = integral(k, P, dk_w, dE_w)
         species, n_exp = EXPECTED.get(f.name, ("?", None))
         ratio = f"{I / n_exp:10.6f}" if n_exp else f"{'-':>10s}"
         exp_s = f"{n_exp:6d}" if n_exp else f"{'-':>6s}"
