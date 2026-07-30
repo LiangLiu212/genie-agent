@@ -197,6 +197,36 @@ Unlike the pke tables, these integrals are **not** data-integrity checks of a
 sampling input — they document which published normalization each dataset
 sits on (shape + relative occupancy only; float the normalization in any fit).
 
+## Input tables vs Dutta, same phase space
+
+![input tables overlaid on the Dutta measurements](dutta_table_overlay.png)
+*Script: [`make_dutta_overlay.py`](make_dutta_overlay.py). Each panel projects
+the input tables through the measurement's phase space and binning: `E_m`
+spectra as `∫_{k<300} 4πk²P dk` in the data's 5-MeV bins; `p_m` panels as
+`∫_window P dE_m` in the data's 40-MeV/c bins, mirrored to signed `p_m`.
+Tables stay on their native N·P (occupancy) scale; data on their published
+scales; figs 6/7 overlays use the Q² = 1.28 files. The thin orange curve is
+the 2024 table's resolved quasiparticle structure, clipped by the axis.*
+
+Per-panel strength ratios (data/table over the plotted bins — `p_m` panels
+4πp²-weighted, reaching `|p_m| < 320` MeV/c, hence slightly different from
+the k < 300 shell-window table above):
+
+- **C12 `E_m` vs fig 9: 1.16 for both tables.** The rebinned tables track the
+  measured shape well; the largest shape difference is at `E_m` = 22.5 MeV,
+  where the data hold more strength than the tables — the same s–p-dip excess
+  the paper notes against IPSM.
+- **C12 p-shell vs fig 6 top: 0.53 / 0.54; s-shell vs fig 6 bot: 0.57 / 0.56.**
+  Roughly shell-independent ≈ 0.55 suppression (FSI absorption; T = 0.60 at
+  these kinematics). In the p-shell window the data's ℓ = 1 dip at `p_m` = 0 is
+  visibly *deeper* than the undistorted tables'.
+- **Fe56 `E_m` vs fig 11: 0.80.** The table tracks the measured tail closely;
+  the deficit concentrates near the peak, where the data are broader than the
+  Benhar-table shell structure (the paper's spreading-width remark).
+- **Fe56 `p_m` vs fig 7: 0.40.** Stronger suppression than C12, as expected
+  for the larger nucleus, and the measured distribution is flatter than the
+  table's.
+
 ## Method
 
 - Uniform-format tables (`pke*_tot.data`, `pke12_2024.table`) are parsed
@@ -219,4 +249,5 @@ pixi run python results/normalization/integrate_all_pke.py \
 pixi run python results/normalization/make_sf2d_all.py                # 2D figures
 pixi run python results/normalization/make_sf_profiles.py             # marginals
 pixi run python results/normalization/make_dutta_prc.py               # Dutta data
+pixi run python results/normalization/make_dutta_overlay.py           # overlay
 ```
