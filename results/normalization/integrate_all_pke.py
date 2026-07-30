@@ -19,9 +19,12 @@ The parse/integrate helpers are imported by make_sf2d_all.py (2D figures).
 
 Usage:
   pixi run python results/normalization/integrate_all_pke.py [data_dir]
+  # windowed (e.g. the Dutta E91-013 acceptance):
+  pixi run python results/normalization/integrate_all_pke.py \
+      --e-window 0 80 --k-window 0 300
 """
+import argparse
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -96,11 +99,35 @@ def integral(k, P, dk_w, dE_w) -> float:
                   * dk_w[:, None] * dE_w[None, :]).sum())
 
 
+def windowed_integral(k, P, k_edges, E_edges, k_win, E_win) -> float:
+    """Same rectangle rule, with partial bins clipped exactly to the window."""
+    dk_eff = np.clip(np.minimum(k_edges[1:], k_win[1])
+                     - np.maximum(k_edges[:-1], k_win[0]), 0.0, None)
+    dE_eff = np.clip(np.minimum(E_edges[1:], E_win[1])
+                     - np.maximum(E_edges[:-1], E_win[0]), 0.0, None)
+    return float((4.0 * np.pi * k[:, None] ** 2 * P
+                  * dk_eff[:, None] * dE_eff[None, :]).sum())
+
+
 def main():
-    data_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else default_data_dir()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("data_dir", nargs="?", type=Path, default=None)
+    ap.add_argument("--e-window", nargs=2, type=float, metavar=("LO", "HI"),
+                    help="E_miss window [MeV] for an additional windowed integral")
+    ap.add_argument("--k-window", nargs=2, type=float, metavar=("LO", "HI"),
+                    help="P_miss window [MeV/c] for the windowed integral")
+    args = ap.parse_args()
+    data_dir = args.data_dir or default_data_dir()
+    window = args.e_window or args.k_window
+    E_win = args.e_window or [-np.inf, np.inf]
+    k_win = args.k_window or [-np.inf, np.inf]
+
     print(f"data dir: {data_dir}\n")
-    print(f"{'file':30s} {'species':8s} {'integral':>12s} {'expect':>6s} "
-          f"{'I/N':>10s}   grid")
+    hdr = (f"{'file':30s} {'species':8s} {'integral':>12s} {'expect':>6s} "
+           f"{'I/N':>10s}")
+    if window:
+        hdr += f" {'I_window':>10s} {'win/tot':>8s}"
+    print(hdr + "   grid")
     for f in sorted(data_dir.glob("pke*")):
         if f.suffix == ".py" or f.is_dir():
             continue
@@ -108,12 +135,16 @@ def main():
         if res is None:
             print(f"{f.name:30s} UNRECOGNIZED FORMAT")
             continue
-        k, P, _, _, dk_w, dE_w, grid = res
+        k, P, k_edges, E_edges, dk_w, dE_w, grid = res
         I = integral(k, P, dk_w, dE_w)
         species, n_exp = EXPECTED.get(f.name, ("?", None))
         ratio = f"{I / n_exp:10.6f}" if n_exp else f"{'-':>10s}"
         exp_s = f"{n_exp:6d}" if n_exp else f"{'-':>6s}"
-        print(f"{f.name:30s} {species:8s} {I:12.6f} {exp_s} {ratio}   {grid}")
+        line = f"{f.name:30s} {species:8s} {I:12.6f} {exp_s} {ratio}"
+        if window:
+            Iw = windowed_integral(k, P, k_edges, E_edges, k_win, E_win)
+            line += f" {Iw:10.6f} {Iw / I:8.4f}"
+        print(line + f"   {grid}")
 
 
 if __name__ == "__main__":

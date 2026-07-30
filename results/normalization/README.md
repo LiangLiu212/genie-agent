@@ -27,6 +27,31 @@ an overall factor of the nucleon count of the tabulated species, which
 | `pke40n_tot.data` | Ar40 n | 22.131857 | N = 22 | **1.005993** | 200k × 400E |
 | `pke56_tot.data` | Fe56 p | 25.998110 | Z = 26 | 0.999927 | 40k × 80E, dE=5 MeV |
 
+### In the Dutta E91-013 window (E_miss 0–80 MeV, P_miss 0–300 MeV/c)
+
+The same integral restricted to the measured (e,e′p) acceptance of the
+[Dutta data below](#dutta-e91-013-author-data-prc-figs-67911), with partial
+bins clipped exactly (`--e-window 0 80 --k-window 0 300`):
+
+| Table | I_window | fraction of total |
+|-------|---------:|:-----------------:|
+| `pke12_tot.data` | 5.249 | 87.5% |
+| `pke12_2024.table` (= `.origin`) | 5.234 | 87.2% |
+| `pke16_tot.data` | 6.710 | 83.9% |
+| `pke40p_tot.data` | 15.127 | 83.5% |
+| `pke40n_tot.data` | 19.284 | 87.1% |
+| `pke56_tot.data` | 22.629 | 87.0% |
+
+- Every table puts **~83–88% of its strength in the mean-field window**; the
+  missing ~13–17% is the correlated (SRC-like) tail at high `E_miss`/`P_miss`
+  that the measurement window excludes.
+- The old and 2024 C12 tables agree in-window (5.249 vs 5.234) — the 2024
+  p-shell restructuring moves strength *within* the window, not across it.
+- Context for the Dutta scales: theory input puts ≈ 5.23–5.25 of Z = 6 protons
+  in the window, so fig 9's renormalized 6.080 exceeds even the *undistorted*
+  in-window strength — consistent with its full-occupancy renormalization.
+  For Fe56 the window holds 22.63, of which fig 11's 18.2 is 80%.
+
 ## Findings
 
 - **All seven tables follow the N·P convention** — each integrates to the
@@ -165,6 +190,8 @@ sits on (shape + relative occupancy only; float the normalization in any fit).
 ```bash
 pixi run python results/normalization/integrate_all_pke.py            # active install
 pixi run python results/normalization/integrate_all_pke.py <data_dir> # explicit dir
+pixi run python results/normalization/integrate_all_pke.py \
+    --e-window 0 80 --k-window 0 300                                  # Dutta window
 pixi run python results/normalization/make_sf2d_all.py                # 2D figures
 pixi run python results/normalization/make_sf_profiles.py             # marginals
 pixi run python results/normalization/make_dutta_prc.py               # Dutta data
