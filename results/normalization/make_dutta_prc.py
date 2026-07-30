@@ -12,8 +12,12 @@ Panels:
   bot-left  = fig 7, Fe56 full-window p_m distribution, 4 Q^2 sets
   bot-right = figs 9 + 11, E_m spectral functions at Q^2 = 1.28 (C12, Fe56)
 
-Printed integrals are the rectangle rule (Sigma y * bin width, 40 MeV/c for
-p_m, 5 MeV for E_m) with stat-only errors added in quadrature.
+Printed integrals (stat-only errors in quadrature):
+  p_m sets (figs 6/7): the 3D momentum integral  4*pi * Sigma y p_m^2 dp_m
+    over the POSITIVE-half bins only (the files are exactly left-right
+    symmetrized, so the positive half covers |p_m| in [0, 320) once);
+    y = int S^D dE_m [MeV^-3], so the result is dimensionless strength.
+  E_m spectra (figs 9/11): Sigma y * 5 MeV (y is already int S^D d^3p_m).
 
 Usage:
   pixi run python results/normalization/make_dutta_prc.py
@@ -49,17 +53,25 @@ def load(stem):
     return x, y, e
 
 
-def report_integral(stem, y, e, dx):
-    I = y.sum() * dx
-    dI = np.sqrt((e ** 2).sum()) * dx
-    print(f"{stem:15s} integral = {I:12.4e} +- {dI:.1e}")
+def report_integral_em(stem, y, e, dE=5.0):
+    I = y.sum() * dE
+    dI = np.sqrt((e ** 2).sum()) * dE
+    print(f"{stem:15s} int y dE_m         = {I:8.4f} +- {dI:.4f}")
+    return I
+
+
+def report_integral_3d(stem, x, y, e, dp=40.0):
+    m = x > 0                       # symmetrized: positive half = full |p_m| range
+    I = 4.0 * np.pi * (y[m] * x[m] ** 2).sum() * dp
+    dI = 4.0 * np.pi * np.sqrt(((e[m] * x[m] ** 2) ** 2).sum()) * dp
+    print(f"{stem:15s} 4pi int y p^2 dp_m = {I:8.4f} +- {dI:.4f}")
     return I
 
 
 def draw_pm_sets(ax, prefix):
     for (tag, label, marker), color in zip(QSETS, COLORS):
         x, y, e = load(f"{prefix}_{tag}")
-        report_integral(f"{prefix}_{tag}", y, e, 40.0)
+        report_integral_3d(f"{prefix}_{tag}", x, y, e)
         m = y > 0  # log scale
         ax.errorbar(x[m], y[m], yerr=e[m], fmt=marker, color=color,
                     ms=9 if marker == "*" else 5, lw=1, capsize=2, label=label)
@@ -91,7 +103,7 @@ def main():
         ("fig11_q1p2", r"fig 11 -- Fe56", COLORS[1]),
     ]:
         x, y, e = load(stem)
-        report_integral(stem, y, e, 5.0)
+        report_integral_em(stem, y, e)
         ax_em.errorbar(x, y, yerr=e, fmt="s" if "9" in stem else "o",
                        color=color, ms=5, lw=1, capsize=2, label=label)
     style_axis(ax_em, title=r"figs 9/11 -- $E_m$ spectra, $Q^2$=1.28",

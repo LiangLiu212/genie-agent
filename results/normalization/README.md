@@ -123,16 +123,26 @@ Full provenance, column semantics, and caveats:
 *Script: [`make_dutta_prc.py`](make_dutta_prc.py); markers mirror the paper's,
 error bars are the files' statistical-only column 4.*
 
-Rectangle-rule integrals (Σy·Δx; stat errors in quadrature), reproducing the
-report's values:
+Integrals (stat errors in quadrature). The `E_m` spectra are already
+`∫S^D d³p_m`, so their strength is the plain Σy·5 MeV; the `p_m` sets are
+`y(p_m) = ∫S^D dE_m` [MeV⁻³], so their strength is the **3D momentum
+integral** `4π Σ y p_m² Δp_m` — dimensionless, taken over the positive-half
+bins only (the files are exactly left–right symmetrized, so the positive
+half covers `|p_m| ∈ [0, 320)` MeV/c once):
 
-| dataset | window integral | normalization convention |
-|---------|-----------------|--------------------------|
+| dataset | strength integral | normalization convention |
+|---------|-------------------|--------------------------|
 | fig 9 — C12 `E_m` spectrum | **6.080 ± 0.029** | ≈ Z = 6: renormalized to the full-occupancy scale — the *measured* analogue of the pke Z-checks above, but by construction (raw distorted yield would be ≈ 3.2 given transparency T = 0.60) |
 | fig 11 — Fe56 `E_m` spectrum | **18.200 ± 0.079** | ≪ Z = 26: in-window renormalized IPSM strength, *not* a Z-normalization |
-| fig 7 — Fe56 `p_m`, 4 Q² | 1.047 / 1.047 / 1.000 / 1.018 ×10⁻⁴ | equal to ≤ 5% — each Q² deliberately rescaled to the Q² = 1.8 integral (pure shape comparison) |
-| fig 6 top — C12 p-shell `p_m` | 2.33 / 1.71 / 1.80 / 1.65 ×10⁻⁵ | same rescale convention, **but the Q² = 0.64 files are anomalous** (~×1.3 high vs the published points — excluded from quantitative use, see the report §3) |
-| fig 6 bot — C12 s-shell `p_m` | 1.51 / 1.24 / 1.15 / 1.23 ×10⁻⁵ | 〃 |
+| fig 7 — Fe56 `p_m`, 4 Q² | 9.62 / 9.10 / 8.15 / 8.91 | the rescale-to-Q² = 1.8 convention equalizes the plotted 1D integrals to ≤ 5%, but the p²-weighted strengths spread ±9% — the weighting emphasizes the large-`|p_m|` tails where the shapes differ |
+| fig 6 top — C12 p-shell `p_m` | 2.37 / **1.77 / 1.75 / 1.74** | the three Q² ≥ 1.28 sets agree to 2%; **the Q² = 0.64 file is anomalous** (×1.35 high — excluded from quantitative use, see the report §3) |
+| fig 6 bot — C12 s-shell `p_m` | 0.82 / 0.69 / 0.61 / 0.78 | 〃 (q0p6 high again) |
+
+The `p_m` strengths do **not** match the corresponding `E_m`-spectrum windows
+(fig 9 gives 4.20 in the p-shell window and 1.30 in the s-shell window; fig 11
+gives 18.2 vs fig 7's ≈ 8.2–9.6): the two projections were published on
+*different* renormalized scales (rescale-to-Q²=1.8 vs in-window model
+strength), consistently a factor ≈ 2.2–2.4 apart.
 
 Unlike the pke tables, these integrals are **not** data-integrity checks of a
 sampling input — they document which published normalization each dataset
