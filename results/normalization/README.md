@@ -33,11 +33,14 @@ The same integral restricted to the measured (e,e′p) acceptance of the
 [Dutta data below](#dutta-e91-013-author-data-prc-figs-67911), with partial
 bins clipped exactly (`--e-window 0 80 --k-window 0 300`):
 
-![2D tables with the Dutta window in red](sf2d_dutta_window.png)
+![2D tables with the Dutta windows in red](sf2d_dutta_window.png)
 *Script: [`make_sf2d_window.py`](make_sf2d_window.py) — sampled density
-`4πk²P` over each table's full native grid, the Dutta window as the red
-boundary. The bright mean-field region sits inside; the diagonal SRC ridge
-toward high `E_miss`/`P_miss` carries the excluded ~13%.*
+`4πk²P` over each table's full native grid, the measured windows as red
+boxes with their strength fractions. C12 panels: the fig 6 shell windows
+(p-shell `E_m` 10–25 MeV, s-shell 30–50 MeV, both `|p_m|` < 300 MeV/c) —
+the 2024 table's quasiparticle stripes sit inside the p-shell box. Fe56:
+the full `E_m` < 80 MeV window; the diagonal SRC ridge toward high
+`E_miss`/`P_miss` carries the excluded strength.*
 
 | Table | I_window | fraction of total |
 |-------|---------:|:-----------------:|
@@ -209,6 +212,24 @@ sampling input — they document which published normalization each dataset
 sits on (shape + relative occupancy only; float the normalization in any fit).
 
 ## Input tables vs Dutta, same phase space
+
+The table density `P(p_m, E_m)` (N·P convention) is projected through the
+measured phase space two ways. The `E_m` spectrum (vs figs 9/11):
+
+$$f(E_m) \;=\; \int_0^{300\,\mathrm{MeV}/c} 4\pi\,p_m^2\,P(p_m,E_m)\,dp_m \qquad [\mathrm{MeV}^{-1}]$$
+
+and the `p_m` distribution in an `E_m` window (vs figs 6/7):
+
+$$n(p_m) \;=\; \int_{E_\mathrm{lo}}^{E_\mathrm{hi}} P(p_m,E_m)\,dE_m \qquad [\mathrm{MeV}^{-3}], \qquad (E_\mathrm{lo},E_\mathrm{hi}) = (10,25),\ (30,50),\ (0,80)\ \mathrm{MeV}$$
+
+Every annotated data/table ratio compares windowed strengths
+
+$$N_\mathrm{win} \;=\; \int_{E_\mathrm{lo}}^{E_\mathrm{hi}}\!\!\int_0^{p_\mathrm{max}} 4\pi\,p_m^2\,P(p_m,E_m)\,dp_m\,dE_m$$
+
+with the data-side equivalents: figs 9/11 tabulate `f(E_m)` directly
+(strength = Σy·5 MeV), and the folded `p_m` data `y(+p) + y(−p)` compare to
+`n(p_m)` (strength = 4π Σ y p_m² Δp_m with Δp_m = 40 MeV/c). All integrals
+are rectangle sums on the native grids with partial bins clipped exactly.
 
 ![input tables overlaid on the Dutta measurements](dutta_table_overlay.png)
 *Script: [`make_dutta_overlay.py`](make_dutta_overlay.py). Each panel projects
