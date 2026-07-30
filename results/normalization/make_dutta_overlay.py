@@ -16,9 +16,17 @@ repo's replication kinematics). Data errors: figs 6/7 stat-only (col 4);
 figs 9/11 stat + 2% + 5% in quadrature, with the fig9 published-bar
 overrides at E_m = 17.5 / 22.5 MeV (report/dutta-e91013-figures.md sec 5).
 
+With --native the tables are drawn on their NATIVE grids instead (0.025-MeV
+E bins for pke12_2024, the offset 5-MeV grid for pke56, 20-MeV/c k bins for
+the p_m panels); only the data keep the published binning. The annotated
+data/table ratios are computed on the native grids (exact windowed sums) in
+both modes, so the two figures carry identical numbers.
+
 Usage:
-  pixi run python results/normalization/make_dutta_overlay.py
+  pixi run python results/normalization/make_dutta_overlay.py            # data binning
+  pixi run python results/normalization/make_dutta_overlay.py --native   # native bins
 """
+import argparse
 import sys
 from pathlib import Path
 
@@ -60,6 +68,41 @@ def pm_profile(res, E_win, bins=P_BINS):
                      for lo, hi in zip(bins[:-1], bins[1:])])
 
 
+def em_native(res, k_hi=K_MAX):
+    """f(E) on the table's native E grid [MeV^-1], k < k_hi."""
+    k, P, k_edges, E_edges, _, _, _ = res
+    dk_eff = clip_widths(k_edges, 0.0, k_hi)
+    fE = (4.0 * np.pi * k[:, None] ** 2 * P * dk_eff[:, None]).sum(axis=0)
+    return fE, E_edges
+
+
+def pm_native(res, E_win, k_hi=P_BINS[-1]):
+    """n(p) on the table's native k grid [MeV^-3], up to the plotted k_hi."""
+    _, P, k_edges, E_edges, _, _, _ = res
+    dE_eff = clip_widths(E_edges, *E_win)
+    nk = (P * dE_eff[None, :]).sum(axis=1)
+    n = int((clip_widths(k_edges, 0.0, k_hi) > 0).sum())
+    return nk[:n], k_edges[:n + 1]
+
+
+def em_strength(res, E_win=(0.0, 80.0), k_hi=K_MAX):
+    """Exact windowed strength on the native grid (binning-independent)."""
+    k, P, k_edges, E_edges, _, _, _ = res
+    dk_eff = clip_widths(k_edges, 0.0, k_hi)
+    dE_eff = clip_widths(E_edges, *E_win)
+    return float((4.0 * np.pi * k[:, None] ** 2 * P
+                  * dk_eff[:, None] * dE_eff[None, :]).sum())
+
+
+def pm_strength(res, E_win, k_hi=P_BINS[-1]):
+    """4pi p^2-weighted strength over the plotted |p_m| range, native grid."""
+    k, P, k_edges, E_edges, _, _, _ = res
+    dk_eff = clip_widths(k_edges, 0.0, k_hi)
+    dE_eff = clip_widths(E_edges, *E_win)
+    nk = (P * dE_eff[None, :]).sum(axis=1)
+    return float((4.0 * np.pi * k ** 2 * nk * dk_eff).sum())
+
+
 def mirror(vals, bins):
     """Signed-p_m step curve from |p_m| bin values (data are symmetrized)."""
     edges = np.concatenate([-bins[::-1], bins[1:]])
@@ -72,6 +115,10 @@ def load_dutta(stem):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--native", action="store_true",
+                    help="draw tables on their native grids (no rebinning)")
+    args = ap.parse_args()
     data_dir = default_data_dir()
     tables = {name: parse_table(data_dir / name) for name in
               ["pke12_tot.data", "pke12_2024.table", "pke56_tot.data"]}
@@ -98,15 +145,17 @@ def main():
             tot[np.isclose(x, em)] = frac * y[np.isclose(x, em)]
         ratios = []
         for name, res, color in tabs:
-            v = em_profile(res, E_BINS)
-            ax.stairs(v, E_BINS, color=color, lw=2.0, zorder=4, label=name)
-            ratios.append(f"{(y.sum()) / v.sum():.2f}")
-        if stem == "fig9_q1p2":     # resolved 2024 structure under the rebin
-            k, P, k_edges, E_edges, _, dE_w, _ = tables["pke12_2024.table"]
-            dk_eff = clip_widths(k_edges, 0.0, K_MAX)
-            fE = (4.0 * np.pi * k[:, None] ** 2 * P
-                  * dk_eff[:, None]).sum(axis=0)
-            E_c = 0.5 * (E_edges[:-1] + E_edges[1:])
+            if args.native:
+                fE, edges = em_native(res)
+                ax.stairs(fE, edges, color=color, lw=1.5, zorder=4, label=name)
+            else:
+                v = em_profile(res, E_BINS)
+                ax.stairs(v, E_BINS, color=color, lw=2.0, zorder=4, label=name)
+            ratios.append(f"{(y.sum() * 5.0) / em_strength(res):.2f}")
+        if stem == "fig9_q1p2" and not args.native:
+            # resolved 2024 structure hidden by the data binning
+            fE, edges = em_native(tables["pke12_2024.table"])
+            E_c = 0.5 * (edges[:-1] + edges[1:])
             m = E_c <= 85.0
             ax.plot(E_c[m], fE[m], color="C1", lw=1.0, alpha=0.5, zorder=3)
         ax.errorbar(x, y, yerr=tot, fmt="none", ecolor="0.6", elinewidth=3,
@@ -139,10 +188,12 @@ def main():
         s_data = 4.0 * np.pi * (y[pos] * x[pos] ** 2).sum() * 40.0
         ratios = []
         for name, res, color in tabs:
-            v = pm_profile(res, E_win)
-            s_tab = 4.0 * np.pi * (v * p_ctr ** 2).sum() * 40.0
-            ratios.append(f"{s_data / s_tab:.2f}")
-            vv, ee = mirror(v, P_BINS)
+            ratios.append(f"{s_data / pm_strength(res, E_win):.2f}")
+            if args.native:
+                nk, edges = pm_native(res, E_win)
+                vv, ee = mirror(nk, edges)
+            else:
+                vv, ee = mirror(pm_profile(res, E_win), P_BINS)
             ax.stairs(vv, ee, color=color, lw=2.0, zorder=4, label=name)
         m = y > 0
         ax.errorbar(x[m], y[m], yerr=e[m], fmt="s", ms=5, color="black",
@@ -154,14 +205,16 @@ def main():
                    logx=False, ymin=None)
         ax.set_xlim(-340, 340)
 
+    binning = ("native table binning" if args.native else "data binning")
     fig.suptitle("GENIE input tables vs Dutta E91-013, same phase space "
-                 r"($|p_m|$ < 300 MeV/c windows, data binning)"
+                 rf"($|p_m|$ < 300 MeV/c windows, {binning})"
                  "\ntables on their native N$\\cdot$P (occupancy) scale; "
                  "data FSI-distorted on published (renormalized) scales; "
                  r"figs 6/7 at $Q^2$ = 1.28",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    out = HERE / "dutta_table_overlay.png"
+    out = HERE / ("dutta_table_overlay_native.png" if args.native
+                  else "dutta_table_overlay.png")
     fig.savefig(out, dpi=DPI)
     print(f"wrote {out.name}")
 

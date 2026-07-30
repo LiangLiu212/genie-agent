@@ -208,15 +208,27 @@ Tables stay on their native N·P (occupancy) scale; data on their published
 scales; figs 6/7 overlays use the Q² = 1.28 files. The thin orange curve is
 the 2024 table's resolved quasiparticle structure, clipped by the axis.*
 
-Per-panel strength ratios (data/table over the plotted bins — `p_m` panels
-4πp²-weighted, reaching `|p_m| < 320` MeV/c, hence slightly different from
-the k < 300 shell-window table above):
+The same overlay **without rebinning the tables** — each table drawn on its
+native grid (0.025-MeV E bins for `pke12_2024`, the offset 2–402 MeV 5-MeV
+grid for `pke56`, 20-MeV/c k bins in the `p_m` panels); only the data keep
+the published binning:
+
+![native-binning variant](dutta_table_overlay_native.png)
+*`make_dutta_overlay.py --native`. What the data binning hides: the 2024
+quasiparticle spikes (clipped), the deeper native ℓ = 1 dip at `p_m` = 0, and
+`pke56`'s sharp 7–12 MeV peak bin reaching 1.37 MeV⁻¹ — averaged down to
+≈ 0.68 in the aligned 5-MeV bins vs the data's 0.81.*
+
+Per-panel strength ratios (identical in both variants: exact windowed sums on
+the native grids — `p_m` panels 4πp²-weighted over the plotted
+`|p_m| < 320` MeV/c, hence slightly different from the k < 300 shell-window
+table above):
 
 - **C12 `E_m` vs fig 9: 1.16 for both tables.** The rebinned tables track the
   measured shape well; the largest shape difference is at `E_m` = 22.5 MeV,
   where the data hold more strength than the tables — the same s–p-dip excess
   the paper notes against IPSM.
-- **C12 p-shell vs fig 6 top: 0.53 / 0.54; s-shell vs fig 6 bot: 0.57 / 0.56.**
+- **C12 p-shell vs fig 6 top: 0.53 / 0.54; s-shell vs fig 6 bot: 0.58 / 0.57.**
   Roughly shell-independent ≈ 0.55 suppression (FSI absorption; T = 0.60 at
   these kinematics). In the p-shell window the data's ℓ = 1 dip at `p_m` = 0 is
   visibly *deeper* than the undistorted tables'.
@@ -250,4 +262,5 @@ pixi run python results/normalization/make_sf2d_all.py                # 2D figur
 pixi run python results/normalization/make_sf_profiles.py             # marginals
 pixi run python results/normalization/make_dutta_prc.py               # Dutta data
 pixi run python results/normalization/make_dutta_overlay.py           # overlay
+pixi run python results/normalization/make_dutta_overlay.py --native  # native bins
 ```
