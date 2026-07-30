@@ -52,6 +52,30 @@ bins clipped exactly (`--e-window 0 80 --k-window 0 300`):
   in-window strength — consistent with its full-occupancy renormalization.
   For Fe56 the window holds 22.63, of which fig 11's 18.2 is 80%.
 
+### C12 shell windows (fig 6 definitions, P_miss 0–300 MeV/c)
+
+The same windowed integral in the two fig 6 `E_miss` windows
+(`--e-window 10 25` / `--e-window 30 50`, each with `--k-window 0 300`),
+against the corresponding Dutta strengths:
+
+| window | `pke12_tot` | `pke12_2024` | IPSM occupancy | fig 9 window sum (renorm.) | fig 6 3D strength (Q²=1.8 ref.) |
+|--------|------------:|-------------:|:--------------:|:--------------------------:|:-------------------------------:|
+| p-shell, `E_m` 10–25 MeV | 3.305 (55.1% of Z) | 3.226 (53.8%) | 4 (p₃/₂) | 4.20 | 1.75 |
+| s-shell, `E_m` 30–50 MeV | 1.186 (19.8%) | 1.211 (20.2%) | 2 (s₁/₂) | 1.30 | 0.61 |
+
+- The input tables put **81–83% of the 4 p₃/₂ protons** in the p-shell window,
+  but only **59–61% of the 2 s₁/₂ protons** in 30–50 MeV — the s-shell is broad
+  and leaks well outside its nominal window.
+- The 2024 refit moves ≈ 0.08 protons out of the p-shell window (3.305 → 3.226)
+  with ≈ 0.03 reappearing in the s-shell window — a within-acceptance
+  reshuffle, matching the near-identical full-window totals above.
+- **The fig 6 strengths (on the unrescaled Q² = 1.8 reference scale) sit at
+  0.50–0.54 of the input-table strength in *both* shells** — a
+  shell-independent suppression consistent with the FSI absorption the
+  distorted S^D retains (T = 0.60 at these kinematics).
+- fig 9's renormalized scale conversely *exceeds* the input tables in-window
+  (×1.27–1.30 in the p window, ×1.07–1.10 in the s window).
+
 ## Findings
 
 - **All seven tables follow the N·P convention** — each integrates to the
