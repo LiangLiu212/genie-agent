@@ -33,6 +33,12 @@ The same integral restricted to the measured (e,e′p) acceptance of the
 [Dutta data below](#dutta-e91-013-author-data-prc-figs-67911), with partial
 bins clipped exactly (`--e-window 0 80 --k-window 0 300`):
 
+![2D tables with the Dutta window in red](sf2d_dutta_window.png)
+*Script: [`make_sf2d_window.py`](make_sf2d_window.py) — sampled density
+`4πk²P` over each table's full native grid, the Dutta window as the red
+boundary. The bright mean-field region sits inside; the diagonal SRC ridge
+toward high `E_miss`/`P_miss` carries the excluded ~13%.*
+
 | Table | I_window | fraction of total |
 |-------|---------:|:-----------------:|
 | `pke12_tot.data` | 5.249 | 87.5% |
@@ -303,4 +309,5 @@ pixi run python results/normalization/make_dutta_overlay.py           # overlay
 pixi run python results/normalization/make_dutta_overlay.py --native  # native bins
 pixi run python results/normalization/make_dutta_folded.py            # folded |p_m|
 pixi run python results/normalization/make_dutta_em_folded.py         # combined view
+pixi run python results/normalization/make_sf2d_window.py             # 2D + window
 ```
