@@ -268,6 +268,15 @@ no factor-2 convention in between.*
   Fe56 shows a real shape difference: the data are flatter, with the deficit
   concentrated at mid-`|p_m|`.
 
+The combined summary — both projections per nucleus in one figure
+([`make_dutta_em_folded.py`](make_dutta_em_folded.py)): top row C12
+(`E_m` vs fig 9, folded p-shell, folded s-shell), bottom row Fe56
+(`E_m` vs fig 11, folded fig 7):
+
+![Em spectra and folded pm together](dutta_em_folded_pm.png)
+*One scale family in every projection: C12 data = 1.06–1.16 × table,
+Fe56 = 0.80 × table.*
+
 ## Method
 
 - Uniform-format tables (`pke*_tot.data`, `pke12_2024.table`) are parsed
@@ -293,4 +302,5 @@ pixi run python results/normalization/make_dutta_prc.py               # Dutta da
 pixi run python results/normalization/make_dutta_overlay.py           # overlay
 pixi run python results/normalization/make_dutta_overlay.py --native  # native bins
 pixi run python results/normalization/make_dutta_folded.py            # folded |p_m|
+pixi run python results/normalization/make_dutta_em_folded.py         # combined view
 ```
