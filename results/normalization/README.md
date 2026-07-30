@@ -88,6 +88,28 @@ Note the wider grid: k to 2000 MeV/c, E to 500 MeV.*
 *`pke56_tot.data` — Fe56 proton SF converted from `benhar-sf-56fe.data`
 (I = 25.998110).*
 
+## Marginal profiles
+
+![f(E_miss) and n(P_miss) marginals, all tables](sf_profiles.png)
+*All tables overlaid, per nucleon (each curve integrates to 1); script:
+[`make_sf_profiles.py`](make_sf_profiles.py). Non-positive values are clamped
+to the 10⁻¹² log floor (not physical).*
+
+- **`f(E_miss)` (left + shell-region zoom):** the structure is all below
+  ~60 MeV. The 2024 C12 table (orange) resolves discrete quasiparticle spikes
+  at 15.9 / 18.5 / 21 MeV where the old `pke12_tot` (blue) has one broad
+  17.5 MeV bump; O16 shows its two shells (~12, 19 MeV); Fe56 turns on at
+  ~10 MeV; the Ar40 pair is smooth, with the neutron table peaking much higher
+  (35.6 MeV) than the proton one (13.1 MeV). All tables share the same
+  exponential-like continuum tail at high E_miss.
+- **`n(P_miss)` (right):** the momentum distributions are nearly universal —
+  peak at 146–170 MeV/c, common shape through the ~250 MeV/c shoulder and the
+  high-k tail. Only the grid reach differs: the Ar40 tables extend to
+  2000 MeV/c, flattening into a ~10⁻¹⁰ plateau beyond ~1600 MeV/c.
+- The dashed `pke12_2024.table.origin` curve sits exactly on the solid
+  converted one in every panel — both marginals are invariant under the
+  lossless rebinning (the converter self-test checks `n(k)` bin by bin).
+
 ## Method
 
 - Uniform-format tables (`pke*_tot.data`, `pke12_2024.table`) are parsed
@@ -106,4 +128,5 @@ Note the wider grid: k to 2000 MeV/c, E to 500 MeV.*
 pixi run python results/normalization/integrate_all_pke.py            # active install
 pixi run python results/normalization/integrate_all_pke.py <data_dir> # explicit dir
 pixi run python results/normalization/make_sf2d_all.py                # 2D figures
+pixi run python results/normalization/make_sf_profiles.py             # marginals
 ```
