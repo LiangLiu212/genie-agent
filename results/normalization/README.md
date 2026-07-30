@@ -110,6 +110,34 @@ to the 10⁻¹² log floor (not physical).*
   converted one in every panel — both marginals are invariant under the
   lossless rebinning (the converter self-test checks `n(k)` bin by bin).
 
+## Dutta E91-013 author data (PRC figs 6/7/9/11)
+
+The *measured* counterpart of the input-table checks above: all 14 author data
+files in [`data/Dipingkar-dutta-data-prc_figs/`](../../data/Dipingkar-dutta-data-prc_figs)
+— the JLab Hall C E91-013 quasi-elastic (e,e′p) **distorted** spectral
+functions (they contain FSI absorption, and are renormalized for publication).
+Full provenance, column semantics, and caveats:
+[`report/dutta-e91013-figures.md`](../../report/dutta-e91013-figures.md).
+
+![Dutta figs 6/7/9/11 data](dutta_prc_data.png)
+*Script: [`make_dutta_prc.py`](make_dutta_prc.py); markers mirror the paper's,
+error bars are the files' statistical-only column 4.*
+
+Rectangle-rule integrals (Σy·Δx; stat errors in quadrature), reproducing the
+report's values:
+
+| dataset | window integral | normalization convention |
+|---------|-----------------|--------------------------|
+| fig 9 — C12 `E_m` spectrum | **6.080 ± 0.029** | ≈ Z = 6: renormalized to the full-occupancy scale — the *measured* analogue of the pke Z-checks above, but by construction (raw distorted yield would be ≈ 3.2 given transparency T = 0.60) |
+| fig 11 — Fe56 `E_m` spectrum | **18.200 ± 0.079** | ≪ Z = 26: in-window renormalized IPSM strength, *not* a Z-normalization |
+| fig 7 — Fe56 `p_m`, 4 Q² | 1.047 / 1.047 / 1.000 / 1.018 ×10⁻⁴ | equal to ≤ 5% — each Q² deliberately rescaled to the Q² = 1.8 integral (pure shape comparison) |
+| fig 6 top — C12 p-shell `p_m` | 2.33 / 1.71 / 1.80 / 1.65 ×10⁻⁵ | same rescale convention, **but the Q² = 0.64 files are anomalous** (~×1.3 high vs the published points — excluded from quantitative use, see the report §3) |
+| fig 6 bot — C12 s-shell `p_m` | 1.51 / 1.24 / 1.15 / 1.23 ×10⁻⁵ | 〃 |
+
+Unlike the pke tables, these integrals are **not** data-integrity checks of a
+sampling input — they document which published normalization each dataset
+sits on (shape + relative occupancy only; float the normalization in any fit).
+
 ## Method
 
 - Uniform-format tables (`pke*_tot.data`, `pke12_2024.table`) are parsed
@@ -129,4 +157,5 @@ pixi run python results/normalization/integrate_all_pke.py            # active i
 pixi run python results/normalization/integrate_all_pke.py <data_dir> # explicit dir
 pixi run python results/normalization/make_sf2d_all.py                # 2D figures
 pixi run python results/normalization/make_sf_profiles.py             # marginals
+pixi run python results/normalization/make_dutta_prc.py               # Dutta data
 ```
