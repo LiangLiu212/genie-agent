@@ -20,6 +20,7 @@ style live under [`template/`](template/).
 | [C12 Benhar spectral function P(k,E)](prd-analyzer-v0/spectral_function_c12.md) | The input ground state from `pke12_tot.data` in (missing energy, missing momentum); `f(E)`/`n(k)` marginals — the baseline SF+Rosenbluth carries and SF+UnifiedQEL reshapes. |
 | [C12 proton SF — Ankowski-Benhar-Sakuda 2024](prd-analyzer-v0/spectral_function_c12_2024.md) | The 2024 `pke12_2024.table` SF fit to high-resolution NIKHEF (e,e′p) data; resolves the p-shell into discrete quasiparticle peaks vs the old broad bump, `n(k)` unchanged. |
 | [EM-QES spline: Benhar vs ABS 2024 SF](pages/spline_22b_vs_33b_q2cut.md) | Grid `gmkspl` σ(E) for the UnifiedQEL-SF Q²-cut tunes t04–t08 on C12: `GEM26_22b` (Benhar SF, solid) vs `GEM26_33b` (ABS 2024 SF, dashed), same color per cut — the SF enters this xsec but shifts σ(E) only mildly. |
+| [SF table normalization integrals](normalization/README.md) | ∫4πk²P dk dE for every `pke*` spectral-function table in the `genie_inclxx` install: all follow the N·P convention (integral = Z or N); the Ar40 p/n pair shares a +0.60% excess; the 2024 C12 conversion verified lossless. |
 
 ## Conventions
 
