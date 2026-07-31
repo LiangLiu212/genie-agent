@@ -33,7 +33,10 @@ Machinery: the v0.2 scripts with `--proton-sel 1p`
 `make_pmiss_signed_q2cut.py`, `make_fsi_proton_choice.py`; outputs and
 caches route here), an `n_p` column in the v0.1 `kin_qel` caches, and an
 `np` column in the `dump_fsiproton.cxx` dumps. New in v0.3:
-`make_pmiss_ladder_q2cut.py` (sections 4.1) — the |p_m| projection of the
-four-stage ladder (input table / record / pre-FSI / post-FSI proton) with
-the E_m window applied and the folded Dutta p_m data overlaid
-(`pm_ladder_<target>_<tune>.png`, reads the `ladder_*` caches).
+`make_pmiss_ladder_q2cut.py` (sections 4.1/4.2) — the |p_m| projection of
+the four-stage ladder (input table / record / pre-FSI / post-FSI proton)
+with the E_m window applied and the folded Dutta p_m data overlaid, in two
+unit conventions per tune: occupancy `Z·dN/d|p_m|/N_sel`
+(`pm_ladder_<target>_<tune>.png`) and the Dutta files' native 3D density
+`∫_win P dE_m` [MeV⁻³] (`pm_ladder_dens_<target>_<tune>.png`; reads the
+`ladder_*` caches).

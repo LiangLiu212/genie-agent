@@ -25,7 +25,13 @@ Z*hist/(N_sel*dk) with N_sel = the windowed selection count and the table's
 native 20 MeV/c bins. Stage 2 also shows the unwindowed record (dotted) --
 for GEM21/SuSA the record E is negative and the window empties the stage.
 
-Figures: results/prd-analyzer-v0.<2|3>/pm_ladder_<target>_<tune>.png.
+Each run writes two figures per tune:
+  pm_ladder_<target>_<tune>.png       occupancy axis Z*dN/d|p_m|/N_sel
+                                      [(MeV/c)^-1] (area = nucleon count)
+  pm_ladder_dens_<target>_<tune>.png  the same stages in the Dutta files'
+                                      native units: 3D density int_win P dE
+                                      [MeV^-3] (MC divided by 4pi p_m^2,
+                                      data drawn as tabulated), log y
 
 Usage:
   pixi run python results/template/make_pmiss_ladder_q2cut.py --target Fe56 --all-tunes --proton-sel 1p
@@ -247,6 +253,102 @@ def make_figure(target, tune, table_stem, table, dutta):
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
     out = OUT_DIR / f"pm_ladder_{tlow}_{tune}.png"
+    fig.savefig(out, dpi=DPI)
+    print("wrote", out)
+
+    make_density_figure(target, tune, table_stem, y_in, k_edges,
+                        h, h2_all, dutta)
+
+
+def make_density_figure(target, tune, table_stem, y_in, k_edges,
+                        h, h2_all, dutta):
+    """The same four stages in the Dutta files' native units: the 3D density
+    int_win P dE [MeV^-3]. The occupancy curves are divided by 4pi p_c^2
+    (bin centers), the data are drawn exactly as tabulated (folded L+R =
+    full density). Log y, so the low-|p_m| region is not p^2-suppressed."""
+    cfg = TGT[target]
+    tlow = target.lower()
+    dx, dy, de = dutta
+    p_c = (EDGES[:-1] + EDGES[1:]) / 2.0
+    wgt = 1.0 / (4.0 * np.pi * p_c ** 2)
+    hd = {s: h[s] * wgt for s in (2, 3, 4)}
+    hd2_all = h2_all * wgt
+    yd_in = None
+    if y_in is not None:
+        k_c = (k_edges[:-1] + k_edges[1:]) / 2.0
+        yd_in = y_in / (4.0 * np.pi * k_c ** 2)
+
+    fig, axes = new_panels(ncols=2, nrows=2, sharey=False)
+    TITLES = ["1 — input table  $\\int_{win} P\\,dE_m$",
+              "2 — struck nucleon (record),  $|p_n|$",
+              "3 — pre-FSI primary proton,  $|\\vec{p}_p-\\vec{q}\\,|$",
+              "4 — post-FSI proton,  $|\\vec{p}_p-\\vec{q}\\,|$"
+              if PROTON_SEL == "1p" else
+              "4 — post-FSI leading proton,  $|\\vec{p}_p-\\vec{q}\\,|$"]
+
+    def draw_data(ax, with_label=False):
+        ax.errorbar(dx, dy, yerr=de, fmt="s", ms=4, color="black",
+                    capsize=2, zorder=9,
+                    label=cfg["data_label"] if with_label else None)
+
+    ax = axes[0]
+    if yd_in is not None:
+        ax.stairs(yd_in, k_edges, color="C1", linewidth=2.0, zorder=4,
+                  label=f"Benhar SF {table_stem} (input)")
+    else:
+        ax.annotate(f"{TUNE_GS[tune][1]}:\nno 2D SF input table",
+                    xy=(0.40, 0.55), xycoords="axes fraction",
+                    fontsize=FS_LEGEND - 2, color="0.35")
+    draw_data(ax, with_label=True)
+    ax.legend(fontsize=FS_LEGEND - 3, title="data units: as tabulated",
+              title_fontsize=FS_LEGEND_TITLE - 3, loc="lower left")
+
+    for i, s in zip((1, 2, 3), (2, 3, 4)):
+        ax = axes[i]
+        if yd_in is not None:
+            ax.stairs(yd_in, k_edges, color="C1", linewidth=1.0,
+                      linestyle="--", alpha=0.8, zorder=2)
+        if s == 2:
+            ax.stairs(hd2_all, EDGES, color="0.5", linewidth=1.2,
+                      linestyle=":", zorder=3, label="record, no $E_m$ window")
+            ax.legend(fontsize=FS_LEGEND - 3, loc="lower left")
+        ax.stairs(hd[s], EDGES, color="C0", linewidth=1.8, zorder=5,
+                  label=tune if i == 3 else None)
+        draw_data(ax)
+
+    if tune == "GEM21_11a_05_000":
+        axes[1].annotate("SuSA record: $E$ restored $<0$,\n"
+                         "outside every $E_m$ window\n(dotted = unwindowed)",
+                         xy=(0.30, 0.45), xycoords="axes fraction",
+                         fontsize=FS_LEGEND - 3, color="0.35")
+    axes[3].legend(fontsize=FS_LEGEND - 3,
+                   title=("thin dashed: input table"
+                          if yd_in is not None else None),
+                   title_fontsize=FS_LEGEND_TITLE - 3, loc="lower left")
+
+    plot_sel = EDGES[1:] <= PM_PLOT
+    top = 1.5 * max([hd[s][plot_sel].max() for s in (2, 3, 4)]
+                    + [(dy + de).max(), hd2_all[plot_sel].max()]
+                    + ([yd_in[k_edges[1:] <= PM_PLOT].max()]
+                       if yd_in is not None else []))
+    for i, ax in enumerate(axes):
+        style_axis(ax, title=TITLES[i],
+                   xlabel=r"$|p_m|$  [MeV/c]" if i >= 2 else None,
+                   logx=False, logy=True, ymin=None)
+        ax.set_xlim(0, PM_PLOT)
+        ax.set_ylim(top / 1e3, top)
+        if i % 2 == 0:
+            ax.set_ylabel(r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
+                          fontsize=FS_LABEL)
+
+    fig.suptitle(f"{target} $|p_m|$ ladder, Dutta units — {tune}  "
+                 f"({TUNE_GS[tune][1]})\n"
+                 "qel && hit p && $Q^2=1.28\\pm5\\%$"
+                 + (" && N$_p$=1" if PROTON_SEL == "1p" else "")
+                 + "; " + cfg["win_label"],
+                 fontsize=FS_SUPTITLE - 2)
+    fig.tight_layout()
+    out = OUT_DIR / f"pm_ladder_dens_{tlow}_{tune}.png"
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
 

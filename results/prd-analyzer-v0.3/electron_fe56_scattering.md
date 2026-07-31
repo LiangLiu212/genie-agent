@@ -137,6 +137,35 @@ fig 7/11 ratio of the [normalization page](../../results/normalization/README.md
 
 Regenerate: `pixi run python results/template/make_pmiss_ladder_q2cut.py --target Fe56 --all-tunes --proton-sel 1p`.
 
+### 4.2 The same ladder in Dutta's units — ∫_win P dE_m [MeV⁻³]
+
+The section-4.1 stages converted to the Dutta files' native units: the
+**3D density** `∫_win P dE_m` [MeV⁻³] instead of the 1D occupancy density
+— the MC histograms divided by 4πp_c² (bin centers), the table drawn as
+`Z·Σ P·ΔE` directly, and the fig 7 folded data **exactly as tabulated**
+(no weighting applied to the data at all). Log y, so the low-|p_m| region
+is not suppressed by the p² phase-space factor; both figure sets carry the
+same information, only the axis convention differs.
+
+![Fe56 v0.3 pm ladder (density), GEM26_11a](pm_ladder_dens_fe56_GEM26_11a_05_000.png)
+![Fe56 v0.3 pm ladder (density), GEM26_22a](pm_ladder_dens_fe56_GEM26_22a_05_000.png)
+![Fe56 v0.3 pm ladder (density), GEM26_22b](pm_ladder_dens_fe56_GEM26_22b_05_000.png)
+![Fe56 v0.3 pm ladder (density), GEM21_11a](pm_ladder_dens_fe56_GEM21_11a_05_000.png)
+
+- What the occupancy view compresses is now explicit: the density falls
+  ~2 decades over 0–320 MeV/c, and the 0.80 data deficit is **not
+  uniform** — the data sit on the table at low |p_m| (≲ 120 MeV/c) and
+  rejoin it in the outermost bins, with the missing strength concentrated
+  in the 150–260 MeV/c falloff (the "flatter measured distribution" of
+  the folded normalization comparison).
+- Stage 4 in this view shows *where* FSI removes strength: the depletion
+  is strongest below ~150 MeV/c, flattening the surviving distribution —
+  qualitatively the same direction as the data-vs-table difference, but
+  the renormalized data are not the raw distorted yield, so this is a
+  shape observation only.
+
+(Same run as 4.1 — the script writes both figure sets.)
+
 ## 5. Pre- vs post-FSI proton
 
 As v0.2 section 5 on the N_p = 1 in-window set (the dumper's `np` column;

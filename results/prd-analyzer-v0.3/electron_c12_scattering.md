@@ -127,6 +127,34 @@ and s-shell (1.16) ratios of the
 
 Regenerate: `pixi run python results/template/make_pmiss_ladder_q2cut.py --target C12 --all-tunes --proton-sel 1p`.
 
+### 4.2 The same ladder in Dutta's units — ∫_win P dE_m [MeV⁻³]
+
+The section-4.1 stages converted to the Dutta files' native units: the
+**3D density** `∫_win P dE_m` [MeV⁻³] instead of the 1D occupancy density
+— the MC histograms divided by 4πp_c² (bin centers), the table drawn as
+`Z·Σ P·ΔE` directly, and the fig 6 p+s folded data **exactly as tabulated**
+(no weighting applied to the data at all). Log y, so the low-|p_m| region
+is not suppressed by the p² phase-space factor; both figure sets carry the
+same information, only the axis convention differs.
+
+![C12 v0.3 pm ladder (density), GEM26_11a](pm_ladder_dens_c12_GEM26_11a_05_000.png)
+![C12 v0.3 pm ladder (density), GEM26_22a](pm_ladder_dens_c12_GEM26_22a_05_000.png)
+![C12 v0.3 pm ladder (density), GEM26_22b](pm_ladder_dens_c12_GEM26_22b_05_000.png)
+![C12 v0.3 pm ladder (density), GEM21_11a](pm_ladder_dens_c12_GEM21_11a_05_000.png)
+
+- The low-|p_m| structure the p²-weighted view hides is now visible: the
+  p+s **sum** has a broad plateau at 40–110 MeV/c rather than a dip — the
+  s-shell (ℓ = 0) density peaks at |p_m| → 0 exactly where the p-shell
+  (ℓ = 1) vanishes, so the two shells fill each other in. The SF tunes'
+  pre-FSI stages reproduce this plateau; the LFG tunes (11a/GEM21) rise
+  monotonically toward |p_m| → 0 instead (no shell structure).
+- 22b's stage 2 (record keeps the sampled E) tracks the windowed table
+  across the full two decades; 22a's stage-4 depletion is visibly
+  |p_m|-dependent (strongest at low |p_m|), consistent with its broad
+  ΔT_p reshuffling in section 4.1.
+
+(Same run as 4.1 — the script writes both figure sets.)
+
 ## 5. Pre- vs post-FSI proton
 
 ![C12 v0.3 pre/post, GEM26_11a](fsi_prepost_c12_GEM26_11a_05_000.png)
