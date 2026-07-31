@@ -94,6 +94,49 @@ multiplicity one.
 Regenerate: `pixi run python results/template/make_emiss_ladder_q2cut.py --target Fe56 --all-tunes --proton-sel 1p`
 (cache: `cache/ladder_fe56/` here).
 
+### 4.1 Missing momentum: table vs record vs pre/post-FSI proton
+
+The |p_m| projection of the same four-stage ladder
+([`make_pmiss_ladder_q2cut.py`](../template/make_pmiss_ladder_q2cut.py),
+reading the section-4 caches): each stage histogrammed in |p_m| (native
+20 MeV/c bins, occupancy scale) with the E_m window applied instead —
+`E_m + T_rec < 80 MeV` — and the folded Dutta fig 7 data overlaid on every
+panel (L+R summed = the full |p_m| density on the published scale,
+2×fig 7 ≡ fig 11 to 0.03 %; weighted 4πp_m² onto the occupancy axis).
+
+![Fe56 v0.3 pm ladder, GEM26_11a](pm_ladder_fe56_GEM26_11a_05_000.png)
+![Fe56 v0.3 pm ladder, GEM26_22a](pm_ladder_fe56_GEM26_22a_05_000.png)
+![Fe56 v0.3 pm ladder, GEM26_22b](pm_ladder_fe56_GEM26_22b_05_000.png)
+![Fe56 v0.3 pm ladder, GEM21_11a](pm_ladder_fe56_GEM21_11a_05_000.png)
+
+Windowed strengths, |p_m| < 320 MeV/c (the data grid — slightly wider than
+section 4's p_m < 300, so I2/I3 sit a little above I2r/I3r):
+I1(table) = 22.852, I(data) = 18.206, **data/table = 0.80** — the folded
+fig 7/11 ratio of the [normalization page](../../results/normalization/README.md).
+
+| tune | I2 (record) | I3 (pre-FSI) | I4 (post-FSI) | I4/I3 | §4 I4r/I3r |
+|---|---|---|---|---|---|
+| GEM26_11a_05_000 | 26.000 | 26.000 | 10.600 | 0.408 | 0.406 |
+| GEM26_22a_05_000 | 23.642 | 23.642 | 9.084 | 0.384 | 0.383 |
+| GEM26_22b_05_000 | 24.163 | 24.163 | 9.925 | 0.411 | 0.409 |
+| GEM21_11a_05_000 | 0 (record E < 0) | 24.543 | 10.216 | 0.416 | 0.415 |
+
+- **I4/I3 reproduces the section-4 survivals to ≤ 0.002**: the two
+  projections window the same events, and on iron the 0–80 MeV window is
+  wide enough that the FSI energy loss does not carry survivors out of it.
+- The E_m window on stage 2 only bites where the record keeps the sampled
+  removal energy (22b: I2 = 24.16, genuinely windowed): for 11a/22a the
+  record E is a δ at S_p inside the window, so I2 = the full k-marginal
+  (dotted ≈ solid); for GEM21 the record E is negative and the window
+  empties the stage (dotted = unwindowed reference).
+- Shape: the pre-FSI stages track the input table bin by bin; the data are
+  visibly *flatter* than both (the mid-|p_m| deficit of the folded
+  normalization comparison). FSI suppresses ≈ 0.6 of the strength roughly
+  shape-preservingly, with a slight shift of the surviving peak to higher
+  |p_m|.
+
+Regenerate: `pixi run python results/template/make_pmiss_ladder_q2cut.py --target Fe56 --all-tunes --proton-sel 1p`.
+
 ## 5. Pre- vs post-FSI proton
 
 As v0.2 section 5 on the N_p = 1 in-window set (the dumper's `np` column;

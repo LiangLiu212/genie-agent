@@ -32,4 +32,8 @@ Machinery: the v0.2 scripts with `--proton-sel 1p`
 (`make_kin_qel_q2cut.py`, `make_emiss_ladder_q2cut.py`,
 `make_pmiss_signed_q2cut.py`, `make_fsi_proton_choice.py`; outputs and
 caches route here), an `n_p` column in the v0.1 `kin_qel` caches, and an
-`np` column in the `dump_fsiproton.cxx` dumps.
+`np` column in the `dump_fsiproton.cxx` dumps. New in v0.3:
+`make_pmiss_ladder_q2cut.py` (sections 4.1) — the |p_m| projection of the
+four-stage ladder (input table / record / pre-FSI / post-FSI proton) with
+the E_m window applied and the folded Dutta p_m data overlaid
+(`pm_ladder_<target>_<tune>.png`, reads the `ladder_*` caches).
