@@ -39,4 +39,7 @@ with the E_m window applied and the folded Dutta p_m data overlaid, in two
 unit conventions per tune: occupancy `Z·dN/d|p_m|/N_sel`
 (`pm_ladder_<target>_<tune>.png`) and the Dutta files' native 3D density
 `∫_win P dE_m` [MeV⁻³] (`pm_ladder_dens_<target>_<tune>.png`; reads the
-`ladder_*` caches).
+`ladder_*` caches), and `make_postfsi_empm_shape.py` (sections 4.3) — the
+post-FSI E_m and |p_m| shapes per tune normalized to the surviving
+in-window events instead of N_sel
+(`postfsi_shape_empm_<target>_<tune>.png`).

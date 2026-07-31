@@ -155,6 +155,51 @@ same information, only the axis convention differs.
 
 (Same run as 4.1 — the script writes both figure sets.)
 
+### 4.3 Post-FSI E_m and |p_m| shapes, normalized to the survivors
+
+Both post-FSI projections per tune
+([`make_postfsi_empm_shape.py`](../template/make_postfsi_empm_shape.py)),
+normalized by the **surviving in-window post-FSI count** instead of the
+true-QEL selection count N_sel: every curve has unit integral over its
+window, dividing out the ~Z × survival occupancy scale so only shapes
+compare. Left: `E_m + T_rec` in [0, 80), p_m < 300 (the section-4
+construction) vs unit-normalized fig 9; right: |p_m| in [0, 320) with the
+fig 6 shell windows 10–25 ∪ 30–50 MeV (the section-4.1 construction) vs
+unit-normalized folded fig 6 p+s. The pre-FSI shape (its own in-window
+count) and the unit-normalized windowed table are drawn as references;
+pre-FSI record spikes may run off the capped y-scale.
+
+![C12 v0.3 post-FSI shapes, GEM26_11a](postfsi_shape_empm_c12_GEM26_11a_05_000.png)
+![C12 v0.3 post-FSI shapes, GEM26_22a](postfsi_shape_empm_c12_GEM26_22a_05_000.png)
+![C12 v0.3 post-FSI shapes, GEM26_22b](postfsi_shape_empm_c12_GEM26_22b_05_000.png)
+![C12 v0.3 post-FSI shapes, GEM21_11a](postfsi_shape_empm_c12_GEM21_11a_05_000.png)
+
+| tune | E panel pre → post | p panel pre → post |
+|---|---|---|
+| GEM26_11a_05_000 | 72,490 → 42,825 | 72,490 → 42,147 |
+| GEM26_22a_05_000 | 65,960 → 36,047 | 66,772 → 27,160 |
+| GEM26_22b_05_000 | 49,321 → 28,961 | 42,903 → 24,992 |
+| GEM21_11a_05_000 | 64,031 → 38,447 | 39,151 → 23,591 |
+
+(The E-panel post counts reproduce section 4's "1p in-window" column —
+same selection, different normalization.)
+
+- **As on iron, the |p_m| shape is nearly FSI-invariant**: post-FSI ≈
+  pre-FSI ≈ table ≈ data in every tune. The per-bin survival rises mildly
+  with |p_m| (22a: 0.31 → 0.43 across 0–320 MeV/c) but the depletion
+  concentrates where the density is small, so the survivor-normalized
+  shape barely moves — the |p_m| distribution measures the ground state,
+  the E_m distribution measures the FSI model.
+- The E_m shapes separate the tunes sharply once the scale is divided
+  out: 11a's survivors are a δ-line moved bodily from 15–20 to 35–40 MeV
+  (the sharp +20 MeV ΔT_p); 22a's are **bimodal** — an untouched line at
+  15–20 plus a rescattered hump at 30–45 that the data do not show; 22b's
+  survivors sit on the pre-FSI shape and the data peak (ΔT_p = 0);
+  GEM21's cut off at 30 MeV, missing the data's s-shell strength at
+  30–50 MeV entirely.
+
+Regenerate: `pixi run python results/template/make_postfsi_empm_shape.py --target C12 --all-tunes --proton-sel 1p`.
+
 ## 5. Pre- vs post-FSI proton
 
 ![C12 v0.3 pre/post, GEM26_11a](fsi_prepost_c12_GEM26_11a_05_000.png)

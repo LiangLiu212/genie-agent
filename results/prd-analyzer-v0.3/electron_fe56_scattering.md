@@ -166,6 +166,47 @@ same information, only the axis convention differs.
 
 (Same run as 4.1 — the script writes both figure sets.)
 
+### 4.3 Post-FSI E_m and |p_m| shapes, normalized to the survivors
+
+Both post-FSI projections per tune
+([`make_postfsi_empm_shape.py`](../template/make_postfsi_empm_shape.py)),
+normalized by the **surviving in-window post-FSI count** instead of the
+true-QEL selection count N_sel: every curve has unit integral over its
+window, dividing out the ~Z × survival occupancy scale so only shapes
+compare. Left: `E_m + T_rec` in [0, 80), p_m < 300 (the section-4
+construction) vs unit-normalized fig 11; right: |p_m| in [0, 320) with the
+E_m < 80 window (the section-4.1 construction) vs unit-normalized folded
+fig 7. The pre-FSI shape (its own in-window count) and the unit-normalized
+windowed table are drawn as references; pre-FSI record spikes may run off
+the capped y-scale.
+
+![Fe56 v0.3 post-FSI shapes, GEM26_11a](postfsi_shape_empm_fe56_GEM26_11a_05_000.png)
+![Fe56 v0.3 post-FSI shapes, GEM26_22a](postfsi_shape_empm_fe56_GEM26_22a_05_000.png)
+![Fe56 v0.3 post-FSI shapes, GEM26_22b](postfsi_shape_empm_fe56_GEM26_22b_05_000.png)
+![Fe56 v0.3 post-FSI shapes, GEM21_11a](postfsi_shape_empm_fe56_GEM21_11a_05_000.png)
+
+| tune | E panel pre → post | p panel pre → post |
+|---|---|---|
+| GEM26_11a_05_000 | 68,047 → 27,601 | 68,047 → 27,741 |
+| GEM26_22a_05_000 | 61,692 → 23,635 | 62,492 → 24,012 |
+| GEM26_22b_05_000 | 46,732 → 19,118 | 47,143 → 19,364 |
+| GEM21_11a_05_000 | 58,874 → 24,453 | 59,700 → 24,851 |
+
+(The E-panel post counts reproduce section 4's "1p in-window" column —
+same selection, different normalization.)
+
+- **The |p_m| shape is nearly FSI-invariant on iron**: post-FSI ≈ pre-FSI
+  ≈ table ≈ data in every tune, even at 0.38–0.42 survival. The per-bin
+  survival I4/I3 rises only mildly with |p_m| (22a: 0.32 → 0.46 across
+  0–320 MeV/c), and the strongest depletion sits at low |p_m| where the
+  distribution is small — so the survivor-normalized shape barely moves.
+- The E_m shapes carry all the FSI distortion: 22a's survivors are broader
+  than the data with the excess at 20–45 MeV (the broad ΔT_p smearing);
+  GEM21's survivors lose the E_m > 35 MeV tail almost entirely (strongly
+  E_m-dependent survival), while the data extend smoothly to 80 MeV.
+
+Regenerate: `pixi run python results/template/make_postfsi_empm_shape.py --target Fe56 --all-tunes --proton-sel 1p`.
+
 ## 5. Pre- vs post-FSI proton
 
 As v0.2 section 5 on the N_p = 1 in-window set (the dumper's `np` column;
