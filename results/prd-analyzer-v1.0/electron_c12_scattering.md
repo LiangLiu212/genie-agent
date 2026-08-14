@@ -191,6 +191,25 @@ with 2× stat errors:
   raw distorted yield (≈ stage 4) back toward the undistorted scale
   (≈ stage 3).
 
+**Post-FSI-normalized variant** (`--nsel postfsi`): the same figure with
+the MC denominator changed from N_sel to the **events after FSI** — the
+158,453 events (81.2 % of the 195,170 selected) with a surviving N_p = 1
+proton — the simulation-side analogue of the data's renormalization
+(which scales the distorted yield back up). Table and data untouched:
+
+![simulated 22b, MC normalized to post-FSI events](em_folded_pm_sim_nselpost_c12_GEM26_22b_05_000.png)
+
+- The ×1.23 lift closes part but not all of the gap: the post-FSI curve
+  rises to 0.39 MeV⁻¹ at the E_m peak vs the data's 0.57, and in the
+  shells the data now sit **between** the stages (data/pre = 0.89 / 0.79 /
+  0.93, data/post ≈ 1.5 / 1.4 / 1.6 per panel).
+- The residual gap is expected: dividing by the *event-count* survival
+  (0.812, mostly proton loss) does not undo the *in-window strength*
+  survival (I4/I3 ≈ 0.58 — FSI moving surviving protons out of the E_m
+  window and below the p thresholds), whereas Dutta's renormalization was
+  fitted to restore full occupancy.
+
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default
-`--tune GEM26_22b_05_000`; any campaign tune via `--tune`).
+`--tune GEM26_22b_05_000`; any campaign tune via `--tune`;
+`--nsel postfsi` for the post-FSI-normalized variant).

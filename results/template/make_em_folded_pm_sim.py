@@ -16,9 +16,17 @@ Units per panel match the normalization page exactly:
               grid; folded data y(+p)+y(-p) at the published scale
               (errors 2x stat -- the sides are duplicated).
 
+--nsel postfsi replaces the MC normalization denominator N_sel (all
+qel && hit-p events) with the number of events AFTER FSI (a surviving
+N_p = 1 proton, i.e. stage 4 exists) — the simulation-side analogue of the
+data's renormalization, which scales the distorted yield back up. Writes
+the `_nselpost` figure variant (em_folded_pm_sim_nselpost_...); table and
+data are untouched.
+
 Usage:
   pixi run python results/template/make_em_folded_pm_sim.py            # 22b
   pixi run python results/template/make_em_folded_pm_sim.py --tune GEM26_22a_05_000
+  pixi run python results/template/make_em_folded_pm_sim.py --nsel postfsi
 """
 import argparse
 import sys
@@ -101,21 +109,19 @@ def load_cache(tune):
     return c
 
 
-def mc_em(c, s):
+def mc_em(c, s, n_norm):
     """Occupancy E_m spectrum of stage s (p_s < 300), data 5-MeV bins."""
-    n_sel = float(c["n_sel"][0])
     m = np.isfinite(c[f"E{s}r"]) & (c[f"p{s}"] < PM_MAX)
     cnt, _ = np.histogram(c[f"E{s}r"][m], bins=E_EDGES)
-    return Z * cnt / (n_sel * 5.0)
+    return Z * cnt / (n_norm * 5.0)
 
 
-def mc_pm_density(c, s, e_win):
+def mc_pm_density(c, s, e_win, n_norm):
     """3D-density |p_m| of stage s in the E_m window, 20-MeV/c bins."""
-    n_sel = float(c["n_sel"][0])
     Er = c[f"E{s}r"]
     m = np.isfinite(Er) & (Er >= e_win[0]) & (Er < e_win[1])
     cnt, _ = np.histogram(c[f"p{s}"][m], bins=K_EDGES)
-    occ = Z * cnt / (n_sel * DK)
+    occ = Z * cnt / (n_norm * DK)
     p_c = (K_EDGES[:-1] + K_EDGES[1:]) / 2.0
     return occ / (4.0 * np.pi * p_c ** 2)
 
@@ -142,10 +148,16 @@ def strength_pm(y_dens, edges):
                  * np.diff(edges)[sel].mean())
 
 
-def main(tune):
+def main(tune, nsel_mode):
     apply_style()
     table_stem, table = load_table()
     c = load_cache(tune)
+    n_sel = float(c["n_sel"][0])
+    n_post = float(np.isfinite(c["E4"]).sum())
+    n_norm = n_post if nsel_mode == "postfsi" else n_sel
+    if nsel_mode == "postfsi":
+        print(f"  N_sel -> post-FSI events: {int(n_post):,} of "
+              f"{int(n_sel):,} ({n_post / n_sel:.3f})")
 
     fig, axes = new_panels(ncols=3, nrows=1, sharey=False)
     ax_em, ax_psh, ax_ssh = axes
@@ -153,7 +165,7 @@ def main(tune):
     # ---- E_m spectrum vs fig 9 -------------------------------------------
     dem, dsf, dstat, dtot = dutta_em()
     y_tab = table_em(table, E_EDGES)
-    y3, y4 = mc_em(c, 3), mc_em(c, 4)
+    y3, y4 = mc_em(c, 3, n_norm), mc_em(c, 4, n_norm)
     ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
                  alpha=0.8, zorder=3, label=f"table {table_stem}")
     ax_em.stairs(y3, E_EDGES, color="C0", lw=1.6, linestyle="--", zorder=4,
@@ -168,9 +180,10 @@ def main(tune):
                f"data/pre = {strength_em(dsf) / strength_em(y3):.2f}"
                f"   I4/I3 = {strength_em(y4) / strength_em(y3):.2f}",
                transform=ax_em.transAxes, va="top", fontsize=FS_TICK)
+    nlab = r"N_{postFSI}" if nsel_mode == "postfsi" else r"N_{sel}"
     style_axis(ax_em, title=r"C12 $E_m$ spectrum vs fig 9",
                xlabel=r"$E_m+T_{rec}$  [MeV]",
-               ylabel=r"$Z\cdot$ d$N/$d$E\,/\,N_{sel}$   [MeV$^{-1}$]",
+               ylabel=rf"$Z\cdot$ d$N/$d$E\,/\,{nlab}$   [MeV$^{{-1}}$]",
                logx=False, logy=False, ymin=None)
     ax_em.set_xlim(0, 85)
     ax_em.set_ylim(0, 0.7)
@@ -185,7 +198,8 @@ def main(tune):
     ]:
         dx, dy, de = dutta_pm(stem)
         yt, k_edges = table_pm_density(table, e_win)
-        y3, y4 = (mc_pm_density(c, 3, e_win), mc_pm_density(c, 4, e_win))
+        y3, y4 = (mc_pm_density(c, 3, e_win, n_norm),
+                  mc_pm_density(c, 4, e_win, n_norm))
         ax.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
                   alpha=0.8, zorder=3, label=f"table {table_stem}")
         ax.stairs(y3, K_EDGES, color="C0", lw=1.6, linestyle="--", zorder=4,
@@ -213,15 +227,20 @@ def main(tune):
               f"{s_data / strength_pm(y3, K_EDGES):.3f}  "
               f"I4/I3={strength_pm(y4, K_EDGES) / strength_pm(y3, K_EDGES):.3f}")
 
-    n_sel = int(c["n_sel"][0])
+    if nsel_mode == "postfsi":
+        norm_note = (f"MC / N$_{{post-FSI}}$ = {int(n_post):,} "
+                     f"(of {int(n_sel):,} selected)")
+    else:
+        norm_note = f"N$_{{sel}}$ = {int(n_sel):,}"
     fig.suptitle(f"Dutta E91-013 vs simulated {tune} ({TUNE_GS[tune]}) — "
                  r"$E_m$ spectrum and folded $|p_m|$"
                  "\nqel && hit p && N$_p$=1, NO $Q^2$ cut "
-                 f"(N$_{{sel}}$ = {n_sel:,}); data at publ. scale, "
+                 f"({norm_note}); data at publ. scale, "
                  "table thin dashed",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    out = OUT_DIR / f"em_folded_pm_sim_c12_{tune}.png"
+    infix = "_nselpost" if nsel_mode == "postfsi" else ""
+    out = OUT_DIR / f"em_folded_pm_sim{infix}_c12_{tune}.png"
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
 
@@ -230,5 +249,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--tune", default="GEM26_22b_05_000",
                     choices=sorted(TUNE_GS))
+    ap.add_argument("--nsel", default="sel", choices=["sel", "postfsi"],
+                    help="postfsi: normalize the MC by the events after "
+                         "FSI (surviving N_p=1 proton) instead of N_sel")
     args = ap.parse_args()
-    main(args.tune)
+    main(args.tune, args.nsel)
