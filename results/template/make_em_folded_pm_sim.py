@@ -65,7 +65,16 @@ CACHE_ROOT = REPO / "results/prd-analyzer-v1.0/cache"
 OUT_DIR = REPO / "results/prd-analyzer-v1.0"
 DATA_DIR = REPO / "data/Dipingkar-dutta-data-prc_figs"
 
-Z = 6
+# per-target configuration; CFG is rebound from --target at entry
+TGT = {
+    "C12": dict(Z=6, tgt_pdg=1000060120, m_rec_gev=None,   # B11 from v0
+                tlow="c12", em_ymax=0.7),
+    "Fe56": dict(Z=26, tgt_pdg=1000260560,
+                 m_rec_gev=51.1616880,                     # Mn55 (v0.1)
+                 tlow="fe56", em_ymax=1.5),
+}
+CFG = TGT["C12"]
+
 PM_MAX = 300.0                   # E_m panel p_s window [MeV/c]
 E_EDGES = np.arange(0.0, 85.0, 5.0)
 DK = 20.0                        # native table k grid [MeV/c]
@@ -82,14 +91,16 @@ TUNE_GS = {
 TABLE_TUNES = {"GEM26_22a_05_000", "GEM26_22b_05_000"}
 
 
-def _m_rec_c12():
+def _m_rec():
+    if CFG["m_rec_gev"] is not None:
+        return CFG["m_rec_gev"]
     from acceptance import M_REC       # B11 [GeV], v0 value (matches caches)
     return M_REC
 
 
 def load_table():
-    """Occupancy-normalized (integral = Z) Benhar C12 table."""
-    path = resolve_sf_table("GEM26_22a_05_000", 1000060120, 2212)
+    """Occupancy-normalized (integral = Z) Benhar table for the target."""
+    path = resolve_sf_table("GEM26_22a_05_000", CFG["tgt_pdg"], 2212)
     k, E, k_edges, E_edges, S = read_pke_table(path)
     dk = float(np.diff(k_edges).mean())
     dE = float(np.diff(E_edges).mean())
@@ -101,7 +112,8 @@ def table_em(table, edges, kmax=PM_MAX):
     """f_{k<kmax}(E) rebinned into `edges` (occupancy scale, MeV^-1)."""
     k, E, k_edges, P, dk, dE = table
     sel = (k + dk / 2.0) <= kmax + 1e-9
-    f = Z * (4.0 * np.pi * (k[sel, None] ** 2) * P[sel, :] * dk).sum(axis=0)
+    f = CFG["Z"] * (4.0 * np.pi * (k[sel, None] ** 2)
+                    * P[sel, :] * dk).sum(axis=0)
     out = np.zeros(len(edges) - 1)
     for i, (lo, hi) in enumerate(zip(edges[:-1], edges[1:])):
         ov = np.clip(np.minimum(E + dE / 2.0, hi)
@@ -116,19 +128,19 @@ def table_pm_density(table, e_win):
     lo, hi = e_win
     ov = np.clip(np.minimum(E + dE / 2.0, hi)
                  - np.maximum(E - dE / 2.0, lo), 0.0, None)
-    return Z * (P * ov[None, :]).sum(axis=1), k_edges
+    return CFG["Z"] * (P * ov[None, :]).sum(axis=1), k_edges
 
 
 def load_cache(tune, psel):
     tag = "" if psel == "1p" else "_leading"
-    path = CACHE_ROOT / f"ladder_c12{tag}" / f"{tune}.npz"
+    path = CACHE_ROOT / f"ladder_{CFG['tlow']}{tag}" / f"{tune}.npz"
     if not path.exists():
         raise SystemExit(f"missing v1.0 cache {path} — build it with "
-                         "make_emiss_ladder_q2cut.py --target C12 "
+                         "make_emiss_ladder_q2cut.py --target <target> "
                          f"--tune {tune} --proton-sel {psel} --no-q2cut "
                          "--build-only")
     c = dict(np.load(path))
-    m_rec = _m_rec_c12()
+    m_rec = _m_rec()
     with np.errstate(invalid="ignore"):
         for s in (3, 4):
             c[f"E{s}r"] = c[f"E{s}"] + c[f"p{s}"] ** 2 / (2.0 * m_rec * 1000.0)
@@ -139,7 +151,7 @@ def mc_em(c, s, n_norm):
     """Occupancy E_m spectrum of stage s (p_s < 300), data 5-MeV bins."""
     m = np.isfinite(c[f"E{s}r"]) & (c[f"p{s}"] < PM_MAX)
     cnt, _ = np.histogram(c[f"E{s}r"][m], bins=E_EDGES)
-    return Z * cnt / (n_norm * 5.0)
+    return CFG["Z"] * cnt / (n_norm * 5.0)
 
 
 def mc_pm_density(c, s, e_win, n_norm):
@@ -147,7 +159,7 @@ def mc_pm_density(c, s, e_win, n_norm):
     Er = c[f"E{s}r"]
     m = np.isfinite(Er) & (Er >= e_win[0]) & (Er < e_win[1])
     cnt, _ = np.histogram(c[f"p{s}"][m], bins=K_EDGES)
-    occ = Z * cnt / (n_norm * DK)
+    occ = CFG["Z"] * cnt / (n_norm * DK)
     p_c = (K_EDGES[:-1] + K_EDGES[1:]) / 2.0
     return occ / (4.0 * np.pi * p_c ** 2)
 
@@ -155,6 +167,15 @@ def mc_pm_density(c, s, e_win, n_norm):
 def dutta_em():
     from fig9_common import load_dutta      # incl. published-bar overrides
     return load_dutta()
+
+
+def dutta_em_target():
+    """(dem, dsf, dstat, dtot), label — the target's E_m spectrum data."""
+    if CFG["tlow"] == "c12":
+        return dutta_em(), "Dutta fig 9"
+    dem, dsf, _, dstat = np.loadtxt(DATA_DIR / "fig11_q1p2.dat", unpack=True)
+    dtot = np.sqrt(dstat ** 2 + (0.02 * dsf) ** 2 + (0.05 * dsf) ** 2)
+    return (dem, dsf, dstat, dtot), "Dutta fig 11"
 
 
 def dutta_pm(stem):
@@ -324,8 +345,8 @@ def main_combo(tune):
     fig, axes = new_panels(ncols=2, nrows=1, sharey=False)
     ax_em, ax_pm = axes
 
-    # ---- E_m spectrum vs fig 9 -------------------------------------------
-    dem, dsf, dstat, dtot = dutta_em()
+    # ---- E_m spectrum ----------------------------------------------------
+    (dem, dsf, dstat, dtot), em_dlab = dutta_em_target()
     y_tab = table_em(table, E_EDGES)
     if tune in TABLE_TUNES:
         ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
@@ -339,32 +360,38 @@ def main_combo(tune):
     ax_em.errorbar(dem, dsf, yerr=dtot, fmt="none", ecolor="0.6",
                    elinewidth=3, alpha=0.8, zorder=8)
     ax_em.errorbar(dem, dsf, yerr=dstat, fmt="s", ms=5, color="black",
-                   capsize=2, zorder=9, label="Dutta fig 9")
+                   capsize=2, zorder=9, label=em_dlab)
     print("  E panel strengths: "
           + "  ".join(f"{lab}={v:.3f}" for lab, v in ss.items())
           + f"  data={strength_em(dsf):.3f}")
-    style_axis(ax_em, title=r"C12 $E_m$ spectrum",
+    style_axis(ax_em, title=rf"{CFG['name']} $E_m$ spectrum",
                xlabel=r"$E_m+T_{rec}$  [MeV]",
                ylabel=r"$Z\cdot$ d$N/$d$E\,/\,N$   [MeV$^{-1}$]",
                logx=False, logy=False, ymin=None)
     ax_em.set_xlim(0, 85)
-    ax_em.set_ylim(0, 0.7)
+    ax_em.set_ylim(0, CFG["em_ymax"])
     ax_em.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="center right")
 
-    # ---- folded |p_m|, shells summed, scaled to the full E window --------
+    # ---- folded |p_m| on the full E window -------------------------------
     E_WIN = (0.0, 80.0)
-    dx, dyp, dep = dutta_pm("fig6_top_q1p2")
-    _, dys, des = dutta_pm("fig6_bot_q1p2")
-    dy_sum = dyp + dys
-    de_sum = np.sqrt(dep ** 2 + des ** 2)
-    # gap-fill from the fig 9 E_m shape: [0,80) / (10-25 u 30-50)
-    m_sh = (((dem >= 10.0) & (dem < 25.0))
-            | ((dem >= 30.0) & (dem < 50.0)))
-    f_gap = float(dsf.sum() / dsf[m_sh].sum())
-    dy = f_gap * dy_sum
-    de = f_gap * de_sum
-    print(f"  gap-fill from fig 9 shape: f = {f_gap:.3f} "
-          f"(shell windows hold {100.0 / f_gap:.1f}% of [0,80))")
+    if CFG["tlow"] == "c12":
+        # fig 6 shells summed, gap-filled from the fig 9 E_m shape
+        dx, dyp, dep = dutta_pm("fig6_top_q1p2")
+        _, dys, des = dutta_pm("fig6_bot_q1p2")
+        dy_sum = dyp + dys
+        de_sum = np.sqrt(dep ** 2 + des ** 2)
+        m_sh = (((dem >= 10.0) & (dem < 25.0))
+                | ((dem >= 30.0) & (dem < 50.0)))
+        f_gap = float(dsf.sum() / dsf[m_sh].sum())
+        dy = f_gap * dy_sum
+        de = f_gap * de_sum
+        pm_dlab = f"Dutta p+s L+R $\\times$ {f_gap:.2f}"
+        print(f"  gap-fill from fig 9 shape: f = {f_gap:.3f} "
+              f"(shell windows hold {100.0 / f_gap:.1f}% of [0,80))")
+    else:
+        # fig 7 IS the E_m < 80 window — folded, no gap-fill
+        dx, dy, de = dutta_pm("fig7_q1p2")
+        pm_dlab = "Dutta fig 7 L+R"
 
     yt, k_edges = table_pm_density(table, E_WIN)
     if tune in TABLE_TUNES:
@@ -377,13 +404,13 @@ def main_combo(tune):
         ax_pm.stairs(y, K_EDGES, color=color, lw=lw, linestyle=ls,
                      zorder=5, label=lab)
     ax_pm.errorbar(dx, dy, yerr=de, fmt="s", ms=5, color="black",
-                   capsize=2, zorder=9,
-                   label=f"Dutta p+s L+R $\\times$ {f_gap:.2f}")
+                   capsize=2, zorder=9, label=pm_dlab)
     s_data = float((4.0 * np.pi * dx ** 2 * dy).sum() * 40.0)
     print(f"  pm panel (E 0–80): data={s_data:.3f}  "
           + "  ".join(f"{lab}={strength_pm(y, K_EDGES):.3f}"
                       for (_, _, _, _, _, _, lab), y in zip(CURVES, ys)))
-    style_axis(ax_pm, title=r"C12 folded $|p_m|$ ($E_m$ 0–80 MeV)",
+    style_axis(ax_pm,
+               title=rf"{CFG['name']} folded $|p_m|$ ($E_m$ 0–80 MeV)",
                xlabel=r"$|p_m|$  [MeV/c]",
                ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
                logx=False, ymin=None)
@@ -400,13 +427,14 @@ def main_combo(tune):
                  "data at publ. scale",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    out = OUT_DIR / f"em_folded_pm_sim_combo_c12_{tune}.png"
+    out = OUT_DIR / f"em_folded_pm_sim_combo_{CFG['tlow']}_{tune}.png"
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
+    ap.add_argument("--target", default="C12", choices=sorted(TGT))
     ap.add_argument("--tune", default="GEM26_22b_05_000",
                     choices=sorted(TUNE_GS))
     ap.add_argument("--nsel", default="sel",
@@ -423,7 +451,11 @@ if __name__ == "__main__":
                          "post leading/N_postFSI, post 1p/N_win); "
                          "--nsel/--proton-sel are ignored")
     args = ap.parse_args()
+    CFG = dict(TGT[args.target], name=args.target)
     if args.combo:
         main_combo(args.tune)
     else:
+        if args.target != "C12":
+            raise SystemExit("the per-variant figures are C12-only; "
+                             "use --combo for Fe56")
         main(args.tune, args.nsel, args.proton_sel)
