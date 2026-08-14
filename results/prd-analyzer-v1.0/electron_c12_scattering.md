@@ -54,8 +54,22 @@ T_p [0, 2] GeV, θ_p [0, 155]°, Q² [1.18, 3.62] GeV².)
   dominant for every tune. GEM21 (dashed) cuts off earliest in both E_e′
   (shoulder deficit below ≈ 0.9 GeV) and T_p (≈ 1.6 GeV endpoint).
 
-Regenerate (this and 1.1):
-`pixi run python results/template/make_kin_qel_v1.py --target C12`.
+**Q²-cut companion** (`--q2cut`): the same figure with the Dutta window
+**applied** — the v0.3 section-3 construction reproduced here for the
+side-by-side (shape companion `kin_qel_q2cut_c12.png`):
+
+![C12 QEL kinematics, Q² window applied, N_p=1, events/bin](kin_qel_q2cut_c12_counts.png)
+
+The slice keeps 103,350 / 103,992 / 75,664 / 102,306 events
+(11a/22a/22b/GEM21 — 26–27 % of the uncut qel N) and reproduces the v0.3
+numbers exactly (window multiplicity 1p = 62.1–63.9 %). Against the uncut
+figure above: the electron arm collapses to the elastic-like corner
+(E_e′ peak 1.75 GeV, θ_e′ ≈ 32°), T_p concentrates at the ≈ 0.68 GeV QE
+bump — while θ_p and the proton-panel shapes barely change.
+
+Regenerate (this, the companion, and 1.1):
+`pixi run python results/template/make_kin_qel_v1.py --target C12`
+(`--q2cut` for the applied-window pair).
 
 ### 1.1 E_m and p_m — no cuts at all
 

@@ -24,8 +24,13 @@ Figures per target, written to results/prd-analyzer-v1.0/:
     empm_<target>_lin.png        linear-y companion
     empm_<target>_counts.png     raw events/bin companion
 
+--q2cut APPLIES the Dutta Q^2 = 1.28 +- 5 % window (the v0.3 section-3
+construction, reproduced here as the cut companion of the uncut figures):
+kinematics figures only, written as kin_qel_q2cut_<target>[_counts].png.
+
 Usage:
   pixi run python results/template/make_kin_qel_v1.py --target C12
+  pixi run python results/template/make_kin_qel_v1.py --target C12 --q2cut
 """
 import argparse
 import sys
@@ -62,15 +67,17 @@ PANELS = [
 ]
 
 
-def load_cache(target, tune):
-    """v0.1 kin_qel cache -> dict, qel selection only (no Q^2 mask)."""
+def load_cache(target, tune, q2cut=False):
+    """v0.1 kin_qel cache -> dict; q2cut applies the Dutta window."""
     path = CACHE_ROOT / f"kin_qel_{target.lower()}" / f"{tune}.npz"
     if not path.exists():
         raise SystemExit(f"missing v0.1 cache {path} — run make_kin_qel.py "
                          f"--target {target} first")
     c = dict(np.load(path))
-    out = {k: c[k] for k in KEYS}
-    out["has_p"] = c["has_p"]
+    m = (np.abs(c["Q2"] / Q2_CENTER - 1.0) <= Q2_FRAC) if q2cut \
+        else np.ones(len(c["Q2"]), dtype=bool)
+    out = {k: c[k][m] for k in KEYS}
+    out["has_p"] = c["has_p"][m]
     out["ntot"] = c["ntot"]
     return out
 
@@ -85,7 +92,7 @@ def panel_range(cache, key, step):
     return float(lo), float(hi)
 
 
-def make_fig(target, cache, density):
+def make_fig(target, cache, density, q2cut=False):
     fig, axes = new_panels(ncols=3, nrows=2, sharey=False)
     for ax, (key, lab, step, nb) in zip(axes, PANELS):
         rng = panel_range(cache, key, step)
@@ -113,14 +120,27 @@ def make_fig(target, cache, density):
                    fontsize=FS_LEGEND - 1, title_fontsize=FS_LEGEND_TITLE)
     norm_note = ("area-normalized" if density
                  else "raw events/bin (equal ntot = 2M/tune)")
-    fig.suptitle(f"(e,e'p) QEL kinematics, NO Q² cut (qel; T$_p$/$\\theta_p$: "
-                 f"N$_p$=1)  —  e⁻ on {target} (t05, genlist EM), {norm_note}\n"
-                 "grey dashed on Q² = Dutta 1.28 ± 5 % window (reference only, "
-                 "NOT applied); hard edge at 1.18 = t05 EM-MinQ2Limit",
-                 fontsize=FS_SUPTITLE - 1)
+    if q2cut:
+        short_note = ("area-normalized" if density
+                      else "events/bin (ntot = 2M/tune)")
+        fig.suptitle(f"(e,e'p) QEL kinematics, Q² = 1.28 ± 5 % APPLIED "
+                     f"(qel && window && N$_p$=1)  —  "
+                     f"e⁻ on {target} (t05), {short_note}\n"
+                     "grey dashed on Q² = the applied window edges",
+                     fontsize=FS_SUPTITLE - 2)
+    else:
+        fig.suptitle(f"(e,e'p) QEL kinematics, NO Q² cut (qel; "
+                     f"T$_p$/$\\theta_p$: "
+                     f"N$_p$=1)  —  e⁻ on {target} (t05, genlist EM), "
+                     f"{norm_note}\n"
+                     "grey dashed on Q² = Dutta 1.28 ± 5 % window (reference "
+                     "only, NOT applied); hard edge at 1.18 = t05 "
+                     "EM-MinQ2Limit",
+                     fontsize=FS_SUPTITLE - 1)
     fig.tight_layout()
+    infix = "_q2cut" if q2cut else ""
     suffix = "" if density else "_counts"
-    out = OUT_DIR / f"kin_qel_{target.lower()}{suffix}.png"
+    out = OUT_DIR / f"kin_qel{infix}_{target.lower()}{suffix}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
@@ -176,21 +196,27 @@ def make_empm_fig(target, cache, density, logy=True):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", default="C12", choices=["Fe56", "C12"])
+    ap.add_argument("--q2cut", action="store_true",
+                    help="APPLY the Dutta Q^2 window (kinematics figures "
+                         "only, kin_qel_q2cut_* names)")
     args = ap.parse_args()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     apply_style()
-    cache = {t: load_cache(args.target, t) for t in TUNES}
+    cache = {t: load_cache(args.target, t, args.q2cut) for t in TUNES}
+    sel_lab = "qel&&win" if args.q2cut else "qel"
     for t in TUNES:
         npc = cache[t]["n_p"]
-        print(f"  {t}: qel multiplicity 0p={np.mean(npc==0):.3f} "
+        print(f"  {t}: {sel_lab} multiplicity 0p={np.mean(npc==0):.3f} "
               f"1p={np.mean(npc==1):.3f} 2p+={np.mean(npc>=2):.3f}")
-    make_fig(args.target, cache, density=True)
-    make_fig(args.target, cache, density=False)
-    make_empm_fig(args.target, cache, density=True)
-    make_empm_fig(args.target, cache, density=False)
-    make_empm_fig(args.target, cache, density=True, logy=False)
+    make_fig(args.target, cache, density=True, q2cut=args.q2cut)
+    make_fig(args.target, cache, density=False, q2cut=args.q2cut)
+    if not args.q2cut:
+        make_empm_fig(args.target, cache, density=True)
+        make_empm_fig(args.target, cache, density=False)
+        make_empm_fig(args.target, cache, density=True, logy=False)
     for t in TUNES:
         c = cache[t]
-        print(f"  {t:18s} qel N={len(c['Q2']):7,d} of ntot={int(c['ntot'][0]):,}"
+        print(f"  {t:18s} {sel_lab} N={len(c['Q2']):7,d} "
+              f"of ntot={int(c['ntot'][0]):,}"
               f"  has_p={100*np.mean(c['has_p']):.1f}%")
