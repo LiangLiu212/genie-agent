@@ -352,7 +352,7 @@ def main_combo(tune):
     print("  E panel strengths: "
           + "  ".join(f"{lab}={v:.3f}" for lab, v in ss.items())
           + f"  data={strength_em(dsf):.3f}")
-    style_axis(ax_em, title=r"C12 $E_m$ spectrum vs fig 9",
+    style_axis(ax_em, title=r"C12 $E_m$ spectrum",
                xlabel=r"$E_m+T_{rec}$  [MeV]",
                ylabel=r"$Z\cdot$ d$N/$d$E\,/\,N$   [MeV$^{-1}$]",
                logx=False, logy=False, ymin=None)
@@ -401,9 +401,7 @@ def main_combo(tune):
     top = 1.5 * max([y[plot_sel].max() for y in ys]
                     + [yt[k_edges[1:] <= 330.0].max(), (dy + de).max()])
     ax_pm.set_ylim(top / 1e3, top)
-    ax_pm.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="lower left",
-                 title="data gap-filled to $E_m$ [0, 80)\nfrom the fig 9 shape",
-                 title_fontsize=FS_LEGEND - 4)
+    ax_pm.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="lower left")
 
     fig.suptitle(f"Dutta E91-013 vs simulated {tune} "
                  f"({TUNE_GS[tune]})\n"
