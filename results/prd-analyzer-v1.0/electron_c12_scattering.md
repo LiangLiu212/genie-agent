@@ -265,6 +265,26 @@ default proton selection; in-window N = 103,972, 53.3 %):
   convention is irrelevant — the two stage-4 definitions select the same
   in-window events to 0.8 %.
 
+**The conventions side by side** (`--combo`): the three normalizations of
+the preceding variants in one figure — table (thin dashed), pre-FSI /
+N_sel = 195,170 (true occupancy), post-FSI **leading p** / its post-FSI
+count N = 190,858 (the raw-distorted-yield analogue: only the 2.2 %
+proton loss divided out), and post-FSI **N_p = 1** / its in-window count
+N = 103,972 (the full renormalization):
+
+![simulated 22b, mixed normalizations](em_folded_pm_sim_combo_c12_GEM26_22b_05_000.png)
+
+- The three conventions ARE the convention chain of the measurement:
+  blue ≈ table = the undistorted spectral function; green = the distorted
+  yield on the per-selected-event scale (E-panel strength 3.29 of Z = 6,
+  the ≈ 0.55 raw-scale suppression the normalization page predicted a
+  distorted, un-renormalized S^D would show); red = the same survivors
+  renormalized in-window to Z = 6.000, landing on the data (6.080) in
+  every projection.
+- Green → red is a nearly pure scale factor (×1.81–1.84 across the three
+  panels — the two stage-4 definitions coincide in-window); that gap is
+  what Dutta's full-occupancy renormalization absorbed.
+
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default
 `--tune GEM26_22b_05_000`; any campaign tune via `--tune`;
@@ -272,4 +292,5 @@ Regenerate:
 in-window-normalized variants; `--proton-sel leading` for the
 leading-proton stage 4 — build its cache once with
 `make_emiss_ladder_q2cut.py --target C12 --tune <tune> --proton-sel
-leading --no-q2cut --build-only`).
+leading --no-q2cut --build-only`; `--combo` for the mixed-normalization
+summary).

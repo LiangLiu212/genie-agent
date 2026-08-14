@@ -36,11 +36,18 @@ the `ladder_c12_leading` uncut cache (build with
 make_emiss_ladder_q2cut.py --proton-sel leading --no-q2cut --build-only)
 and writes the `_leadp` figure variant.
 
+--combo draws the mixed-normalization summary (needs BOTH caches): table
++ pre-FSI / N_sel (true occupancy) + post-FSI leading p / its post-FSI
+event count + post-FSI N_p = 1 / its in-window count — the three
+normalization conventions of the preceding variants in one figure
+(`_combo`); --nsel/--proton-sel are ignored with it.
+
 Usage:
   pixi run python results/template/make_em_folded_pm_sim.py            # 22b
   pixi run python results/template/make_em_folded_pm_sim.py --tune GEM26_22a_05_000
   pixi run python results/template/make_em_folded_pm_sim.py --nsel postfsi
   pixi run python results/template/make_em_folded_pm_sim.py --proton-sel leading
+  pixi run python results/template/make_em_folded_pm_sim.py --combo
 """
 import argparse
 import sys
@@ -274,6 +281,109 @@ def main(tune, nsel_mode, psel):
     print("wrote", out)
 
 
+def main_combo(tune):
+    """Mixed normalizations together: table, pre-FSI/N_sel, post-FSI
+    leading p / N_postFSI(leading), post-FSI N_p=1 / N_win(1p)."""
+    apply_style()
+    table_stem, table = load_table()
+    c1 = load_cache(tune, "1p")
+    cl = load_cache(tune, "leading")
+    n_sel = float(c1["n_sel"][0])
+    n_post_l = float(np.isfinite(cl["E4"]).sum())
+    with np.errstate(invalid="ignore"):
+        m4win = (np.isfinite(c1["E4r"]) & (c1["E4r"] >= 0.0)
+                 & (c1["E4r"] < 80.0) & (c1["p4"] < PM_MAX))
+    n_win_1 = float(m4win.sum())
+    print(f"  N_sel={int(n_sel):,}  N_postFSI(leading)={int(n_post_l):,} "
+          f"({n_post_l / n_sel:.3f})  N_win(1p)={int(n_win_1):,} "
+          f"({n_win_1 / n_sel:.3f})")
+
+    # (cache, stage-4 denominator, color, lw, label)
+    CURVES = [
+        (c1, 3, n_sel, "C0", 1.6, "--",
+         "pre-FSI / N$_{sel}$"),
+        (cl, 4, n_post_l, "C2", 1.8, "-",
+         "post-FSI leading p / N$_{postFSI}$"),
+        (c1, 4, n_win_1, "C3", 2.0, "-",
+         "post-FSI N$_p$=1 / N$_{win}$"),
+    ]
+
+    fig, axes = new_panels(ncols=3, nrows=1, sharey=False)
+    ax_em, ax_psh, ax_ssh = axes
+
+    # ---- E_m spectrum vs fig 9 -------------------------------------------
+    dem, dsf, dstat, dtot = dutta_em()
+    y_tab = table_em(table, E_EDGES)
+    ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
+                 alpha=0.8, zorder=3, label=f"table {table_stem}")
+    ss = {}
+    for cc, s, n_norm, color, lw, ls, lab in CURVES:
+        y = mc_em(cc, s, n_norm)
+        ss[lab] = strength_em(y)
+        ax_em.stairs(y, E_EDGES, color=color, lw=lw, linestyle=ls,
+                     zorder=5, label=lab)
+    ax_em.errorbar(dem, dsf, yerr=dtot, fmt="none", ecolor="0.6",
+                   elinewidth=3, alpha=0.8, zorder=8)
+    ax_em.errorbar(dem, dsf, yerr=dstat, fmt="s", ms=5, color="black",
+                   capsize=2, zorder=9, label="Dutta fig 9")
+    print("  E panel strengths: "
+          + "  ".join(f"{lab}={v:.3f}" for lab, v in ss.items())
+          + f"  data={strength_em(dsf):.3f}")
+    style_axis(ax_em, title=r"C12 $E_m$ spectrum vs fig 9",
+               xlabel=r"$E_m+T_{rec}$  [MeV]",
+               ylabel=r"$Z\cdot$ d$N/$d$E\,/\,N$   [MeV$^{-1}$]",
+               logx=False, logy=False, ymin=None)
+    ax_em.set_xlim(0, 85)
+    ax_em.set_ylim(0, 0.7)
+    ax_em.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="center right")
+
+    # ---- folded |p_m| per shell ------------------------------------------
+    for ax, stem, e_win, title in [
+        (ax_psh, "fig6_top_q1p2", (10.0, 25.0),
+         "C12 folded p-shell (10–25 MeV)"),
+        (ax_ssh, "fig6_bot_q1p2", (30.0, 50.0),
+         "C12 folded s-shell (30–50 MeV)"),
+    ]:
+        dx, dy, de = dutta_pm(stem)
+        yt, k_edges = table_pm_density(table, e_win)
+        ax.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
+                  alpha=0.8, zorder=3, label=f"table {table_stem}")
+        ys = []
+        for cc, s, n_norm, color, lw, ls, lab in CURVES:
+            y = mc_pm_density(cc, s, e_win, n_norm)
+            ys.append(y)
+            ax.stairs(y, K_EDGES, color=color, lw=lw, linestyle=ls,
+                      zorder=5, label=lab)
+        ax.errorbar(dx, dy, yerr=de, fmt="s", ms=5, color="black",
+                    capsize=2, zorder=9, label="Dutta L+R")
+        s_data = float((4.0 * np.pi * dx ** 2 * dy).sum() * 40.0)
+        print(f"  {title}: data="
+              f"{s_data:.3f}  "
+              + "  ".join(f"{lab}={strength_pm(y, K_EDGES):.3f}"
+                          for (_, _, _, _, _, _, lab), y
+                          in zip(CURVES, ys)))
+        style_axis(ax, title=title, xlabel=r"$|p_m|$  [MeV/c]",
+                   ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
+                   logx=False, ymin=None)
+        ax.set_xlim(0, 330)
+        plot_sel = K_EDGES[1:] <= 330.0
+        top = 1.5 * max([y[plot_sel].max() for y in ys]
+                        + [yt[k_edges[1:] <= 330.0].max(), (dy + de).max()])
+        ax.set_ylim(top / 1e3, top)
+        ax.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="upper right")
+
+    fig.suptitle(f"Dutta E91-013 vs simulated {tune} ({TUNE_GS[tune]}) — "
+                 r"$E_m$ spectrum and folded $|p_m|$"
+                 "\nqel && hit p, NO $Q^2$ cut; mixed normalizations "
+                 "(each MC curve / its own N, see legend); data at publ. "
+                 "scale",
+                 fontsize=FS_SUPTITLE - 2)
+    fig.tight_layout()
+    out = OUT_DIR / f"em_folded_pm_sim_combo_c12_{tune}.png"
+    fig.savefig(out, dpi=DPI)
+    print("wrote", out)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--tune", default="GEM26_22b_05_000",
@@ -287,5 +397,12 @@ if __name__ == "__main__":
     ap.add_argument("--proton-sel", default="1p", choices=["1p", "leading"],
                     help="leading: stage 4 = leading FS proton of any "
                          ">=1p event (reads the _leading cache)")
+    ap.add_argument("--combo", action="store_true",
+                    help="mixed-normalization summary (table, pre/N_sel, "
+                         "post leading/N_postFSI, post 1p/N_win); "
+                         "--nsel/--proton-sel are ignored")
     args = ap.parse_args()
-    main(args.tune, args.nsel, args.proton_sel)
+    if args.combo:
+        main_combo(args.tune)
+    else:
+        main(args.tune, args.nsel, args.proton_sel)
