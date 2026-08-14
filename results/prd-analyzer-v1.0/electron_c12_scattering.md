@@ -254,6 +254,17 @@ exactly Z = 6 over the window, directly against fig 9's 6.08:
   strength in the 20–25 MeV s–p dip bin and less at the p-shell's
   140 MeV/c point than the simulation.
 
+The same renormalization with the **N_p = 1** stage 4 (`--nsel postwin`,
+default proton selection; in-window N = 103,972, 53.3 %):
+
+![simulated 22b, N_p=1, in-window renormalized](em_folded_pm_sim_nselwin_c12_GEM26_22b_05_000.png)
+
+- Indistinguishable from the leading-p version in-window (data/post =
+  1.00 / 0.91 / 1.05 vs 1.02 / 0.92 / 1.04): once the in-window
+  renormalization divides out the occupancy scale, the multiplicity
+  convention is irrelevant — the two stage-4 definitions select the same
+  in-window events to 0.8 %.
+
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default
 `--tune GEM26_22b_05_000`; any campaign tune via `--tune`;
