@@ -23,6 +23,13 @@ data's renormalization, which scales the distorted yield back up. Writes
 the `_nselpost` figure variant (em_folded_pm_sim_nselpost_...); table and
 data are untouched.
 
+--nsel postwin goes one step further than postfsi: the denominator is the
+number of post-FSI events INSIDE the measurement window (E_m + T_rec in
+[0, 80) MeV and p_m < 300 MeV/c) — the analogue of Dutta's full-occupancy
+renormalization: the stage-4 curve then integrates to exactly Z over the
+window, directly comparable to fig 9's 6.08. Writes the `_nselwin`
+variant.
+
 --proton-sel leading replaces the stage-4 definition N_p = 1 with the
 LEADING final-state proton of any >=1p event (the v0.2 convention). Reads
 the `ladder_c12_leading` uncut cache (build with
@@ -165,10 +172,17 @@ def main(tune, nsel_mode, psel):
              else "post-FSI leading p (stage 4)")
     n_sel = float(c["n_sel"][0])
     n_post = float(np.isfinite(c["E4"]).sum())
-    n_norm = n_post if nsel_mode == "postfsi" else n_sel
+    with np.errstate(invalid="ignore"):
+        m4win = (np.isfinite(c["E4r"]) & (c["E4r"] >= 0.0)
+                 & (c["E4r"] < 80.0) & (c["p4"] < PM_MAX))
+    n_win = float(m4win.sum())
+    n_norm = {"sel": n_sel, "postfsi": n_post, "postwin": n_win}[nsel_mode]
     if nsel_mode == "postfsi":
         print(f"  N_sel -> post-FSI events: {int(n_post):,} of "
               f"{int(n_sel):,} ({n_post / n_sel:.3f})")
+    elif nsel_mode == "postwin":
+        print(f"  N_sel -> in-window post-FSI events (E<80, p<300): "
+              f"{int(n_win):,} of {int(n_sel):,} ({n_win / n_sel:.3f})")
 
     fig, axes = new_panels(ncols=3, nrows=1, sharey=False)
     ax_em, ax_psh, ax_ssh = axes
@@ -190,7 +204,8 @@ def main(tune, nsel_mode, psel):
                f"data/pre = {strength_em(dsf) / strength_em(y3):.2f}"
                f"   I4/I3 = {strength_em(y4) / strength_em(y3):.2f}",
                transform=ax_em.transAxes, va="top", fontsize=FS_TICK)
-    nlab = r"N_{postFSI}" if nsel_mode == "postfsi" else r"N_{sel}"
+    nlab = {"sel": r"N_{sel}", "postfsi": r"N_{postFSI}",
+            "postwin": r"N_{win}^{postFSI}"}[nsel_mode]
     style_axis(ax_em, title=r"C12 $E_m$ spectrum vs fig 9",
                xlabel=r"$E_m+T_{rec}$  [MeV]",
                ylabel=rf"$Z\cdot$ d$N/$d$E\,/\,{nlab}$   [MeV$^{{-1}}$]",
@@ -239,6 +254,8 @@ def main(tune, nsel_mode, psel):
     if nsel_mode == "postfsi":
         norm_note = (f"MC / N$_{{post-FSI}}$ = {int(n_post):,} "
                      f"(of {int(n_sel):,} selected)")
+    elif nsel_mode == "postwin":
+        norm_note = f"MC / in-win post-FSI N = {int(n_win):,}"
     else:
         norm_note = f"N$_{{sel}}$ = {int(n_sel):,}"
     sel_clause = ("N$_p$=1" if psel == "1p" else "leading p")
@@ -249,7 +266,8 @@ def main(tune, nsel_mode, psel):
                  "table thin dashed",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    infix = ("_nselpost" if nsel_mode == "postfsi" else "") \
+    infix = {"sel": "", "postfsi": "_nselpost",
+             "postwin": "_nselwin"}[nsel_mode] \
         + ("" if psel == "1p" else "_leadp")
     out = OUT_DIR / f"em_folded_pm_sim{infix}_c12_{tune}.png"
     fig.savefig(out, dpi=DPI)
@@ -260,9 +278,12 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--tune", default="GEM26_22b_05_000",
                     choices=sorted(TUNE_GS))
-    ap.add_argument("--nsel", default="sel", choices=["sel", "postfsi"],
+    ap.add_argument("--nsel", default="sel",
+                    choices=["sel", "postfsi", "postwin"],
                     help="postfsi: normalize the MC by the events after "
-                         "FSI (a surviving proton) instead of N_sel")
+                         "FSI (a surviving proton) instead of N_sel; "
+                         "postwin: by the post-FSI events inside the "
+                         "window (E_m+T_rec in [0,80), p_m < 300)")
     ap.add_argument("--proton-sel", default="1p", choices=["1p", "leading"],
                     help="leading: stage 4 = leading FS proton of any "
                          ">=1p event (reads the _leading cache)")

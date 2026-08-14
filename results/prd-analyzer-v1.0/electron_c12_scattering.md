@@ -231,10 +231,34 @@ stage-4 definition differs). Proton loss drops from ≈ 19 % (N_p ≠ 1) to
   base variant — with leading-p there is no multiplicity veto left to
   divide out, only the true proton loss.
 
+**In-window-normalized variant** (`--nsel postwin`, leading p): the
+denominator is the number of post-FSI events **inside the measurement
+window** — E_m + T_rec ∈ [0, 80) MeV and p_m < 300 MeV/c, N = 104,758
+(53.7 % of the selection) — the closest simulation analogue of Dutta's
+full-occupancy renormalization: the stage-4 E_m curve then integrates to
+exactly Z = 6 over the window, directly against fig 9's 6.08:
+
+![simulated 22b, leading p, in-window renormalized](em_folded_pm_sim_nselwin_leadp_c12_GEM26_22b_05_000.png)
+
+- **The renormalized post-FSI simulation reproduces the data in all three
+  projections** (data/post = 1.02 E_m, 0.92 p-shell, 1.04 s-shell): the
+  red curve sits on the fig 9 spectrum bin by bin — peak 0.59 vs 0.57
+  MeV⁻¹ — and on the folded shell data across two decades of density.
+  Renormalized this way, 22b's distorted-then-rescaled prediction is the
+  published data, closing the loop on the convention chain: the ×1.9
+  in-window renormalization is exactly what the experiment's
+  full-occupancy rescale did to its own distorted yield.
+- The pre-FSI stage (÷ the same denominator) now overshoots everything by
+  ≈ 1/0.54 — it is drawn as the undistorted reference only.
+- The residual shape differences are the known ones: the data hold more
+  strength in the 20–25 MeV s–p dip bin and less at the p-shell's
+  140 MeV/c point than the simulation.
+
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default
 `--tune GEM26_22b_05_000`; any campaign tune via `--tune`;
-`--nsel postfsi` for the post-FSI-normalized variant; `--proton-sel
-leading` for the leading-proton stage 4 — build its cache once with
+`--nsel postfsi` / `--nsel postwin` for the post-FSI- /
+in-window-normalized variants; `--proton-sel leading` for the
+leading-proton stage 4 — build its cache once with
 `make_emiss_ladder_q2cut.py --target C12 --tune <tune> --proton-sel
 leading --no-q2cut --build-only`).
