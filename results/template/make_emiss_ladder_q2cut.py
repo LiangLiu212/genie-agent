@@ -49,6 +49,7 @@ OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
 PROTON_SEL = "leading"          # or "1p": stage 4 requires exactly one FS proton
+NO_Q2CUT = False                # True (v1.0): drop the Q^2 window entirely
 PM_MAX = 300.0
 BINW = 5.0
 EDGES = np.arange(0.0, 85.0, 5.0)
@@ -160,12 +161,14 @@ def build_cache(target, tune, max_files):
     gridlog = GRIDLOG_ROOT / cfg["run_dir"] / f"{cfg['stems'][tune]}.gridlog"
     urls = gst_urls(gridlog, max_files)
     print(f"[{tune}] streaming {len(urls)} gst file(s) "
-          f"(qel && hitnuc==p && |Q2/1.28-1|<=5%)")
+          f"(qel && hitnuc==p"
+          + ("" if NO_Q2CUT else " && |Q2/1.28-1|<=5%") + ")")
     parts, ntot, nsel = [], 0, 0
     for ipath, url in enumerate(urls):
         a = uproot.open(url)["gst"].arrays(BRANCHES, library="ak")
-        keep = (ak.to_numpy(a.hitnuc == 2212) & ak.to_numpy(a.qel)
-                & (np.abs(ak.to_numpy(a.Q2) / Q2_CENTER - 1.0) <= Q2_FRAC))
+        keep = ak.to_numpy(a.hitnuc == 2212) & ak.to_numpy(a.qel)
+        if not NO_Q2CUT:
+            keep &= np.abs(ak.to_numpy(a.Q2) / Q2_CENTER - 1.0) <= Q2_FRAC
         nz = lambda b: ak.to_numpy(a[b])
         omega = nz("Ev") - nz("El")
         qx = nz("pxv") - nz("pxl")
@@ -213,7 +216,8 @@ def build_cache(target, tune, max_files):
     out["ntot"], out["n_sel"] = np.array([ntot]), np.array([nsel])
     np.savez_compressed(cache_dir / f"{tune}.npz", **out)
     surv = float(np.mean(np.isfinite(out["E4"])))
-    print(f"[{tune}] ntot={ntot}  qel&&hitp&&win={nsel} "
+    sel_lab = "qel&&hitp" if NO_Q2CUT else "qel&&hitp&&win"
+    print(f"[{tune}] ntot={ntot}  {sel_lab}={nsel} "
           f"({100.0 * nsel / ntot:.2f}%)  post-FSI-p survival {100.0 * surv:.1f}%")
 
 
@@ -317,8 +321,10 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
 
     fig.suptitle(f"{target} restored E$_m$ ladder — {tune}  "
                  f"({TUNE_GS[tune][1]})\n"
-                 "qel && hit p && $Q^2=1.28\\pm5\\%$"
+                 "qel && hit p"
+                 + ("" if NO_Q2CUT else " && $Q^2=1.28\\pm5\\%$")
                  + (" && N$_p$=1" if PROTON_SEL == "1p" else "")
+                 + (", NO $Q^2$ cut" if NO_Q2CUT else "")
                  + ", $p_m<300$ MeV/$c$; " + cfg["data_label"],
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
@@ -371,7 +377,9 @@ def make_shape_figure(target, tune, c, dutta):
               title_fontsize=FS_LEGEND_TITLE - 3)
     fig.suptitle(f"{target} post-FSI E$_m$ shape — {tune}  "
                  f"({TUNE_GS[tune][1]})\n"
-                 "qel && hit p && $Q^2$ slice; unit-normalized shapes",
+                 "qel && hit p"
+                 + (", NO $Q^2$ cut" if NO_Q2CUT else " && $Q^2$ slice")
+                 + "; unit-normalized shapes",
                  fontsize=FS_SUPTITLE - 3)
     out = OUT_DIR / f"em_postfsi_shape_{tlow}_{tune}.png"
     fig.savefig(out, dpi=DPI)
@@ -387,12 +395,22 @@ if __name__ == "__main__":
     ap.add_argument("--max-files", type=int, default=20)
     ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
                     help="1p: stage 4 = exactly one FS proton, outputs to v0.3")
+    ap.add_argument("--no-q2cut", action="store_true",
+                    help="drop the Q^2 window (v1.0 construction; requires "
+                         "--proton-sel 1p): reads/writes v1.0 cache+figures")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
+    NO_Q2CUT = args.no_q2cut
+    if NO_Q2CUT and PROTON_SEL != "1p":
+        raise SystemExit("--no-q2cut is the v1.0 construction (N_p=1): "
+                         "pass --proton-sel 1p")
     if PROTON_SEL == "1p":
         CACHE_ROOT = REPO / "results/prd-analyzer-v0.3/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
-        OUT_DIR.mkdir(parents=True, exist_ok=True)
+    if NO_Q2CUT:
+        CACHE_ROOT = REPO / "results/prd-analyzer-v1.0/cache"
+        OUT_DIR = REPO / "results/prd-analyzer-v1.0"
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     apply_style()
     table_stem, table = load_table(args.target, "GEM26_22a_05_000")

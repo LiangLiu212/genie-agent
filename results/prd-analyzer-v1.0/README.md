@@ -16,4 +16,7 @@ The notes:
 - [`electron_c12_scattering.md`](electron_c12_scattering.md)
 
 Machinery: [`make_kin_qel_v1.py`](../template/make_kin_qel_v1.py) (reads the
-v0.1 kin_qel caches, no Q² mask, N_p = 1 on the proton panels; outputs here).
+v0.1 kin_qel caches, no Q² mask, N_p = 1 on the proton panels), plus the
+v0.2/v0.3 ladder scripts with the new `--no-q2cut` flag
+(`make_emiss_ladder_q2cut.py`, `make_pmiss_ladder_q2cut.py` — stream/read
+the uncut caches in `cache/ladder_<target>/` here). All outputs land here.

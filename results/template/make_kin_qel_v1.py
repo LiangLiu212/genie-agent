@@ -16,9 +16,13 @@ Reads the v0.1 caches (cache/kin_qel_<target>/<tune>.npz, n_p column
 included since v0.3; run make_kin_qel.py first if missing) and masks at
 plot time; no streaming here.
 
-Two figures per target, written to results/prd-analyzer-v1.0/:
+Figures per target, written to results/prd-analyzer-v1.0/:
     kin_qel_<target>.png         area-normalized (shape comparison)
     kin_qel_<target>_counts.png  raw events/bin (equal ntot = 2M/tune)
+    empm_<target>.png            E_m/p_m overlays, log y (no E_m/p_m cuts;
+                                 sec-4 Dutta window grey-dashed as reference)
+    empm_<target>_lin.png        linear-y companion
+    empm_<target>_counts.png     raw events/bin companion
 
 Usage:
   pixi run python results/template/make_kin_qel_v1.py --target C12
@@ -121,6 +125,54 @@ def make_fig(target, cache, density):
     print("wrote", out)
 
 
+def make_empm_fig(target, cache, density, logy=True):
+    """E_miss = omega - T_p and p_miss of the unique proton (N_p = 1), full
+    generated phase space (NO Q^2 cut) and NO E_m/p_m cuts -- the Dutta
+    window drawn grey-dashed as reference only (E_m: 0 and 80 MeV;
+    p_m: 300 MeV/c). logy=False writes the linear-y companion (_lin)."""
+    PANELS2 = [("E_miss", r"$E_m=\omega-T_p$  [MeV]",  20.0, 55, (0.0, 80.0)),
+               ("p_miss", r"$p_m$  [MeV/c]",           50.0, 55, (300.0,))]
+    fig, axes = new_panels(ncols=2, sharey=False)
+    frac = {}
+    for ax, (key, lab, step, nb, refs) in zip(axes, PANELS2):
+        rng = panel_range(cache, key, step)
+        bins = np.linspace(rng[0], rng[1], nb)
+        for tune, (color, ls, gs) in TUNES.items():
+            c = cache[tune]
+            m = np.isfinite(c[key]) & (c["n_p"] == 1)
+            if tune not in frac:
+                w = (m & (c["E_miss"] >= 0) & (c["E_miss"] < 80)
+                     & (c["p_miss"] < 300))
+                frac[tune] = w.sum() / max(m.sum(), 1)
+            ax.hist(c[key][m], bins=bins, histtype="step", linewidth=1.8,
+                    color=color, ls=ls, density=density,
+                    label=f"{tune} ({gs}, in-win {100*frac[tune]:.0f}%)")
+        for v in refs:
+            ax.axvline(v, color="0.5", ls="--", lw=1.0)
+        style_axis(ax, title=None, xlabel=lab, logx=False, logy=logy, ymin=None)
+        if not logy:
+            ax.set_ylim(0, None)
+        ax.set_ylabel("normalized / bin" if density else "events / bin",
+                      fontsize=FS_LABEL)
+    axes[0].legend(fontsize=FS_LEGEND - 4, loc="upper right",
+                   title="the unique p (N$_p$=1); grey dashed =\n"
+                         "Dutta window (reference, NOT applied)",
+                   title_fontsize=FS_LEGEND_TITLE - 4)
+    norm_note = ("area-normalized" if density
+                 else "raw events/bin (equal ntot = 2M/tune)")
+    fig.suptitle(f"E$_m$ / p$_m$, NO Q² cut, E$_m$/p$_m$ uncut — "
+                 f"{target} (t05), {norm_note}",
+                 fontsize=FS_SUPTITLE - 2)
+    fig.tight_layout()
+    suffix = ("" if density else "_counts") + ("" if logy else "_lin")
+    out = OUT_DIR / f"empm_{target.lower()}{suffix}.png"
+    fig.savefig(out, dpi=130)
+    print("wrote", out)
+    if density and logy:
+        for t, f in frac.items():
+            print(f"  {t}: in-window fraction (of qel && N_p=1) = {f:.3f}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", default="C12", choices=["Fe56", "C12"])
@@ -135,6 +187,9 @@ if __name__ == "__main__":
               f"1p={np.mean(npc==1):.3f} 2p+={np.mean(npc>=2):.3f}")
     make_fig(args.target, cache, density=True)
     make_fig(args.target, cache, density=False)
+    make_empm_fig(args.target, cache, density=True)
+    make_empm_fig(args.target, cache, density=False)
+    make_empm_fig(args.target, cache, density=True, logy=False)
     for t in TUNES:
         c = cache[t]
         print(f"  {t:18s} qel N={len(c['Q2']):7,d} of ntot={int(c['ntot'][0]):,}"

@@ -54,5 +54,108 @@ T_p [0, 2] GeV, θ_p [0, 155]°, Q² [1.18, 3.62] GeV².)
   dominant for every tune. GEM21 (dashed) cuts off earliest in both E_e′
   (shoulder deficit below ≈ 0.9 GeV) and T_p (≈ 1.6 GeV endpoint).
 
-Regenerate:
+Regenerate (this and 1.1):
 `pixi run python results/template/make_kin_qel_v1.py --target C12`.
+
+### 1.1 E_m and p_m — no cuts at all
+
+![C12 E_m/p_m, no Q² cut, N_p=1](empm_c12.png)
+
+![C12 E_m/p_m, no Q² cut, N_p=1, linear y](empm_c12_lin.png)
+
+The v0.3 subsection-3.1 construction on the full generated phase space
+(log-y above for the tails, linear-y below for the true proportions;
+raw-counts companion `empm_c12_counts.png`): E_m = ω − T_p and p_m of the
+unique proton, no E_m/p_m cuts, the Dutta window grey-dashed as reference.
+In-window fractions (of qel ∧ N_p = 1): **65 / 55 / 59 / 60 %**
+(11a/22a/22b/GEM21) — within ~1 % of v0.3's in-slice values (66/56/61/60 %).
+
+- The axes now span the full phase space (E_m to ≈ 1.6 GeV, p_m to
+  ≈ 2.4 GeV/c): the QE peak keeps its shape, and the FSI-rescatter
+  population becomes a broad E_m hump at ≈ 600 MeV with the uncorrelated
+  p_m ≈ |q| bump spread over ≈ 0.8–1.8 GeV/c (in the slice it was pinned
+  near 1.2 GeV/c).
+- GEM21 (dashed) is the outlier in the deep tails: its E_m distribution
+  dies ≈ 2 decades below the others past ≈ 1.3 GeV and its p_m tail cuts
+  off by ≈ 2 GeV/c.
+
+## 2. Missing energy: table vs simulation vs Dutta Fig. 9, no Q² cut
+
+The four-stage restored E_m ladder (v0.3 section 4 construction — stage 1
+input table, 2 struck-nucleon record, 3 pre-FSI primary proton, 4 = the
+unique proton of N_p = 1 events; occupancy scale `Z·dN/dx/N_sel`,
+E_m + T_rec < 80 MeV, p_s < 300 MeV/c) with the Q² window **dropped**:
+N_sel = all qel ∧ hit-p events of the 2M-event samples:
+
+![C12 v1.0 ladder, GEM26_11a](em_ladder_restored_c12_GEM26_11a_05_000.png)
+![C12 v1.0 ladder, GEM26_22a](em_ladder_restored_c12_GEM26_22a_05_000.png)
+![C12 v1.0 ladder, GEM26_22b](em_ladder_restored_c12_GEM26_22b_05_000.png)
+![C12 v1.0 ladder, GEM21_11a](em_ladder_restored_c12_GEM21_11a_05_000.png)
+
+I1(table, k < 300) = 5.249 — the
+[normalization-page](../normalization/README.md) Dutta-window integral.
+
+| tune | qel ∧ hit p (of 2M) | 1p fraction | I2r = I3r | I4r | I4r/I3r (v0.3 slice) | record median [MeV] |
+|---|---|---|---|---|---|---|
+| GEM26_11a_05_000 | 268,918 (13.4 %) | 80.6 % | 6.000 | 3.472 | 0.579 (0.591) | 17.09 |
+| GEM26_22a_05_000 | 268,653 (13.4 %) | 79.5 % | 5.439 | 2.926 | 0.538 (0.546) | 17.16 |
+| GEM26_22b_05_000 | 195,170 (9.8 %) | 81.2 % | 5.542 | 3.196 | 0.577 (0.587) | 20.34 |
+| GEM21_11a_05_000 | 239,886 (12.0 %) | 81.2 % | 5.422 (I3r) | 3.229 | 0.596 (0.600) | −12.30 |
+
+- **The ladder is Q²-blind on the ground-state side.** I2r = I3r uncut
+  reproduces the in-slice values to ≤ 0.06 (6.000 / 5.439 / 5.542 / 5.422
+  vs 6.000 / 5.425 / 5.530 / 5.363): the SF/LFG sampling factorizes from
+  the lepton kinematics, so a 26–39× larger selection (the slice kept
+  ~2.6–3.6 % of it) lands on the same occupancy curves.
+- **The in-window survivals barely move either** (−0.004 to −0.012 vs
+  v0.3): the E<80/p<300 window survival is dominated by the FSI model, not
+  by which Q² produced the event. The tune ordering is unchanged
+  (22a lowest at 0.538, GEM21 highest at 0.596).
+- Post-FSI shape companions (`em_postfsi_shape_c12_*.png`, same run) show
+  the same per-tune ΔT_p signatures as v0.3 section 4.3 on 5× the
+  statistics.
+
+Regenerate:
+`pixi run python results/template/make_emiss_ladder_q2cut.py --target C12 --all-tunes --proton-sel 1p --no-q2cut`
+(streams the campaign over XRootD with no Q² mask; cache
+`cache/ladder_c12/` here).
+
+### 2.1 Missing momentum: the |p_m| ladder on the normalization-page scale
+
+The |p_m| projection (v0.3 section 4.1/4.2 construction,
+[`make_pmiss_ladder_q2cut.py`](../template/make_pmiss_ladder_q2cut.py)
+`--no-q2cut`): each stage histogrammed in |p_m| with the fig 6 shell
+windows `E_m + T_rec` 10–25 ∪ 30–50 MeV applied, occupancy scale, and the
+folded Dutta fig 6 p+s data (L+R summed = the full |p_m| density on the
+published scale, weighted 4πp_m² onto the occupancy axis — the
+[normalization-page](../normalization/README.md) folded-data convention)
+overlaid on every panel:
+
+![C12 v1.0 pm ladder, GEM26_11a](pm_ladder_c12_GEM26_11a_05_000.png)
+![C12 v1.0 pm ladder, GEM26_22a](pm_ladder_c12_GEM26_22a_05_000.png)
+![C12 v1.0 pm ladder, GEM26_22b](pm_ladder_c12_GEM26_22b_05_000.png)
+![C12 v1.0 pm ladder, GEM21_11a](pm_ladder_c12_GEM21_11a_05_000.png)
+
+Windowed strengths, |p_m| < 320 MeV/c: I1(table) = 4.533,
+I(data) = 4.917, **data/table = 1.08** — identical to v0.3 (the data and
+table stages carry no Q² dependence at all).
+
+| tune | I2 (record) | I3 (pre-FSI) | I4 (post-FSI) | I4/I3 (v0.3 slice) |
+|---|---|---|---|---|
+| GEM26_11a_05_000 | 6.000 | 6.000 | 3.423 | 0.570 (0.581) |
+| GEM26_22a_05_000 | 5.505 | 5.505 | 2.206 | **0.401** (0.407) |
+| GEM26_22b_05_000 | 4.828 | 4.828 | 2.765 | 0.573 (0.583) |
+| GEM21_11a_05_000 | 0 (record E < 0) | 3.306 | 1.977 | 0.598 (0.603) |
+
+- **22a's shell-window collapse survives the full phase space** (0.401 vs
+  the 0.57–0.60 of the others): its broad ΔT_p smearing pushes survivors
+  out of the narrow 10–25 ∪ 30–50 windows regardless of Q² — a property of
+  the FSI model, not of the slice.
+- The pre-FSI stages track the input table bin by bin (including the
+  ℓ = 1 dip at |p_m| → 0) exactly as in the slice; the folded data sit
+  slightly above at the peak (the 1.08).
+- Density-units companions (`pm_ladder_dens_c12_*.png`, same run): the
+  stages as `∫_win P dE_m` [MeV⁻³], log y, data exactly as tabulated.
+
+Regenerate:
+`pixi run python results/template/make_pmiss_ladder_q2cut.py --target C12 --all-tunes --proton-sel 1p --no-q2cut`.

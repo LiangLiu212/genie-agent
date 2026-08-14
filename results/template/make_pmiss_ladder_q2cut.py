@@ -54,6 +54,7 @@ OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 DATA_DIR = REPO / "data/Dipingkar-dutta-data-prc_figs"
 
 PROTON_SEL = "leading"          # or "1p": stage 4 = exactly one FS proton
+NO_Q2CUT = False                # True (v1.0): caches built with no Q^2 window
 DK = 20.0                       # native table k grid [MeV/c]
 EDGES = np.arange(0.0, 820.0 + 1.0, DK)
 PM_PLOT = 330.0                 # plotted |p_m| range (data reach 300)
@@ -247,8 +248,10 @@ def make_figure(target, tune, table_stem, table, dutta):
                           fontsize=FS_LABEL)
 
     fig.suptitle(f"{target} $|p_m|$ ladder — {tune}  ({TUNE_GS[tune][1]})\n"
-                 "qel && hit p && $Q^2=1.28\\pm5\\%$"
+                 "qel && hit p"
+                 + ("" if NO_Q2CUT else " && $Q^2=1.28\\pm5\\%$")
                  + (" && N$_p$=1" if PROTON_SEL == "1p" else "")
+                 + (", NO $Q^2$ cut" if NO_Q2CUT else "")
                  + "; " + cfg["win_label"],
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
@@ -343,8 +346,10 @@ def make_density_figure(target, tune, table_stem, y_in, k_edges,
 
     fig.suptitle(f"{target} $|p_m|$ ladder, Dutta units — {tune}  "
                  f"({TUNE_GS[tune][1]})\n"
-                 "qel && hit p && $Q^2=1.28\\pm5\\%$"
+                 "qel && hit p"
+                 + ("" if NO_Q2CUT else " && $Q^2=1.28\\pm5\\%$")
                  + (" && N$_p$=1" if PROTON_SEL == "1p" else "")
+                 + (", NO $Q^2$ cut" if NO_Q2CUT else "")
                  + "; " + cfg["win_label"],
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
@@ -360,11 +365,21 @@ if __name__ == "__main__":
     ap.add_argument("--all-tunes", action="store_true")
     ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
                     help="1p: stage 4 = exactly one FS proton, reads/writes v0.3")
+    ap.add_argument("--no-q2cut", action="store_true",
+                    help="v1.0 construction (requires --proton-sel 1p): reads "
+                         "the uncut v1.0 caches, writes v1.0 figures")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
+    NO_Q2CUT = args.no_q2cut
+    if NO_Q2CUT and PROTON_SEL != "1p":
+        raise SystemExit("--no-q2cut is the v1.0 construction (N_p=1): "
+                         "pass --proton-sel 1p")
     if PROTON_SEL == "1p":
         CACHE_ROOT = REPO / "results/prd-analyzer-v0.3/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
+    if NO_Q2CUT:
+        CACHE_ROOT = REPO / "results/prd-analyzer-v1.0/cache"
+        OUT_DIR = REPO / "results/prd-analyzer-v1.0"
 
     apply_style()
     table_stem, table = load_table(args.target)
