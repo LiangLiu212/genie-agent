@@ -209,7 +209,32 @@ proton — the simulation-side analogue of the data's renormalization
   window and below the p thresholds), whereas Dutta's renormalization was
   fitted to restore full occupancy.
 
+**Leading-proton variant** (`--proton-sel leading`): stage 4 = the
+**leading** FS proton of any ≥1p event (the v0.2 convention) instead of
+the unique proton of N_p = 1 events, from a separate uncut cache
+(`cache/ladder_c12_leading/`, same 195,170-event selection — only the
+stage-4 definition differs). Proton loss drops from ≈ 19 % (N_p ≠ 1) to
+2.2 % (0p only):
+
+![simulated 22b, leading-p post-FSI](em_folded_pm_sim_leadp_c12_GEM26_22b_05_000.png)
+
+- **In-window the two stage-4 definitions coincide**: data/pre = 1.10 /
+  0.98 / 1.14 and I4/I3 = 0.58 / 0.57 / 0.59, vs the N_p = 1 figure's
+  0.58 / 0.57 / 0.58 — the v0.3 headline (≥2p events almost never enter
+  the E_m windows) extended to the full phase space: the extra ~16 % of
+  events whose leading proton now counts land almost entirely outside
+  0–80 MeV.
+- The post-FSI-normalized companion
+  (`em_folded_pm_sim_nselpost_leadp_c12_GEM26_22b_05_000.png`,
+  `--nsel postfsi --proton-sel leading`) lifts the MC by only ×1.02
+  (N_post = 190,858, 97.8 %), so it is nearly indistinguishable from this
+  base variant — with leading-p there is no multiplicity veto left to
+  divide out, only the true proton loss.
+
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default
 `--tune GEM26_22b_05_000`; any campaign tune via `--tune`;
-`--nsel postfsi` for the post-FSI-normalized variant).
+`--nsel postfsi` for the post-FSI-normalized variant; `--proton-sel
+leading` for the leading-proton stage 4 — build its cache once with
+`make_emiss_ladder_q2cut.py --target C12 --tune <tune> --proton-sel
+leading --no-q2cut --build-only`).

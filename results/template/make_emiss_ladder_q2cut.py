@@ -50,6 +50,8 @@ OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
 PROTON_SEL = "leading"          # or "1p": stage 4 requires exactly one FS proton
 NO_Q2CUT = False                # True (v1.0): drop the Q^2 window entirely
+SEL_TAG = ""                    # "_leading" for the uncut leading-p variant
+                                # (cache dir + figure-stem tag, v1.0 only)
 PM_MAX = 300.0
 BINW = 5.0
 EDGES = np.arange(0.0, 85.0, 5.0)
@@ -156,7 +158,7 @@ def build_cache(target, tune, max_files):
     import awkward as ak
     cfg = TGT[target]
     m_rec = cfg["m_rec_gev"] if cfg["m_rec_gev"] is not None else _m_rec_c12()
-    cache_dir = CACHE_ROOT / f"ladder_{target.lower()}"
+    cache_dir = CACHE_ROOT / f"ladder_{target.lower()}{SEL_TAG}"
     cache_dir.mkdir(parents=True, exist_ok=True)
     gridlog = GRIDLOG_ROOT / cfg["run_dir"] / f"{cfg['stems'][tune]}.gridlog"
     urls = gst_urls(gridlog, max_files)
@@ -231,7 +233,7 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
     cfg = TGT[target]
     m_rec = cfg["m_rec_gev"] if cfg["m_rec_gev"] is not None else _m_rec_c12()
     tlow = target.lower()
-    cache = CACHE_ROOT / f"ladder_{tlow}" / f"{tune}.npz"
+    cache = CACHE_ROOT / f"ladder_{tlow}{SEL_TAG}" / f"{tune}.npz"
     if not cache.exists():
         build_cache(target, tune, max_files)
     c = dict(np.load(cache))
@@ -328,7 +330,7 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
                  + ", $p_m<300$ MeV/$c$; " + cfg["data_label"],
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    out = OUT_DIR / f"em_ladder_restored_{tlow}_{tune}.png"
+    out = OUT_DIR / f"em_ladder_restored{SEL_TAG}_{tlow}_{tune}.png"
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
 
@@ -381,7 +383,7 @@ def make_shape_figure(target, tune, c, dutta):
                  + (", NO $Q^2$ cut" if NO_Q2CUT else " && $Q^2$ slice")
                  + "; unit-normalized shapes",
                  fontsize=FS_SUPTITLE - 3)
-    out = OUT_DIR / f"em_postfsi_shape_{tlow}_{tune}.png"
+    out = OUT_DIR / f"em_postfsi_shape{SEL_TAG}_{tlow}_{tune}.png"
     fig.savefig(out, dpi=DPI)
     plt.close(fig)
     print("  wrote", out)
@@ -396,24 +398,34 @@ if __name__ == "__main__":
     ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
                     help="1p: stage 4 = exactly one FS proton, outputs to v0.3")
     ap.add_argument("--no-q2cut", action="store_true",
-                    help="drop the Q^2 window (v1.0 construction; requires "
-                         "--proton-sel 1p): reads/writes v1.0 cache+figures")
+                    help="drop the Q^2 window (v1.0 construction): reads/"
+                         "writes v1.0 cache+figures; --proton-sel leading "
+                         "uses the _leading cache dir + figure tag")
+    ap.add_argument("--build-only", action="store_true",
+                    help="only build missing caches, write no figures")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
     NO_Q2CUT = args.no_q2cut
-    if NO_Q2CUT and PROTON_SEL != "1p":
-        raise SystemExit("--no-q2cut is the v1.0 construction (N_p=1): "
-                         "pass --proton-sel 1p")
     if PROTON_SEL == "1p":
         CACHE_ROOT = REPO / "results/prd-analyzer-v0.3/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
     if NO_Q2CUT:
         CACHE_ROOT = REPO / "results/prd-analyzer-v1.0/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v1.0"
+        SEL_TAG = "" if PROTON_SEL == "1p" else "_leading"
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     apply_style()
     table_stem, table = load_table(args.target, "GEM26_22a_05_000")
     dutta = TGT[args.target]["dutta"]()
     for tune in (sorted(TUNE_GS) if args.all_tunes else [args.tune]):
-        make_figure(args.target, tune, args.max_files, dutta, table_stem, table)
+        if args.build_only:
+            cache = (CACHE_ROOT / f"ladder_{args.target.lower()}{SEL_TAG}"
+                     / f"{tune}.npz")
+            if cache.exists():
+                print(f"[{tune}] cache exists: {cache}")
+            else:
+                build_cache(args.target, tune, args.max_files)
+        else:
+            make_figure(args.target, tune, args.max_files, dutta,
+                        table_stem, table)

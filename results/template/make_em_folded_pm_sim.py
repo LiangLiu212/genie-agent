@@ -23,10 +23,17 @@ data's renormalization, which scales the distorted yield back up. Writes
 the `_nselpost` figure variant (em_folded_pm_sim_nselpost_...); table and
 data are untouched.
 
+--proton-sel leading replaces the stage-4 definition N_p = 1 with the
+LEADING final-state proton of any >=1p event (the v0.2 convention). Reads
+the `ladder_c12_leading` uncut cache (build with
+make_emiss_ladder_q2cut.py --proton-sel leading --no-q2cut --build-only)
+and writes the `_leadp` figure variant.
+
 Usage:
   pixi run python results/template/make_em_folded_pm_sim.py            # 22b
   pixi run python results/template/make_em_folded_pm_sim.py --tune GEM26_22a_05_000
   pixi run python results/template/make_em_folded_pm_sim.py --nsel postfsi
+  pixi run python results/template/make_em_folded_pm_sim.py --proton-sel leading
 """
 import argparse
 import sys
@@ -40,7 +47,7 @@ from plot_style import (apply_style, new_panels, style_axis,
 from make_sf2d_table import resolve_sf_table, read_pke_table  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
-CACHE = REPO / "results/prd-analyzer-v1.0/cache/ladder_c12"
+CACHE_ROOT = REPO / "results/prd-analyzer-v1.0/cache"
 OUT_DIR = REPO / "results/prd-analyzer-v1.0"
 DATA_DIR = REPO / "data/Dipingkar-dutta-data-prc_figs"
 
@@ -95,12 +102,14 @@ def table_pm_density(table, e_win):
     return Z * (P * ov[None, :]).sum(axis=1), k_edges
 
 
-def load_cache(tune):
-    path = CACHE / f"{tune}.npz"
+def load_cache(tune, psel):
+    tag = "" if psel == "1p" else "_leading"
+    path = CACHE_ROOT / f"ladder_c12{tag}" / f"{tune}.npz"
     if not path.exists():
         raise SystemExit(f"missing v1.0 cache {path} — build it with "
                          "make_emiss_ladder_q2cut.py --target C12 "
-                         "--all-tunes --proton-sel 1p --no-q2cut")
+                         f"--tune {tune} --proton-sel {psel} --no-q2cut "
+                         "--build-only")
     c = dict(np.load(path))
     m_rec = _m_rec_c12()
     with np.errstate(invalid="ignore"):
@@ -148,10 +157,12 @@ def strength_pm(y_dens, edges):
                  * np.diff(edges)[sel].mean())
 
 
-def main(tune, nsel_mode):
+def main(tune, nsel_mode, psel):
     apply_style()
     table_stem, table = load_table()
-    c = load_cache(tune)
+    c = load_cache(tune, psel)
+    p4lab = ("post-FSI (stage 4)" if psel == "1p"
+             else "post-FSI leading p (stage 4)")
     n_sel = float(c["n_sel"][0])
     n_post = float(np.isfinite(c["E4"]).sum())
     n_norm = n_post if nsel_mode == "postfsi" else n_sel
@@ -170,8 +181,7 @@ def main(tune, nsel_mode):
                  alpha=0.8, zorder=3, label=f"table {table_stem}")
     ax_em.stairs(y3, E_EDGES, color="C0", lw=1.6, linestyle="--", zorder=4,
                  label="pre-FSI (stage 3)")
-    ax_em.stairs(y4, E_EDGES, color="C3", lw=2.0, zorder=5,
-                 label="post-FSI (stage 4)")
+    ax_em.stairs(y4, E_EDGES, color="C3", lw=2.0, zorder=5, label=p4lab)
     ax_em.errorbar(dem, dsf, yerr=dtot, fmt="none", ecolor="0.6",
                    elinewidth=3, alpha=0.8, zorder=8)
     ax_em.errorbar(dem, dsf, yerr=dstat, fmt="s", ms=5, color="black",
@@ -204,8 +214,7 @@ def main(tune, nsel_mode):
                   alpha=0.8, zorder=3, label=f"table {table_stem}")
         ax.stairs(y3, K_EDGES, color="C0", lw=1.6, linestyle="--", zorder=4,
                   label="pre-FSI (stage 3)")
-        ax.stairs(y4, K_EDGES, color="C3", lw=2.0, zorder=5,
-                  label="post-FSI (stage 4)")
+        ax.stairs(y4, K_EDGES, color="C3", lw=2.0, zorder=5, label=p4lab)
         ax.errorbar(dx, dy, yerr=de, fmt="s", ms=5, color="black",
                     capsize=2, zorder=9, label="Dutta L+R")
         s_data = float((4.0 * np.pi * dx ** 2 * dy).sum() * 40.0)
@@ -232,14 +241,16 @@ def main(tune, nsel_mode):
                      f"(of {int(n_sel):,} selected)")
     else:
         norm_note = f"N$_{{sel}}$ = {int(n_sel):,}"
+    sel_clause = ("N$_p$=1" if psel == "1p" else "leading p")
     fig.suptitle(f"Dutta E91-013 vs simulated {tune} ({TUNE_GS[tune]}) — "
                  r"$E_m$ spectrum and folded $|p_m|$"
-                 "\nqel && hit p && N$_p$=1, NO $Q^2$ cut "
+                 f"\nqel && hit p && {sel_clause}, NO $Q^2$ cut "
                  f"({norm_note}); data at publ. scale, "
                  "table thin dashed",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    infix = "_nselpost" if nsel_mode == "postfsi" else ""
+    infix = ("_nselpost" if nsel_mode == "postfsi" else "") \
+        + ("" if psel == "1p" else "_leadp")
     out = OUT_DIR / f"em_folded_pm_sim{infix}_c12_{tune}.png"
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
@@ -251,6 +262,9 @@ if __name__ == "__main__":
                     choices=sorted(TUNE_GS))
     ap.add_argument("--nsel", default="sel", choices=["sel", "postfsi"],
                     help="postfsi: normalize the MC by the events after "
-                         "FSI (surviving N_p=1 proton) instead of N_sel")
+                         "FSI (a surviving proton) instead of N_sel")
+    ap.add_argument("--proton-sel", default="1p", choices=["1p", "leading"],
+                    help="leading: stage 4 = leading FS proton of any "
+                         ">=1p event (reads the _leading cache)")
     args = ap.parse_args()
-    main(args.tune, args.nsel)
+    main(args.tune, args.nsel, args.proton_sel)
