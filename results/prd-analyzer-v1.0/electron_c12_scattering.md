@@ -159,3 +159,38 @@ table stages carry no Q² dependence at all).
 
 Regenerate:
 `pixi run python results/template/make_pmiss_ladder_q2cut.py --target C12 --all-tunes --proton-sel 1p --no-q2cut`.
+
+### 2.2 Combined view: simulated SF + UnifiedQEL in the dutta_em_folded_pm style
+
+The [normalization-page combined
+figure](../normalization/dutta_em_folded_pm.png) (E_m spectrum + folded
+per-shell |p_m|, data at published scale) with the curves = the
+**simulation** instead of the input tables
+([`make_em_folded_pm_sim.py`](../template/make_em_folded_pm_sim.py)):
+GEM26_22b_05_000 (SF + UnifiedQEL) pre-FSI (stage 3, blue dashed) and
+post-FSI (stage 4, red) from the v1.0 uncut caches, the table kept thin
+dashed. E_m panel on the occupancy scale in the data's 5-MeV bins
+(p_s < 300); |p_m| panels as the 3D density `∫_win P dE_m` [MeV⁻³] on the
+native 20-MeV/c grid, fig 6 shell windows applied per panel, folded data
+with 2× stat errors:
+
+![simulated 22b vs Dutta, combined Em + folded pm](em_folded_pm_sim_c12_GEM26_22b_05_000.png)
+
+- **Pre-FSI reproduces the input table in all three projections**
+  (data/pre = 1.10 in E_m, 0.98 p-shell, 1.14 s-shell — vs the
+  normalization page's data/table 1.16 / 1.06 / 1.16): the UnifiedQEL
+  cross-section reshaping moves little strength across these windows, and
+  what it does move shows as the small p-shell/E_m differences from the
+  pure-table ratios.
+- **Post-FSI suppresses nearly shape-preservingly in |p_m|** (I4/I3 = 0.57
+  / 0.58 per shell, the section-2.1 pattern) while the E_m panel keeps the
+  22b signature: survivors sit on the pre-FSI peak (ΔT_p = 0) with the
+  suppression strongest right at the 15–20 MeV peak bin.
+- The distorted, renormalized data sit between the two MC stages
+  everywhere — consistent with the published renormalization pulling the
+  raw distorted yield (≈ stage 4) back toward the undistorted scale
+  (≈ stage 3).
+
+Regenerate:
+`pixi run python results/template/make_em_folded_pm_sim.py` (default
+`--tune GEM26_22b_05_000`; any campaign tune via `--tune`).
