@@ -265,25 +265,23 @@ default proton selection; in-window N = 103,972, 53.3 %):
   convention is irrelevant — the two stage-4 definitions select the same
   in-window events to 0.8 %.
 
-**The conventions side by side** (`--combo`): the three normalizations of
-the preceding variants in one figure — table (thin dashed), pre-FSI /
-N_sel = 195,170 (true occupancy), post-FSI **leading p** / its post-FSI
-count N = 190,858 (the raw-distorted-yield analogue: only the 2.2 %
-proton loss divided out), and post-FSI **N_p = 1** / its in-window count
-N = 103,972 (the full renormalization):
+**The conventions side by side** (`--combo`): table (thin dashed),
+pre-FSI / N_sel = 195,170 (true occupancy), and both post-FSI stage-4
+definitions each renormalized by **its own in-window count** — leading p
+/ N_win = 104,758, N_p = 1 / N_win = 103,972:
 
 ![simulated 22b, mixed normalizations](em_folded_pm_sim_combo_c12_GEM26_22b_05_000.png)
 
-- The three conventions ARE the convention chain of the measurement:
-  blue ≈ table = the undistorted spectral function; green = the distorted
-  yield on the per-selected-event scale (E-panel strength 3.29 of Z = 6,
-  the ≈ 0.55 raw-scale suppression the normalization page predicted a
-  distorted, un-renormalized S^D would show); red = the same survivors
-  renormalized in-window to Z = 6.000, landing on the data (6.080) in
-  every projection.
-- Green → red is a nearly pure scale factor (×1.81–1.84 across the three
-  panels — the two stage-4 definitions coincide in-window); that gap is
-  what Dutta's full-occupancy renormalization absorbed.
+- The two renormalized post-FSI curves are **indistinguishable** (E-panel
+  strength 6.000 both, by construction; p-shell 3.85 vs 3.87; s-shell
+  1.33 vs 1.32 — green hides under red everywhere): in-window
+  renormalized, the stage-4 multiplicity convention is irrelevant, and
+  both land on the data (6.080; 3.53; 1.39) in every projection.
+- Against the undistorted references (blue ≈ thin-dashed table), the
+  figure isolates what survives the full distort-then-renormalize chain:
+  a slight peak sharpening in E_m (0.60 vs 0.55 at the peak) and the
+  small in-window reshuffles in the shells — everything else about FSI
+  is absorbed into the divided-out scale.
 
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default

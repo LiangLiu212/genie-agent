@@ -283,27 +283,31 @@ def main(tune, nsel_mode, psel):
 
 def main_combo(tune):
     """Mixed normalizations together: table, pre-FSI/N_sel, post-FSI
-    leading p / N_postFSI(leading), post-FSI N_p=1 / N_win(1p)."""
+    leading p / N_win(leading), post-FSI N_p=1 / N_win(1p) — each post
+    stage renormalized by its OWN in-window count."""
     apply_style()
     table_stem, table = load_table()
     c1 = load_cache(tune, "1p")
     cl = load_cache(tune, "leading")
     n_sel = float(c1["n_sel"][0])
-    n_post_l = float(np.isfinite(cl["E4"]).sum())
-    with np.errstate(invalid="ignore"):
-        m4win = (np.isfinite(c1["E4r"]) & (c1["E4r"] >= 0.0)
-                 & (c1["E4r"] < 80.0) & (c1["p4"] < PM_MAX))
-    n_win_1 = float(m4win.sum())
-    print(f"  N_sel={int(n_sel):,}  N_postFSI(leading)={int(n_post_l):,} "
-          f"({n_post_l / n_sel:.3f})  N_win(1p)={int(n_win_1):,} "
+
+    def n_win(c):
+        with np.errstate(invalid="ignore"):
+            m = (np.isfinite(c["E4r"]) & (c["E4r"] >= 0.0)
+                 & (c["E4r"] < 80.0) & (c["p4"] < PM_MAX))
+        return float(m.sum())
+
+    n_win_l, n_win_1 = n_win(cl), n_win(c1)
+    print(f"  N_sel={int(n_sel):,}  N_win(leading)={int(n_win_l):,} "
+          f"({n_win_l / n_sel:.3f})  N_win(1p)={int(n_win_1):,} "
           f"({n_win_1 / n_sel:.3f})")
 
-    # (cache, stage-4 denominator, color, lw, label)
+    # (cache, stage, denominator, color, lw, ls, label)
     CURVES = [
         (c1, 3, n_sel, "C0", 1.6, "--",
          "pre-FSI / N$_{sel}$"),
-        (cl, 4, n_post_l, "C2", 1.8, "-",
-         "post-FSI leading p / N$_{postFSI}$"),
+        (cl, 4, n_win_l, "C2", 1.8, "-",
+         "post-FSI leading p / N$_{win}$"),
         (c1, 4, n_win_1, "C3", 2.0, "-",
          "post-FSI N$_p$=1 / N$_{win}$"),
     ]
