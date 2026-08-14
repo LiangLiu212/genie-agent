@@ -268,20 +268,28 @@ default proton selection; in-window N = 103,972, 53.3 %):
 **The conventions side by side** (`--combo`): table (thin dashed),
 pre-FSI / N_sel = 195,170 (true occupancy), and both post-FSI stage-4
 definitions each renormalized by **its own in-window count** — leading p
-/ N_win = 104,758, N_p = 1 / N_win = 103,972:
+/ N_win = 104,758, N_p = 1 / N_win = 103,972. One |p_m| panel on the
+**full E_m window [0, 80)**: the fig 6 p+s folded data are summed and
+**gap-filled by ×1.105**, the fig 9 E_m-shape ratio of [0, 80) strength
+to the shell windows' (10–25 ∪ 30–50 hold 90.5 %; [0, 10) is empty) —
+so data and curves finally share one E window with no coverage mismatch:
 
 ![simulated 22b, mixed normalizations](em_folded_pm_sim_combo_c12_GEM26_22b_05_000.png)
 
 - The two renormalized post-FSI curves are **indistinguishable** (E-panel
-  strength 6.000 both, by construction; p-shell 3.85 vs 3.87; s-shell
-  1.33 vs 1.32 — green hides under red everywhere): in-window
-  renormalized, the stage-4 multiplicity convention is irrelevant, and
-  both land on the data (6.080; 3.53; 1.39) in every projection.
-- Against the undistorted references (blue ≈ thin-dashed table), the
-  figure isolates what survives the full distort-then-renormalize chain:
-  a slight peak sharpening in E_m (0.60 vs 0.55 at the peak) and the
-  small in-window reshuffles in the shells — everything else about FSI
-  is absorbed into the divided-out scale.
+  strengths 6.000 both by construction; |p_m| panel 6.07 vs 6.06 — green
+  hides under red): in-window renormalized, the stage-4 multiplicity
+  convention is irrelevant, and both sit on the data in shape.
+- |p_m|-panel strengths (|p_m| < 320): gap-filled data 5.44, pre-FSI
+  5.59, renormalized post 6.06–6.07 — the data land between the
+  undistorted and the fully renormalized scales, ≈ 10 % below the post
+  curves, mirroring the E-panel's data/post ≈ 1.01 within the fig 6 ↔
+  fig 9 cross-normalization residuals (+19 %/−6 % per shell on the
+  normalization page).
+- Against the undistorted references (blue ≈ thin-dashed table), what
+  survives the full distort-then-renormalize chain is small: the slight
+  E_m peak sharpening (0.60 vs 0.55) and a mild |p_m| tilt — everything
+  else about FSI is absorbed into the divided-out scale.
 
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default

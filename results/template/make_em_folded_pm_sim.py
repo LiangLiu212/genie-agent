@@ -284,7 +284,11 @@ def main(tune, nsel_mode, psel):
 def main_combo(tune):
     """Mixed normalizations together: table, pre-FSI/N_sel, post-FSI
     leading p / N_win(leading), post-FSI N_p=1 / N_win(1p) — each post
-    stage renormalized by its OWN in-window count."""
+    stage renormalized by its OWN in-window count. Single |p_m| panel on
+    the FULL E_m window [0, 80): the fig 6 p+s folded data are summed and
+    scaled up by the gap-fill factor f = fig 9 strength in [0, 80) / fig 9
+    strength in (10-25 u 30-50) — the E_m-shape correction for the 25-30
+    and 50-80 MeV strength the shell windows miss ([0, 10) is empty)."""
     apply_style()
     table_stem, table = load_table()
     c1 = load_cache(tune, "1p")
@@ -312,8 +316,8 @@ def main_combo(tune):
          "post-FSI N$_p$=1 / N$_{win}$"),
     ]
 
-    fig, axes = new_panels(ncols=3, nrows=1, sharey=False)
-    ax_em, ax_psh, ax_ssh = axes
+    fig, axes = new_panels(ncols=2, nrows=1, sharey=False)
+    ax_em, ax_pm = axes
 
     # ---- E_m spectrum vs fig 9 -------------------------------------------
     dem, dsf, dstat, dtot = dutta_em()
@@ -341,46 +345,54 @@ def main_combo(tune):
     ax_em.set_ylim(0, 0.7)
     ax_em.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="center right")
 
-    # ---- folded |p_m| per shell ------------------------------------------
-    for ax, stem, e_win, title, leg_loc in [
-        (ax_psh, "fig6_top_q1p2", (10.0, 25.0),
-         "C12 folded p-shell (10–25 MeV)", "lower left"),
-        (ax_ssh, "fig6_bot_q1p2", (30.0, 50.0),
-         "C12 folded s-shell (30–50 MeV)", "upper right"),
-    ]:
-        dx, dy, de = dutta_pm(stem)
-        yt, k_edges = table_pm_density(table, e_win)
-        ax.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
-                  alpha=0.8, zorder=3, label=f"table {table_stem}")
-        ys = []
-        for cc, s, n_norm, color, lw, ls, lab in CURVES:
-            y = mc_pm_density(cc, s, e_win, n_norm)
-            ys.append(y)
-            ax.stairs(y, K_EDGES, color=color, lw=lw, linestyle=ls,
-                      zorder=5, label=lab)
-        ax.errorbar(dx, dy, yerr=de, fmt="s", ms=5, color="black",
-                    capsize=2, zorder=9, label="Dutta L+R")
-        s_data = float((4.0 * np.pi * dx ** 2 * dy).sum() * 40.0)
-        print(f"  {title}: data="
-              f"{s_data:.3f}  "
-              + "  ".join(f"{lab}={strength_pm(y, K_EDGES):.3f}"
-                          for (_, _, _, _, _, _, lab), y
-                          in zip(CURVES, ys)))
-        style_axis(ax, title=title, xlabel=r"$|p_m|$  [MeV/c]",
-                   ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
-                   logx=False, ymin=None)
-        ax.set_xlim(0, 330)
-        plot_sel = K_EDGES[1:] <= 330.0
-        top = 1.5 * max([y[plot_sel].max() for y in ys]
-                        + [yt[k_edges[1:] <= 330.0].max(), (dy + de).max()])
-        ax.set_ylim(top / 1e3, top)
-        ax.legend(fontsize=FS_LEGEND - 4, frameon=False, loc=leg_loc)
+    # ---- folded |p_m|, shells summed, scaled to the full E window --------
+    E_WIN = (0.0, 80.0)
+    dx, dyp, dep = dutta_pm("fig6_top_q1p2")
+    _, dys, des = dutta_pm("fig6_bot_q1p2")
+    dy_sum = dyp + dys
+    de_sum = np.sqrt(dep ** 2 + des ** 2)
+    # gap-fill from the fig 9 E_m shape: [0,80) / (10-25 u 30-50)
+    m_sh = (((dem >= 10.0) & (dem < 25.0))
+            | ((dem >= 30.0) & (dem < 50.0)))
+    f_gap = float(dsf.sum() / dsf[m_sh].sum())
+    dy = f_gap * dy_sum
+    de = f_gap * de_sum
+    print(f"  gap-fill from fig 9 shape: f = {f_gap:.3f} "
+          f"(shell windows hold {100.0 / f_gap:.1f}% of [0,80))")
 
-    fig.suptitle(f"Dutta E91-013 vs simulated {tune} ({TUNE_GS[tune]}) — "
-                 r"$E_m$ spectrum and folded $|p_m|$"
-                 "\nqel && hit p, NO $Q^2$ cut; mixed normalizations "
-                 "(each MC curve / its own N, see legend); data at publ. "
-                 "scale",
+    yt, k_edges = table_pm_density(table, E_WIN)
+    ax_pm.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
+                 alpha=0.8, zorder=3, label=f"table {table_stem}")
+    ys = []
+    for cc, s, n_norm, color, lw, ls, lab in CURVES:
+        y = mc_pm_density(cc, s, E_WIN, n_norm)
+        ys.append(y)
+        ax_pm.stairs(y, K_EDGES, color=color, lw=lw, linestyle=ls,
+                     zorder=5, label=lab)
+    ax_pm.errorbar(dx, dy, yerr=de, fmt="s", ms=5, color="black",
+                   capsize=2, zorder=9,
+                   label=f"Dutta p+s L+R $\\times$ {f_gap:.2f}")
+    s_data = float((4.0 * np.pi * dx ** 2 * dy).sum() * 40.0)
+    print(f"  pm panel (E 0–80): data={s_data:.3f}  "
+          + "  ".join(f"{lab}={strength_pm(y, K_EDGES):.3f}"
+                      for (_, _, _, _, _, _, lab), y in zip(CURVES, ys)))
+    style_axis(ax_pm, title=r"C12 folded $|p_m|$ ($E_m$ 0–80 MeV)",
+               xlabel=r"$|p_m|$  [MeV/c]",
+               ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
+               logx=False, ymin=None)
+    ax_pm.set_xlim(0, 330)
+    plot_sel = K_EDGES[1:] <= 330.0
+    top = 1.5 * max([y[plot_sel].max() for y in ys]
+                    + [yt[k_edges[1:] <= 330.0].max(), (dy + de).max()])
+    ax_pm.set_ylim(top / 1e3, top)
+    ax_pm.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="lower left",
+                 title="data gap-filled to $E_m$ [0, 80)\nfrom the fig 9 shape",
+                 title_fontsize=FS_LEGEND - 4)
+
+    fig.suptitle(f"Dutta E91-013 vs simulated {tune} "
+                 f"({TUNE_GS[tune]})\n"
+                 "qel && hit p, NO $Q^2$ cut; mixed normalizations; "
+                 "data at publ. scale",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
     out = OUT_DIR / f"em_folded_pm_sim_combo_c12_{tune}.png"
