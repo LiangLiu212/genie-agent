@@ -330,25 +330,16 @@ def main_combo(tune):
     if tune in TABLE_TUNES:
         ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
                      alpha=0.8, zorder=3, label=f"table {table_stem}")
-    ss, peaks = {}, {}
+    ss = {}
     for cc, s, n_norm, color, lw, ls, lab in CURVES:
         y = mc_em(cc, s, n_norm)
         ss[lab] = strength_em(y)
-        peaks[lab] = float(y.max())
         ax_em.stairs(y, E_EDGES, color=color, lw=lw, linestyle=ls,
                      zorder=5, label=lab)
     ax_em.errorbar(dem, dsf, yerr=dtot, fmt="none", ecolor="0.6",
                    elinewidth=3, alpha=0.8, zorder=8)
     ax_em.errorbar(dem, dsf, yerr=dstat, fmt="s", ms=5, color="black",
                    capsize=2, zorder=9, label="Dutta fig 9")
-    off = {lab: p for lab, p in peaks.items() if p > 0.7}
-    if off:
-        ax_em.text(0.26, 0.97,
-                   "off scale (peak):\n"
-                   + "\n".join(f"{lab.split(' / ')[0]}: {p:.1f}"
-                               for lab, p in off.items()),
-                   transform=ax_em.transAxes, va="top",
-                   fontsize=FS_TICK - 2, color="0.35")
     print("  E panel strengths: "
           + "  ".join(f"{lab}={v:.3f}" for lab, v in ss.items())
           + f"  data={strength_em(dsf):.3f}")

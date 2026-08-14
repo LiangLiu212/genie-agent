@@ -293,8 +293,8 @@ so data and curves finally share one E window with no coverage mismatch:
 
 The same combo for the **other three tunes** (`--combo --tune …`; the
 table curve is drawn only for the SF tunes — LFG/SuSA have no 2D SF
-input; off-scale δ peaks annotated, 1.2 MeV⁻¹ = all of Z in one 5-MeV
-bin):
+input; δ-like E_m curves run off the capped y-scale, their peak being
+1.2 MeV⁻¹ = all of Z in one 5-MeV bin):
 
 ![combo, GEM26_11a LocalFGM](em_folded_pm_sim_combo_c12_GEM26_11a_05_000.png)
 ![combo, GEM26_22a SF+Rosenbluth](em_folded_pm_sim_combo_c12_GEM26_22a_05_000.png)
