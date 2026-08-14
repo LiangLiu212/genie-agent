@@ -307,7 +307,7 @@ def main(tune, nsel_mode, psel):
     print("wrote", out)
 
 
-def main_combo(tune):
+def main_combo(tune, shells=False):
     """Mixed normalizations together: table, pre-FSI/N_sel, post-FSI
     leading p / N_win(leading), post-FSI N_p=1 / N_win(1p) — each post
     stage renormalized by its OWN in-window count. Single |p_m| panel on
@@ -342,8 +342,11 @@ def main_combo(tune):
          "post-FSI N$_p$=1 / N$_{win}$"),
     ]
 
-    fig, axes = new_panels(ncols=2, nrows=1, sharey=False)
-    ax_em, ax_pm = axes
+    fig, axes = new_panels(ncols=(3 if shells else 2), nrows=1, sharey=False)
+    if shells:
+        ax_em, ax_psh, ax_ssh = axes
+    else:
+        ax_em, ax_pm = axes
 
     # ---- E_m spectrum ----------------------------------------------------
     (dem, dsf, dstat, dtot), em_dlab = dutta_em_target()
@@ -371,6 +374,55 @@ def main_combo(tune):
     ax_em.set_xlim(0, 85)
     ax_em.set_ylim(0, CFG["em_ymax"])
     ax_em.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="center right")
+
+    # ---- folded |p_m|, per-shell variant (original fig 6 data) -----------
+    if shells:
+        for ax, stem, e_win, title, leg_loc in [
+            (ax_psh, "fig6_top_q1p2", (10.0, 25.0),
+             "C12 folded p-shell (10–25 MeV)", "lower left"),
+            (ax_ssh, "fig6_bot_q1p2", (30.0, 50.0),
+             "C12 folded s-shell (30–50 MeV)", "upper right"),
+        ]:
+            dx, dy, de = dutta_pm(stem)
+            yt, k_edges = table_pm_density(table, e_win)
+            if tune in TABLE_TUNES:
+                ax.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
+                          alpha=0.8, zorder=3, label=f"table {table_stem}")
+            ys = []
+            for cc, s, n_norm, color, lw, ls, lab in CURVES:
+                y = mc_pm_density(cc, s, e_win, n_norm)
+                ys.append(y)
+                ax.stairs(y, K_EDGES, color=color, lw=lw, linestyle=ls,
+                          zorder=5, label=lab)
+            ax.errorbar(dx, dy, yerr=de, fmt="s", ms=5, color="black",
+                        capsize=2, zorder=9, label="Dutta L+R")
+            s_data = float((4.0 * np.pi * dx ** 2 * dy).sum() * 40.0)
+            print(f"  {title}: data={s_data:.3f}  "
+                  + "  ".join(f"{lab}={strength_pm(y, K_EDGES):.3f}"
+                              for (_, _, _, _, _, _, lab), y
+                              in zip(CURVES, ys)))
+            style_axis(ax, title=title, xlabel=r"$|p_m|$  [MeV/c]",
+                       ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
+                       logx=False, ymin=None)
+            ax.set_xlim(0, 330)
+            plot_sel = K_EDGES[1:] <= 330.0
+            top = 1.5 * max([y[plot_sel].max() for y in ys]
+                            + [yt[k_edges[1:] <= 330.0].max(),
+                               (dy + de).max()])
+            ax.set_ylim(top / 1e3, top)
+            ax.legend(fontsize=FS_LEGEND - 4, frameon=False, loc=leg_loc)
+
+        fig.suptitle(f"Dutta E91-013 vs simulated {tune} "
+                     f"({TUNE_GS[tune]})\n"
+                     "qel && hit p, NO $Q^2$ cut; mixed normalizations; "
+                     "data at publ. scale",
+                     fontsize=FS_SUPTITLE - 2)
+        fig.tight_layout()
+        out = (OUT_DIR
+               / f"em_folded_pm_sim_combo_shells_{CFG['tlow']}_{tune}.png")
+        fig.savefig(out, dpi=DPI)
+        print("wrote", out)
+        return
 
     # ---- folded |p_m| on the full E window -------------------------------
     E_WIN = (0.0, 80.0)
@@ -450,10 +502,16 @@ if __name__ == "__main__":
                     help="mixed-normalization summary (table, pre/N_sel, "
                          "post leading/N_postFSI, post 1p/N_win); "
                          "--nsel/--proton-sel are ignored")
+    ap.add_argument("--shells", action="store_true",
+                    help="with --combo (C12 only): per-shell |p_m| panels "
+                         "with the ORIGINAL folded fig 6 data (no "
+                         "gap-fill scale); writes the _combo_shells figure")
     args = ap.parse_args()
     CFG = dict(TGT[args.target], name=args.target)
+    if args.shells and (not args.combo or args.target != "C12"):
+        raise SystemExit("--shells goes with --combo and C12 only")
     if args.combo:
-        main_combo(args.tune)
+        main_combo(args.tune, args.shells)
     else:
         if args.target != "C12":
             raise SystemExit("the per-variant figures are C12-only; "

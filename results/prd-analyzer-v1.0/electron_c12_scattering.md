@@ -305,6 +305,19 @@ so data and curves finally share one E window with no coverage mismatch:
   E_m peak sharpening (0.60 vs 0.55) and a mild |p_m| tilt — everything
   else about FSI is absorbed into the divided-out scale.
 
+**Shell-resolved variant** (`--combo --shells`): the |p_m| comparison per
+fig 6 shell with the **original folded data, no gap-fill scale** — MC and
+table windowed to 10–25 (p-shell) and 30–50 MeV (s-shell), data exactly
+as tabulated (L+R summed only); same mixed normalizations:
+
+![combo, shells resolved, original data](em_folded_pm_sim_combo_shells_c12_GEM26_22b_05_000.png)
+
+- Per-shell strengths: p-shell data 3.53 vs renormalized post 3.85–3.87
+  (data/post = 0.92); s-shell 1.39 vs 1.32–1.33 (1.05) — the ±8 %
+  opposite-sign residuals are the fig 6 ↔ fig 9 cross-normalization
+  spread per shell; shape-wise the data sit on the renormalized post
+  curves in both windows.
+
 The same combo for the **other three tunes** (`--combo --tune …`; the
 table curve is drawn only for the SF tunes — LFG/SuSA have no 2D SF
 input; δ-like E_m curves run off the capped y-scale, their peak being
