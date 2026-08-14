@@ -77,6 +77,9 @@ TUNE_GS = {
     "GEM26_22b_05_000": "SF + UnifiedQEL",
     "GEM21_11a_05_000": "SuSAv2",
 }
+# tunes whose ground state IS the 2D Benhar table (draw it as their input;
+# for LFG/SuSA tunes the table curve is omitted)
+TABLE_TUNES = {"GEM26_22a_05_000", "GEM26_22b_05_000"}
 
 
 def _m_rec_c12():
@@ -198,8 +201,9 @@ def main(tune, nsel_mode, psel):
     dem, dsf, dstat, dtot = dutta_em()
     y_tab = table_em(table, E_EDGES)
     y3, y4 = mc_em(c, 3, n_norm), mc_em(c, 4, n_norm)
-    ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
-                 alpha=0.8, zorder=3, label=f"table {table_stem}")
+    if tune in TABLE_TUNES:
+        ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
+                     alpha=0.8, zorder=3, label=f"table {table_stem}")
     ax_em.stairs(y3, E_EDGES, color="C0", lw=1.6, linestyle="--", zorder=4,
                  label="pre-FSI (stage 3)")
     ax_em.stairs(y4, E_EDGES, color="C3", lw=2.0, zorder=5, label=p4lab)
@@ -232,8 +236,9 @@ def main(tune, nsel_mode, psel):
         yt, k_edges = table_pm_density(table, e_win)
         y3, y4 = (mc_pm_density(c, 3, e_win, n_norm),
                   mc_pm_density(c, 4, e_win, n_norm))
-        ax.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
-                  alpha=0.8, zorder=3, label=f"table {table_stem}")
+        if tune in TABLE_TUNES:
+            ax.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
+                      alpha=0.8, zorder=3, label=f"table {table_stem}")
         ax.stairs(y3, K_EDGES, color="C0", lw=1.6, linestyle="--", zorder=4,
                   label="pre-FSI (stage 3)")
         ax.stairs(y4, K_EDGES, color="C3", lw=2.0, zorder=5, label=p4lab)
@@ -322,18 +327,28 @@ def main_combo(tune):
     # ---- E_m spectrum vs fig 9 -------------------------------------------
     dem, dsf, dstat, dtot = dutta_em()
     y_tab = table_em(table, E_EDGES)
-    ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
-                 alpha=0.8, zorder=3, label=f"table {table_stem}")
-    ss = {}
+    if tune in TABLE_TUNES:
+        ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
+                     alpha=0.8, zorder=3, label=f"table {table_stem}")
+    ss, peaks = {}, {}
     for cc, s, n_norm, color, lw, ls, lab in CURVES:
         y = mc_em(cc, s, n_norm)
         ss[lab] = strength_em(y)
+        peaks[lab] = float(y.max())
         ax_em.stairs(y, E_EDGES, color=color, lw=lw, linestyle=ls,
                      zorder=5, label=lab)
     ax_em.errorbar(dem, dsf, yerr=dtot, fmt="none", ecolor="0.6",
                    elinewidth=3, alpha=0.8, zorder=8)
     ax_em.errorbar(dem, dsf, yerr=dstat, fmt="s", ms=5, color="black",
                    capsize=2, zorder=9, label="Dutta fig 9")
+    off = {lab: p for lab, p in peaks.items() if p > 0.7}
+    if off:
+        ax_em.text(0.26, 0.97,
+                   "off scale (peak):\n"
+                   + "\n".join(f"{lab.split(' / ')[0]}: {p:.1f}"
+                               for lab, p in off.items()),
+                   transform=ax_em.transAxes, va="top",
+                   fontsize=FS_TICK - 2, color="0.35")
     print("  E panel strengths: "
           + "  ".join(f"{lab}={v:.3f}" for lab, v in ss.items())
           + f"  data={strength_em(dsf):.3f}")
@@ -361,8 +376,9 @@ def main_combo(tune):
           f"(shell windows hold {100.0 / f_gap:.1f}% of [0,80))")
 
     yt, k_edges = table_pm_density(table, E_WIN)
-    ax_pm.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
-                 alpha=0.8, zorder=3, label=f"table {table_stem}")
+    if tune in TABLE_TUNES:
+        ax_pm.stairs(yt, k_edges, color="C1", lw=1.0, linestyle="--",
+                     alpha=0.8, zorder=3, label=f"table {table_stem}")
     ys = []
     for cc, s, n_norm, color, lw, ls, lab in CURVES:
         y = mc_pm_density(cc, s, E_WIN, n_norm)

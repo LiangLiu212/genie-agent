@@ -291,6 +291,36 @@ so data and curves finally share one E window with no coverage mismatch:
   E_m peak sharpening (0.60 vs 0.55) and a mild |p_m| tilt — everything
   else about FSI is absorbed into the divided-out scale.
 
+The same combo for the **other three tunes** (`--combo --tune …`; the
+table curve is drawn only for the SF tunes — LFG/SuSA have no 2D SF
+input; off-scale δ peaks annotated, 1.2 MeV⁻¹ = all of Z in one 5-MeV
+bin):
+
+![combo, GEM26_11a LocalFGM](em_folded_pm_sim_combo_c12_GEM26_11a_05_000.png)
+![combo, GEM26_22a SF+Rosenbluth](em_folded_pm_sim_combo_c12_GEM26_22a_05_000.png)
+![combo, GEM21_11a SuSAv2](em_folded_pm_sim_combo_c12_GEM21_11a_05_000.png)
+
+| tune | N_win/N_sel (1p) | pre-FSI (E) | post (E) | pre (p_m) | post (p_m) | data (p_m) |
+|---|---|---|---|---|---|---|
+| GEM26_11a | 0.579 | 6.000 | 6.000 | 6.000 | 6.01 | 5.44 |
+| GEM26_22a | 0.488 | 5.439 | 6.000 | 5.505 | 6.07 | 5.44 |
+| GEM26_22b | 0.533 | 5.542 | 6.000 | 5.591 | 6.06 | 5.44 |
+| GEM21_11a | 0.538 | 5.422 | 6.000 | 5.481 | 6.08 | 5.44 |
+
+- **With every post curve renormalized to 6.000, the E_m panel is a pure
+  shape comparison — and it is the v0.3 §4.3 taxonomy on the full phase
+  space**: 11a's renormalized survivors are a δ line moved bodily to
+  35–40 MeV (nothing like the data); 22a is bimodal (untouched line at
+  15–20 + a 30–40 rescatter hump the data don't show); GEM21 is a
+  triangle cutting off at 30 MeV, missing the data's 30–80 MeV s-shell
+  strength entirely; **22b is the only tune whose renormalized post-FSI
+  E_m tracks the data**.
+- The |p_m| panel separates the ground states: the SF tunes reproduce
+  the data's low-|p_m| plateau (shell structure), while 11a/GEM21 rise
+  monotonically toward |p_m| → 0, overshooting the first gap-filled data
+  bins by up to ×7 (LFG) — and 11a's LFG cuts off sharply at ≈ 280 MeV/c
+  below the data's outermost points.
+
 Regenerate:
 `pixi run python results/template/make_em_folded_pm_sim.py` (default
 `--tune GEM26_22b_05_000`; any campaign tune via `--tune`;
