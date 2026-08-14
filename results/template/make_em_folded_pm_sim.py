@@ -342,11 +342,11 @@ def main_combo(tune):
     ax_em.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="center right")
 
     # ---- folded |p_m| per shell ------------------------------------------
-    for ax, stem, e_win, title in [
+    for ax, stem, e_win, title, leg_loc in [
         (ax_psh, "fig6_top_q1p2", (10.0, 25.0),
-         "C12 folded p-shell (10–25 MeV)"),
+         "C12 folded p-shell (10–25 MeV)", "lower left"),
         (ax_ssh, "fig6_bot_q1p2", (30.0, 50.0),
-         "C12 folded s-shell (30–50 MeV)"),
+         "C12 folded s-shell (30–50 MeV)", "upper right"),
     ]:
         dx, dy, de = dutta_pm(stem)
         yt, k_edges = table_pm_density(table, e_win)
@@ -374,7 +374,7 @@ def main_combo(tune):
         top = 1.5 * max([y[plot_sel].max() for y in ys]
                         + [yt[k_edges[1:] <= 330.0].max(), (dy + de).max()])
         ax.set_ylim(top / 1e3, top)
-        ax.legend(fontsize=FS_LEGEND - 4, frameon=False, loc="upper right")
+        ax.legend(fontsize=FS_LEGEND - 4, frameon=False, loc=leg_loc)
 
     fig.suptitle(f"Dutta E91-013 vs simulated {tune} ({TUNE_GS[tune]}) — "
                  r"$E_m$ spectrum and folded $|p_m|$"
