@@ -7,7 +7,10 @@ identical except the electron quasi-elastic cross-section **model** (list `EMQE`
   differential xsec; `IntegralNuclearModel = genie::SpectralFunc/Default`, `NewQELXSec` integrator,
   Noemi hadron tensor). Replaces GEM26_22a's factorized `genie::RosenbluthPXSec/Default`.
 - **Nuclear ground state**: C12 (`NuclearModel@Pdg=1000060120`) = `genie::SpectralFunc/Default`,
-  the Benhar 2D spectral function (`pke12_tot.data`) — same as GEM26_22a. Default `NuclearModel`
+  the Benhar 2D spectral function (`pke12_tot.data`) — same as GEM26_22a. **Fe56**
+  (`NuclearModel@Pdg=1000260560`) = `genie::SpectralFunc/Default` too (`pke56_tot.data`; added
+  2026-07-11 for the E91-013 iron study — per-Pdg key, so C12 physics is byte-identical, but the
+  tune-family hash `tune_xml_sha256` of records changes from that date). Default `NuclearModel`
   left `genie::LocalFGM/Default` for any other nucleus.
 
 ## Why `/Dipole` and not `/Default` (important)
@@ -58,3 +61,10 @@ ground state. Tune id: `GEM26_22b_00_000`.
 generating the spline on the grid (`genie-grid` skill) or as a background job, not a blocking
 foreground run. Status as of creation: the tune builds and configures correctly (SF integral model
 wired, no errors) — a full spline was not yet produced.
+
+## EM-MinQ2Limit overrides (PP subdirs)
+
+`_04..._08` = 0.54 / 1.18 / 1.70 / 1.73 / 3.15 GeV² (spline-ladder campaign);
+`_09_000` = **0.25 GeV²** (2026-08-17, inclusive (e,e′) comparison vs the QES-archive
+12C 2.5 GeV/15° and 56Fe 2.7 GeV/15° settings — both sit entirely above 0.25).
+Each subdir is a full CommonParam.xml copy differing only in that one value.
