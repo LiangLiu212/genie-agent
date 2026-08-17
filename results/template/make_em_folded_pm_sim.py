@@ -273,7 +273,7 @@ def main(tune, nsel_mode, psel):
                 transform=ax.transAxes, va="bottom", fontsize=FS_TICK)
         style_axis(ax, title=title, xlabel=r"$|p_m|$  [MeV/c]",
                    ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
-                   logx=False, ymin=None)
+                   logx=False, ymin=None, logy=True)
         ax.set_xlim(0, 330)
         plot_sel = K_EDGES[1:] <= 330.0
         top = 1.5 * max(y3[plot_sel].max(), y4[plot_sel].max(),
@@ -403,7 +403,7 @@ def main_combo(tune, shells=False):
                               in zip(CURVES, ys)))
             style_axis(ax, title=title, xlabel=r"$|p_m|$  [MeV/c]",
                        ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
-                       logx=False, ymin=None)
+                       logx=False, ymin=None, logy=True)
             ax.set_xlim(0, 330)
             plot_sel = K_EDGES[1:] <= 330.0
             top = 1.5 * max([y[plot_sel].max() for y in ys]
@@ -465,7 +465,7 @@ def main_combo(tune, shells=False):
                title=rf"{CFG['name']} folded $|p_m|$ ($E_m$ 0–80 MeV)",
                xlabel=r"$|p_m|$  [MeV/c]",
                ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
-               logx=False, ymin=None)
+               logx=False, ymin=None, logy=True)
     ax_pm.set_xlim(0, 330)
     plot_sel = K_EDGES[1:] <= 330.0
     top = 1.5 * max([y[plot_sel].max() for y in ys]

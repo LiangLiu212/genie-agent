@@ -67,12 +67,12 @@ def main():
               f"n(k) peak @ {k[n_k.argmax()]:4.0f} MeV/c")
 
     style_axis(ax_E, logx=False, xlabel=r"$E_{\rm miss}$  [MeV]",
-               ylabel=r"$f(E_{\rm miss}) = \int 4\pi k^2 P\,dk\,/\,I$   [MeV$^{-1}$]")
+               ylabel=r"$f(E_{\rm miss}) = \int 4\pi k^2 P\,dk\,/\,I$   [MeV$^{-1}$]", logy=True)
     style_axis(ax_Ez, logx=False, title="shell region",
-               xlabel=r"$E_{\rm miss}$  [MeV]")
+               xlabel=r"$E_{\rm miss}$  [MeV]", logy=True)
     ax_Ez.set_xlim(0, 60)
     style_axis(ax_k, logx=False, xlabel=r"$P_{\rm miss}$  [MeV/c]",
-               ylabel=r"$n(P_{\rm miss}) = \int 4\pi k^2 P\,dE\,/\,I$   [(MeV/c)$^{-1}$]")
+               ylabel=r"$n(P_{\rm miss}) = \int 4\pi k^2 P\,dE\,/\,I$   [(MeV/c)$^{-1}$]", logy=True)
     ax_E.legend(title="SF table", fontsize=FS_LEGEND - 2,
                 title_fontsize=FS_LEGEND_TITLE)
     fig.suptitle("pke SF table marginals, per nucleon (each curve integrates to 1)",

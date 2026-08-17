@@ -40,7 +40,7 @@ for ax, tgt in zip(axes, order):
         X = [max(x, FLOOR) for _, x in data[tune][tgt]]
         ax.plot(E, X, "-o", ms=3, color=COLORS[i % len(COLORS)],
                 label=f"Q2cut={q2[tune]:.2f} ({tune[:2]})")
-    style_axis(ax, title=f"{tgt_name[tgt]}  (e- EM-QES)", xlabel="E [GeV]")
+    style_axis(ax, title=f"{tgt_name[tgt]}  (e- EM-QES)", xlabel="E [GeV]", logx=True, logy=True)
 
 # Set the shared y-range from the largest target (Au197) so its curves are not
 # clipped by C12's smaller autoscale.

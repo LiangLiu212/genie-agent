@@ -83,19 +83,19 @@ def main():
 
     draw_pm_sets(ax_p, "fig6_top")
     style_axis(ax_p, title="fig 6 top -- C12 p-shell (10-25 MeV)",
-               xlabel=PM_XLABEL, ylabel=PM_YLABEL, logx=False, ymin=5e-10)
+               xlabel=PM_XLABEL, ylabel=PM_YLABEL, logx=False, ymin=5e-10, logy=True)
     ax_p.set_ylim(5e-10, 6e-7)
     ax_p.legend(fontsize=FS_LEGEND - 2, ncols=2, frameon=False,
                 loc="upper center")
 
     draw_pm_sets(ax_s, "fig6_bot")
     style_axis(ax_s, title="fig 6 bot -- C12 s-shell (30-50 MeV)",
-               xlabel=PM_XLABEL, ylabel=PM_YLABEL, logx=False, ymin=5e-10)
+               xlabel=PM_XLABEL, ylabel=PM_YLABEL, logx=False, ymin=5e-10, logy=True)
     ax_s.set_ylim(5e-10, 6e-7)
 
     draw_pm_sets(ax_fe, "fig7")
     style_axis(ax_fe, title=r"fig 7 -- Fe56 ($E_m$ < 80 MeV)",
-               xlabel=PM_XLABEL, ylabel=PM_YLABEL, logx=False, ymin=5e-9)
+               xlabel=PM_XLABEL, ylabel=PM_YLABEL, logx=False, ymin=5e-9, logy=True)
     ax_fe.set_ylim(5e-9, 4e-6)
 
     for stem, label, color in [

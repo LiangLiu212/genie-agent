@@ -202,7 +202,7 @@ def main():
                 transform=ax.transAxes, va="top", fontsize=FS_TICK)
         style_axis(ax, title=title, xlabel=r"$p_m$  [MeV/c]",
                    ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
-                   logx=False, ymin=None)
+                   logx=False, ymin=None, logy=True)
         ax.set_xlim(-340, 340)
 
     binning = ("native table binning" if args.native else "data binning")

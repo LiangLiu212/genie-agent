@@ -68,7 +68,7 @@ def main():
         style_axis(ax, title=title, xlabel=r"$|p_m|$  [MeV/c]",
                    ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]"
                    if ax is ax_p else None,
-                   logx=False, ymin=None)
+                   logx=False, ymin=None, logy=True)
         ax.set_xlim(0, 330)
         ax.legend(fontsize=FS_LEGEND - 2, frameon=False, loc="upper right")
 

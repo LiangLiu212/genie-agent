@@ -102,7 +102,7 @@ def main():
                 transform=ax.transAxes, va="bottom", fontsize=FS_TICK)
         style_axis(ax, title=title, xlabel=r"$|p_m|$  [MeV/c]",
                    ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
-                   logx=False, ymin=None)
+                   logx=False, ymin=None, logy=True)
         ax.set_xlim(0, 330)
         ax.legend(fontsize=FS_LEGEND - 2, frameon=False, loc="upper right")
 

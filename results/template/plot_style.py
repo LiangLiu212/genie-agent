@@ -53,7 +53,7 @@ def new_panels(ncols=3, nrows=1, sharey=True):
 
 
 def style_axis(ax, title=None, xlabel=None, ylabel=None,
-               logx=True, logy=True, ymin=FLOOR):
+               logx=False, logy=False, ymin=FLOOR):
     """Apply the shared per-axis styling (scales, fonts, grid, ticks, ylim)."""
     if logx:
         ax.set_xscale("log")

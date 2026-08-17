@@ -34,7 +34,7 @@ fig, ax = plt.subplots(1, 1, figsize=(6.5, 5.5))
 ax.hist(leading, bins=40, color=COLORS[0], histtype="step", lw=1.5,
         label=f"{n_d_ev}/{n_ev} events with a deuteron")
 style_axis(ax, title="2 GeV e$^-$ on Ar40, EM QEL, GEM26_44b",
-           xlabel="leading deuteron p  [GeV]")
+           xlabel="leading deuteron p  [GeV]", logx=True, logy=True)
 ax.set_xscale("linear")  # momentum spans <1 decade; log x not useful here
 ax.set_yscale("linear")
 ax.set_ylabel("events", fontsize=FS_LABEL)

@@ -19,12 +19,13 @@ Never assume a display.
 - suptitle **18**, panel title **16**, axis labels **16**
 - legend title **13**, legend text **12**, tick labels **12**
 
-**Scales** — log-log by default (`set_xscale("log")`, `set_yscale("log")`).
-These are cross-section / spline figures spanning many decades.
+**Scales** — linear x and y by default. Opt into log per-axis (`logx=True` /
+`logy=True`) only when the data genuinely spans many decades (e.g. spline
+energy scans) or the user asks for it.
 
-**Log-axis floor** — clamp non-positive y to `FLOOR = 1e-12` so zeros render on a
-log axis; set `ax.set_ylim(FLOOR, None)`. Note in the caption that clamped values
-are not physical.
+**Log-axis floor** — when a log y axis is used, clamp non-positive y to
+`FLOOR = 1e-12` so zeros render; set `ax.set_ylim(FLOOR, None)`. Note in the
+caption that clamped values are not physical.
 
 **Grid** — `ax.grid(True, which="both", ls=":", alpha=0.4)` (dotted, both major
 and minor, faint).
@@ -53,7 +54,8 @@ for ax, facet in zip(axes, facets):
     for i, (label, E, X) in enumerate(series):
         ax.plot(E, [max(x, FLOOR) for x in X], "-o", ms=3,
                 color=COLORS[i % len(COLORS)], label=label)
-    style_axis(ax, title=facet, xlabel="E [GeV]")   # log-log, grid, ticks, ylim
+    style_axis(ax, title=facet, xlabel="E [GeV]")   # linear axes, grid, ticks
+    # spline-style figure spanning decades? -> style_axis(..., logx=True, logy=True)
 axes[0].set_ylabel("xsec  [GENIE units]", fontsize=FS_LABEL)
 axes[0].legend(title="<param> [unit]", fontsize=FS_LEGEND,
                title_fontsize=FS_LEGEND_TITLE)
