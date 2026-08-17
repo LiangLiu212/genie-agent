@@ -63,6 +63,37 @@ consistent with iron's broader QE peak and larger removal energy.
 
 ![Q2 map, 56Fe 2.7 GeV 15 deg](fe56_e2p7_th15_q2.png)
 
+## GENIE comparison at EM-MinQ2Limit = 0.25
+
+Three tunes, each with a new `_09_000` override setting **EM-MinQ2Limit =
+0.25 GeV²** (`genie-agent/tunes/{GEM26_11a,GEM21_11a,GEM26_22b}/<CMC>_09_000/`):
+GEM26_11a (LFG + Rosenbluth), GEM21_11a (SuSAv2), GEM26_22b (Benhar SF +
+UnifiedQEL). Per tune: full-EM splines (55 each, `-e 3`) and 500k-event local
+gevgen samples — e⁻ C12 at 2.5 GeV and e⁻ Fe56 at 2.7 GeV (run records in
+`genie-agent/run-manifest.jsonl`, date 2026-08-17). Both data settings sit
+entirely above the cut (Q² ≥ 0.293), so the cut removes nothing in-acceptance.
+
+Comparison (`report/make_incl_ee_comparison.py`): events in θ = 15°±1°
+(~90k per sample), ω in 15 MeV bins, normalized absolutely via
+dσ/dΩdω = σ_tot·N_bin/(N_gen·ΔΩ·Δω) with σ_tot = Σ splines at E
+(1 GeV⁻² = 3.8938e10 ×1e-38 cm²; gst QE channels cross-checked to <5%).
+σ_tot(full EM, Q²>0.25): C12 4.39/4.37/3.95 μb, Fe56 21.2/20.7/19.4 μb
+(LFG+Rosenbluth / SuSAv2 / SF+UnifiedQEL).
+
+![GENIE vs inclusive data, Q2 cut 0.25](incl_ee_q2cut0p25.png)
+
+Findings:
+
+- **12C**: SuSAv2 reproduces the QE peak height and position almost exactly;
+  LFG+Rosenbluth is ~25% high at the peak; SF+UnifiedQEL is ~20% low with the
+  peak shifted right (ω = 0.240 vs 0.230 GeV). All three track the dip and Δ
+  region well (slight undershoot at ω ≈ 0.40–0.45 GeV).
+- **56Fe**: LFG+Rosenbluth overshoots the QE peak (~15%); SuSAv2 matches the
+  peak but all three tunes undershoot the dip/Δ plateau by ~15–25% — the
+  classic transverse-strength deficit, larger in iron than carbon.
+- Data are radiatively corrected, no Coulomb corrections; GENIE curves are
+  unradiated. Statistical archive errors only.
+
 ## Notes
 
 - **12C↔56Fe overlaps** (same beam/angle on both nuclei, useful for A-scaling
