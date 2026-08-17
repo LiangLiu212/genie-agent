@@ -44,15 +44,24 @@ Mihovilovic 855 MeV / 70° set from `Miho_12C.dat`.
 - **12C** — 39 beam energies, 2,937 points: ![12C all settings](c12_all.png)
 - **56Fe** — 46 beam energies, 2,429 points: ![56Fe all settings](fe56_all.png)
 
-## Q² map: 12C at 2.5 GeV / 15°
+## Q² maps of single settings
 
 At fixed beam energy and angle each ω point carries Q² = 4E(E−ω)sin²(θ/2).
-For the Zeller:1973ge 2.5 GeV / 15° carbon setting the 76 points span
-**Q² = 0.293–0.421 (GeV/c)²** (computed, `report/make_q2_c12_e2p5_th15.py`);
-the QE peak (ω = 0.230 GeV) sits at Q² ≈ 0.387 (GeV/c)², i.e. Bjorken
-x ≈ 0.90. The whole setting lies above typical EM-MinQ2Limit guards.
+Generator: `report/make_q2_setting.py --target 12C|56Fe -e <GeV> --theta <deg>`.
+Both settings below lie entirely above typical EM-MinQ2Limit guards.
+
+**12C, Zeller:1973ge, 2.5 GeV / 15°** — 76 points spanning
+**Q² = 0.293–0.421 (GeV/c)²**; the QE peak (ω = 0.230 GeV) sits at
+Q² ≈ 0.387 (GeV/c)², i.e. Bjorken x ≈ 0.90.
 
 ![Q2 map, 12C 2.5 GeV 15 deg](c12_e2p5_th15_q2.png)
+
+**56Fe, Chen:1990kq, 2.7 GeV / 15°** — 60 points spanning
+**Q² = 0.352–0.473 (GeV/c)²**; the cross-section maximum (ω = 0.290 GeV)
+sits at Q² ≈ 0.443 (GeV/c)², i.e. x ≈ 0.81 — further below 1 than carbon,
+consistent with iron's broader QE peak and larger removal energy.
+
+![Q2 map, 56Fe 2.7 GeV 15 deg](fe56_e2p7_th15_q2.png)
 
 ## Notes
 
