@@ -1,0 +1,68 @@
+Data from M. Mihovilovic et. al in  Few Body Syst. 65 (2024) 3, 78
+
+Columns
+1  A
+2  Z
+3  E (MeV)
+4  Electron scattering angle theta (degrees)
+5  Omega (electron energy loss (MeV)
+6  Cross Section  (nb/(sr-GeV))
+7  Stat Uncertainty   (nb/(sr-GeV))
+8  Systematic Uncertainty(nb/(sr-GeV))
+9  inspirehep.net  Citation label
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+6 12 855 70  155 6.02    0.42    0.11 Mihovilovic:2024ymj
+6 12 855 70  165 9.34    0.52    0.17 Mihovilovic:2024ymj
+6 12 855 70  175 14.54   0.65    0.26 Mihovilovic:2024ymj
+6 12 855 70  185 18.56   0.73    0.33 Mihovilovic:2024ymj
+6 12 855 70  195 27.91   0.91    0.50 Mihovilovic:2024ymj
+6 12 855 70  205 39.21   1.08    0.70 Mihovilovic:2024ymj
+6 12 855 70  215 50.98   1.25    0.91 Mihovilovic:2024ymj
+6 12 855 70  225 73.46   1.54    1.31 Mihovilovic:2024ymj
+6 12 855 70  235 94.24   1.77    1.68 Mihovilovic:2024ymj
+6 12 855 70  245 118.69  2.02    2.11 Mihovilovic:2024ymj
+6 12 855 70  255 154.26  2.36    2.74 Mihovilovic:2024ymj
+6 12 855 70  225 65.63   1.85    1.17 Mihovilovic:2024ymj
+6 12 855 70  235 89.76   2.18    1.60 Mihovilovic:2024ymj
+6 12 855 70  245 120.92  2.57    2.15 Mihovilovic:2024ymj
+6 12 855 70  255 148.49  2.88    2.64 Mihovilovic:2024ymj
+6 12 855 70  265 187.28  3.30    3.33 Mihovilovic:2024ymj
+6 12 855 70  275 215.79  3.58    3.84 Mihovilovic:2024ymj
+6 12 855 70  285 259.45  4.03    4.61 Mihovilovic:2024ymj
+6 12 855 70  295 292.28  4.32    5.20 Mihovilovic:2024ymj
+6 12 855 70  305 327.25  4.66    5.82 Mihovilovic:2024ymj
+6 12 855 70  315 350.40  4.83    6.23 Mihovilovic:2024ymj
+6 12 855 70  305 300.94  4.54    5.35 Mihovilovic:2024ymj
+6 12 855 70  315 345.37  4.93    6.14 Mihovilovic:2024ymj
+6 12 855 70  325 384.89  5.29    6.84 Mihovilovic:2024ymj
+6 12 855 70  335 394.58  5.37    7.01 Mihovilovic:2024ymj
+6 12 855 70  345 409.91  5.50    7.29 Mihovilovic:2024ymj
+6 12 855 70  355 416.81  5.56    7.41 Mihovilovic:2024ymj
+6 12 855 70  365 425.48  5.62    7.56 Mihovilovic:2024ymj
+6 12 855 70  375 429.97  5.64    7.64 Mihovilovic:2024ymj
+6 12 855 70  385 423.77  5.59    7.53 Mihovilovic:2024ymj
+6 12 855 70  375 442.97  6.17    7.87 Mihovilovic:2024ymj
+6 12 855 70  385 437.38  6.11    7.78 Mihovilovic:2024ymj
+6 12 855 70  395 421.96  5.95    7.50 Mihovilovic:2024ymj
+6 12 855 70  405 421.54  5.95    7.49 Mihovilovic:2024ymj
+6 12 855 70  415 413.63  5.86    7.35 Mihovilovic:2024ymj
+6 12 855 70  425 422.07  5.92    7.50 Mihovilovic:2024ymj
+6 12 855 70  435 409.61  5.83    7.28 Mihovilovic:2024ymj
+6 12 855 70  425 390.93  6.09    6.95 Mihovilovic:2024ymj
+6 12 855 70  435 413.38  6.30    7.35 Mihovilovic:2024ymj
+6 12 855 70  445 423.29  6.38    7.53 Mihovilovic:2024ymj
+6 12 855 70  455 448.10  6.61    7.97 Mihovilovic:2024ymj
+6 12 855 70  465 452.97  6.64    8.05 Mihovilovic:2024ymj
+6 12 855 70  475 470.63  6.77    8.37 Mihovilovic:2024ymj
+6 12 855 70  485 504.07  7.12    8.96 Mihovilovic:2024ymj
+6 12 855 70  485 501.52  7.16    8.92 Mihovilovic:2024ymj
+6 12 855 70  495 521.17  7.32    9.27 Mihovilovic:2024ymj
+6 12 855 70  505 553.50  7.63    9.84 Mihovilovic:2024ymj
+6 12 855 70  515 572.62  7.80    10.18 Mihovilovic:2024ymj
+6 12 855 70  525 596.80  7.96    10.61 Mihovilovic:2024ymj
+6 12 855 70  525 587.79  12.88   10.45 Mihovilovic:2024ymj
+6 12 855 70  535 638.78  13.51   11.36 Mihovilovic:2024ymj
+6 12 855 70  545 645.64  13.59   11.48 Mihovilovic:2024ymj
+6 12 855 70  555 626.94  13.32   11.15 Mihovilovic:2024ymj
+6 12 855 70  565 670.66  13.82   11.92 Mihovilovic:2024ymj
