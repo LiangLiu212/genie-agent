@@ -42,7 +42,8 @@ def plot(nucleus, datfile, png):
     energies = sorted(by_e)
     ncols = 3
     nrows = (len(energies) + ncols - 1) // ncols
-    fig, axes = new_panels(ncols=ncols, nrows=nrows, sharey=True)
+    # per-panel y scale: on linear axes the settings span ~3 decades in sigma
+    fig, axes = new_panels(ncols=ncols, nrows=nrows, sharey=False)
     for ax, e in zip(axes, energies):
         for i, (theta, cite) in enumerate(sorted(by_e[e])):
             om, sig, err = by_e[e][(theta, cite)]
@@ -50,7 +51,7 @@ def plot(nucleus, datfile, png):
                         color=COLORS[i % len(COLORS)],
                         label=f"{theta:g}°  {cite}")
         style_axis(ax, title=f"E = {e:g} GeV",
-                   xlabel="$\\omega$  [GeV]", logx=False, logy=True, ymin=None)
+                   xlabel="$\\omega$  [GeV]", ymin=None)
         ax.legend(title="$\\theta$, dataset", fontsize=FS_LEGEND,
                   title_fontsize=FS_LEGEND_TITLE)
     for ax in axes[len(energies):]:
