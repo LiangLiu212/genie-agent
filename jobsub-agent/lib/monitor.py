@@ -13,7 +13,7 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from lib import control, records
+from lib import control, pnfs_io, records
 from lib.submit_env import build_submit_env
 
 # HTCondor JobStatus: 1=idle 2=running 3=removed 4=completed 5=held 6=transferring
@@ -86,7 +86,8 @@ def count_pnfs_outputs(record: dict, cfg: dict) -> int:
 
     Generic: the expected suffix comes from `record['extra']['output_suffix']`
     (the GENIE adapter sets `.xml` / `.ghep.root`); if unset, any file counts.
-    Best-effort; needs ifdh on PATH and returns 0 on any error.
+    Best-effort; uses ifdh when on PATH, else xrdfs via the dCache door (EAF has
+    no ifdh); returns 0 on any error.
     """
     pnfs_dir = record.get("pnfs_output_dir", "")
     if not pnfs_dir:
@@ -97,9 +98,11 @@ def count_pnfs_outputs(record: dict, cfg: dict) -> int:
         try:
             p = subprocess.run(["ifdh", "ls", path], capture_output=True,
                                text=True, timeout=120, env=build_submit_env())
+            if p.returncode == 0:
+                return [l.strip() for l in (p.stdout or "").splitlines() if l.strip()]
         except (subprocess.TimeoutExpired, FileNotFoundError):
-            return []
-        return [] if p.returncode != 0 else [l.strip() for l in (p.stdout or "").splitlines() if l.strip()]
+            pass
+        return pnfs_io.xrdfs_ls(path)[1]
 
     count = 0
     for line in _ls(pnfs_dir):
@@ -114,12 +117,17 @@ def count_pnfs_outputs(record: dict, cfg: dict) -> int:
     return count
 
 
-def refresh_status(record_path: Path, cfg: dict) -> dict:
+def refresh_status(record_path: Path, cfg: dict, recheck_failed: bool = False) -> dict:
     """Re-poll + persist a job's status. Returns the record + a transient
     `cluster_state` summary (the latter is not persisted)."""
     record = records.read_record(record_path)
     if record["status"] in records.TERMINAL_STATES:
-        return record
+        # A "failed" verdict from the queue-drain path can be a race: the pnfs
+        # count may run before dCache lists a just-copied output. recheck_failed
+        # re-evaluates such records; other terminal states stay sticky.
+        if not (recheck_failed and record["status"] == "failed"
+                and not record.get("outputs_pulled")):
+            return record
     cluster_id = record.get("cluster_id", "")
     if not cluster_id:
         return record  # nothing submitted to poll yet

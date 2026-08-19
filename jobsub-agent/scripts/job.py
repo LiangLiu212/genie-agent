@@ -30,7 +30,7 @@ def _fmt(rec: dict) -> str:
 
 def cmd_status(args, cfg) -> int:
     path = records.find_record_for_jobid(args.jobid)
-    rec = monitor.refresh_status(path, cfg)
+    rec = monitor.refresh_status(path, cfg, recheck_failed=getattr(args, "recheck_outputs", False))
     print(f"jobid:      {rec['jobid']}")
     print(f"status:     {rec['status']}")
     print(f"cluster:    {rec.get('cluster_id') or '-'}")
@@ -94,6 +94,8 @@ def main() -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("status", help="re-poll + show one job"); p.add_argument("jobid")
+    p.add_argument("--recheck-outputs", action="store_true",
+                   help="re-evaluate a 'failed' record against pnfs (false-failed race)")
     p = sub.add_parser("list", help="list jobs"); p.add_argument("--active", action="store_true")
     p = sub.add_parser("cancel", help="jobsub_rm a job"); p.add_argument("jobid")
     p = sub.add_parser("fetchlog", help="jobsub_fetchlog a job"); p.add_argument("jobid")

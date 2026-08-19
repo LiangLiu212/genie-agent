@@ -4,7 +4,8 @@ Generic: *which* files to copy (`suffix`) and *how* to name them locally
 (`name_fn`) are parameters — not a GENIE `job_kind` switch (that was the
 genie-mcp coupling). Walks `ifdh ls` of `pnfs_output_dir`'s per-process subdirs,
 copies matching files into `local_output_dir`, and updates `processes_done` +
-`status` on the record. All ifdh calls run under the scrubbed env.
+`status` on the record. All ifdh calls run under the scrubbed env; hosts without
+ifdh (e.g. EAF) fall back to xrdfs/xrdcp via lib.pnfs_io.
 """
 from __future__ import annotations
 
@@ -12,7 +13,7 @@ import subprocess
 from pathlib import Path
 from typing import Callable, Optional
 
-from lib import records
+from lib import pnfs_io, records
 from lib.submit_env import build_submit_env
 
 
@@ -20,20 +21,22 @@ def _ifdh_ls(path: str) -> tuple[bool, list[str]]:
     try:
         p = subprocess.run(["ifdh", "ls", path], capture_output=True,
                            text=True, timeout=120, env=build_submit_env())
+        if p.returncode == 0:
+            return True, [l.strip() for l in (p.stdout or "").splitlines() if l.strip()]
     except (subprocess.TimeoutExpired, FileNotFoundError):
-        return False, []
-    if p.returncode != 0:
-        return False, []
-    return True, [l.strip() for l in (p.stdout or "").splitlines() if l.strip()]
+        pass
+    return pnfs_io.xrdfs_ls(path)
 
 
 def _ifdh_cp(src: str, dst: Path) -> tuple[bool, str]:
     try:
         p = subprocess.run(["ifdh", "cp", src, str(dst)], capture_output=True,
                            text=True, timeout=600, env=build_submit_env())
-    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-        return False, str(e)
-    return (p.returncode == 0), (p.stderr or "")[-200:]
+        if p.returncode == 0:
+            return True, ""
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        pass
+    return pnfs_io.xrdcp_from_pnfs(src, dst)
 
 
 def _default_name(process_str: str, basename: str) -> str:
