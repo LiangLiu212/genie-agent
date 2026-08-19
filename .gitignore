@@ -40,3 +40,17 @@ minerva/
 
 # fetched cross-section splines (regenerable: pulled from /pnfs or re-run gmkspl)
 genie-agent/splines/
+
+# dutta-qe analysis project: generated caches + outputs (regenerable)
+analysis/dutta-qe/cache/
+analysis/dutta-qe/out/
+analysis/dutta-qe/__pycache__/
+
+# external SIMC checkout (has its own .git; reference only, not ours)
+simc_gfortran/
+
+# bulk ROOT event/histogram inputs (123 MB files exceed GitHub's 100 MB limit)
+data/luren/
+
+# compiled ELF of dump_qel_1p.cxx (source is tracked)
+results/template/dump_qel_1p
