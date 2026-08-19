@@ -61,3 +61,28 @@ Outputs land under `/pnfs/dune/scratch/users/$USER/jobsub-agent/<project>/<chann
 <installation>/<tune>/<stem>_{gev,spl}/...`; `pull` copies them locally. The
 adapter stamps `.extra.output_suffix` so status/pull know what to look for.
 Per-process seed on the worker is `$CLUSTER + $PROCESS` (reproducible).
+
+## Preserving splines — scratch expires, persistent does not
+
+Scratch dCache purges outputs ~30 days after they land (verified 2026-07-17:
+the June C12 sample dirs are empty). When the user confirms a spline set is
+worth keeping, mirror the XMLs to **persistent** with the directory structure
+preserved — a pure `scratch` → `persistent` path substitution, so every
+gridlog's recorded `pnfs_output_dir` still resolves to the mirror mechanically:
+
+```bash
+for stem in <gridlog stems>; do
+  d=$(jq -r '.pnfs_output_dir' jobsub-agent/jobsub-runs/<runtype-date>/$stem.gridlog)
+  src=$(find "$d" -name '*.xml')
+  dst=${src/\/pnfs\/dune\/scratch\//\/pnfs\/dune\/persistent\/}
+  mkdir -p "$(dirname "$dst")" && cp "$src" "$dst"
+  sha256sum "$src" "$dst"    # must match; record the checksums in the plan doc
+done
+```
+
+Notes: NFS `cp` works for these small (~118K) files (the NFS stall affects
+bulk *reads* of large files, and `xrdcp` writes to persistent would need a
+`storage.create:/persistent` token scope the default token lacks). Always
+verify sha256 both sides and record the persistent paths + checksums in the
+campaign plan doc. Ask the user before copying — persistent quota is shared;
+do not mirror event files (ghep/gst, GBs) this way without explicit direction.

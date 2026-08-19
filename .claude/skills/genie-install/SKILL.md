@@ -68,6 +68,7 @@ cd "$GENIEBASE/Generator"
 export GENIE=$PWD
 ./configure \
     --with-pythia6-lib="$PYTHIA6_LIB_DIR" \
+    --disable-lhapdf5 \
     --enable-lhapdf6 \
     --with-lhapdf6-lib="$LHAPDF_PKG_DIR/lib" \
     --with-lhapdf6-inc="$LHAPDF_PKG_DIR/include" \
@@ -80,6 +81,13 @@ mkdir -p "$GENIEBASE/data"     # XSECSPLINEDIR
 ```
 Reweight/nusystematics/nuisance are **not** built here (unused by the runners) —
 see [Adding INCL/Reweight later](#adding-inclreweight-later).
+
+Confirmed working for `R-3_06_02` (2026-08-19) with exactly the invocation above.
+`--disable-lhapdf5` matters: lhapdf5 is default-enabled and both reference builds
+(`GENIE_INCLXX`, `GENIE_v3_6_0`) carry `GOPT_ENABLE_LHAPDF5=NO`. Note the spack
+`libxml2` is an *external* (prefix `/usr`), so `LIBXML2_PKG_DIR=/usr` and the
+recorded include path is `/usr/include/libxml2` — same as the reference builds;
+not a bug.
 
 ### 4. Write `$GENIEBASE/setup_env.sh`
 Static reference script the env-snapshotter sources. Modeled on the worker

@@ -140,3 +140,16 @@ a GENIE table change: `pixi run python shared/build_pdg.py`.
   Branch + commit/push only when asked.
 - Skills under `.claude/skills/` (e.g. `genie-runlog`) document workflows for
   future sessions; keep them in sync when behaviour changes.
+
+## Planning protocol
+
+When in plan mode, follow this workflow strictly:
+
+1. Start with a short outline only: numbered one-line points, no details.
+2. When I ask about a specific point, reply with brief focused thoughts on that
+   point only (a few sentences, options and trade-offs). Do NOT restate or
+   rewrite the full plan.
+3. Track agreed decisions internally as we go.
+4. Only when I explicitly say "finalize the plan" do you assemble the complete
+   detailed plan from the agreed points and present it for approval.
+5. Use AskUserQuestion for open decisions instead of guessing.
