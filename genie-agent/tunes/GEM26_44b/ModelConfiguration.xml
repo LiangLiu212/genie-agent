@@ -57,12 +57,12 @@ University of Liverpool
   Also, set the preferred hadron transport model.
   Options include:
    - genie::HAIntranuke/Default
-   - genie::HAIntranuke2018/Default
+   - genie::INCLCascadeIntranuke/Default
    - genie::HNIntranuke2018/Default
    - genie::HNIntranuke2018/OsetOff
   -->
   <param type="bool" name="HadronTransp-Enable"> true </param>
-  <param type="alg"  name="HadronTransp-Model">  genie::HAIntranuke2018/Default  </param>
+  <param type="alg"  name="HadronTransp-Model">  genie::INCLCascadeIntranuke/Default  </param>
 
 
  <!--
@@ -71,7 +71,12 @@ University of Liverpool
   The parameter name is build as: "XSecModel@[name of thread]"
   -->
 
-  <param type="alg" name="XSecModel@genie::EventGenerator/QEL-EM">         genie::RosenbluthPXSec/Default </param>
+  <!-- SF-consistent unified QE for EM. NB: must use a *completed* param set (Default + a
+       CCFormFactorsAlg); the bare /Default set omits CCFormFactorsAlg and UnifiedQELPXSec::
+       LoadConfig fetches it unconditionally (FATAL otherwise). /Dipole = Default + dipole CC FF;
+       for an EM interaction only EMFormFactorsAlg (LwlynSmithFFEM/Default) is used, so the EM
+       cross section is identical to the bare-Default config. -->
+  <param type="alg" name="XSecModel@genie::EventGenerator/QEL-EM">         genie::UnifiedQELPXSec/EM_Dipole_incl </param>
 
   <param type="alg" name="XSecModel@genie::EventGenerator/RES-EM">         genie::BergerSehgalRESPXSec2014/EM-NoPauliBlock </param>
 

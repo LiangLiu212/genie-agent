@@ -38,6 +38,10 @@ University of Liverpool
   <!-- C12 ground state from the Benhar 2D spectral function (data: pke12_tot.data) -->
   <param type="alg" name="NuclearModel@Pdg=1000060120">   genie::SpectralFunc/Default </param>
 
+  <!-- Fe56 ground state from the Benhar 2D spectral function (data: pke56_tot.data);
+       added 2026-07-11 for the E91-013 iron study -->
+  <param type="alg" name="NuclearModel@Pdg=1000260560">   genie::SpectralFunc/Default </param>
+
 
 <!--
   Example of specific model for specific nuclei
