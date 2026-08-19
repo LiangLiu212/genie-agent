@@ -49,16 +49,45 @@ Template campaign: `incl26_07a-xsec-spline-set.md`.
 
 ## Stage 1 — tarball
 
-- [ ] build: tarball path xxx, sha xxx
-- [ ] publish label `genie_v3_6_2`: cvmfs dir xxx
-- [ ] verify ok: xxx
-- [ ] 1-job grid smoke (numu C12 CCQE -n 30 -e 5): jobid xxx, pulled XML splines xxx
+- [x] build: `jobsub-agent/tarballs/tarball_084bd2a68abc.tar` (405.5 MB, sha 084bd2a68abc),
+      toplevel Generator+data+setup_env.sh, excl. src/.git/.o/.d.
+- [x] publish label `genie_v3_6_2` →
+      `/cvmfs/fifeuser1.opensciencegrid.org/sw/dune/120083695b901536884562f73373f8681cc7e5c5ba106dc0184d888f82801b86`
+- [x] verify: exists / ok (age 0d).
+- [x] 1-job grid smoke (numu C12 CCQE -n 30 -e 5):
+      `gmkspl_grid-numu_C12_20260819-190343-ce0db8`, cluster 86282706.0@jobsub01,
+      done in ~8 min wall; pulled XML: 1 spline, nknots=30, genie_tune=G18_02a_00_000.
+      **ABI gate green** — the `--first`-concretized local build runs on workers.
+
+### Tooling fixes required for EAF operation (2026-08-19)
+
+- `job.py status/list` stamped a false "failed" at queue-drain: `count_pnfs_outputs`
+  shells `ifdh` (absent on EAF) and silently returned 0. Fixed in
+  `jobsub-agent/lib/monitor.py` + new `jobsub-agent/lib/pnfs_io.py`: ifdh falls
+  back to `xrdfs` via root://fndca1.fnal.gov:1094 (pnfs-stream namespace mapping).
+- `job.py pull` same story (`ifdh ls/cp`): `jobsub-agent/lib/outputs.py` now falls
+  back to `xrdfs ls` / `xrdcp`.
+- New `job.py status --recheck-outputs`: re-evaluates a "failed" record whose
+  outputs were never pulled (queue-drain vs dCache-listing race); other terminal
+  states stay sticky. Used to repair the smoke record (failed → done).
+- `jobsub_fetchlog` → landscape returns 404 for these jobs (no worker logs
+  available); timing must come from PNFS mtimes (upper bounds incl. queue wait).
+
+### Host-environment findings (2026-08-19, supersede fe56-era notes)
+
+- Grid submission + RCDS publish + jobsub_q all WORK from this EAF pod
+  (2026-07-11 firewall no longer applies). Whole campaign runs from EAF.
+- Bearer-token storage scopes: write only to `/pnfs/dune/scratch/users/liangliu`;
+  persistent is read-only via tokens. With a kinit ticket, `ssh dunegpvm04.fnal.gov`
+  works (NFS /pnfs there) → persistent mirrors go through ssh.
 
 ## Stage 2 — vN seed (18 submissions)
 
 Script: `.claude/plans/submit_g18_02a_e5000_vn_splines.sh` (written 2026-08-19).
 
-- [ ] 18/18 submitted: jobids xxx
+- [x] 18/18 submitted 2026-08-19 19:22–19:23 UTC (stems
+      `numu-numubar-nue-nuebar-nutau-nutaubar_{1000000010|H1|1000000010-H1}_20260819-192*`),
+      all running by 19:2x. Persistent status monitor active in-session.
 - [ ] wall times: CCDIS free-n xxx, CCDIS H1 xxx, NCDIS xxx, Charm xxx, others xxx
 - [ ] pulled; merged `gxspl-vN-e5000.xml`: spline count xxx, sha256 xxx
 - [ ] seed on persistent `/pnfs/dune/persistent/users/liangliu/genie_xsec/g18_02a_e5000/seed/`: sha256 match xxx
