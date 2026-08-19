@@ -94,6 +94,39 @@ Findings:
 - Data are radiatively corrected, no Coulomb corrections; GENIE curves are
   unradiated. Statistical archive errors only.
 
+## ACHILLES overlay (QE spectral function)
+
+100k ACHILLES events (v0.3.1 content, `main` @ e02d266; install + run at
+`/exp/dune/app/users/liangliu/ACHILLES/runs/e_C12_2500MeV_15deg`, seed
+20260819): e⁻ 2.5 GeV on ¹²C, `QESpectral` with the Benhar-family
+`pke12{p,n}_tot.data` spectral functions, cascade off, generated directly
+inside θ = 15°±1° (HardCuts AngleTheta [14, 16]). σ within cuts =
+329.66 ± 2.19 nb/atom (p-knockout 263.9 + n-knockout 65.7), so the
+normalization is σ_cut·N_bin/(N_gen·ΔΩ·Δω) with the same ΔΩ as the GENIE
+θ-mask window. The overlay (`report/make_incl_ee_achilles.py`) adds a dashed
+QE-only projection of GEM26_22b (qel mask on the same 500k sample) — the
+direct GENIE counterpart: Benhar SF + UnifiedQEL.
+
+![ACHILLES vs GENIE vs data, 12C 2.5 GeV 15 deg](incl_ee_achilles_c12.png)
+
+Findings (peak values in nb/sr/GeV, 15 MeV bins):
+
+- **ACHILLES sits on the data QE peak**: 29655 in ω ∈ [0.240, 0.255] vs data
+  29200 at ω = 0.230 — height within ~2% (of a data peak that still contains
+  some non-QE strength), position one bin right of the data, same rightward
+  shift GENIE SF shows.
+- **The two Benhar-SF QE curves differ by ~40%**: GENIE SF QE-only peaks at
+  21336 (GENIE SF full EM: 23685) vs ACHILLES 29655. Same ground-state family,
+  very different elementary-current treatment — consistent with the hypothesis
+  that ACHILLES's exact leptonic⊗hadronic tensor contraction (interference
+  terms retained) carries the missing peak strength; form-factor choices and
+  off-shell/Ward prescriptions (`Ward: None`, default `FormFactors.yml`) are
+  not yet disentangled from that.
+- For reference, GENIE QE-only peaks: LFG+Rosenbluth 34713, SuSAv2 26235.
+- ACHILLES here is QE-only, so the curve dies past ω ≈ 0.35: the dip/Δ region
+  needs its DCC resonance model (a second `RES_Spectral_Func` run) before a
+  full-spectrum comparison.
+
 ## Notes
 
 - **12C↔56Fe overlaps** (same beam/angle on both nuclei, useful for A-scaling
