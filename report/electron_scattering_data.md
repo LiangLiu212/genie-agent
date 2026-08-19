@@ -96,18 +96,28 @@ Findings:
 
 ## ACHILLES overlay (QE spectral function)
 
-100k ACHILLES events (v0.3.1 content, `main` @ e02d266; install + run at
-`/exp/dune/app/users/liangliu/ACHILLES/runs/e_C12_2500MeV_15deg`, seed
-20260819): e⁻ 2.5 GeV on ¹²C, `QESpectral` with the Benhar-family
-`pke12{p,n}_tot.data` spectral functions, cascade off, generated directly
-inside θ = 15°±1° (HardCuts AngleTheta [14, 16]). σ within cuts =
-329.66 ± 2.19 nb/atom (p-knockout 263.9 + n-knockout 65.7), so the
-normalization is σ_cut·N_bin/(N_gen·ΔΩ·Δω) with the same ΔΩ as the GENIE
-θ-mask window. The overlay (`report/make_incl_ee_achilles.py`) adds a dashed
-QE-only projection of GEM26_22b (qel mask on the same 500k sample) — the
-direct GENIE counterpart: Benhar SF + UnifiedQEL.
+100k ACHILLES events per setting (v0.3.1 content, `main` @ e02d266; install +
+runs at `/exp/dune/app/users/liangliu/ACHILLES/runs/`): `QESpectral` with
+Benhar-family spectral functions, cascade off, generated directly inside
+θ = 15°±1° (HardCuts AngleTheta [14, 16]), so the normalization is
+σ_cut·N_bin/(N_gen·ΔΩ·Δω) with the same ΔΩ as the GENIE θ-mask window.
 
-![ACHILLES vs GENIE vs data, 12C 2.5 GeV 15 deg](incl_ee_achilles_c12.png)
+- **¹²C 2.5 GeV** (`e_C12_2500MeV_15deg`, seed 20260819): shipped
+  `pke12{p,n}_tot.data`; σ_cut = 329.66 ± 2.19 nb/atom (p 263.9 + n 65.7).
+- **⁵⁶Fe 2.7 GeV** (`e_Fe56_2700MeV_15deg`, seed 20260820): iron is **not**
+  shipped in v0.3.1 — inputs custom-built by
+  `report/make_achilles_fe56_inputs.py` (Benhar pke56 table from GENIE_INCLXX
+  with a format transform validated byte-identically on C12; 2pF densities
+  c = 4.106, z = 0.519 fm from de Vries 1987; 5000 sampled configurations;
+  `Particles.yml` patched with PID 1000260560). σ_cut = 1096.62 ± 5.36 nb/atom
+  (p 834.9 + n 261.7). Unlike GENIE's Fe56 SuSAv2 (a scaled-C12 surrogate,
+  see prd-analyzer open questions), this is a genuine Fe56 SF calculation.
+
+The overlay (`report/make_incl_ee_achilles.py`) adds a dashed QE-only
+projection of GEM26_22b (qel mask on the same 500k samples) — the direct
+GENIE counterpart: Benhar SF + UnifiedQEL.
+
+![ACHILLES vs GENIE vs data](incl_ee_achilles.png)
 
 Findings (peak values in nb/sr/GeV, 15 MeV bins):
 
@@ -123,9 +133,17 @@ Findings (peak values in nb/sr/GeV, 15 MeV bins):
   off-shell/Ward prescriptions (`Ward: None`, default `FormFactors.yml`) are
   not yet disentangled from that.
 - For reference, GENIE QE-only peaks: LFG+Rosenbluth 34713, SuSAv2 26235.
-- ACHILLES here is QE-only, so the curve dies past ω ≈ 0.35: the dip/Δ region
-  needs its DCC resonance model (a second `RES_Spectral_Func` run) before a
-  full-spectrum comparison.
+- **⁵⁶Fe repeats the pattern** (data peak 89740 at ω = 0.290): ACHILLES 83022
+  in [0.270, 0.285] — 7% under a data peak that carries more non-QE strength
+  than carbon's — vs GENIE SF QE-only 63802 (−29% vs data) and SF full 73645,
+  both peaking in the same bin as ACHILLES. The ACHILLES/GENIE-SF-QE ratio is
+  +30% in iron vs +39% in carbon, i.e. the same current-treatment gap, mildly
+  A-dependent. LFG+Rosenbluth overshoots (105406) and peaks early
+  ([0.225, 0.240]); SuSAv2 matches the height (89107, in [0.255, 0.270]) but
+  recall its Fe56 EM tensor is rescaled C12.
+- ACHILLES here is QE-only, so the curves die past the QE region: the dip/Δ
+  region needs its DCC resonance model (a second `RES_Spectral_Func` run)
+  before a full-spectrum comparison.
 
 ## Notes
 
