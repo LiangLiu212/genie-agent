@@ -34,14 +34,18 @@ Template campaign: `incl26_07a-xsec-spline-set.md`.
       SKILL.md). libxml2 resolves to the system external (`/usr/include/libxml2`) —
       same as reference builds. Build script: `$GENIEBASE/build_genie.sh`,
       log `$GENIEBASE/build.log`.
-- [ ] `make` finished, rc 0 (= xxx)
+- [x] `make` finished rc 0, BUILD_OK 2026-08-19 18:33 UTC (single-core EAF build,
+      ~35 min). 188 libs; gmkspl/gspladd/gspl2root/gevgen/gntpc present.
 - [x] `setup_env.sh` written (skill heredoc, non-INCL).
 - [x] Registered `genie_v3_6_2` in `genie_env.json` (active_installation flip
       deferred to first grid submission; all commands pass `--installation`).
-- [ ] Env snapshot `config/env/genie_v3_6_2.json` (= xxx)
-- [ ] Smoke (a) CCQE C12: jobid xxx, rc xxx, spline_count xxx
-- [ ] **Charm go/no-go** (b): jobid xxx, rc xxx, spline_count xxx
-- [ ] gevgen sanity xxx (optional at this stage)
+- [x] Env snapshot `config/env/genie_v3_6_2.json` (47 vars, GENIE + XSECSPLINEDIR
+      point at the new install).
+- [x] Smoke (a) CCQE C12: `gmkspl-numu_C12_20260819-183428-fd0-ca38ca`, rc 0,
+      91.6 s, spline_count 1.
+- [x] **Charm go/no-go** (b): `gmkspl-numu_C12_20260819-183629-588-5557ed`, rc 0,
+      392.8 s, spline_count 9 = 6× AivazisCharmPXSecLO (DIS-CC-CHARM, n/p × s/v/3(s))
+      + 3× KovalenkoQELCharmPXSec (QEL-CC-CHARM, Λc+/Σc+/Σc++). **GO.**
 
 ## Stage 1 — tarball
 
