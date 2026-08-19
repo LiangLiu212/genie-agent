@@ -143,6 +143,21 @@ def main() -> int:
     target_label = "-".join(canon_targets)
     now = datetime.now()
     stem = f"{probe_label}_{target_label}_{now.strftime('%Y%m%d-%H%M%S')}"
+
+    # The worker names its output spl_grid_<stem>_<probes>_<targets>_<tune>_<genlist>[_e..][_n..]_p.._c..;
+    # too many targets in one job pushes that (and the local record filenames) past NAME_MAX=255.
+    out_name = (f"spl_grid_{stem}_{'-'.join(str(p) for p in nu_pdgs)}_"
+                f"{'-'.join(str(t) for t in tgt_pdgs)}_{tune}_{genlist}")
+    if args.max_energy is not None:
+        out_name += f"_e{args.max_energy}gev"
+    if args.n_knots is not None:
+        out_name += f"_n{args.n_knots}"
+    out_name += "_p0000_c0000000000.xml"
+    if len(out_name) > 255:
+        sys.stderr.write(f"error: worker output filename would be {len(out_name)} chars (>255 NAME_MAX); "
+                         "put fewer targets in one job\n")
+        return 2
+
     pnfs_dir = pnfs.output_dir(scratch_base=cfg["pnfs_scratch_base"], user=user, project=project,
                                installation=installation, tune=tune, genlist=genlist, stem=stem,
                                kind=KIND, probe="-".join(str(p) for p in nu_pdgs),

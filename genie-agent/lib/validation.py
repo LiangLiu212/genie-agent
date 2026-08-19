@@ -14,7 +14,7 @@ from .pdg import CHARGED_LEPTON_PDGS, NEUTRINO_PDGS
 # Tune format: <PREFIX><YY>_<NN><x>_<PP>_<FFF>  e.g. G18_02a_00_000, GEM21_11a_00_000
 TUNE_RE = re.compile(r"^[A-Z]+\d{2}_\d{2}[a-z]_\d{2}_[0-9a-z]+$")
 
-_EM_LISTS = frozenset({"EM", "EMQE", "EMMEC"})
+_EM_LISTS = frozenset({"EM", "EMQE", "EMMEC", "EMRES", "EMDIS", "EMQE+EMMEC"})
 
 
 def _tune_family_dir(

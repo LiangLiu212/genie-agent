@@ -63,7 +63,13 @@ def submit(
     command_file = run_dir / f"{stem}.command.json"
     submit_log = run_dir / f"{stem}.submit.log"
 
-    cmd = list(submit_cmd) + (["--no_submit"] if dry_run else [])
+    cmd = list(submit_cmd)
+    if dry_run:
+        # --no_submit must precede the executable: jobsub_submit stops parsing
+        # its own options at the file:// argument, so anything appended after it
+        # becomes a worker argument and the job is submitted for real.
+        exe_idx = next((i for i, a in enumerate(cmd) if a.startswith("file://")), len(cmd))
+        cmd.insert(exe_idx, "--no_submit")
     jobid = records.make_jobid(runtype, stem)
 
     record = records.make_initial_record(

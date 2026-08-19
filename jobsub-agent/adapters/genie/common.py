@@ -20,7 +20,7 @@ _GENIE_AGENT_CONFIG = _REPO_ROOT / "genie-agent" / "config" / "genie_env.json"
 
 # <PREFIX><YY>_<NN><x>_<PP>_<FFF>  e.g. G18_02a_00_000, GEM21_11a_00_000
 TUNE_RE = re.compile(r"^[A-Z]+\d{2}_\d{2}[a-z]_\d{2}_[0-9a-z]+$")
-EM_LISTS = frozenset({"EM", "EMQE", "EMMEC"})
+EM_LISTS = frozenset({"EM", "EMQE", "EMMEC", "EMRES", "EMDIS", "EMQE+EMMEC"})
 _BARE_NUCLEONS = frozenset({2112, 2212})
 
 
