@@ -46,8 +46,15 @@ CAMPAIGN_TUNES = ["GEM26_11a_05_000", "GEM26_22a_05_000",
 
 
 def genie_root() -> Path:
+    """$GENIE/.. of the selected installation ($GENIE_AGENT_INSTALLATION
+    overrides active_installation, as everywhere in genie-agent). The
+    GEM26/GEM21 campaign ran under genie_inclxx — pin that when the active
+    installation has moved on (its SpectralFunc.xml lacks the C12 tables)."""
+    import os
     cfg = json.load(open(REPO / "genie-agent" / "config" / "genie_env.json"))
-    inst = cfg["installations"][cfg["active_installation"]]
+    name = os.environ.get("GENIE_AGENT_INSTALLATION",
+                          cfg["active_installation"])
+    inst = cfg["installations"][name]
     return Path(inst["genie_bin_dir"]).parent
 
 

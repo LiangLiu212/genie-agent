@@ -42,12 +42,19 @@ event count + post-FSI N_p = 1 / its in-window count — the three
 normalization conventions of the preceding variants in one figure
 (`_combo`); --nsel/--proton-sel are ignored with it.
 
+--combo --grid draws the combo content for ALL FOUR tunes in one
+paper-style 8-panel figure (`_combo_grid`): rows = tunes, left column =
+E_m spectrum, right column = folded |p_m| on the full E window. No
+suptitle and no panel titles (the tune tag sits inside each E_m panel);
+the |p_m| column shares one log scale so rows compare directly.
+
 Usage:
   pixi run python results/template/make_em_folded_pm_sim.py            # 22b
   pixi run python results/template/make_em_folded_pm_sim.py --tune GEM26_22a_05_000
   pixi run python results/template/make_em_folded_pm_sim.py --nsel postfsi
   pixi run python results/template/make_em_folded_pm_sim.py --proton-sel leading
   pixi run python results/template/make_em_folded_pm_sim.py --combo
+  pixi run python results/template/make_em_folded_pm_sim.py --combo --grid
 """
 import argparse
 import sys
@@ -86,6 +93,9 @@ TUNE_GS = {
     "GEM26_22b_05_000": "SF + UnifiedQEL",
     "GEM21_11a_05_000": "SuSAv2",
 }
+# row order of the --grid figure (= the notes' table order)
+TUNE_ORDER = ["GEM26_11a_05_000", "GEM26_22a_05_000",
+              "GEM26_22b_05_000", "GEM21_11a_05_000"]
 # tunes whose ground state IS the 2D Benhar table (draw it as their input;
 # for LFG/SuSA tunes the table curve is omitted)
 TABLE_TUNES = {"GEM26_22a_05_000", "GEM26_22b_05_000"}
@@ -182,6 +192,26 @@ def dutta_pm(stem):
     x, y, _, e = np.loadtxt(DATA_DIR / f"{stem}.dat", unpack=True)
     m = x > 0
     return x[m], 2.0 * y[m], 2.0 * e[m]    # folded L+R, errors 2x stat
+
+
+def pm_full_data(dem, dsf):
+    """Folded |p_m| data on the FULL E window [0, 80): C12 = the fig 6
+    shells summed and gap-filled from the fig 9 E_m shape; Fe56 = fig 7
+    as-is. Returns (dx, dy, de, label)."""
+    if CFG["tlow"] == "c12":
+        dx, dyp, dep = dutta_pm("fig6_top_q1p2")
+        _, dys, des = dutta_pm("fig6_bot_q1p2")
+        m_sh = (((dem >= 10.0) & (dem < 25.0))
+                | ((dem >= 30.0) & (dem < 50.0)))
+        f_gap = float(dsf.sum() / dsf[m_sh].sum())
+        print(f"  gap-fill from fig 9 shape: f = {f_gap:.3f} "
+              f"(shell windows hold {100.0 / f_gap:.1f}% of [0,80))")
+        return (dx, f_gap * (dyp + dys),
+                f_gap * np.sqrt(dep ** 2 + des ** 2),
+                f"Dutta p+s L+R $\\times$ {f_gap:.2f}")
+    # fig 7 IS the E_m < 80 window — folded, no gap-fill
+    dx, dy, de = dutta_pm("fig7_q1p2")
+    return dx, dy, de, "Dutta fig 7 L+R"
 
 
 def strength_em(y):
@@ -426,24 +456,7 @@ def main_combo(tune, shells=False):
 
     # ---- folded |p_m| on the full E window -------------------------------
     E_WIN = (0.0, 80.0)
-    if CFG["tlow"] == "c12":
-        # fig 6 shells summed, gap-filled from the fig 9 E_m shape
-        dx, dyp, dep = dutta_pm("fig6_top_q1p2")
-        _, dys, des = dutta_pm("fig6_bot_q1p2")
-        dy_sum = dyp + dys
-        de_sum = np.sqrt(dep ** 2 + des ** 2)
-        m_sh = (((dem >= 10.0) & (dem < 25.0))
-                | ((dem >= 30.0) & (dem < 50.0)))
-        f_gap = float(dsf.sum() / dsf[m_sh].sum())
-        dy = f_gap * dy_sum
-        de = f_gap * de_sum
-        pm_dlab = f"Dutta p+s L+R $\\times$ {f_gap:.2f}"
-        print(f"  gap-fill from fig 9 shape: f = {f_gap:.3f} "
-              f"(shell windows hold {100.0 / f_gap:.1f}% of [0,80))")
-    else:
-        # fig 7 IS the E_m < 80 window — folded, no gap-fill
-        dx, dy, de = dutta_pm("fig7_q1p2")
-        pm_dlab = "Dutta fig 7 L+R"
+    dx, dy, de, pm_dlab = pm_full_data(dem, dsf)
 
     yt, k_edges = table_pm_density(table, E_WIN)
     if tune in TABLE_TUNES:
@@ -484,6 +497,139 @@ def main_combo(tune, shells=False):
     print("wrote", out)
 
 
+def main_grid():
+    """--combo for ALL FOUR tunes in one figure: a len(TUNE_ORDER) x 2
+    grid, one tune per row, left column = E_m spectrum, right column =
+    folded |p_m| on the full E window [0, 80) — per row exactly the
+    main_combo curves, normalizations and data. Paper layout: no suptitle
+    and no panel titles (the tune tag sits inside each E_m panel), x tick
+    labels on the bottom row only, and ONE log scale shared by the whole
+    |p_m| column so the rows compare directly."""
+    apply_style()
+    from matplotlib.lines import Line2D
+
+    table_stem, table = load_table()
+    (dem, dsf, dstat, dtot), em_dlab = dutta_em_target()
+    E_WIN = (0.0, 80.0)
+    dx, dy, de, pm_dlab = pm_full_data(dem, dsf)
+    y_tab = table_em(table, E_EDGES)
+    yt, kt_edges = table_pm_density(table, E_WIN)
+
+    nrows = len(TUNE_ORDER)
+    fig, axes = new_panels(ncols=2, nrows=nrows, sharey=False)
+
+    pm_axes, pm_tops = [], []
+    plot_sel = K_EDGES[1:] <= 330.0
+    for irow, tune in enumerate(TUNE_ORDER):
+        ax_em, ax_pm = axes[2 * irow], axes[2 * irow + 1]
+        bottom = irow == nrows - 1
+        c1 = load_cache(tune, "1p")
+        cl = load_cache(tune, "leading")
+        n_sel = float(c1["n_sel"][0])
+
+        def n_win(c):
+            with np.errstate(invalid="ignore"):
+                m = (np.isfinite(c["E4r"]) & (c["E4r"] >= 0.0)
+                     & (c["E4r"] < 80.0) & (c["p4"] < PM_MAX))
+            return float(m.sum())
+
+        n_win_l, n_win_1 = n_win(cl), n_win(c1)
+        print(f"  [{tune}] N_sel={int(n_sel):,}  "
+              f"N_win(leading)={int(n_win_l):,} ({n_win_l / n_sel:.3f})  "
+              f"N_win(1p)={int(n_win_1):,} ({n_win_1 / n_sel:.3f})")
+        curves = [
+            (c1, 3, n_sel, "C0", 1.6, "--", "pre-FSI / N$_{sel}$"),
+            (cl, 4, n_win_l, "C2", 1.8, "-",
+             "post-FSI leading p / N$_{win}$"),
+            (c1, 4, n_win_1, "C3", 2.0, "-",
+             "post-FSI N$_p$=1 / N$_{win}$"),
+        ]
+
+        # ---- E_m panel ----------------------------------------------------
+        if tune in TABLE_TUNES:
+            ax_em.stairs(y_tab, E_EDGES, color="C1", lw=1.0, linestyle="--",
+                         alpha=0.8, zorder=3)
+        ss = {}
+        for cc, s, n_norm, color, lw, ls, lab in curves:
+            y = mc_em(cc, s, n_norm)
+            ss[lab] = strength_em(y)
+            ax_em.stairs(y, E_EDGES, color=color, lw=lw, linestyle=ls,
+                         zorder=5)
+        ax_em.errorbar(dem, dsf, yerr=dtot, fmt="none", ecolor="0.6",
+                       elinewidth=3, alpha=0.8, zorder=8)
+        ax_em.errorbar(dem, dsf, yerr=dstat, fmt="s", ms=5, color="black",
+                       capsize=2, zorder=9)
+        ax_em.text(0.97, 0.97, f"{tune}\n{TUNE_GS[tune]}",
+                   transform=ax_em.transAxes, ha="right", va="top",
+                   fontsize=FS_LEGEND, zorder=10)
+        print("    E strengths: "
+              + "  ".join(f"{lab}={v:.3f}" for lab, v in ss.items())
+              + f"  data={strength_em(dsf):.3f}")
+        style_axis(ax_em,
+                   xlabel=r"$E_m+T_{rec}$  [MeV]" if bottom else None,
+                   ylabel=r"$Z\cdot$ d$N/$d$E\,/\,N$   [MeV$^{-1}$]",
+                   logx=False, logy=False, ymin=None)
+        ax_em.set_xlim(0, 85)
+        ax_em.set_ylim(0, CFG["em_ymax"])
+
+        # ---- |p_m| panel (full E window) -----------------------------------
+        if tune in TABLE_TUNES:
+            ax_pm.stairs(yt, kt_edges, color="C1", lw=1.0, linestyle="--",
+                         alpha=0.8, zorder=3)
+        ys = []
+        for cc, s, n_norm, color, lw, ls, lab in curves:
+            y = mc_pm_density(cc, s, E_WIN, n_norm)
+            ys.append(y)
+            ax_pm.stairs(y, K_EDGES, color=color, lw=lw, linestyle=ls,
+                         zorder=5)
+        ax_pm.errorbar(dx, dy, yerr=de, fmt="s", ms=5, color="black",
+                       capsize=2, zorder=9)
+        s_data = float((4.0 * np.pi * dx ** 2 * dy).sum() * 40.0)
+        print(f"    pm strengths: data={s_data:.3f}  "
+              + "  ".join(f"{lab}={strength_pm(y, K_EDGES):.3f}"
+                          for (_, _, _, _, _, _, lab), y
+                          in zip(curves, ys)))
+        style_axis(ax_pm, xlabel=r"$|p_m|$  [MeV/c]" if bottom else None,
+                   ylabel=r"$\int_{E\,\rm win} P\,dE_m$   [MeV$^{-3}$]",
+                   logx=False, ymin=None, logy=True)
+        ax_pm.set_xlim(0, 330)
+        pm_tops.append(1.5 * max([y[plot_sel].max() for y in ys]
+                                 + [yt[kt_edges[1:] <= 330.0].max(),
+                                    (dy + de).max()]))
+        pm_axes.append(ax_pm)
+        if not bottom:
+            ax_em.tick_params(labelbottom=False)
+            ax_pm.tick_params(labelbottom=False)
+
+    # one shared |p_m| scale containing every row's own 3-decade window
+    pm_top, pm_bot = max(pm_tops), min(pm_tops) / 1e3
+    for ax in pm_axes:
+        ax.set_ylim(pm_bot, pm_top)
+
+    # legends once, on the top row (proxy handles — row 1 has no table curve)
+    axes[0].legend(handles=[
+        Line2D([], [], color="C1", lw=1.0, ls="--", alpha=0.8,
+               label=f"table {table_stem}"),
+        Line2D([], [], color="C0", lw=1.6, ls="--",
+               label="pre-FSI / N$_{sel}$"),
+        Line2D([], [], color="C2", lw=1.8,
+               label="post-FSI leading p / N$_{win}$"),
+        Line2D([], [], color="C3", lw=2.0,
+               label="post-FSI N$_p$=1 / N$_{win}$"),
+        Line2D([], [], color="black", marker="s", ls="none", ms=5,
+               label=em_dlab),
+    ], fontsize=FS_LEGEND - 4, frameon=False, loc="center right")
+    axes[1].legend(handles=[
+        Line2D([], [], color="black", marker="s", ls="none", ms=5,
+               label=pm_dlab),
+    ], fontsize=FS_LEGEND - 4, frameon=False, loc="lower left")
+
+    fig.tight_layout()
+    out = OUT_DIR / f"em_folded_pm_sim_combo_grid_{CFG['tlow']}.png"
+    fig.savefig(out, dpi=DPI)
+    print("wrote", out)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", default="C12", choices=sorted(TGT))
@@ -506,12 +652,22 @@ if __name__ == "__main__":
                     help="with --combo (C12 only): per-shell |p_m| panels "
                          "with the ORIGINAL folded fig 6 data (no "
                          "gap-fill scale); writes the _combo_shells figure")
+    ap.add_argument("--grid", action="store_true",
+                    help="with --combo: ALL FOUR tunes in one 4x2 grid "
+                         "(rows = tunes, cols = E_m | folded |p_m|), no "
+                         "titles; --tune is ignored; writes the "
+                         "_combo_grid figure")
     args = ap.parse_args()
     CFG = dict(TGT[args.target], name=args.target)
     if args.shells and (not args.combo or args.target != "C12"):
         raise SystemExit("--shells goes with --combo and C12 only")
+    if args.grid and (not args.combo or args.shells):
+        raise SystemExit("--grid goes with --combo (and not --shells)")
     if args.combo:
-        main_combo(args.tune, args.shells)
+        if args.grid:
+            main_grid()
+        else:
+            main_combo(args.tune, args.shells)
     else:
         if args.target != "C12":
             raise SystemExit("the per-variant figures are C12-only; "

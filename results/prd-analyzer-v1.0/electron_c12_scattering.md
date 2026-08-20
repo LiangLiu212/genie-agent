@@ -348,12 +348,26 @@ input; δ-like E_m curves run off the capped y-scale, their peak being
   bins by up to ×7 (LFG) — and 11a's LFG cuts off sharply at ≈ 280 MeV/c
   below the data's outermost points.
 
+**All four tunes in one figure** (`--combo --grid`): the four combo
+figures above merged into a single title-less 8-panel grid (2 columns ×
+4 rows) — one tune per row in the table's order, E_m in the left column,
+folded |p_m| (E_m 0–80 MeV, gap-filled data) in the right; per row
+exactly the combo curves, normalizations and data, with the tune tag
+inside each E_m panel instead of a title. The |p_m| column shares one
+log scale, so the LFG/SuSA low-|p_m| pile-up and the SF shell plateau
+read straight down the column:
+
+![combo grid, all four tunes, Em + folded pm](em_folded_pm_sim_combo_grid_c12.png)
+
 Regenerate:
-`pixi run python results/template/make_em_folded_pm_sim.py` (default
+`GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python
+results/template/make_em_folded_pm_sim.py` (the pin resolves the
+SF-table lookup against the campaign install now that
+`active_installation` is `genie_v3_6_2`; default
 `--tune GEM26_22b_05_000`; any campaign tune via `--tune`;
 `--nsel postfsi` / `--nsel postwin` for the post-FSI- /
 in-window-normalized variants; `--proton-sel leading` for the
 leading-proton stage 4 — build its cache once with
 `make_emiss_ladder_q2cut.py --target C12 --tune <tune> --proton-sel
 leading --no-q2cut --build-only`; `--combo` for the mixed-normalization
-summary).
+summary; `--combo --grid` for the 8-panel all-tunes grid).
