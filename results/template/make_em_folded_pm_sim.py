@@ -501,12 +501,15 @@ def main_grid():
     """--combo for ALL FOUR tunes in one figure: a len(TUNE_ORDER) x 2
     grid, one tune per row, left column = E_m spectrum, right column =
     folded |p_m| on the full E window [0, 80) — per row exactly the
-    main_combo curves, normalizations and data. Paper layout: no suptitle
-    and no panel titles (the tune tag sits inside each E_m panel), x tick
-    labels on the bottom row only, and ONE log scale shared by the whole
-    |p_m| column so the rows compare directly."""
+    main_combo curves, normalizations and data. Paper layout: 3:4 (h:w)
+    panels with the rows TOUCHING (hspace = 0), no suptitle and no panel
+    titles (the tune tag sits inside each E_m panel), x tick labels on
+    the bottom row only, and ONE log scale shared by the whole |p_m|
+    column so the rows compare directly."""
     apply_style()
+    import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
+    from matplotlib.ticker import MaxNLocator
 
     table_stem, table = load_table()
     (dem, dsf, dstat, dtot), em_dlab = dutta_em_target()
@@ -516,7 +519,17 @@ def main_grid():
     yt, kt_edges = table_pm_density(table, E_WIN)
 
     nrows = len(TUNE_ORDER)
-    fig, axes = new_panels(ncols=2, nrows=nrows, sharey=False)
+    # 3:4 (h:w) panels, rows touching: margins fixed in inches and turned
+    # into fractions by hand (tight_layout would reopen the row gap)
+    PW, PH = 5.0, 3.75
+    ML, MR, MT, MB, WGAP = 1.0, 0.15, 0.15, 0.55, 1.0
+    figw = ML + 2 * PW + WGAP + MR
+    figh = MT + nrows * PH + MB
+    fig, ax2d = plt.subplots(nrows, 2, figsize=(figw, figh))
+    fig.subplots_adjust(left=ML / figw, right=1.0 - MR / figw,
+                        bottom=MB / figh, top=1.0 - MT / figh,
+                        wspace=WGAP / PW, hspace=0.0)
+    axes = list(ax2d.ravel())
 
     pm_axes, pm_tops = [], []
     plot_sel = K_EDGES[1:] <= 330.0
@@ -571,6 +584,11 @@ def main_grid():
                    logx=False, logy=False, ymin=None)
         ax_em.set_xlim(0, 85)
         ax_em.set_ylim(0, CFG["em_ymax"])
+        # rows touch: drop the top tick label so it can't collide with
+        # the "0.0" of the panel above at the shared border (steps = the
+        # AutoLocator set, else MaxNLocator picks 0.08-sized ticks here)
+        ax_em.yaxis.set_major_locator(
+            MaxNLocator(steps=[1, 2, 2.5, 5, 10], prune="upper"))
 
         # ---- |p_m| panel (full E window) -----------------------------------
         if tune in TABLE_TUNES:
@@ -624,7 +642,6 @@ def main_grid():
                label=pm_dlab),
     ], fontsize=FS_LEGEND - 4, frameon=False, loc="lower left")
 
-    fig.tight_layout()
     out = OUT_DIR / f"em_folded_pm_sim_combo_grid_{CFG['tlow']}.png"
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
