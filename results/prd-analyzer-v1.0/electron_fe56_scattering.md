@@ -98,7 +98,19 @@ count** (E_m + T_rec ∈ [0, 80), p_m < 300). One simplification vs C12:
   deficit of the normalization-page comparison, now visible against
   pre- and post-FSI alike (FSI barely reshapes |p_m|).
 
+**All four tunes in one figure** (`--combo --grid`): the same
+title-less 8-panel grid as [C12](electron_c12_scattering.md) — 2
+columns × 4 rows, 3:4 h:w panels with the rows touching, the tune tag
+inside each E_m panel, one log scale shared down the |p_m| column; the
+fig 7 folded data go in as tabulated (no gap-fill on iron):
+
+![Fe56 combo grid, all four tunes](em_folded_pm_sim_combo_grid_fe56.png)
+
 Regenerate:
-`pixi run python results/template/make_em_folded_pm_sim.py --combo --target Fe56 --tune <tune>`
-(caches: `cache/ladder_fe56{,_leading}/`, built with
+`GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python
+results/template/make_em_folded_pm_sim.py --combo --target Fe56 --tune
+<tune>` (the pin resolves the SF-table lookup against the campaign
+install now that `active_installation` is `genie_v3_6_2`;
+`--combo --grid` for the 8-panel all-tunes grid; caches:
+`cache/ladder_fe56{,_leading}/`, built with
 `make_emiss_ladder_q2cut.py --target Fe56 … --no-q2cut --build-only`).
