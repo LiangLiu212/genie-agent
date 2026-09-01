@@ -66,6 +66,9 @@ TUNE_GS = {
     "GEM26_22a_05_000": (True,  "SpectralFunc"),
     "GEM26_22b_05_000": (True,  "SpectralFunc"),
     "GEM21_11a_05_000": (False, "LocalFGM"),
+    # INCL++ ground state + INCL++ cascade FSI; local C12 sample only
+    # (TGT["C12"]["local_gst"]), no grid campaign
+    "GEM26_44b_05_000": (False, "INCL++ GS+FSI"),
 }
 
 
@@ -113,6 +116,11 @@ TGT = {
         ymax=1.0, sp_note=r"$S_p\approx16$ MeV",
         gem21_note=("SuSA record: $m_N-E_n=-T_N<0$,\noff scale left "
                     "(median {med:.1f} MeV)"),
+        # tunes with no campaign: local gst chunks (repo-relative glob);
+        # GEM26_44b_05_000 = 4x125k EMQE-only, 2026-09-01, install cc9c9b417
+        local_gst={"GEM26_44b_05_000": "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-01/eminus_C12_20260901-*.gst.root"},
+        incl_note=("INCL record: $E=v_{{loc}}-T_i$, no $S_p$ floor\n"
+                   "— mostly $<0$, off scale left\n(median {med:.1f} MeV)"),
     ),
 }
 
@@ -160,9 +168,17 @@ def build_cache(target, tune, max_files):
     m_rec = cfg["m_rec_gev"] if cfg["m_rec_gev"] is not None else _m_rec_c12()
     cache_dir = CACHE_ROOT / f"ladder_{target.lower()}{SEL_TAG}"
     cache_dir.mkdir(parents=True, exist_ok=True)
-    gridlog = GRIDLOG_ROOT / cfg["run_dir"] / f"{cfg['stems'][tune]}.gridlog"
-    urls = gst_urls(gridlog, max_files)
-    print(f"[{tune}] streaming {len(urls)} gst file(s) "
+    if tune in cfg["stems"]:
+        gridlog = GRIDLOG_ROOT / cfg["run_dir"] / f"{cfg['stems'][tune]}.gridlog"
+        urls, verb = gst_urls(gridlog, max_files), "streaming"
+    else:                                   # local sample (cfg["local_gst"])
+        import glob
+        urls = sorted(glob.glob(str(REPO / cfg["local_gst"][tune])))
+        verb = "reading local"
+        if not urls:
+            raise SystemExit(f"no local gst files for {tune}: "
+                             f"{REPO / cfg['local_gst'][tune]}")
+    print(f"[{tune}] {verb} {len(urls)} gst file(s) "
           f"(qel && hitnuc==p"
           + ("" if NO_Q2CUT else " && |Q2/1.28-1|<=5%") + ")")
     parts, ntot, nsel = [], 0, 0
@@ -300,6 +316,8 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
                 "$m_N-E_n=E_{sampled}$\n(restoration)")
     elif tune == "GEM21_11a_05_000":
         note = cfg["gem21_note"].format(med=med2)
+    elif tune == "GEM26_44b_05_000":
+        note = cfg["incl_note"].format(med=med2)
     else:
         note = ("record: FermiMover drops the sampled $w$\n— $\\delta$ at "
                 + cfg["sp_note"] + f" (off scale:\npeak bin = {pk:.1f})")

@@ -66,6 +66,14 @@ TUNE_GS = {
     "GEM26_22a_05_000": (True,  "SpectralFunc"),
     "GEM26_22b_05_000": (True,  "SpectralFunc"),
     "GEM21_11a_05_000": (False, "LocalFGM"),
+    "GEM26_44b_05_000": (False, "INCL++ GS+FSI"),   # local C12 sample
+}
+# tunes whose struck-nucleon record E sits below every E_m window
+RECORD_NOTE = {
+    "GEM21_11a_05_000": ("SuSA record: $E$ restored $<0$,\n"
+                         "outside every $E_m$ window\n(dotted = unwindowed)"),
+    "GEM26_44b_05_000": ("INCL record: $E=v_{loc}-T_i$, mostly $<0$,\n"
+                         "outside every $E_m$ window\n(dotted = unwindowed)"),
 }
 
 
@@ -222,9 +230,8 @@ def make_figure(target, tune, table_stem, table, dutta):
                   label=tune if i == 3 else None)
         draw_data(ax)
 
-    if tune == "GEM21_11a_05_000":
-        axes[1].annotate("SuSA record: $E$ restored $<0$,\n"
-                         "outside every $E_m$ window\n(dotted = unwindowed)",
+    if tune in RECORD_NOTE:
+        axes[1].annotate(RECORD_NOTE[tune],
                          xy=(0.30, 0.45), xycoords="axes fraction",
                          fontsize=FS_LEGEND - 3, color="0.35")
     axes[3].legend(fontsize=FS_LEGEND - 3,
@@ -319,9 +326,8 @@ def make_density_figure(target, tune, table_stem, y_in, k_edges,
                   label=tune if i == 3 else None)
         draw_data(ax)
 
-    if tune == "GEM21_11a_05_000":
-        axes[1].annotate("SuSA record: $E$ restored $<0$,\n"
-                         "outside every $E_m$ window\n(dotted = unwindowed)",
+    if tune in RECORD_NOTE:
+        axes[1].annotate(RECORD_NOTE[tune],
                          xy=(0.30, 0.45), xycoords="axes fraction",
                          fontsize=FS_LEGEND - 3, color="0.35")
     axes[3].legend(fontsize=FS_LEGEND - 3,

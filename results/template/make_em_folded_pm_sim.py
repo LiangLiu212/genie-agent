@@ -92,10 +92,14 @@ TUNE_GS = {
     "GEM26_22a_05_000": "SF + Rosenbluth",
     "GEM26_22b_05_000": "SF + UnifiedQEL",
     "GEM21_11a_05_000": "SuSAv2",
+    "GEM26_44b_05_000": "INCL++ GS+FSI",      # local C12 sample, no campaign
 }
-# row order of the --grid figure (= the notes' table order)
+# row order of the --grid figure (= the notes' table order); --grid-tunes
+# overrides it (with --tag naming the output), e.g. the five-row INCL grid
 TUNE_ORDER = ["GEM26_11a_05_000", "GEM26_22a_05_000",
               "GEM26_22b_05_000", "GEM21_11a_05_000"]
+GRID_TUNES = TUNE_ORDER
+TAG = ""
 # tunes whose ground state IS the 2D Benhar table (draw it as their input;
 # for LFG/SuSA tunes the table curve is omitted)
 TABLE_TUNES = {"GEM26_22a_05_000", "GEM26_22b_05_000"}
@@ -518,7 +522,7 @@ def main_grid():
     y_tab = table_em(table, E_EDGES)
     yt, kt_edges = table_pm_density(table, E_WIN)
 
-    nrows = len(TUNE_ORDER)
+    nrows = len(GRID_TUNES)
     # 3:4 (h:w) panels, rows touching: margins fixed in inches and turned
     # into fractions by hand (tight_layout would reopen the row gap)
     PW, PH = 5.0, 3.75
@@ -533,7 +537,7 @@ def main_grid():
 
     pm_axes, pm_tops = [], []
     plot_sel = K_EDGES[1:] <= 330.0
-    for irow, tune in enumerate(TUNE_ORDER):
+    for irow, tune in enumerate(GRID_TUNES):
         ax_em, ax_pm = axes[2 * irow], axes[2 * irow + 1]
         bottom = irow == nrows - 1
         c1 = load_cache(tune, "1p")
@@ -642,7 +646,7 @@ def main_grid():
                label=pm_dlab),
     ], fontsize=FS_LEGEND - 4, frameon=False, loc="lower left")
 
-    out = OUT_DIR / f"em_folded_pm_sim_combo_grid_{CFG['tlow']}.png"
+    out = OUT_DIR / f"em_folded_pm_sim_combo_grid_{CFG['tlow']}{TAG}.png"
     fig.savefig(out, dpi=DPI)
     print("wrote", out)
 
@@ -674,8 +678,17 @@ if __name__ == "__main__":
                          "(rows = tunes, cols = E_m | folded |p_m|), no "
                          "titles; --tune is ignored; writes the "
                          "_combo_grid figure")
+    ap.add_argument("--grid-tunes", nargs="+", default=None,
+                    choices=sorted(TUNE_GS),
+                    help="with --combo --grid: row tunes in order (default: "
+                         "the four campaign tunes)")
+    ap.add_argument("--tag", default="",
+                    help="output-stem tag for a --grid-tunes grid, e.g. _incl")
     args = ap.parse_args()
     CFG = dict(TGT[args.target], name=args.target)
+    if args.grid_tunes:
+        GRID_TUNES = args.grid_tunes
+    TAG = args.tag
     if args.shells and (not args.combo or args.target != "C12"):
         raise SystemExit("--shells goes with --combo and C12 only")
     if args.grid and (not args.combo or args.shells):

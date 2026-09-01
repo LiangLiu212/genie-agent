@@ -55,7 +55,13 @@ TUNES = {
     "GEM26_22a_05_000": ("C2", "-",  "SF"),
     "GEM26_22b_05_000": ("C3", "-",  "SF"),
     "GEM21_11a_05_000": ("C4", "--", "LocalFGM"),
+    # local EMQE-only sample (make_kin_qel_cache_local.py), not a campaign
+    # tune: selectable via --tunes only
+    "GEM26_44b_05_000": ("C1", "-",  "INCL++"),
 }
+CAMPAIGN_TUNES = ["GEM26_11a_05_000", "GEM26_22a_05_000",
+                  "GEM26_22b_05_000", "GEM21_11a_05_000"]
+TAG = ""            # output-stem tag for non-default tune sets (--tag)
 
 # panel -> (cache key, axis label, nice range step, nbins)
 PANELS = [
@@ -80,6 +86,14 @@ def load_cache(target, tune, q2cut=False):
     out["has_p"] = c["has_p"][m]
     out["ntot"] = c["ntot"]
     return out
+
+
+def ntot_note(cache):
+    """'equal ntot = 2M/tune' for a uniform set, else the per-tune list."""
+    n = [int(cache[t]["ntot"][0]) for t in TUNES]
+    if len(set(n)) == 1:
+        return f"equal ntot = {n[0] / 1e6:g}M/tune"
+    return "ntot = " + "/".join(f"{v / 1e6:g}M" for v in n) + "/tune"
 
 
 def panel_range(cache, key, step):
@@ -118,11 +132,12 @@ def make_fig(target, cache, density, q2cut=False):
     handles, labels = axes[0].get_legend_handles_labels()
     axes[5].legend(handles, labels, title="campaign tune", loc="center",
                    fontsize=FS_LEGEND - 1, title_fontsize=FS_LEGEND_TITLE)
+    ntots = ntot_note(cache)
     norm_note = ("area-normalized" if density
-                 else "raw events/bin (equal ntot = 2M/tune)")
+                 else f"raw events/bin ({ntots})")
     if q2cut:
         short_note = ("area-normalized" if density
-                      else "events/bin (ntot = 2M/tune)")
+                      else f"events/bin ({ntots.replace('equal ', '')})")
         fig.suptitle(f"(e,e'p) QEL kinematics, Q² = 1.28 ± 5 % APPLIED "
                      f"(qel && window && N$_p$=1)  —  "
                      f"e⁻ on {target} (t05), {short_note}\n"
@@ -140,7 +155,7 @@ def make_fig(target, cache, density, q2cut=False):
     fig.tight_layout()
     infix = "_q2cut" if q2cut else ""
     suffix = "" if density else "_counts"
-    out = OUT_DIR / f"kin_qel{infix}_{target.lower()}{suffix}.png"
+    out = OUT_DIR / f"kin_qel{infix}_{target.lower()}{TAG}{suffix}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
@@ -179,13 +194,13 @@ def make_empm_fig(target, cache, density, logy=True):
                          "Dutta window (reference, NOT applied)",
                    title_fontsize=FS_LEGEND_TITLE - 4)
     norm_note = ("area-normalized" if density
-                 else "raw events/bin (equal ntot = 2M/tune)")
+                 else f"raw events/bin ({ntot_note(cache)})")
     fig.suptitle(f"E$_m$ / p$_m$, NO Q² cut, E$_m$/p$_m$ uncut — "
                  f"{target} (t05), {norm_note}",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
     suffix = ("" if density else "_counts") + ("" if logy else "_lin")
-    out = OUT_DIR / f"empm_{target.lower()}{suffix}.png"
+    out = OUT_DIR / f"empm_{target.lower()}{TAG}{suffix}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
     if density and logy:
@@ -199,7 +214,15 @@ if __name__ == "__main__":
     ap.add_argument("--q2cut", action="store_true",
                     help="APPLY the Dutta Q^2 window (kinematics figures "
                          "only, kin_qel_q2cut_* names)")
+    ap.add_argument("--tunes", nargs="+", default=None, choices=sorted(TUNES),
+                    help="tune set to overlay (default: the four campaign "
+                         "tunes); e.g. GEM26_22b_05_000 GEM26_44b_05_000")
+    ap.add_argument("--tag", default="",
+                    help="output-stem tag for a non-default --tunes set, "
+                         "e.g. _incl -> kin_qel_c12_incl.png")
     args = ap.parse_args()
+    TUNES = {t: TUNES[t] for t in (args.tunes or CAMPAIGN_TUNES)}
+    TAG = args.tag
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     apply_style()
