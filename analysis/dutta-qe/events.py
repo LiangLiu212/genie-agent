@@ -14,6 +14,17 @@ import numpy as np
 from config import CACHE_DIR, M_REC
 
 
+def tunes_with_cache(target):
+    """Sorted tunes whose cache exists for this target.
+
+    Not every tune has a sample for every target (e.g. the GEM26_44b INCL
+    sample is C12-only), so "--all-tunes" loops use this instead of TUNES.
+    """
+    from config import TUNES
+    return [t for t in sorted(TUNES)
+            if (CACHE_DIR / target.lower() / f"{t}.npz").exists()]
+
+
 def load_cache(target, tune):
     """-> (cache dict with E{2,3,4}r added, n_sel). Raises if missing."""
     path = CACHE_DIR / target.lower() / f"{tune}.npz"

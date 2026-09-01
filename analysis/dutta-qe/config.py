@@ -43,13 +43,19 @@ M_P = next(v["mass_gev"] for v in _nuc.values() if v["code"] == 2212)
 # Mn55: install genie_pdg_table.txt (results/template/make_emiss_ladder_q2cut.py)
 M_REC = {"C12": 10.2525481, "Fe56": 51.1616880}
 
-# ---- tunes (full-EM t05 grid campaigns) -------------------------------------
+# ---- tunes (full-EM t05 grid campaigns + local INCL sample) -----------------
 # tune -> (has 2D SF input table, ground-state label, QEL generator)
+# GEM26_44b: INCL++ ground state AND INCL++ cascade FSI (local 4x125k sample,
+# 2026-09-01, install cc9c9b417). Energy-convention caveats:
+# tunes/GEM26_44b/README.md — the record E_m is v_loc - T_i (no S_p floor,
+# strength can sit near/below zero) and GHEP RemovalEnergy is indeterminate
+# (not consumed here: the cache uses only gst En/pn).
 TUNES = {
     "GEM26_11a_05_000": (False, "LocalFGM",     "QELKinematicsGenerator"),
     "GEM26_22a_05_000": (True,  "SpectralFunc", "QELKinematicsGenerator"),
     "GEM26_22b_05_000": (True,  "SpectralFunc", "QELEventGenerator"),
     "GEM21_11a_05_000": (False, "LocalFGM",     "QELEventGeneratorSuSA"),
+    "GEM26_44b_05_000": (False, "INCL++ GS+FSI", "QELEventGeneratorINCL"),
 }
 
 # ---- per-target configuration ----------------------------------------------
@@ -69,6 +75,10 @@ TARGETS = {
                "GEM21_11a_05_000": "eminus_C12_20260726-105650"},
         em_data_label="Dutta Fig. 9",
         pm_data_label="Dutta Fig. 6 p+s L+R",
+        # tunes with no grid campaign: local gst chunks (repo-relative glob)
+        local_gst={"GEM26_44b_05_000":
+                   "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-01/"
+                   "eminus_C12_20260901-*.gst.root"},
     ),
     "Fe56": dict(
         Z=26,
@@ -86,13 +96,19 @@ TARGETS = {
 }
 
 
+# the installation the t05 campaigns ran on — the pke*_tot.data tables live
+# only in its data dir (NOT resolved via active_installation: that changed to
+# genie_v3_6_2 on 2026-08-19, which does not ship the tot tables)
+SF_INSTALLATION = "genie_inclxx"
+
+
 def sf_table_path(target):
-    """The SpectralFunc input table of the active GENIE installation.
+    """The SpectralFunc input table of the campaign GENIE installation.
 
     Resolved through genie-agent's installation registry (the same table
     GEM26_22a/22b read at run time via SpectralFunc.xml).
     """
     cfg = json.load(open(REPO / "genie-agent/config/genie_env.json"))
-    inst = cfg["installations"][cfg["active_installation"]]
+    inst = cfg["installations"][SF_INSTALLATION]
     genie = Path(inst["genie_bin_dir"]).parent
     return genie / "data/evgen/nucl/spectral_functions" / TARGETS[target]["sf_table"]

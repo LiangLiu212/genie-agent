@@ -23,7 +23,7 @@ import numpy as np
 
 from config import (EM_BINW, EM_EDGES, OUT_DIR, PM_MAX_EM, TARGETS, TUNES)
 from dutta import load_em
-from events import load_cache, occ_hist, unit_hist
+from events import load_cache, occ_hist, tunes_with_cache, unit_hist
 from sftable import f_restricted, load_table, rebin
 from style import (apply_style, new_panels, style_axis,
                    FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE, DPI)
@@ -163,4 +163,5 @@ if __name__ == "__main__":
     ap.add_argument("--tune", default="GEM26_22a_05_000", choices=sorted(TUNES))
     ap.add_argument("--all-tunes", action="store_true")
     args = ap.parse_args()
-    main(args.target, sorted(TUNES) if args.all_tunes else [args.tune])
+    main(args.target,
+         tunes_with_cache(args.target) if args.all_tunes else [args.tune])

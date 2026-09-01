@@ -14,9 +14,9 @@ Usage:
 import numpy as np
 
 from config import (EM_BINW, EM_EDGES, OUT_DIR, PM_DATA_BINW, PM_EDGES,
-                    PM_MAX_EM, PM_SUM, TARGETS, TUNES)
+                    PM_MAX_EM, PM_SUM, TARGETS)
 from dutta import load_em, load_folded_pm
-from events import in_windows, load_cache, occ_hist, strength
+from events import in_windows, load_cache, occ_hist, strength, tunes_with_cache
 from sftable import f_restricted, load_table, n_windowed, rebin
 
 
@@ -44,7 +44,7 @@ def target_tables(target):
              f"(data/table = {IdP / I1_P:.2f})", "",
              "| tune | I2ᴱ | I3ᴱ | I4ᴱ | I4/I3 (E) | I2ᴾ | I3ᴾ | I4ᴾ | I4/I3 (p) |",
              "|---|---|---|---|---|---|---|---|---|"]
-    for tune in sorted(TUNES):
+    for tune in tunes_with_cache(target):
         c, n_sel = load_cache(target, tune)
         IE, IP = {}, {}
         for s in (2, 3, 4):

@@ -1,6 +1,6 @@
 """Stage 0: build cache/<target>/<tune>.npz from events.
 
-Two interchangeable sources (identical schema, see select.py):
+Three interchangeable sources (identical schema, see select.py):
 
   --seed-from-v03   copy the study's committed-analysis caches
                     (results/prd-analyzer-v0.3/cache/ladder_*) — instant,
@@ -8,23 +8,28 @@ Two interchangeable sources (identical schema, see select.py):
   --stream          rebuild from the grid gst files over XRootD
                     (needs a valid bearer token: BEARER_TOKEN_FILE,
                     refresh with `htgettoken -a htvaultprod.fnal.gov -i dune`)
+  --local           read local gst chunk files declared per target/tune in
+                    config TARGETS[target]["local_gst"] (tunes with no grid
+                    campaign, e.g. the GEM26_44b INCL sample)
 
-The stream path applies the selection qel && hitnuc==p && |Q^2/1.28-1|<=5%
-and records the three event stages; stage 4 uses the study's final N_p = 1
-post-FSI selection (the unique final-state proton).
+The stream/local paths apply the selection qel && hitnuc==p &&
+|Q^2/1.28-1|<=5% and record the three event stages; stage 4 uses the
+study's final N_p = 1 post-FSI selection (the unique final-state proton).
 
 Usage:
   pixi run python analysis/dutta-qe/build_cache.py --seed-from-v03
   pixi run python analysis/dutta-qe/build_cache.py --stream --target C12 [--tune ...] [--max-files 20]
+  pixi run python analysis/dutta-qe/build_cache.py --local --target C12 [--tune ...]
 """
 import argparse
+import glob as globmod
 import json
 import shutil
 
 import numpy as np
 
 from config import (CACHE_DIR, GRIDLOG_ROOT, M_P, M_REC, Q2_CENTER, Q2_FRAC,
-                    TARGETS, TUNES, V03_CACHE)
+                    REPO, TARGETS, TUNES, V03_CACHE)
 
 DOOR = "root://fndca1.fnal.gov:1094"
 
@@ -77,19 +82,17 @@ def gst_urls(gridlog_path, max_files):
     return sorted(urls)[:max_files] if max_files else sorted(urls)
 
 
-def stream(target, tune, max_files):
+def build(target, tune, paths, verb):
+    """Selection + three-stage projection over gst files (URLs or local)."""
     import uproot
     import awkward as ak
-    cfg = TARGETS[target]
     m_rec = M_REC[target]
     out_dir = CACHE_DIR / target.lower()
     out_dir.mkdir(parents=True, exist_ok=True)
-    gridlog = GRIDLOG_ROOT / cfg["run_dir"] / f"{cfg['stems'][tune]}.gridlog"
-    urls = gst_urls(gridlog, max_files)
-    print(f"[{tune}] streaming {len(urls)} gst file(s) "
+    print(f"[{tune}] {verb} {len(paths)} gst file(s) "
           f"(qel && hitnuc==p && |Q2/{Q2_CENTER}-1|<={Q2_FRAC:.0%})")
     parts, ntot, nsel = [], 0, 0
-    for ipath, url in enumerate(urls):
+    for ipath, url in enumerate(paths):
         a = uproot.open(url)["gst"].arrays(BRANCHES, library="ak")
         keep = (ak.to_numpy(a.hitnuc == 2212) & ak.to_numpy(a.qel)
                 & (np.abs(ak.to_numpy(a.Q2) / Q2_CENTER - 1.0) <= Q2_FRAC))
@@ -132,7 +135,7 @@ def stream(target, tune, max_files):
                           E4=E4[keep], p4=p4[keep] * 1000.0))
         ntot += len(keep)
         nsel += int(keep.sum())
-        print(f"  ... file {ipath + 1}/{len(urls)}: {ntot:,} events, "
+        print(f"  ... file {ipath + 1}/{len(paths)}: {ntot:,} events, "
               f"{nsel:,} selected", flush=True)
     out = {k: np.concatenate([q[k] for q in parts]) for k in parts[0]}
     out["ntot"], out["n_sel"] = np.array([ntot]), np.array([nsel])
@@ -141,17 +144,40 @@ def stream(target, tune, max_files):
           f"  -> {out_dir / f'{tune}.npz'}")
 
 
+def stream(target, tune, max_files):
+    cfg = TARGETS[target]
+    gridlog = GRIDLOG_ROOT / cfg["run_dir"] / f"{cfg['stems'][tune]}.gridlog"
+    build(target, tune, gst_urls(gridlog, max_files), "streaming")
+
+
+def local(target, tune):
+    """Local gst chunks declared in config TARGETS[target]["local_gst"]."""
+    pattern = TARGETS[target].get("local_gst", {}).get(tune)
+    if not pattern:
+        raise SystemExit(f"no local_gst source for {target}/{tune} in config.py")
+    paths = sorted(globmod.glob(str(REPO / pattern)))
+    if not paths:
+        raise SystemExit(f"no files match {REPO / pattern}")
+    build(target, tune, paths, "reading local")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     src = ap.add_mutually_exclusive_group(required=True)
     src.add_argument("--seed-from-v03", action="store_true")
     src.add_argument("--stream", action="store_true")
+    src.add_argument("--local", action="store_true")
     ap.add_argument("--target", default="C12", choices=list(TARGETS))
     ap.add_argument("--tune", default=None, choices=sorted(TUNES))
     ap.add_argument("--max-files", type=int, default=20)
     args = ap.parse_args()
     if args.seed_from_v03:
         seed_from_v03()
-    else:
-        for tune in ([args.tune] if args.tune else sorted(TUNES)):
+    elif args.stream:
+        for tune in ([args.tune] if args.tune
+                     else sorted(TARGETS[args.target]["stems"])):
             stream(args.target, tune, args.max_files)
+    else:
+        for tune in ([args.tune] if args.tune
+                     else sorted(TARGETS[args.target].get("local_gst", {}))):
+            local(args.target, tune)

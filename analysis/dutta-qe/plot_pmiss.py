@@ -28,7 +28,8 @@ import numpy as np
 from config import (OUT_DIR, PM_BINW, PM_DATA_BINW, PM_EDGES, PM_PLOT,
                     PM_SUM, TARGETS, TUNES)
 from dutta import load_folded_pm
-from events import in_windows, load_cache, occ_hist, strength, unit_hist
+from events import (in_windows, load_cache, occ_hist, strength,
+                    tunes_with_cache, unit_hist)
 from sftable import load_table, n_windowed
 from style import (apply_style, new_panels, style_axis,
                    FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE, DPI)
@@ -230,4 +231,5 @@ if __name__ == "__main__":
     ap.add_argument("--tune", default="GEM26_22a_05_000", choices=sorted(TUNES))
     ap.add_argument("--all-tunes", action="store_true")
     args = ap.parse_args()
-    main(args.target, sorted(TUNES) if args.all_tunes else [args.tune])
+    main(args.target,
+         tunes_with_cache(args.target) if args.all_tunes else [args.tune])

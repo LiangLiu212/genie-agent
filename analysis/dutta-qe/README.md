@@ -31,6 +31,7 @@ used; the Q² = 0.64 files are anomalous and excluded.
 # stage 0 — events -> cache/<target>/<tune>.npz  (pick one source)
 pixi run python analysis/dutta-qe/build_cache.py --seed-from-v03   # instant
 pixi run python analysis/dutta-qe/build_cache.py --stream --target C12 --max-files 20
+pixi run python analysis/dutta-qe/build_cache.py --local --target C12   # local_gst tunes (GEM26_44b)
 
 # stage 1 — E_miss figures (ladder + survivor-normalized shape)
 pixi run python analysis/dutta-qe/plot_emiss.py --target C12  --all-tunes
@@ -75,3 +76,16 @@ the identical schema, so they are interchangeable per target/tune.
   I4/I3(p panel) 0.41–0.60 — the shell windows expose the ΔT_p taxonomy.
 - The |p_m| shapes are nearly FSI-invariant (ground-state measure); the
   E_m shapes separate the FSI models.
+
+## GEM26_44b (INCL++ GS + FSI) — added 2026-09-01
+
+C12-only, from the local 4×125k sample under
+`genie-agent/genie-runs/GEM26_44b_05_000-2026-09-01/` (declared in config
+`TARGETS["C12"]["local_gst"]`, cached with `build_cache.py --local`).
+Per-target availability: `--all-tunes` loops use `events.tunes_with_cache`,
+so Fe56 figures stay 4-tune. By the tune's energy convention
+(`genie-agent/tunes/GEM26_44b/README.md`), the struck-nucleon record E_m is
+`v_loc − T_i` with no S_p floor — stage 2 carries no strength on the Dutta
+axis (I2 = 0 is expected, not a bug); stages 3/4 are the physical ones.
+C12 numbers (2026-09-01): I3ᴱ=6.000, I4ᴱ=3.185, I4/I3(E)=0.531;
+I3ᴾ=4.100, I4ᴾ=2.600, I4/I3(p)=0.634.
