@@ -396,3 +396,56 @@ Regenerate:
 `--nsel postfsi` / `--nsel postwin`, `--proton-sel leading`, `--combo`,
 `--combo --shells` for the variants; the five-row grid via
 `--combo --grid --grid-tunes GEM26_11a_05_000 GEM26_22a_05_000 GEM26_22b_05_000 GEM21_11a_05_000 GEM26_44b_05_000 --tag _incl`).
+
+## 3. The INCL ground state in the record: momentum vs sampled position
+
+The v0.1 "plot 3" ([`make_struck_pr.py`](../template/make_struck_pr.py)):
+the struck nucleon's momentum against the radial position `r = |X4|` the
+record carries, for the four campaign tunes **and** the INCL tune, all
+restricted to **QEL** single-nucleon events (`--sel-qel`; the campaign
+dumps are full-EM, the INCL sample is EMQE-only, so `scat = 1` is the
+like-for-like selection; no Q² window). Fraction of events per bin on one
+shared log color scale, white dashed = the per-column profile ⟨p⟩(r). The
+INCL sample was dumped from its four local GHEP chunks with
+`dump_hitnuc` (500,000 of 500,000 events single-nucleon):
+
+![C12 struck nucleon momentum vs sampled position, four campaign tunes + INCL, QEL](struck_pr_c12_all_t05_qel.png)
+
+![C12 struck nucleon momentum vs sampled position, INCL](struck_pr_c12_GEM26_44b_05_000_qel.png)
+
+| tune | ground state | N (qel) | ⟨r⟩ [fm] | corr(p, r) |
+|---|---|---|---|---|
+| GEM26_11a_05_000 | LocalFGM | 385,486 | 2.30 | −0.706 |
+| GEM26_22a_05_000 | 2D SF | 385,378 | 2.30 | +0.001 |
+| GEM26_22b_05_000 | 2D SF | 277,035 | 2.30 | −0.000 |
+| GEM21_11a_05_000 | LocalFGM | 345,033 | 2.30 | −0.704 |
+| **GEM26_44b_05_000** | **INCL++ (NucleusGenINCL)** | **500,000** | **2.27** | **+0.455** |
+
+- **The INCL record is a global p_F ball with a radius-dependent floor.**
+  The momentum never exceeds 270 MeV/c (|p|_max = 270.3, the hard cut of
+  the uniform-in-ball resampling, seen in section 2.1 as the record's
+  cliff) at *every* radius, while the *lower* edge rises with r: the full
+  0–270 range at the centre, p ≳ 180 MeV/c at 3 fm, p ≳ 240 at 4 fm, and
+  only p ≈ 270 beyond 5 fm. ⟨p⟩(r) climbs from ≈ 200 MeV/c inside 1 fm to
+  the cut at the surface; ⟨|p|⟩ = 225 MeV/c, median 237.
+- **That floor is the local-energy acceptance imprinting a *positive*
+  r–p correlation, +0.455** — a third species in the v0.1 taxonomy: LFG's
+  k_F(r) envelope falls with r (corr −0.70, the *upper* edge moves), the
+  SF tunes are exactly factorized (0), and INCL's *lower* edge moves the
+  other way. Mechanically (tune README, Phase-0 point 2): the momentum is
+  thrown in the global ball at the already-sampled ground-state radius and
+  accepted only if its kinetic energy exceeds INCL's local energy at that
+  r — the classical picture in which only the fastest nucleons reach the
+  surface. So although the momentum is not drawn from the INCL correlated
+  ground state, the record is *not* factorized either.
+- The radius itself is INCL's own density: ⟨r⟩ = 2.27 fm (max 5.5) against
+  the 2.30 fm that VertexGenerator's r²ρ(r) gives every campaign tune.
+- The dump also shows Phase-0 bug 4 directly: `RemovalEnergy` is the same
+  denormal garbage (7.5 × 10⁻⁹⁰) in every INCL event — never assigned —
+  which is why no INCL analysis here consumes it.
+
+Regenerate: build `dump_hitnuc` in the `genie_inclxx` env (recipe in-file),
+dump the four chunks to `results/prd-analyzer-v0.1/cache/hitnuc_c12/GEM26_44b_05_000.csv`,
+then
+`GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python results/template/make_struck_pr.py --dump-dir results/prd-analyzer-v0.1/cache/hitnuc_c12 --target C12 --tunes GEM26_11a_05_000 GEM26_22a_05_000 GEM26_22b_05_000 GEM21_11a_05_000 GEM26_44b_05_000 --sel-qel --tag _qel --out-dir results/prd-analyzer-v1.0`
+(`--tunes GEM26_44b_05_000` alone for the single figure).

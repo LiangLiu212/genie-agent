@@ -45,6 +45,13 @@ REPO = Path(__file__).resolve().parents[2]
 OUT_DEFAULT = REPO / "results" / "prd-analyzer-v0.1"
 TUNES = ["GEM26_11a_05_000", "GEM26_22a_05_000",
          "GEM26_22b_05_000", "GEM21_11a_05_000"]
+# non-campaign tunes, selectable via --tunes only (local samples dumped with
+# dump_hitnuc the same way); GS_OVERRIDE labels chains whose ground state is
+# not the ModelConfiguration NuclearModel line (the INCL thread samples r AND
+# p in NucleusGenINCL and never reads that line, which 44b left as 22b's SF)
+EXTRA_TUNES = ["GEM26_44b_05_000"]
+GS_OVERRIDE = {"GEM26_44b_05_000": "INCL++ (NucleusGenINCL)"}
+GENLIST = {"GEM26_44b_05_000": "EMQE"}       # default: EM (t05 campaigns)
 SF_TUNE = "GEM26_22a_05_000"          # any tune resolving to the 2D SF table
 R_MAX = {"Fe56": 8.0, "C12": 6.0}     # fm, ~1.6x the hard-sphere radius
 Q2_CENTER, Q2_FRAC = 1.28, 0.05       # --sel-qel-q2 window (Dutta slice)
@@ -57,19 +64,27 @@ def target_setup(target: str):
     _, _, p_edges, _, _ = read_pke_table(table)
     r_edges = np.arange(0.0, R_MAX[target] + 1e-9, 0.2)
     gs = {}
-    for t in TUNES:
+    for t in TUNES + EXTRA_TUNES:
+        if t in GS_OVERRIDE:
+            gs[t] = GS_OVERRIDE[t]
+            continue
         model = resolve_ground_state(t, pdg)
         gs[t] = (f"SpectralFunc ({table.stem})"
                  if "genie::SpectralFunc/" in model else "LocalFGM")
     return r_edges, p_edges, gs
 
 
-def load_hist(csv: Path, R_edges, P_edges, sel_qel_q2=False):
+def load_hist(csv: Path, R_edges, P_edges, sel_qel_q2=False, sel_qel=False):
     """CSV from dump_hitnuc -> (H fraction/bin [r, p], profile, counts).
 
     sel_qel_q2: keep only scat==1 (QEL) events inside the Dutta Q^2 window
-    (needs the q2 column of the extended dumper)."""
+    (needs the q2 column of the extended dumper).
+    sel_qel: keep only scat==1 (QEL), no Q^2 window (works on the older
+    8-column dumps too) — the like-for-like selection against an EMQE-only
+    sample."""
     d = np.genfromtxt(csv, delimiter=",", names=True)
+    if sel_qel:
+        d = d[d["scat"] == 1]
     if sel_qel_q2:
         m = (d["scat"] == 1) & (np.abs(d["q2"] / Q2_CENTER - 1.0) <= Q2_FRAC)
         d = d[m]
@@ -109,7 +124,7 @@ def draw_panel(ax, fig, H, prof, R_edges, P_edges, norm, add_cbar=True):
 
 
 def single_figure(target, tune, H, prof, c, R_edges, P_edges, gs,
-                  out_dir=OUT_DEFAULT, sel_note=""):
+                  out_dir=OUT_DEFAULT, sel_note="", tag=""):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LogNorm
     w, h = PANEL_SIZE
@@ -121,15 +136,16 @@ def single_figure(target, tune, H, prof, c, R_edges, P_edges, gs,
     ax.set_title(f"N = {c['n_kept']:,}{sel_note or ' single-nucleon'} events,  "
                  f"corr(p, r) = {c['corr']:+.3f}", fontsize=FS_TITLE - 3)
     fig.suptitle(f"{target} struck nucleon: momentum vs sampled position\n"
-                 f"{tune}  ({gs[tune]}),  e$^-$ 2.445 GeV, genlist EM",
+                 f"{tune}  ({gs[tune]})\n"
+                 f"e$^-$ 2.445 GeV, genlist {GENLIST.get(tune, 'EM')}",
                  fontsize=FS_SUPTITLE - 2)
-    out = Path(out_dir) / f"struck_pr_{target.lower()}_{tune}.png"
+    out = Path(out_dir) / f"struck_pr_{target.lower()}_{tune}{tag}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
 
 def combined_figure(target, results, R_edges, P_edges, gs,
-                    out_dir=OUT_DEFAULT, sel_note=""):
+                    out_dir=OUT_DEFAULT, sel_note="", tag=""):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LogNorm
     w, h = PANEL_SIZE
@@ -151,7 +167,7 @@ def combined_figure(target, results, R_edges, P_edges, gs,
                  f"(e$^-$ 2.445 GeV, genlist EM{sel_note}, t05 tunes, "
                  "shared color scale)",
                  fontsize=FS_SUPTITLE - 2)
-    out = Path(out_dir) / f"struck_pr_{target.lower()}_all_t05.png"
+    out = Path(out_dir) / f"struck_pr_{target.lower()}_all_t05{tag}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
 
@@ -167,21 +183,32 @@ if __name__ == "__main__":
                     help="keep only QEL events in the Dutta Q2=1.28+-5%% window")
     ap.add_argument("--out-dir", default=str(OUT_DEFAULT),
                     help="figure output dir (v0.2: results/prd-analyzer-v0.2)")
+    ap.add_argument("--sel-qel", action="store_true",
+                    help="keep only QEL events (scat==1), no Q2 window")
+    ap.add_argument("--tunes", nargs="+", default=None,
+                    choices=TUNES + EXTRA_TUNES,
+                    help="explicit tune set (overrides --tune/--all-tunes; "
+                         "the combined figure is drawn for >1 tune)")
+    ap.add_argument("--tag", default="",
+                    help="output-stem tag, e.g. _qel -> struck_pr_c12_all_t05_qel.png")
     args = ap.parse_args()
 
     apply_style()
-    sel_note = ", qel && $Q^2=1.28\\pm5\\%$" if args.sel_qel_q2 else ""
+    sel_note = (", qel && $Q^2=1.28\\pm5\\%$" if args.sel_qel_q2
+                else ", qel" if args.sel_qel else "")
     R_edges, P_edges, gs = target_setup(args.target)
-    tunes = TUNES if args.all_tunes else [args.tune]
+    tunes = args.tunes or (TUNES if args.all_tunes else [args.tune])
     results = []
     for t in tunes:
         H, prof, c = load_hist(Path(args.dump_dir) / f"{t}.csv", R_edges, P_edges,
-                               sel_qel_q2=args.sel_qel_q2)
+                               sel_qel_q2=args.sel_qel_q2, sel_qel=args.sel_qel)
         print(f"{t}: N={c['n_kept']:,}  in-grid={c['in_range']:,}  "
               f"corr(p,r)={c['corr']:+.3f}  <r>={c['mean_r']:.2f} fm")
         single_figure(args.target, t, H, prof, c, R_edges, P_edges, gs,
-                      out_dir=args.out_dir, sel_note=sel_note and " qel-window")
+                      out_dir=args.out_dir, tag=args.tag,
+                      sel_note=(" qel-window" if args.sel_qel_q2
+                                else " qel" if args.sel_qel else ""))
         results.append((t, H, prof, c))
-    if args.all_tunes:
+    if args.all_tunes or (args.tunes and len(args.tunes) > 1):
         combined_figure(args.target, results, R_edges, P_edges, gs,
-                        out_dir=args.out_dir, sel_note=sel_note)
+                        out_dir=args.out_dir, sel_note=sel_note, tag=args.tag)
