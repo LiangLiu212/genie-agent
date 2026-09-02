@@ -405,7 +405,8 @@ record carries, for the four campaign tunes **and** the INCL tune, all
 restricted to **QEL** single-nucleon events (`--sel-qel`; the campaign
 dumps are full-EM, the INCL sample is EMQE-only, so `scat = 1` is the
 like-for-like selection; no Q² window). Fraction of events per bin on one
-shared log color scale, white dashed = the per-column profile ⟨p⟩(r). The
+shared log color scale (r on x, momentum on y), white dashed = the per-column
+profile ⟨p⟩(r). The
 INCL sample was dumped from its four local GHEP chunks with
 `dump_hitnuc` (500,000 of 500,000 events single-nucleon):
 
@@ -447,5 +448,6 @@ INCL sample was dumped from its four local GHEP chunks with
 Regenerate: build `dump_hitnuc` in the `genie_inclxx` env (recipe in-file),
 dump the four chunks to `results/prd-analyzer-v0.1/cache/hitnuc_c12/GEM26_44b_05_000.csv`,
 then
-`GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python results/template/make_struck_pr.py --dump-dir results/prd-analyzer-v0.1/cache/hitnuc_c12 --target C12 --tunes GEM26_11a_05_000 GEM26_22a_05_000 GEM26_22b_05_000 GEM21_11a_05_000 GEM26_44b_05_000 --sel-qel --tag _qel --out-dir results/prd-analyzer-v1.0`
-(`--tunes GEM26_44b_05_000` alone for the single figure).
+`GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python results/template/make_struck_pr.py --dump-dir results/prd-analyzer-v0.1/cache/hitnuc_c12 --target C12 --tunes GEM26_11a_05_000 GEM26_22a_05_000 GEM26_22b_05_000 GEM21_11a_05_000 GEM26_44b_05_000 --sel-qel --tag _qel --r-on-x --out-dir results/prd-analyzer-v1.0`
+(`--tunes GEM26_44b_05_000` alone for the single figure; `--r-on-x` puts the
+radius on x and the momentum on y, the orientation used here).

@@ -52,6 +52,7 @@ TUNES = ["GEM26_11a_05_000", "GEM26_22a_05_000",
 EXTRA_TUNES = ["GEM26_44b_05_000"]
 GS_OVERRIDE = {"GEM26_44b_05_000": "INCL++ (NucleusGenINCL)"}
 GENLIST = {"GEM26_44b_05_000": "EMQE"}       # default: EM (t05 campaigns)
+R_ON_X = False       # --r-on-x: radius on x, momentum on y (default: p on x)
 SF_TUNE = "GEM26_22a_05_000"          # any tune resolving to the 2D SF table
 R_MAX = {"Fe56": 8.0, "C12": 6.0}     # fm, ~1.6x the hard-sphere radius
 Q2_CENTER, Q2_FRAC = 1.28, 0.05       # --sel-qel-q2 window (Dutta slice)
@@ -108,19 +109,31 @@ def load_hist(csv: Path, R_edges, P_edges, sel_qel_q2=False, sel_qel=False):
 
 
 def draw_panel(ax, fig, H, prof, R_edges, P_edges, norm, add_cbar=True):
-    # orientation: x = missing momentum P_miss (plots 1-2), y = radius r
-    Xe, Ye = np.meshgrid(P_edges, R_edges, indexing="ij")
-    Zm = np.ma.masked_less_equal(H.T, 0.0)
-    pc = ax.pcolormesh(Xe, Ye, Zm, cmap="viridis", norm=norm)
+    # default orientation: x = missing momentum P_miss (plots 1-2), y = radius
+    # r; --r-on-x transposes (x = r, y = P_miss). H is indexed [r, p].
     r_ctr, p_of_r = prof
-    ax.plot(p_of_r, r_ctr, "w--", lw=1.8, label=r"$\langle p\rangle(r)$")
-    ax.set_xlabel(r"$P_{\rm miss}$  [MeV/c]", fontsize=FS_LABEL)
-    ax.set_xlim(P_edges[0], P_edges[-1])
+    if R_ON_X:
+        Xe, Ye = np.meshgrid(R_edges, P_edges, indexing="ij")
+        Zm = np.ma.masked_less_equal(H, 0.0)
+        pc = ax.pcolormesh(Xe, Ye, Zm, cmap="viridis", norm=norm)
+        ax.plot(r_ctr, p_of_r, "w--", lw=1.8, label=r"$\langle p\rangle(r)$")
+        ax.set_xlabel(r"$r$  [fm]", fontsize=FS_LABEL)
+        ax.set_xlim(R_edges[0], R_edges[-1])
+    else:
+        Xe, Ye = np.meshgrid(P_edges, R_edges, indexing="ij")
+        Zm = np.ma.masked_less_equal(H.T, 0.0)
+        pc = ax.pcolormesh(Xe, Ye, Zm, cmap="viridis", norm=norm)
+        ax.plot(p_of_r, r_ctr, "w--", lw=1.8, label=r"$\langle p\rangle(r)$")
+        ax.set_xlabel(r"$P_{\rm miss}$  [MeV/c]", fontsize=FS_LABEL)
+        ax.set_xlim(P_edges[0], P_edges[-1])
     ax.tick_params(labelsize=FS_TICK)
     if add_cbar:
         cb = fig.colorbar(pc, ax=ax, pad=0.02, fraction=0.046)
         cb.ax.tick_params(labelsize=FS_TICK)
     return pc
+
+
+YLABEL = {False: r"$r$  [fm]", True: r"$P_{\rm miss}$  [MeV/c]"}
 
 
 def single_figure(target, tune, H, prof, c, R_edges, P_edges, gs,
@@ -131,7 +144,7 @@ def single_figure(target, tune, H, prof, c, R_edges, P_edges, gs,
     fig, ax = plt.subplots(figsize=(w * 1.4, h), layout="constrained")
     norm = LogNorm(vmin=H.max() * 1e-6, vmax=H.max())
     draw_panel(ax, fig, H, prof, R_edges, P_edges, norm)
-    ax.set_ylabel(r"$r$  [fm]", fontsize=FS_LABEL)
+    ax.set_ylabel(YLABEL[R_ON_X], fontsize=FS_LABEL)
     ax.legend(loc="upper right", fontsize=FS_TICK)
     ax.set_title(f"N = {c['n_kept']:,}{sel_note or ' single-nucleon'} events,  "
                  f"corr(p, r) = {c['corr']:+.3f}", fontsize=FS_TITLE - 3)
@@ -158,7 +171,7 @@ def combined_figure(target, results, R_edges, P_edges, gs,
         pc = draw_panel(ax, fig, H, prof, R_edges, P_edges, norm, add_cbar=False)
         ax.set_title(f"{tune}\n{gs[tune]},  corr = {c['corr']:+.3f}",
                      fontsize=FS_TITLE - 3)
-    axes[0].set_ylabel(r"$r$  [fm]", fontsize=FS_LABEL)
+    axes[0].set_ylabel(YLABEL[R_ON_X], fontsize=FS_LABEL)
     axes[0].legend(loc="upper right", fontsize=FS_TICK)
     cb = fig.colorbar(pc, ax=axes, pad=0.01, fraction=0.02)
     cb.set_label("fraction of events / bin", fontsize=FS_TITLE - 2)
@@ -191,7 +204,11 @@ if __name__ == "__main__":
                          "the combined figure is drawn for >1 tune)")
     ap.add_argument("--tag", default="",
                     help="output-stem tag, e.g. _qel -> struck_pr_c12_all_t05_qel.png")
+    ap.add_argument("--r-on-x", action="store_true",
+                    help="radius on x, momentum on y (default: P_miss on x, "
+                         "the orientation of plots 1-2)")
     args = ap.parse_args()
+    R_ON_X = args.r_on_x
 
     apply_style()
     sel_note = (", qel && $Q^2=1.28\\pm5\\%$" if args.sel_qel_q2
