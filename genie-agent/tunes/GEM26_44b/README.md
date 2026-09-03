@@ -60,6 +60,15 @@ Key facts, all verified by source read:
 5. The INCL path bypasses `QELUtils::BindHitNucleon`, so the Benhar-table
    recoil special case (`QELUtils.cxx:271`) never fires here.
 
+**Correction (2026-09-02, `docs/incl-ground-state-review.md`, verified with a
+runtime probe + 500k events):** point 1 describes `HitNucP4` (what the cross
+section and lepton kinematics use), not the GHEP record — the record's hit
+nucleon is rewritten **on-shell** from INCL after the cascade, so its `E_m`
+is `−T`. Point 3 is superseded: the pre-FSI proton carries
+`E_m = V₀ − T_ball`, `V₀ = T_F + S = 45.0 MeV` (floor `S = 6.83`), imposed by
+INCL's energy balance at cascade insertion. The pre-FSI `|p_m|` is the
+local-energy-reduced momentum, not the record's ball.
+
 ## C12 pilot (2026-07-13) — Phase-0 closure + required source fix
 
 Pilot: 500 events, e- on C12 at 2.445 GeV, spline

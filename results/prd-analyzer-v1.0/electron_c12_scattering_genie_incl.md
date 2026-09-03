@@ -40,14 +40,19 @@ state + hA2018 FSI), its designated comparison partner: the two share the
 (the "full INCL" configuration, tune README "Comparison set"). The
 four-tune campaign numbers are quoted from the sibling note where useful.
 
-**Energy convention, read before the ladders** (tune README, Phase-0): the
-GHEP hit nucleon is off-shell by INCL's local energy, `E = √(p²+m²) − v_loc`,
-with **no removal energy** (GENIE's `RemovalEnergy` field is not consumed
-anywhere here — the caches use only the gst `En`/`p_n`), so the
-struck-nucleon record E_m is `v_loc − T_i` with **no S_p floor** and sits
-below the Dutta axis; and the event momentum is resampled uniformly in a
-global-p_F ball (not the INCL correlated ground state). Both are visible
-below as the empty stage-2 panels and the record's p_F cut-off.
+**Energy convention, read before the ladders** (verified 2026-09-02 in
+[`docs/incl-ground-state-review.md`](../../docs/incl-ground-state-review.md);
+it supersedes the Phase-0 wording): the GHEP hit nucleon is **on-shell**,
+`E = √(p² + m_INCL²)` — it is rewritten from the INCL side after the cascade
+— so the struck-nucleon record E_m is simply `−T_n` and sits below the
+Dutta axis (no removal energy anywhere; `RemovalEnergy` is garbage and not
+consumed). The momentum is resampled uniformly in a global-p_F ball at the
+INCL radius, accepted above the local energy `T_loc(r)`. The QE lepton
+kinematics use a *local-energy-reduced* on-shell nucleon, and the binding
+enters only when INCL re-imposes its energy balance on the outgoing proton:
+the pre-FSI proton carries `E_m = V₀ − T_ball` with `V₀ = T_F + S = 45.0 MeV`,
+i.e. a floor at `S = 6.83 MeV`. Both are visible below as the empty stage-2
+panels and the record's p_F cut-off.
 
 ## 1. QEL kinematics — E_e′, θ_e′, T_p, θ_p, Q², no Q² cut
 
@@ -158,23 +163,22 @@ the same sample in [`analysis/dutta-qe/`](../../analysis/dutta-qe/README.md),
 89,465 in-slice events; 22b from the sibling note.)
 
 - **The record sits entirely below the Dutta axis**: median −29.4 MeV,
-  p5–p95 [−37.5, −11.0] MeV — the `v_loc − T_i` convention with no S_p
-  floor, exactly the Phase-0 prediction (pilot: mean ≈ −20 MeV, 90 % below
-  zero). It is a bookkeeping convention, not a physics prediction; the
+  p5–p95 [−37.5, −11.0] MeV — it is `m_N − E_n = −T_n` of an on-shell
+  nucleon (the record is rewritten on-shell from INCL after the cascade;
+  review §3). A bookkeeping convention, not a physics prediction; the
   physical stages are 3 and 4.
 - **I3r = 6.000: every selected event's pre-FSI proton lands inside the
-  window.** The pre-FSI E_m occupies 5–45 MeV with a hard lower edge at
-  5 MeV and a plateau at 5–15 MeV (0.26–0.31 MeV⁻¹) — no shell structure,
-  no S_p-anchored peak: the p_F-ball momentum plus the local-energy
-  prescription spread the vertex E_m over ≈ 40 MeV without a δ line or an
-  s/p split. Nothing resembles the input-table shape of the SF tunes.
+  window.** The pre-FSI E_m is exactly `V₀ − T_ball` (review §3): it occupies
+  6.83–45 MeV with a hard lower edge at `S = 6.83 MeV` (the well depth
+  minus the Fermi energy) and a plateau at 7–15 MeV (0.26–0.31 MeV⁻¹) — a
+  Fermi-gas binding with the INCL well depth, no shell structure, no
+  S_p-anchored peak. Nothing resembles the input-table shape of the SF tunes.
 - **The cascade puts a floor at 15 MeV.** Post-FSI the spectrum has a hard
   edge at 15 MeV, a 0.19 MeV⁻¹ peak in the 15–20 bin and a tail to ≈ 60 MeV.
-  No such floor exists at the vertex (stage 3 starts at 5 MeV), so it is
-  produced by the exit from the INCL nucleus — consistent with the emitted
-  proton paying the separation energy on leaving the potential rather than
-  at the vertex (an interpretation from the figures; not traced in source
-  here).
+  No such floor exists at the vertex (stage 3 starts at 6.83 MeV), so it is
+  produced inside the cascade; a 0.7 GeV proton pays no potential at exit
+  (`V(T) = 0` above ≈ 195 MeV, review §3), so the extra ≈ 8 MeV is not the
+  well — its origin is not traced here.
 - The in-window survival, 0.520, is the lowest of the five tunes (campaign
   range 0.538–0.596), and it moves by only −0.011 from the slice value — as
   for the campaign tunes, the survival is an FSI-model property, not a
@@ -222,7 +226,10 @@ table stage).
 - **Pre-FSI, the shell windows see a flat plateau** (≈ 0.02 (MeV/c)⁻¹ from
   100 to 220 MeV/c, cut off by 280) against the data's ℓ = 1 peak at
   140 MeV/c (0.033): 84 % of the data's windowed strength (4.112 vs 4.917),
-  with no p-shell node at |p_m| → 0 and no s-shell fall-off.
+  with no p-shell node at |p_m| → 0 and no s-shell fall-off. This stage-3
+  `|p_m| = |p_p′ − q|` is **not** the record's ball momentum: it is the
+  local-energy-reduced momentum the kinematics used (⟨p⟩ 152 vs 225 MeV/c,
+  falling with r; review §2), which is why stages 2 and 3 differ so much.
 - **Post-FSI the cliff is gone**: the cascade smears the distribution past
   300 MeV/c and halves it in the windows (0.620 survival — the *highest*
   of the five tunes, campaign range 0.401–0.598), leaving a broad hump
@@ -433,12 +440,16 @@ INCL sample was dumped from its four local GHEP chunks with
   r–p correlation, +0.455** — a third species in the v0.1 taxonomy: LFG's
   k_F(r) envelope falls with r (corr −0.70, the *upper* edge moves), the
   SF tunes are exactly factorized (0), and INCL's *lower* edge moves the
-  other way. Mechanically (tune README, Phase-0 point 2): the momentum is
-  thrown in the global ball at the already-sampled ground-state radius and
-  accepted only if its kinetic energy exceeds INCL's local energy at that
-  r — the classical picture in which only the fastest nucleons reach the
-  surface. So although the momentum is not drawn from the INCL correlated
-  ground state, the record is *not* factorized either.
+  other way. Mechanically: the momentum is thrown in the global ball at the
+  already-sampled ground-state radius and accepted only if its kinetic
+  energy exceeds INCL's local energy `T_loc(r)` — the momentum a nucleon
+  needs to reach that radius in the correlated ground state. The floor
+  matches `p_min(r) = p_F F(r)^{1/3}` to a few MeV/c
+  ([review §2](../../docs/incl-ground-state-review.md)). **But this is the
+  record only**: the momentum the QE kinematics actually used is the
+  local-energy-*reduced* one (⟨p⟩ 152 MeV/c, `corr(p, r) = −0.65`, LFG-like
+  falling profile), so the two 2D pictures — record and kinematics — have
+  opposite correlations; the review figure shows both.
 - The radius itself is INCL's own density: ⟨r⟩ = 2.27 fm (max 5.5) against
   the 2.30 fm that VertexGenerator's r²ρ(r) gives every campaign tune.
 - The dump also shows Phase-0 bug 4 directly: `RemovalEnergy` is the same

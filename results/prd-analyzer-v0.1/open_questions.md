@@ -109,3 +109,10 @@
   not yet filed upstream; (c) whether the uniform-ball momentum resampling
   (item 2) is intended physics or an implementation shortcut needs an INCL
   author's input before the tune is used in publication figures.
+
+  **Correction (2026-09-02):** see `docs/incl-ground-state-review.md`. Item 1
+  is the interaction's `HitNucP4`, not the record: the GHEP hit nucleon is
+  rewritten on-shell from INCL after the cascade (`E_m = −T`). Item 3 is
+  superseded — measured `E_m(pre-FSI) = V₀ − T_ball`, `V₀ = 45.0 MeV`,
+  floor `S = 6.83`, from INCL's energy balance at cascade insertion; the
+  pre-FSI `|p_m|` is the local-energy-reduced momentum.
