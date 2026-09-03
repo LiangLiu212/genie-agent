@@ -161,13 +161,20 @@ particle with the outgoing proton momentum, on-shell; then the non-hybrid
 `GENIEAvatar::postInteraction` (the `kNucmINCL` path taken by `GEM26_44b`)
 enforces INCL's energy balance with the struck nucleon counted as
 `E_ball − V₀` (`G4INCLGENIEAvatar.cxx:84`, `oldTotalEnergy = lepton_initial_energy
-+ particle1->getEnergy() − particle1->getPotentialEnergy()`; functor
-`:505-511`), rescaling the proton's momentum until
-`T_p′ = ω + T_ball − V₀` (its own V(T) is 0). `afterNPVAvatarUserAction`
-(`G4INCLGENIECascadeAction.cxx:89-108`) then rewrites **every** pre-existing
-GHEP particle from the INCL-side record with `E = √(p² + m²)`: the pre-FSI
-proton gets the rescaled momentum, and the initial nucleon gets the raw ball
-momentum back. **Measured**: `E_m(pre-FSI) = ω − T_p′ = 45.00 − T_rec` to
++ particle1->getEnergy() − particle1->getPotentialEnergy()`). The
+`ViolationLeptonEMomentumFunctor` (`:455-511`) boosts the outgoing **lepton and
+proton** to the probe+nucleon CM frame and scales both CM momenta by one factor α
+until `Σ(E − V) + E_lepton` matches; the rescaled lepton is written back to the
+record (`:388-390`; the avatar holds the cascade action's own record,
+`INCLCascadeIntranuke.cxx:316`), so the GHEP lepton is no longer the
+generator's: measured over the 500k sample, the record's Q² sits 0.5–1.8 % below
+the selected `Q2s` (mean −1.3 %, i.e. E′ lowered by ≈ 20 MeV), and the record's
+energy balance is exact only with that rescaled lepton. The net condition is
+`T_p′ = ω + T_ball − V₀` with ω from the rescaled lepton.
+`afterNPVAvatarUserAction` (`G4INCLGENIECascadeAction.cxx:89-108`) then rewrites
+**every** pre-existing GHEP particle from the INCL-side record with
+`E = √(p² + m²)`: the pre-FSI proton and the lepton get the rescaled momenta, and
+the initial nucleon gets the raw ball momentum back. **Measured**: `E_m(pre-FSI) = ω − T_p′ = 45.00 − T_rec` to
 0.01 MeV over 346k events (figure, bottom right), range [6.83, 44.9], mean
 17.5. The effective removal energy of the INCL chain is therefore
 **V₀ − T = S + (T_F − T)**: a Fermi-gas binding with the well depth, floor
@@ -234,10 +241,12 @@ are exactly `−T` and `S = 6.83` MeV; the stage-2/stage-3 `|p_m|` mismatch
 2. The cross section and lepton kinematics use an on-shell nucleon with the
    local-energy-*reduced* momentum (`:315-336`); no binding energy enters the
    QE kinematics at all.
-3. Energy conservation is re-imposed only afterwards, by INCL rescaling the
-   outgoing proton (`G4INCLGENIEAvatar.cxx:84, 505-511`), so the GHEP record
-   does not conserve 3-momentum between the initial nucleon, lepton and
-   pre-FSI proton (the remnant absorbs it).
+3. Energy conservation is re-imposed only afterwards, by INCL scaling the
+   outgoing lepton *and* proton CM momenta by a common factor
+   (`G4INCLGENIEAvatar.cxx:84, 455-511`; lepton written back at `:388-390`), so
+   the GHEP lepton differs from the generator's and the record does not
+   conserve 3-momentum between the initial nucleon, lepton and pre-FSI proton
+   (the remnant absorbs it).
 4. The initial nucleon in GHEP is rewritten from the INCL side after the
    cascade (`G4INCLGENIECascadeAction.cxx:99-108`): it is not the 4-vector the
    kinematics used.
