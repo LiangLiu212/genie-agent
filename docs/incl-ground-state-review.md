@@ -236,6 +236,11 @@ are exactly `−T` and `S = 6.83` MeV; the stage-2/stage-3 `|p_m|` mismatch
 
 ## 6. Issues for upstream (all verified in source and data)
 
+Update 2026-09-03: items 2–6 and the vertex part of 1 are addressed on the fork
+branch `feature/incl-vertex-local-energy` (`d7cd3f5d4`; plans in
+`incl-vertex-local-energy-option-plan.md`, `incl-local-frame-binding-plan.md`);
+items 7–8 remain.
+
 1. `ResamplingHitNucleon` replaces INCL's correlated momentum by a global-p_F
    ball with a one-sided local-energy cut (`INCLNucleus.cxx:514-536`).
 2. The cross section and lepton kinematics use an on-shell nucleon with the

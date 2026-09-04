@@ -1,7 +1,17 @@
 # Plan: make the GENIE–INCL QE vertex honour INCL's local-energy option
 
-Status: plan only (2026-09-03), no code changed. Decisions taken with the user
-on 2026-09-03 (single switch; QE avatar keeps counting as the first collision).
+Status: **implemented 2026-09-03** on the fork branch
+`feature/incl-vertex-local-energy` (`LiangLiu212/Generator` @ `d7cd3f5d4`, off
+`feature/for_Anna` @ `cc9c9b417`), together with the binding plan's getter/record
+items; the `genie_inclxx` install now runs these libraries. Decisions taken with
+the user on 2026-09-03 (single switch; QE avatar keeps counting as the first
+collision). Validation (20k e⁻ C12 EMQE events per setting, existing spline):
+record nucleon = interaction nucleon (invariant mass 892.6 MeV), stage-2 and
+stage-3 E_m identical, `|p_p′ − q| = p_rec` to 0.004 MeV/c, record `Q2 == Q2s`,
+`E_m = V₀ − T` to 0.01 MeV; corr(p, r) = −0.67 (on, ⟨p⟩ 147 MeV/c, E_m mean
+31.5) / 0.00 (`never`, ⟨p⟩ 203, E_m mean 21.9). Not done: new splines (E7) and
+the tune overlay (E8) — the `never` runs used a scratch `GXMLPATH` override of
+`NucleusGenINCL.xml`.
 Companion to [`incl-local-frame-binding-plan.md`](incl-local-frame-binding-plan.md)
 (the E = E_red − V₀ convention) and grounded in
 [`incl-ground-state-review.md`](incl-ground-state-review.md).
@@ -49,10 +59,11 @@ ball at every radius). With the binding plan in place, the vertex nucleon is
 
 ## Edits (all under `/exp/dune/app/users/liangliu/GENIE/GENIE_INCLXX/Generator`, branch off `feature/for_Anna`)
 
-**E1 `config/NucleusGenINCL.xml`** — add `local-energy-BB = first-collision` and
-`local-energy-pi = first-collision` to `Default` (make the fallback explicit; fix
-the header text at `:28,32`), and a param_set `NoLocalEnergy` with both set to
-`never`.
+**E1 `config/NucleusGenINCL.xml`** — the `Default` set already carried
+`local-energy-BB/pi = first-collision` (an earlier read of this file was wrong);
+done: header documentation fixed, complete `NoLocalEnergy` param_set added
+(GENIE param_sets do not inherit from `Default`, and a `--` inside an XML comment
+silently breaks the whole file — every param then reads back empty).
 
 **E2 `src/Physics/NuclearState/NucleusGenINCL.cxx` `LoadConfig` (`:526-556`)** —
 map `"never"` → `G4INCL::NeverLocalEnergy` for both params. `:140` (MEC cluster
@@ -106,6 +117,12 @@ nucleus per throw vs `fixRadius` ball) is untouched by this plan.
 `NucleusGenINCL/NoLocalEnergy` (spline and events must agree).
 
 ## Validation
+
+Figure: [`results/prd-analyzer-v1.0/struck_pr_c12_all_t05_locE.png`](../results/prd-analyzer-v1.0/struck_pr_c12_all_t05_locE.png)
+— struck-nucleon (r, |p|) for LFG (`GEM26_11a`, campaign), the old INCL record
+(`GEM26_44b` 500k, ball with the rising floor), and the new branch's record with
+local energy on (LFG-like, corr −0.67) and `never` (pure ball, corr −0.01); 20k
+events each for the new runs (`make_struck_pr.py --csv …`).
 
 - **V1 probe** (`results/template/probe_incl_hitnuc.cxx`, both settings):
   `never` → `p_i = p_ball` exactly, `E_i = E_ball − 45.00`, `isRPValid` bound = p_F,

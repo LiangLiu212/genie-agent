@@ -207,6 +207,10 @@ if __name__ == "__main__":
     ap.add_argument("--r-on-x", action="store_true",
                     help="radius on x, momentum on y (default: P_miss on x, "
                          "the orientation of plots 1-2)")
+    ap.add_argument("--csv", action="append", default=[],
+                    metavar="LABEL=PATH[:GS_LABEL]",
+                    help="ad-hoc dump_hitnuc CSV drawn after the tunes (e.g. a "
+                         "test run of a modified install); repeatable")
     args = ap.parse_args()
     R_ON_X = args.r_on_x
 
@@ -226,6 +230,20 @@ if __name__ == "__main__":
                       sel_note=(" qel-window" if args.sel_qel_q2
                                 else " qel" if args.sel_qel else ""))
         results.append((t, H, prof, c))
-    if args.all_tunes or (args.tunes and len(args.tunes) > 1):
+    for entry in args.csv:
+        label, rest = entry.split("=", 1)
+        path, _, gslab = rest.partition(":")
+        gs[label] = gslab or label
+        GENLIST[label] = "EMQE"
+        H, prof, c = load_hist(Path(path), R_edges, P_edges,
+                               sel_qel_q2=args.sel_qel_q2, sel_qel=args.sel_qel)
+        print(f"{label}: N={c['n_kept']:,}  in-grid={c['in_range']:,}  "
+              f"corr(p,r)={c['corr']:+.3f}  <r>={c['mean_r']:.2f} fm")
+        single_figure(args.target, label, H, prof, c, R_edges, P_edges, gs,
+                      out_dir=args.out_dir, tag=args.tag,
+                      sel_note=(" qel-window" if args.sel_qel_q2
+                                else " qel" if args.sel_qel else ""))
+        results.append((label, H, prof, c))
+    if args.all_tunes or len(results) > 1:
         combined_figure(args.target, results, R_edges, P_edges, gs,
                         out_dir=args.out_dir, sel_note=sel_note, tag=args.tag)

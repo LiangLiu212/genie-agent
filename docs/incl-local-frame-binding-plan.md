@@ -1,6 +1,9 @@
 # Plan: one INCL initial nucleon — local-energy frame + well-depth binding (GEM26_44b)
 
-Status: plan only (2026-09-03), no code changed. Follows
+Status: getter/record items (E1–E5) **implemented 2026-09-03** on the fork branch
+`feature/incl-vertex-local-energy` (`d7cd3f5d4`) as part of the vertex local-energy
+option (see that plan for validation); E6/E7 (rebuild, splines) partially — the
+libraries are rebuilt, splines are not regenerated yet. Follows
 [`incl-ground-state-review.md`](incl-ground-state-review.md), which found four
 different "initial nucleons" per event. This plan makes them one.
 
