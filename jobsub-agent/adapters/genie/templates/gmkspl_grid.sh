@@ -73,8 +73,9 @@ echo "RCDS_DIR=${RCDS_DIR}"
 # Inline the install's setup_env.sh spack load. Version-only specs + --first
 # (no hardcoded /<hash>): the worker resolves them against the grid's larsoft
 # CVMFS spack DB, where this install's local hashes do not exist. Keep this list
-# in sync with GENIE_DEV/setup_env.sh.
-spack load --first gcc@12.5.0 root@6.28.12 pythia6@6.4.28 log4cpp@1.1.3 \
+# in sync with the installs' setup_env.sh (GENIE_v3_6_2, GENIE_INCLXX; GENIE_RC
+# adds pythia8@8.317 + PYTHIA8DATA, 2026-09-03).
+spack load --first gcc@12.5.0 root@6.28.12 pythia6@6.4.28 pythia8@8.317 log4cpp@1.1.3 \
                    lhapdf@6.5.5 libxml2@2.9.13 boost@1.82.0 gsl@2.8 \
                    xrootd@5.8.4 eigen@3.4.1
 
@@ -90,6 +91,8 @@ while IFS=' ' read -r name prefix; do
 done < <(spack find --loaded --format "{name} {prefix}")
 
 export PYTHIA6_LIB_DIR=${PYTHIA6_PKG_DIR}/lib
+# Pythia8 (rc-v380 / GENIE >= 3.8 tarballs link libpythia8; harmless for Pythia6 builds).
+export PYTHIA8DATA=${PYTHIA8_PKG_DIR}/share/Pythia8/xmldoc
 source ${ROOT_PKG_DIR}/bin/thisroot.sh
 # INCL++ is only present in INCL builds; a non-INCL install has no inclxx_genie/.
 # Guard so the unconditional source does not abort the job under `set -e`.

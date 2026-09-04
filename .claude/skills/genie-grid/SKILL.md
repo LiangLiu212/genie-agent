@@ -19,6 +19,9 @@ builds the worker args + PNFS output path, and submits.
    `genie_master`); non-INCL installs are supported — the worker scripts now
    guard the INCL `thisinclxx.sh` source, so a tarball without `inclxx_genie/`
    runs fine.
+   The worker templates `spack load` pythia6 **and** `pythia8@8.317` and export `PYTHIA8DATA`
+   (2026-09-03): GENIE ≥ 3.8 tarballs (e.g. label `genie_rc`, rc-v380) link `libpythia8.so`
+   and would fail at dynamic-link time otherwise; Pythia6-era tarballs are unaffected.
 3. For gevgen: a cross-section spline reachable by the grid. Stage it to
    `/pnfs/dune/scratch/users/$USER/...` and pass the `/pnfs/...` path — the grid
    file-transfer host **cannot** read `/exp/dune/data`. A local path still works
@@ -30,18 +33,21 @@ builds the worker args + PNFS output path, and submits.
 pixi run python jobsub-agent/adapters/genie/run_gmkspl_grid.py \
     --probes numu,numubar --targets C12,Ar40 \
     --tune G18_02a_00_000 --genlist CCQE -e 10 -n 100 \
-    --tarball-label genie_rc_main -N 1 [--dry-run]
+    --tarball-label genie_rc -N 1 [--dry-run]
 
 # events (gevgen) — one probe/target, mono-energetic, -N processes share inputs
 pixi run python jobsub-agent/adapters/genie/run_gevgen_grid.py \
     --probe numu --target C12 -n 1000 -e 3.0 \
     --cross-sections /pnfs/.../spline.xml \
     --tune G18_02a_00_000 --genlist CCQE \
-    --tarball-label genie_rc_main -N 100 [--dry-run]
+    --tarball-label genie_rc -N 100 [--dry-run]
 ```
 `--tune`/`--genlist` default to genie-agent's `default_tune`/`default_generator_list`.
 Add `--tune-tarball-label <label>` to overlay custom tunes via GXMLPATH (worker
 `-X`). **Dry-run first** (`--dry-run` → `--no_submit`) to inspect the argv.
+`-N` for gmkspl only reruns the same command per process (seed changes) — it is **not** a
+work splitter; parallelise splines by submitting one job per (tune, target, probe, genlist),
+as in `.claude/plans/submit_rc_v380_splines.sh` (resume guard, per-list lifetimes).
 
 ## Validation rules the adapter enforces (errors)
 - `generator_list='Default'` is rejected (PYTHIA6 charm broken).
