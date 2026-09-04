@@ -444,6 +444,8 @@ if __name__ == "__main__":
                     help="drop the Q^2 window (v1.0 construction): reads/"
                          "writes v1.0 cache+figures; --proton-sel leading "
                          "uses the _leading cache dir + figure tag")
+    ap.add_argument("--out-dir", default=None,
+                    help="write the figures here instead of the version default")
     ap.add_argument("--build-only", action="store_true",
                     help="only build missing caches, write no figures")
     args = ap.parse_args()
@@ -455,6 +457,8 @@ if __name__ == "__main__":
     if NO_Q2CUT:
         CACHE_ROOT = REPO / "results/prd-analyzer-v1.0/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v1.0"
+    if args.out_dir:
+        OUT_DIR = Path(args.out_dir)
         SEL_TAG = "" if PROTON_SEL == "1p" else "_leading"
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 

@@ -381,6 +381,8 @@ if __name__ == "__main__":
     ap.add_argument("--no-q2cut", action="store_true",
                     help="v1.0 construction (requires --proton-sel 1p): reads "
                          "the uncut v1.0 caches, writes v1.0 figures")
+    ap.add_argument("--out-dir", default=None,
+                    help="write the figures here instead of the version default")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
     NO_Q2CUT = args.no_q2cut
@@ -393,6 +395,8 @@ if __name__ == "__main__":
     if NO_Q2CUT:
         CACHE_ROOT = REPO / "results/prd-analyzer-v1.0/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v1.0"
+    if args.out_dir:
+        OUT_DIR = Path(args.out_dir)
 
     apply_style()
     table_stem, table = load_table(args.target)
