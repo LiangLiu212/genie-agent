@@ -48,6 +48,11 @@ Add `--tune-tarball-label <label>` to overlay custom tunes via GXMLPATH (worker
 `-N` for gmkspl only reruns the same command per process (seed changes) — it is **not** a
 work splitter; parallelise splines by submitting one job per (tune, target, probe, genlist),
 as in `.claude/plans/submit_rc_v380_splines.sh` (resume guard, per-list lifetimes).
+Spline cost per list is dominated by the tune's QE model (rc-v380 campaign, 2026-09-03/04, Ar40,
+100 knots): Martini/LS-type QE minutes; Nieves(+RPA) ~3 h; Nieves-ZExp (AR23) 4–7 h on a worker;
+`SpectralFunc` QE (AR25_20i) ~11 h → run those locally with `run_gmkspl.py --label <campaign>` and
+merge via the labelled-local fallback in `.claude/plans/merge_rc_v380_splines.sh`. Use the 85000 s
+band for anything projected beyond ~6 h; eviction at `--expected-lifetime` restarts gmkspl from zero.
 
 ## Validation rules the adapter enforces (errors)
 - `generator_list='Default'` is rejected (PYTHIA6 charm broken).

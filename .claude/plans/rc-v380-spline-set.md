@@ -184,12 +184,89 @@ Replaced by the local cost probes above (grid pilot skipped): the 43200 s band c
         @ 6 GeV (`gevgen-numu_Ar40_20260904-002432-805-589742`): rc 0, 200 events, 0 on-the-fly
         splines, 0 selection failures.
 - 00:23 UTC: 6 grid jobs left, all CCQE: AR23_20m Ar40 ×2, AR23_20n Ar40 ×2, G18_10a Fe56 ×2.
+  - [x] **B / AR23_20m_00_000 / Ar40** merged 04:24 UTC: `gxspl-Ar40-numu-numubar-k100-e10.xml`,
+        25/25 jobs, 211 splines, 0 duplicates, nknots=100, Emax 10 GeV, 11 process types,
+        sha256 `bf5b2e82e83614fcc7a0487d5236f2930f31c1d92e8097e4a278d681e3272c19`;
+        `gspl2root` ok (`xsec_graphs-Ar40.root`, 2.2 MB); gevgen numubar Ar40 `Default` 200 ev
+        @ 6 GeV (`gevgen-numubar_Ar40_20260904-042505-2a0-1d9ffd`): rc 0, 200 events, 0 on-the-fly
+        splines, 0 selection failures. Grid CCQE wall times: numu 3.9 h, numubar ~6.5 h.
+- 04:23 UTC: 2 grid jobs left (AR23_20n Ar40 numubar CCQE, G18_10a Fe56 numu CCQE); local row-E
+  CCQE: numubar C12 done (11730 s), numu C12 + both Ar40 running.
+  - [x] **E / AR25_20i_00_000 / C12** merged 04:37 UTC: `gxspl-C12-numu-numubar-k100-e3.xml`,
+        23 grid jobs + 2 **local** CCQE splines (numu 17402 s, numubar 11730 s; labelled
+        `rc_v380_splines`, picked up by the merge script's local fallback after fixing its
+        selector — the local runner stores `targets`/`probes` as strings, not lists), 199 splines,
+        0 duplicates, nknots=100, Emax 3 GeV, CC QES = `NievesQELCCPXSec/ZExpNoRPA` + charm + Λ,
+        sha256 `0f9e0635218af8a43d29eec4ce8d91dc03c92d522b99a15e5b00a3bb57b71f52`;
+        `gspl2root` ok (2.2 MB); gevgen numubar C12 `Default` 200 ev @ 1.8 GeV
+        (`gevgen-numubar_C12_20260904-044859-6ae-f8313f`): rc 0, 200 events, 0 on-the-fly
+        splines, 0 selection failures.
+  - [x] **C / AR23_20n_00_000 / Ar40** merged 05:04 UTC: `gxspl-Ar40-numu-numubar-k100-e10.xml`,
+        25/25 jobs, 211 splines, 0 duplicates, nknots=100, Emax 10 GeV, 11 process types,
+        sha256 `9fe4740fe6b9d8239b373c3c204ab8e8bec6f539eeb4525c2c7d0a42abf5de60`;
+        `gspl2root` ok (2.2 MB); gevgen numu Ar40 `Default` 200 ev @ 6 GeV
+        (`gevgen-numu_Ar40_20260904-050437-a8d-2a7889`): rc 0, 200 events, 0 on-the-fly
+        splines, 0 selection failures. Grid CCQE wall: numu 4.3 h, numubar ~7 h.
+- 05:04 UTC: 1 grid job left (G18_10a Fe56 numu CCQE, 200 knots to 50 GeV, 7.3 h so far);
+  local row-E Ar40 CCQE ×2 still running (5.5 h). **6 of 8 products done.**
+- **06:03 UTC: all 198 grid jobs done, 0 failed** (last: Fe56 numu CCQE, ~8.2 h wall).
+  - [x] **G / G18_10a_02_11b / Fe56** merged 06:04 UTC: `gxspl-Fe56-numu-numubar-k200-e50.xml`,
+        27/27 jobs, 212 splines (incl. 1 IMD: numu only — IMD-ANH needs a nuebar probe),
+        0 duplicates, nknots=200, Emax 50 GeV, 12 process types,
+        sha256 `8394f08921b8b9ffedb163617e30ea17eb3f426b80fd731cc772156328f7e088`;
+        `gspl2root` ok (`xsec_graphs-Fe56.root`, 2.9 MB); gevgen `Default` 200 ev @ 30 GeV:
+        numu (`gevgen-numu_Fe56_20260904-060457-659-3f85c1`) and numubar
+        (`gevgen-numubar_Fe56_20260904-060502-30f-ac41e1`) both rc 0, 200 events, 0 on-the-fly
+        splines, 0 selection failures. **7 of 8 products done**; E / Ar40 waits for the two
+        local CCQE runs.
 - [ ] key/knot/tune checks xxx · gspl2root xxx · gevgen Default smoke ×8 xxx
+
+  - [x] **E / AR25_20i_00_000 / Ar40** merged 10:36 UTC: `gxspl-Ar40-numu-numubar-k100-e3.xml`,
+        23 grid jobs + 2 local CCQE (numu 39000 s = 10.8 h, numubar 23022 s), 199 splines,
+        0 duplicates, nknots=100, Emax 3 GeV, sha256
+        `c70ce3dac00e917ac4bc10c8695e81c7a177c8f48145daa59546d10ae8b397ce`; `gspl2root` ok;
+        gevgen `Default` 200 ev @ 1.8 GeV numu (`gevgen-numu_Ar40_20260904-104907-39f-8fab0e`) and
+        numubar (`gevgen-numubar_Ar40_20260904-104914-29e-163374`): rc 0, 200 events each, 0
+        on-the-fly splines, 0 selection failures.
+
+### Stage 5 result — all 8 products (2026-09-04 10:49 UTC)
+
+Directory: `/exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/<TUNE>/` (+ `xsec_graphs-<Target>.root`,
+`work/<Target>/` per-job inputs, `*.gspladd.log`).
+
+| Sample | File | splines | knots | Emax | sha256 |
+|---|---|---|---|---|---|
+| A | `G18_10a_02_11b/gxspl-Ar40-numu-numubar-k100-e10.xml` | 211 | 100 | 10 | `6a045c06dd511bc1eb2db4e4f6a4bde71267396bdae41c8332a6bc00ee65e7c6` |
+| B | `AR23_20m_00_000/gxspl-Ar40-numu-numubar-k100-e10.xml` | 211 | 100 | 10 | `bf5b2e82e83614fcc7a0487d5236f2930f31c1d92e8097e4a278d681e3272c19` |
+| C | `AR23_20n_00_000/gxspl-Ar40-numu-numubar-k100-e10.xml` | 211 | 100 | 10 | `9fe4740fe6b9d8239b373c3c204ab8e8bec6f539eeb4525c2c7d0a42abf5de60` |
+| D | `G24_12a_00_000/gxspl-C12-numu-numubar-k100-e5.xml` | 218 | 100 | 5 | `1cf574b8003e731827e7772e0882c548e8eeeb4f060220acc5a3d0095954aeb0` |
+| D | `G24_12a_00_000/gxspl-Ar40-numu-numubar-k100-e5.xml` | 218 | 100 | 5 | `7d4e69a7f98c724ab312b0feb87ef583b5646bac8b6d5360f74f1112d07e938c` |
+| E | `AR25_20i_00_000/gxspl-C12-numu-numubar-k100-e3.xml` | 199 | 100 | 3 | `0f9e0635218af8a43d29eec4ce8d91dc03c92d522b99a15e5b00a3bb57b71f52` |
+| E | `AR25_20i_00_000/gxspl-Ar40-numu-numubar-k100-e3.xml` | 199 | 100 | 3 | `c70ce3dac00e917ac4bc10c8695e81c7a177c8f48145daa59546d10ae8b397ce` |
+| G | `G18_10a_02_11b/gxspl-Fe56-numu-numubar-k200-e50.xml` | 212 | 200 | 50 | `8394f08921b8b9ffedb163617e30ea17eb3f426b80fd731cc772156328f7e088` |
+
+Overview figure: `results/rc-v380-splines/total_xsec_rc-v380.png` (σ_tot/E per nucleon vs E,
+numu | numubar, from the gspl2root `tot_cc + tot_nc` graphs; generator
+`results/template/make_rc_v380_total_xsec.py`).
+
+Every file: one `genie_tune` section, 0 duplicate keys, all knots reach Emax, `gspl2root` converts,
+and a 200-event `Default` gevgen (numu and/or numubar, at 0.6 × Emax) runs with 0 on-the-fly
+spline computations and 0 selection failures. F (GDM18 DM beam) remains deferred.
 
 ## Stage 6 — preserve
 
-- [ ] persistent mirror + sha256 (scratch / persistent / local) xxx
-- [ ] run-manifest rebuilt xxx · genie-grid skill + memory updated xxx
+- [x] **Persistent mirror done 2026-09-04 10:5x UTC** via `.claude/plans/mirror_rc_v380_splines.sh --go`
+      (ssh dunegpvm04, `cp` from /exp/dune/data): all 8 merged XMLs under
+      `/pnfs/dune/persistent/users/liangliu/genie_xsec/rc-v380/<TUNE>/`, sha256 identical to the
+      local products (table above). The raw per-job grid XMLs stay on scratch
+      (`/pnfs/dune/scratch/users/liangliu/jobsub-agent/rc_v380_splines/…`, ~30-day purge) and in
+      `work/<Target>/` next to each product.
+- [x] run-manifest rebuilt 06:05 UTC (873 runs; 212 `rc_v380_splines` grid records incl. the 13
+      cancelled duplicates and the dry-run artifact).
+- [x] `genie-grid` skill (Pythia8 worker note, `-N` caveat, per-tune spline cost) and memory notes
+      (`genie-rc-v380-install`, `rc-v380-spline-campaign`) updated.
+- Left as is: `active_installation` = `genie_rc` (switch back to `genie_v3_6_2` in
+  `genie-agent/config/genie_env.json` when the rc-v380 work is over); F (GDM18) deferred.
 
 ## Deviations / notes
 
@@ -205,6 +282,12 @@ Replaced by the local cost probes above (grid pilot skipped): the 43200 s band c
   before every poll. The **Kerberos ticket expires 2026-09-04 05:30 UTC** — after that no
   polling/pulling until the user runs `kinit` (grid jobs themselves are unaffected).
 - Re-poll at 00:00 UTC: 183 done, 15 running, 0 failed/held.
+- 2026-09-04 14:00 UTC queue audit: the first CCQE smoke (`71837794.0@jobsub03`, cancelled in
+  the record at 21:25 UTC) had **not** been removed (the `jobsub_rm` behind `job.py cancel`
+  failed silently); it ran to its 14400 s lifetime and was put on hold by
+  `SYSTEM_PERIODIC_HOLD Run Time/limit 14733/14400` — i.e. the lifetime is enforced by a
+  periodic hold at the limit, not a restart. Removed by hand with `jobsub_rm`; queue now empty
+  of campaign jobs. Lesson: after `job.py cancel`, confirm with `jobsub_q`.
 
 ## Ledger
 

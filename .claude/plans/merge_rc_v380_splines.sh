@@ -95,8 +95,9 @@ for row in "${ROWS[@]}"; do
     for llog in genie-agent/genie-runs/${tune}-*/*.log; do
       x=$(jq -r --arg tune "$tune" --arg tgt "$target" --arg probe "$probe" --arg gl "$gl" \
         'select(.runtype=="gmkspl" and .inputs.label=="rc_v380_splines" and .inputs.tune==$tune
-                and .inputs.genlist==$gl and (.inputs.targets|join(","))==$tgt
-                and (.inputs.probes|join(","))==$probe and .returncode==0
+                and .inputs.genlist==$gl
+                and ((.inputs.targets|if type=="array" then join(",") else . end)==$tgt)
+                and ((.inputs.probes|if type=="array" then join(",") else . end)==$probe) and .returncode==0
                 and (.outputs.spline_count // 0) > 0) | .outputs.primary_output' "$llog" 2>/dev/null) || true
       if [ -n "$x" ] && [ -f "$x" ]; then
         cp -f "$x" "$stage/${probe}_${gl}_local_$(basename "$x")"
