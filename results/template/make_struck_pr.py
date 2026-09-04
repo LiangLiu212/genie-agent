@@ -162,8 +162,10 @@ def combined_figure(target, results, R_edges, P_edges, gs,
     import matplotlib.pyplot as plt
     from matplotlib.colors import LogNorm
     w, h = PANEL_SIZE
-    fig, axes = plt.subplots(1, len(results), figsize=(w * len(results) * 0.95, h),
-                             sharey=True, layout="constrained")
+    n = len(results)
+    # few panels: give each more width so the two-line titles fit
+    pw = w * 0.95 if n >= 4 else w * 1.5
+    fig, axes = plt.subplots(1, n, figsize=(pw * n, h), sharey=True, layout="constrained")
     vmax = max(H.max() for _, H, _, _ in results)
     norm = LogNorm(vmin=vmax * 1e-6, vmax=vmax)
     pc = None
@@ -176,10 +178,15 @@ def combined_figure(target, results, R_edges, P_edges, gs,
     cb = fig.colorbar(pc, ax=axes, pad=0.01, fraction=0.02)
     cb.set_label("fraction of events / bin", fontsize=FS_TITLE - 2)
     cb.ax.tick_params(labelsize=FS_TICK)
-    fig.suptitle(f"{target} struck nucleon: momentum vs sampled position  "
-                 f"(e$^-$ 2.445 GeV, genlist EM{sel_note}, t05 tunes, "
-                 "shared color scale)",
-                 fontsize=FS_SUPTITLE - 2)
+    if n >= 4:
+        fig.suptitle(f"{target} struck nucleon: momentum vs sampled position  "
+                     f"(e$^-$ 2.445 GeV, genlist EM{sel_note}, t05 tunes, "
+                     "shared color scale)",
+                     fontsize=FS_SUPTITLE - 2)
+    else:
+        fig.suptitle(f"{target} struck nucleon: momentum vs sampled position  "
+                     f"(e$^-$ 2.445 GeV{sel_note}, shared color scale)",
+                     fontsize=FS_SUPTITLE - 2)
     out = Path(out_dir) / f"struck_pr_{target.lower()}_all_t05{tag}.png"
     fig.savefig(out, dpi=130)
     print("wrote", out)
@@ -218,7 +225,7 @@ if __name__ == "__main__":
     sel_note = (", qel && $Q^2=1.28\\pm5\\%$" if args.sel_qel_q2
                 else ", qel" if args.sel_qel else "")
     R_edges, P_edges, gs = target_setup(args.target)
-    tunes = args.tunes or (TUNES if args.all_tunes else [args.tune])
+    tunes = (args.tunes or (TUNES if args.all_tunes else ([] if args.csv else [args.tune])))
     results = []
     for t in tunes:
         H, prof, c = load_hist(Path(args.dump_dir) / f"{t}.csv", R_edges, P_edges,

@@ -26,6 +26,63 @@ Companion to [`incl-local-frame-binding-plan.md`](incl-local-frame-binding-plan.
 (the E = E_red − V₀ convention) and grounded in
 [`incl-ground-state-review.md`](incl-ground-state-review.md).
 
+## Convention revised (2026-09-04): INCL's own scheme
+
+Committed as `6bd7803d6` on `feature/incl-vertex-local-energy` (pushed to `LiangLiu212/Generator`, 2026-09-04).
+
+After looking at the E_m spectra of the 200k samples (the "on" setting moved the
+pre-FSI E_m to `V₀ − T_red`, edge at 45 MeV, and the post-FSI peak from 15–20
+to 50–55 MeV), the user re-specified the vertex to follow INCL's
+`InteractionAvatar` exactly:
+
+- **The scattering is computed in the local frame.** The nucleon handed to the
+  cross section and the lepton/proton kinematics (`HitNucP4`, from
+  `INCLNucleus::getHitNucleonP4`) is the on-shell local-frame nucleon
+  `(p_red, E_ball − T_loc(r))` when local energy is on, and the on-shell ball
+  nucleon `(p_ball, E_ball)` under `never`. No potential is subtracted there.
+- **Energy conservation uses `E − V`, with no local-energy term.**
+  `G4INCLGENIEAvatar::preInteraction` sets
+  `oldTotalEnergy = E_lep + E_ball − V₀` (the `− locE1` term of the first
+  implementation is removed) and INCL's `ViolationLeptonEMomentumFunctor`
+  rescales lepton and proton to it, as INCL does for its own collisions. The
+  lepton therefore moves by the difference `V₀ − T_loc(r)` (on) or `V₀`
+  (`never`) between the scattering energy and the conserved one (per cent
+  level in Q²).
+- **The record holds the global nucleon** `(p_ball, E_ball − V₀)`
+  (`INCLNucleus::getHitNucleonRecordP4`, written through the new virtual
+  `NucleusGenI::SetRecordHitNucleon`, default = the interaction's `HitNucP4`),
+  so `RemovalEnergy = V₀ − T_ball ∈ [S, V₀]` and stage 2 = stage 3 in E_m; the
+  post-cascade on-shell rewrite still skips the initial-state nucleon.
+
+Consequences: E_m = `V₀ − T_ball` in both settings (the old chain's spectrum,
+post-FSI peak back at 15–20 MeV on the data); the record's (r, p) is the
+INCL ball with the floor (corr ≈ +0.47) in both settings; the local-energy
+choice shows in the scattering only — stage-3 `|p_p′ − q| ≈ p_red` (LFG-like,
+corr ≈ −0.67) with local energy on, `≈ p_ball` under `never` — and in the
+cross section (the spline integrand sees the local-frame nucleon, on-shell,
+i.e. the 07-31 convention again for "on"). The formulas in *Semantics* and
+*Expected observables* below describe the first implementation
+(`E_i = E_loc − V₀`) and are superseded by this section.
+
+Validation (2026-09-04, 20k e⁻ C12 EMQE events per setting on the 07-31
+spline, `genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-153523-28c`
+= on, `…-153524-64b` = never; probe `probe_incl_hitnuc` 20k nuclei per
+param_set; checks `check_locframe_run.py`):
+
+| quantity (QEL, hit proton) | local energy on | never |
+|---|---|---|
+| record ⟨p⟩, max, corr(p, r) | 225.6 MeV/c, 270.34, +0.466 | 225.5, 270.33, +0.466 |
+| `RemovalEnergy` = m − E_n = V₀ − T_ball | to 0.009 MeV; mean 17.46, range [6.83, 44.67] | same; mean 17.50 |
+| stage 3 − stage 2 E_m | 0.0001 MeV max | 0.0000 |
+| Q²(record) − Q²s (lepton rescaled by INCL) | −1.27 % mean, [−1.98, −0.28] (∝ V₀ − T_loc(r)) | −1.81 % mean, [−1.99, −1.70] (∝ V₀) |
+| \|p_p′ − q\| / p_red(r, p_ball) | 1.02 mean (p10–p90 0.88–1.13) | — |
+| \|p_p′ − q\| / p_ball | 0.67 mean, corr(·, r) = −0.66 | 1.007 mean, corr = +0.43 |
+| scattering nucleon (probe): ⟨p_i⟩, corr(p_i, r) | 148.3 MeV/c, −0.668 (on-shell to 2e-4 MeV) | 225.8, +0.468 |
+
+Splines regenerated under this convention (2026-09-04, `gmkspl -n 30 -e 3.0`,
+EMQE): jobs `gmkspl-eminus_C12_20260904-153639-9f4` (label `locframe-on`) and
+`…-153640-9bc` (`locframe-never`, override directory first in `GXMLPATH`).
+
 ## Why
 
 INCL++ has `localEnergyBBType` / `localEnergyPiType` ∈ {`always`,
@@ -58,15 +115,17 @@ generated and compared without code edits.
 |---|---|---|
 | `always` | on | every NN collision |
 | `first-collision` (default) | on — the vertex *is* the first collision | none (the QE avatar consumed the flag; kept as today) |
-| `never` | off: struck nucleon = INCL's own `(p_ball, E_ball − V₀)`; the resampling still applies the ground-state floor `T > T_loc(r)` (changed 2026-09-04: the floor is a ground-state constraint, not the energy correction) | none |
+| `never` | off: scattering nucleon = INCL's own on-shell `(p_ball, E_ball)` (record `(p_ball, E_ball − V₀)` as in every mode); the resampling still applies the ground-state floor `T > T_loc(r)` (changed 2026-09-04: the floor is a ground-state constraint, not the energy correction) | none |
 
 `local-energy-pi` keeps its INCL meaning (πN collisions, Δ decays) and is not
 consulted by the vertex. The resampling floor `T > T_loc(r)` (INCL's r–p
 constraint: a nucleon at radius r needs the momentum whose reflection radius
 reaches r) is applied in every mode; `never` only switches off the local-energy
-transform of the accepted momentum (`vertexLocE() = 0`). With the binding plan in place, the vertex nucleon is
-`(p_i, E_i)` with `E_loc = E_ball − vertexLocE`, `p_i = √(E_loc² − m²) p̂`,
-`E_i = E_loc − V₀`, where `vertexLocE` is `T_loc(r)` (on) or 0 (off).
+transform of the accepted momentum (`vertexLocE() = 0`). First implementation (superseded, see *Convention revised*): the vertex
+nucleon was `(p_i, E_i)` with `E_loc = E_ball − vertexLocE`,
+`p_i = √(E_loc² − m²) p̂`, `E_i = E_loc − V₀`. Since 2026-09-04 the scattering
+nucleon is the on-shell `(p_i, E_loc)` and the record nucleon
+`(p_ball, E_ball − V₀)`; the balance is `E − V` without a local-energy term.
 
 ## Edits (all under `/exp/dune/app/users/liangliu/GENIE/GENIE_INCLXX/Generator`, branch off `feature/for_Anna`)
 
@@ -174,6 +233,22 @@ each, distinct seeds, the matching new spline, `--label`:
 The first two `never` chunks and all `on` chunks were generated with the
 rejection-loop resampling, the last two with the direct draw — statistically
 the same distribution.
+
+**Superseded (convention revised, same day)** — the samples above and the
+d42/f8a splines use the first convention. Under the INCL scheme:
+- splines (`gmkspl -n 30 -e 3.0`, EMQE): `eminus_C12_20260904-153639-9f4.xml`
+  (label `locframe-on`, 5452 s) and `…-153640-9bc.xml` (`locframe-never`,
+  5768 s, override dir first). At 2.445 GeV vs the 07-31 spline: e-p ×1.019 /
+  e-n ×0.964 (on — the same integrand convention as 07-31, the strict floor and
+  gmkspl's few-% integration wobble) and ×0.972 / ×0.963 (never);
+  `results/prd-analyzer-v1.0/spline_gem26_44b_locframe.png`.
+- `locframe-on-200k` (9f4 spline): `eminus_C12_20260904-170929-740`,
+  `-170930-58d`, `-170930-0b5`, `-170931-b2b` — 4 × 50k, seeds 20260911–14,
+  ~1050 s each, rc 0.
+- `locframe-never-200k` (9bc spline, override dir first): `-171310-ad8`,
+  `-171310-15a`, `-171310-6f2`, `-171310-ff5` — seeds 20260921–24.
+- registered in the ladder scripts as `GEM26_44b_05_000_lfon` / `_lfnever`;
+  stage-3 momentum csvs via `results/template/make_stage3_csv.py`.
 
 ## Resampling exhaustion (found and fixed 2026-09-04)
 

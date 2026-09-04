@@ -69,6 +69,18 @@ is `−T`. Point 3 is superseded: the pre-FSI proton carries
 INCL's energy balance at cascade insertion. The pre-FSI `|p_m|` is the
 local-energy-reduced momentum, not the record's ball.
 
+**Update (2026-09-04, fork branch `feature/incl-vertex-local-energy`,
+`docs/incl-vertex-local-energy-option-plan.md`):** the vertex now follows
+INCL's own scheme explicitly — the scattering is computed with the on-shell
+local-frame nucleon `(p_red, E_ball − T_loc(r))` (`never`: the ball nucleon),
+INCL's balance conserves `E_ball − V₀` by rescaling lepton and proton, and the
+GHEP initial nucleon is written as the global nucleon `(p_ball, E_ball − V₀)`
+with `RemovalEnergy = V₀ − T_ball` (now determinate, in [6.83, 45.0] MeV for
+C12). So for samples made with these libraries the record's `E_m = V₀ − T_ball`
+equals the pre-FSI proton's, and the record momentum is INCL's ball (with the
+p_min(r) floor) in both local-energy settings; the local-energy choice is
+visible in `|p_p′ − q|` and in the cross section.
+
 ## C12 pilot (2026-07-13) — Phase-0 closure + required source fix
 
 Pilot: 500 events, e- on C12 at 2.445 GeV, spline

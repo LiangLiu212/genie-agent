@@ -1,6 +1,12 @@
 # Plan: one INCL initial nucleon — local-energy frame + well-depth binding (GEM26_44b)
 
-Status: getter/record items (E1–E5) **implemented 2026-09-03** on the fork branch
+Status (2026-09-04): **superseded** — the "one nucleon everywhere, E_i = E_red − V₀"
+convention of this plan was replaced by INCL's own scheme (scattering in the
+local frame, balance E − V without a local-energy term, record = global nucleon
+`(p_ball, E_ball − V₀)`); see `incl-vertex-local-energy-option-plan.md`,
+*Convention revised*. The mechanics below (getters, record write, avatar
+balance) are still the places that changed. Earlier status: getter/record items
+(E1–E5) **implemented 2026-09-03** on the fork branch
 `feature/incl-vertex-local-energy` (`d7cd3f5d4`) as part of the vertex local-energy
 option (see that plan for validation); E6/E7 (rebuild, splines) partially — the
 libraries are rebuilt, splines are not regenerated yet. Follows

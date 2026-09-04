@@ -1,14 +1,18 @@
 // Probe the GENIE<->INCL struck-nucleon chain at runtime, for N C12 nuclei:
 // reset (INCL ground state, pick a proton), resample (uniform p_F ball; with
 // local energy on: accept KE > T_loc(r) of the resampled state), then print the
-// local energy the vertex applies and the 4-vector handed to the interaction by
-// INCLNucleus::getHitNucleonP4() (momentum in the local frame, E = E_loc - V).
+// local energy the vertex applies, the scattering nucleon handed to the
+// interaction by INCLNucleus::getHitNucleonP4() (INCL local-energy frame,
+// on-shell: p_i, E_i = E - vloc) and the record nucleon
+// getHitNucleonRecordP4() (global ball momentum, E_rec = E_ball - V).
 // One CSV line per nucleus:
-//   r,p_ball,T_ball,vloc,p_i,E_i_minus_m,Em,pmax_isRPValid,useLocE
-// where Em = getRemovalEnergy() = m - E_i and pmax_isRPValid = the momentum bound
-// of isRPValid at this nucleus (sqrt((E_F - vloc)^2 - m^2)).
+//   r,p_ball,T_ball,vloc,p_i,E_i_minus_m,p_rec,E_rec_minus_m,Em,pmax_isRPValid,useLocE
+// where Em = getRemovalEnergy() = m - E_rec = V - T_ball and pmax_isRPValid = the
+// momentum bound of isRPValid at this nucleus (sqrt((E_F - vloc)^2 - m^2)).
 // Usage:  probe_incl_hitnuc <N> <out.csv> [NucleusGenINCL param_set: Default|NoLocalEnergy]
 // Build (spack env, NOT pixi): source .../GENIE_INCLXX/setup_env.sh, then
+// (the INCL -D flags are `$INCLXX_DIR/bin/inclxx-config --dflags`; they contain
+//  -DG4ThreadLocal="" so pass them through `eval`, or the quotes reach g++)
 //   g++ -O2 -std=c++17 <GENIE's -D flags for INCL> -o probe_incl_hitnuc probe_incl_hitnuc.cxx \
 //     -I$GENIE/src -I$INCLXX_DIR/include -I$LOG4CPP_PKG_DIR/include -I$LHAPDF_PKG_DIR/include \
 //     -I$GSL_PKG_DIR/include -I/usr/include/libxml2 -I$BOOST_PKG_DIR/include $(root-config --cflags) \
@@ -43,7 +47,7 @@ int main(int argc, char** argv) {
   genie::Target tgt(1000060120);
   tgt.SetHitNucPdg(2212);
   FILE* f = fopen(out, "w");
-  fprintf(f, "r,p_ball,T_ball,vloc,p_i,E_i_minus_m,Em,pmax_isRPValid,useLocE\n");
+  fprintf(f, "r,p_ball,T_ball,vloc,p_i,E_i_minus_m,p_rec,E_rec_minus_m,Em,pmax_isRPValid,useLocE\n");
   for (int i = 0; i < N; ++i) {
     incl->reset(&tgt);
     incl->ResamplingHitNucleon();
@@ -53,15 +57,16 @@ int main(int argc, char** argv) {
     const double pb = hit->getMomentum().mag();
     const double Tb = hit->getEnergy() - m;
     const double v  = incl->vertexLocE();
-    const TLorentzVector p4 = incl->getHitNucleonP4();
+    const TLorentzVector p4  = incl->getHitNucleonP4();        // scattering nucleon
+    const TLorentzVector p4r = incl->getHitNucleonRecordP4();  // record nucleon
     const double Em = incl->getRemovalEnergy();
     // isRPValid bound: largest |p| it accepts here
     double pmax = 0.;
     { double lo = 0., hi = 400.;
       for (int k = 0; k < 40; ++k) { double mid = 0.5*(lo+hi); if (incl->isRPValid(r, mid)) lo = mid; else hi = mid; }
       pmax = lo; }
-    fprintf(f, "%.4f,%.3f,%.3f,%.4f,%.3f,%.4f,%.4f,%.2f,%d\n",
-            r, pb, Tb, v, p4.Vect().Mag(), p4.E() - m, Em, pmax, useLocE ? 1 : 0);
+    fprintf(f, "%.4f,%.3f,%.3f,%.4f,%.3f,%.4f,%.3f,%.4f,%.4f,%.2f,%d\n",
+            r, pb, Tb, v, p4.Vect().Mag(), p4.E() - m, p4r.Vect().Mag(), p4r.E() - m, Em, pmax, useLocE ? 1 : 0);
   }
   fclose(f);
   fprintf(stderr, "wrote %s (%d nuclei)\n", out, N);

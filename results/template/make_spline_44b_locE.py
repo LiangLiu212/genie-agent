@@ -47,10 +47,14 @@ if __name__ == "__main__":
     ap.add_argument("--old", required=True)
     ap.add_argument("--on", required=True)
     ap.add_argument("--never", required=True)
+    ap.add_argument("--out", default=str(OUT), help="output PNG (default: spline_gem26_44b_locE.png)")
+    ap.add_argument("--variant", default="new vertex", help="title text for the compared vertex")
+    ap.add_argument("--on-label", default="new vertex, local energy on")
+    ap.add_argument("--never-label", default="new vertex, never")
     args = ap.parse_args()
     series = [("old chain (2026-07-31)", args.old, "C0", "-"),
-              ("new vertex, local energy on", args.on, "C3", "-"),
-              ("new vertex, never", args.never, "C2", "--")]
+              (args.on_label, args.on, "C3", "-"),
+              (args.never_label, args.never, "C2", "--")]
     data = {lab: read_splines(p) for lab, p, _, _ in series}
     names = sorted(next(iter(data.values())).keys())
     print("splines:", [short(n) for n in names])
@@ -83,9 +87,9 @@ if __name__ == "__main__":
     axes[2].set_ylabel("ratio", fontsize=FS_LABEL)
     axes[0].legend(fontsize=FS_LEGEND - 2, title="GEM26_44b_05_000, gmkspl -n 30 -e 3",
                    title_fontsize=FS_LEGEND_TITLE - 2, loc="lower right")
-    fig.suptitle("GEM26_44b_05_000 EMQE splines, e$^-$ on C12: old chain vs new vertex\n"
+    fig.suptitle(f"GEM26_44b_05_000 EMQE splines, e$^-$ on C12: old chain vs {args.variant}\n"
                  "(local energy on / never); dotted: E = 2.445 GeV",
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
-    fig.savefig(OUT, dpi=DPI)
-    print("wrote", OUT)
+    fig.savefig(args.out, dpi=DPI)
+    print("wrote", args.out)

@@ -74,6 +74,11 @@ TUNE_GS = {
     # local energy on (LFG-like momentum) / never (INCL ball with floor)
     "GEM26_44b_05_000_locEon":    (False, "INCL++ new vertex, local energy ON"),
     "GEM26_44b_05_000_locEnever": (False, "INCL++ new vertex, never"),
+    # the INCL-scheme vertex (convention of 2026-09-04: scattering in INCL's local
+    # frame, balance E - V without a local-energy term, record = global nucleon
+    # (p_ball, E_ball - V0)); 200k local events each on their own spline
+    "GEM26_44b_05_000_lfon":    (False, "INCL-scheme vertex, locE ON"),
+    "GEM26_44b_05_000_lfnever": (False, "INCL-scheme vertex, never"),
 }
 
 
@@ -126,9 +131,13 @@ TGT = {
         local_gst={"GEM26_44b_05_000": "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-01/eminus_C12_20260901-*.gst.root",
                    # explicit chunk lists: both settings share the tune id and the run dir
                    "GEM26_44b_05_000_locEon": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135725-84c.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135727-8b5.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135727-a11.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135728-d90.gst.root"],
+                   "GEM26_44b_05_000_lfon": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170929-740.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170930-58d.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170930-0b5.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170931-b2b.gst.root"],
+                   "GEM26_44b_05_000_lfnever": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-ad8.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-15a.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-6f2.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-ff5.gst.root"],
                    "GEM26_44b_05_000_locEnever": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135728-089.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135728-a87.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-143137-3cd.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-143137-546.gst.root"]},
         incl_note=("INCL record: $E=v_{{loc}}-T_i$, no $S_p$ floor\n"
                    "— mostly $<0$, off scale left\n(median {med:.1f} MeV)"),
+        incl_lf_note=("INCL-scheme vertex: record = INCL ball nucleon,\n"
+                      "$m_N-E_n = V_0 - T_{{ball}}$ (median {med:.1f} MeV)"),
         incl_new_note=("new vertex: record = interaction nucleon,\n"
                        "$m_N-E_n = V_0 - T$ (median {med:.1f} MeV)"),
     ),
@@ -330,6 +339,8 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
         note = cfg["gem21_note"].format(med=med2)
     elif tune == "GEM26_44b_05_000":
         note = cfg["incl_note"].format(med=med2)
+    elif tune.startswith("GEM26_44b_05_000_lf"):
+        note = cfg["incl_lf_note"].format(med=med2)
     elif tune.startswith("GEM26_44b_05_000_locE"):
         note = cfg["incl_new_note"].format(med=med2)
     else:

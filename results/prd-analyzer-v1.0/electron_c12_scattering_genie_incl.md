@@ -463,20 +463,129 @@ then
 (`--tunes GEM26_44b_05_000` alone for the single figure; `--r-on-x` puts the
 radius on x and the momentum on y, the orientation used here).
 
-## 4. The new vertex: E_m and |p_m| with local energy on / never
+## 4. The INCL-scheme vertex: E_m and |p_m| with local energy on / never
 
-The fork branch `feature/incl-vertex-local-energy` (`LiangLiu212/Generator`
-@ `4fc6f094e`; plans in [`docs/incl-vertex-local-energy-option-plan.md`](../../docs/incl-vertex-local-energy-option-plan.md)
-and [`docs/incl-local-frame-binding-plan.md`](../../docs/incl-local-frame-binding-plan.md))
-hands **one** struck nucleon to the cross section, the lepton kinematics, INCL's
-energy balance and the record: momentum in the local-energy frame (when
-`local-energy-BB` applies it) or the INCL ball nucleon (`never`), with the well
-depth as binding, `E_i = √(p_i² + m²) − V₀`, V₀ = T_F + S = 45.0 MeV. The
-resampling keeps INCL's floor `p > p_min(r)` in both modes. Samples: 200k events
-per setting (4 × 50k, 2026-09-04), each with its own regenerated spline
-(σ 14–18 % below the 07-31 one, `spline_gem26_44b_locE.png`); registered here as
-the pseudo-tunes `GEM26_44b_05_000_locEon` / `_locEnever` with explicit chunk
-lists in the ladder scripts. Section 2's construction, unchanged:
+The fork branch `feature/incl-vertex-local-energy` (`LiangLiu212/Generator`,
+working tree on top of `4fc6f094e`, 2026-09-04 afternoon; plan and validation in
+[`docs/incl-vertex-local-energy-option-plan.md`](../../docs/incl-vertex-local-energy-option-plan.md),
+*Convention revised*) makes the QE vertex follow INCL's own `InteractionAvatar`
+scheme, and makes INCL's `local-energy-BB` option (`always`/`first-collision`
+= on, `never` = off) the single switch for it:
+
+1. **The scattering is computed in the local frame.** The nucleon handed to the
+   cross section and the lepton/proton kinematics (`HitNucP4`) is the on-shell
+   local-frame nucleon `(p_red, E_ball − T_loc(r))`, `p_red² = p_ball² − p_min(r)²`,
+   when local energy is on, and the ball nucleon `(p_ball, E_ball)` under `never`.
+   No potential is subtracted there.
+2. **Energy conservation uses `E − V`, with no local-energy term.** INCL's balance
+   at cascade insertion is `E_lep + E_ball − V₀`, V₀ = T_F + S = 45.0 MeV, and its
+   `ViolationLeptonEMomentumFunctor` rescales lepton and proton to it (the lepton
+   moves by the difference between the scattering energy and the conserved one:
+   `V₀ − T_loc(r)` with local energy on, `V₀` under `never`; −1.3 % / −1.8 % in Q²
+   on average).
+3. **The record holds the global nucleon** `(p_ball, E_ball − V₀)`, so
+   `RemovalEnergy = V₀ − T_ball ∈ [S, V₀] = [6.83, 45.0]` MeV in every mode and the
+   post-cascade rewrite leaves the initial-state nucleon alone.
+
+The resampling keeps INCL's floor `p > p_min(r)` in both modes. Consequences,
+all verified on 20k events per setting before the production samples (table in
+the plan doc): `E_m = V₀ − T_ball` for the record and the pre-FSI proton alike
+(stage 2 = stage 3 to 0.0001 MeV), the record's (r, |p|) is the INCL ball in
+both settings, and the local-energy choice lives only in the scattering — in
+`|p_p′ − q|` (≈ p_red vs ≈ p_ball, blurred by the rescaling) and in the cross
+section.
+
+**Splines** (`gmkspl -n 30 -e 3.0`, EMQE, `make_spline_44b_locE.py --variant …`):
+`spline_gem26_44b_locframe.png`. Against the 07-31 spline at 2.445 GeV: local
+energy on e-p ×1.019, e-n ×0.964 — the same integrand convention as the old
+chain (on-shell local-frame nucleon), differing only by the strict floor and
+gmkspl's few-per-cent integration wobble; `never` ×0.972 / ×0.963 (the ball
+nucleon without the local-frame reduction).
+
+![GEM26_44b splines: old chain vs INCL-scheme vertex](spline_gem26_44b_locframe.png)
+
+**Samples**: 200k events per setting (4 × 50k, 2026-09-04, seeds 20260911–14 /
+20260921–24, each on its own spline, `never` via the `genie-agent/tunes-locE-never`
+override first in `GXMLPATH`); registered as the pseudo-tunes
+`GEM26_44b_05_000_lfon` / `_lfnever` (chunk lists in the ladder scripts).
+Section 2's construction, unchanged:
+
+![C12 v1.0 ladder, INCL-scheme vertex, local energy on](em_ladder_restored_c12_GEM26_44b_05_000_lfon.png)
+
+| sample | qel ∧ hit p | 1p fraction | I2r | I3r | I4r | I4r/I3r | record median [MeV] |
+|---|---|---|---|---|---|---|---|
+| old chain (section 2, 500k) | 346,164 (69.2 %) | 65.0 % | 0 (record E < 0) | 6.000 | 3.119 | 0.520 | −29.39 |
+| **INCL scheme, local energy on** | 141,074 (70.5 %) | 65.2 % | **6.000** | 6.000 | 3.138 | 0.523 | **+15.46** (p5–p95 7.40–34.11) |
+| **INCL scheme, never** | 138,368 (69.2 %) | 65.5 % | **6.000** | 6.000 | 3.119 | 0.520 | **+15.50** (7.42–33.96) |
+
+- **The E_m ladder is the same in both settings, and it is the old chain's**:
+  stage 2 (now filled: `m_N − E_n = V₀ − T_ball`, floor S = 6.83 MeV, 10–15 MeV
+  peak, tail to 45) equals stage 3 bin by bin, and stage 4 is the section-2
+  spectrum — the cascade adds a constant +9.13 MeV to every unscattered proton
+  (INCL's emission Q-value correction: the real S_p(C12) = 15.96 MeV minus the
+  6.83 MeV already in V₀), so the post-FSI peak sits at 15–20 MeV, on the data's
+  p-shell point. Local energy on/off does not touch E_m, by construction.
+- The `never` ladder (`em_ladder_restored_c12_GEM26_44b_05_000_lfnever.png`) is
+  indistinguishable from the one shown (I4r 3.119 vs 3.138).
+
+**Struck-nucleon (r, |p|)** (section 3 construction, r on x, 200k each): the
+record is the INCL ball with the rising floor in both settings (corr +0.47,
+⟨p⟩ 226 MeV/c) — the plot that used to distinguish the settings now cannot.
+Where the local-energy choice lives is the pre-FSI `|p_p′ − q|` of the same
+events (`make_stage3_csv.py` → `make_struck_pr.py --csv`): LFG-like with local
+energy on (corr −0.66, the reduced momentum ceiling falling with r; the edge
+slightly above p_F is the rescaling blur), the ball under `never` (corr +0.42):
+
+![C12 struck nucleon (r, p) in the record, INCL-scheme vertex, on / never](struck_pr_c12_all_t05_lf200k.png)
+![C12 pre-FSI |p_p' - q| vs r, INCL-scheme vertex, on / never](struck_pr_c12_all_t05_lf200k_stage3.png)
+
+**|p_m| ladders** (section 2.1 construction; shell windows applied):
+
+![C12 v1.0 pm ladder, INCL-scheme vertex, local energy on](pm_ladder_c12_GEM26_44b_05_000_lfon.png)
+![C12 v1.0 pm ladder, INCL-scheme vertex, never](pm_ladder_c12_GEM26_44b_05_000_lfnever.png)
+
+| sample | I2 (record) | I3 (pre-FSI) | I4 (post-FSI) | I4/I3 | I(data) |
+|---|---|---|---|---|---|
+| old chain | 0 (record E < 0) | 4.112 | 2.551 | 0.620 | 4.917 |
+| **INCL scheme, local energy on** | 4.072 | 4.072 | 2.577 | 0.633 | 4.917 |
+| **INCL scheme, never** | 4.070 | 4.070 | 2.589 | 0.636 | 4.917 |
+
+- **Stage 2 is the ball in both** (peak at 240–260 MeV/c, cliff at p_F); the
+  shell windows are again momentum bands of the ball, since `E_m = V₀ − T_ball`
+  exactly (10–25 MeV ⇔ 195–258 MeV/c, 30–50 MeV ⇔ < 168 MeV/c).
+- **Stage 3 is where the settings differ.** With local energy on the pre-FSI
+  proton carries the local-frame momentum: a broad plateau over 50–250 MeV/c
+  (the section-2.1 shape of the old chain, whose kinematics were the same),
+  populating the data's low-|p_m| region; under `never` it is the ball itself,
+  concentrated at 200–280 MeV/c. The integrals agree (4.07) because both count
+  the same nucleons; the shapes do not.
+- **After FSI** the shell-window survival is 0.63 in both (the old chain's
+  0.62); the on-sample undershoots the data's 140 MeV/c peak by ~2.5× while
+  `never` peaks at 260–280 MeV/c, beyond the data.
+- Companions from the same runs: `em_postfsi_shape_c12_GEM26_44b_05_000_lf*.png`,
+  `pm_ladder_dens_c12_GEM26_44b_05_000_lf*.png`.
+
+Regenerate (caches `cache/ladder_c12/GEM26_44b_05_000_lf{on,never}.npz`):
+`GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python results/template/make_emiss_ladder_q2cut.py --target C12 --tune GEM26_44b_05_000_lfon --proton-sel 1p --no-q2cut`
+(and `…_lfnever`; the same for `make_pmiss_ladder_q2cut.py`); the (r, p) figures
+from the per-chunk `dump_hitnuc` CSVs and `make_stage3_csv.py` output via
+`make_struck_pr.py --csv LABEL=PATH:GS_LABEL --r-on-x --sel-qel`.
+
+### 4.1 Superseded: the first implementation (E_i = E_red − V₀)
+
+The first version of the branch (`d7cd3f5d4` … `4fc6f094e`, 2026-09-04
+morning; [`docs/incl-local-frame-binding-plan.md`](../../docs/incl-local-frame-binding-plan.md))
+handed **one** bound struck nucleon to everything — cross section, lepton
+kinematics, INCL's balance (with the local energy subtracted) and the record:
+`E_i = √(p_i² + m²) − V₀` with `p_i` the local-frame momentum (on) or the ball
+(`never`). That put the local energy into the binding: `E_m = V₀ − T_red` with
+local energy on, a triangle rising to a hard edge at 45 MeV (median 33 MeV) and
+a post-FSI peak at 50–55 MeV, 30 MeV above the data, with the shell-window
+|p_m| survival collapsing to 0.40 — the surface nucleons became the *most*
+bound. `never` was already the old chain's spectrum. It was replaced by the
+INCL scheme above; its samples (`GEM26_44b_05_000_locEon` / `_locEnever`,
+splines d42/f8a, σ 14–18 % below the 07-31 one) and figures are kept for the
+record:
 
 ![C12 v1.0 ladder, new vertex, local energy on](em_ladder_restored_c12_GEM26_44b_05_000_locEon.png)
 ![C12 v1.0 ladder, new vertex, never](em_ladder_restored_c12_GEM26_44b_05_000_locEnever.png)
@@ -504,6 +613,14 @@ lists in the ladder scripts. Section 2's construction, unchanged:
   momentum predicted in the plan (E_m mean 17.5 → 31).
 - The FSI transformation is the same +10 MeV shift and 0.52 survival in both —
   the cascade does not care which vertex convention produced the proton.
+
+**Struck-nucleon (r, |p|) of the two samples** (section 3 construction, r on x,
+200k events each; `make_struck_pr.py --csv …`): the record now carries the
+nucleon the kinematics used — LFG-like with local energy on (corr −0.67, the
+ceiling √(p_F² − p_min(r)²) falling with r), the ball with the rising floor
+with `never` (corr +0.47):
+
+![C12 struck nucleon (r, p), new vertex, local energy on / never, 200k each](struck_pr_c12_all_t05_locE200k.png)
 
 **|p_m| ladders** (section 2.1 construction; shell windows applied):
 

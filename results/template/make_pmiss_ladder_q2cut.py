@@ -69,6 +69,11 @@ TUNE_GS = {
     "GEM26_44b_05_000": (False, "INCL++ GS+FSI"),   # local C12 sample
     "GEM26_44b_05_000_locEon":    (False, "INCL++ new vertex, local energy ON"),
     "GEM26_44b_05_000_locEnever": (False, "INCL++ new vertex, never"),
+    # the INCL-scheme vertex (convention of 2026-09-04: scattering in INCL's local
+    # frame, balance E - V without a local-energy term, record = global nucleon
+    # (p_ball, E_ball - V0)); 200k local events each on their own spline
+    "GEM26_44b_05_000_lfon":    (False, "INCL-scheme vertex, locE ON"),
+    "GEM26_44b_05_000_lfnever": (False, "INCL-scheme vertex, never"),
 }
 # tunes whose struck-nucleon record E sits below every E_m window
 RECORD_NOTE = {
