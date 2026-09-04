@@ -9,9 +9,10 @@ collision). Validation (20k e⁻ C12 EMQE events per setting, existing spline):
 record nucleon = interaction nucleon (invariant mass 892.6 MeV), stage-2 and
 stage-3 E_m identical, `|p_p′ − q| = p_rec` to 0.004 MeV/c, record `Q2 == Q2s`,
 `E_m = V₀ − T` to 0.01 MeV; corr(p, r) = −0.67 (on, ⟨p⟩ 147 MeV/c, E_m mean
-31.5) / 0.00 (`never`, ⟨p⟩ 203, E_m mean 21.9). Not done: new splines (E7) and
-the tune overlay (E8) — the `never` runs used a scratch `GXMLPATH` override of
-`NucleusGenINCL.xml`.
+31.5) / +0.45 (`never`, floor kept, ⟨p⟩ 226, E_m mean 17.4; fork commit of
+2026-09-04 — the first version had dropped the floor for `never`: ⟨p⟩ 203,
+corr 0.00). Not done: new splines (E7) and the tune overlay (E8) — the `never`
+runs used a scratch `GXMLPATH` override of `NucleusGenINCL.xml`.
 Companion to [`incl-local-frame-binding-plan.md`](incl-local-frame-binding-plan.md)
 (the E = E_red − V₀ convention) and grounded in
 [`incl-ground-state-review.md`](incl-ground-state-review.md).
@@ -48,12 +49,13 @@ generated and compared without code edits.
 |---|---|---|
 | `always` | on | every NN collision |
 | `first-collision` (default) | on — the vertex *is* the first collision | none (the QE avatar consumed the flag; kept as today) |
-| `never` | off: struck nucleon = INCL's own `(p_ball, E_ball − V₀)`, resampling accepts any ball momentum (no `T > T_loc(r)` floor) | none |
+| `never` | off: struck nucleon = INCL's own `(p_ball, E_ball − V₀)`; the resampling still applies the ground-state floor `T > T_loc(r)` (changed 2026-09-04: the floor is a ground-state constraint, not the energy correction) | none |
 
 `local-energy-pi` keeps its INCL meaning (πN collisions, Δ decays) and is not
-consulted by the vertex. The resampling floor is deliberately tied to the same
-switch: `never` removes INCL's r–p constraint from the record as well (pure p_F
-ball at every radius). With the binding plan in place, the vertex nucleon is
+consulted by the vertex. The resampling floor `T > T_loc(r)` (INCL's r–p
+constraint: a nucleon at radius r needs the momentum whose reflection radius
+reaches r) is applied in every mode; `never` only switches off the local-energy
+transform of the accepted momentum (`vertexLocE() = 0`). With the binding plan in place, the vertex nucleon is
 `(p_i, E_i)` with `E_loc = E_ball − vertexLocE`, `p_i = √(E_loc² − m²) p̂`,
 `E_i = E_loc − V₀`, where `vertexLocE` is `T_loc(r)` (on) or 0 (off).
 
@@ -78,9 +80,9 @@ used by:
 - the getters (`:315-336`), rewritten per the binding plan as one const
   computation of `(p_i, E_i)`;
 - `isRPValid` (`:476-487`): `MaxMomAtR = √((E_F − vertexLocE())² − m²)` → p_F when off;
-- `ResamplingHitNucleon` (`:514-536`): threshold `= useVertexLocE_ ? getLocalEnergy(resampled state) : 0`
-  (evaluated inside the loop on the resampled state, which also removes the NaN
-  side effect described in the review).
+- `ResamplingHitNucleon` (`:514-536`): threshold `getLocalEnergy(resampled state)`
+  in every mode (evaluated inside the loop on the resampled state, which also
+  removes the NaN side effect described in the review).
 Delete the commented `setLocalEnergy*Type(NeverLocalEnergy)` lines (`:182-183`).
 
 **E4 `src/Physics/HadronTransport/G4INCLGENIEAvatar.{h,cxx}`** — read
@@ -121,8 +123,9 @@ nucleus per throw vs `fixRadius` ball) is untouched by this plan.
 Figure: [`results/prd-analyzer-v1.0/struck_pr_c12_all_t05_locE.png`](../results/prd-analyzer-v1.0/struck_pr_c12_all_t05_locE.png)
 — struck-nucleon (r, |p|) for LFG (`GEM26_11a`, campaign), the old INCL record
 (`GEM26_44b` 500k, ball with the rising floor), and the new branch's record with
-local energy on (LFG-like, corr −0.67) and `never` (pure ball, corr −0.01); 20k
-events each for the new runs (`make_struck_pr.py --csv …`).
+local energy on (LFG-like, corr −0.67) and `never` (floor kept: the same
+truncated ball as the old record, corr +0.45, but now the nucleon the kinematics
+used); 20k events each for the new runs (`make_struck_pr.py --csv …`).
 
 - **V1 probe** (`results/template/probe_incl_hitnuc.cxx`, both settings):
   `never` → `p_i = p_ball` exactly, `E_i = E_ball − 45.00`, `isRPValid` bound = p_F,
@@ -139,15 +142,15 @@ events each for the new runs (`make_struck_pr.py --csv …`).
 
 | quantity | default (`first-collision`/`always`) | `never` |
 |---|---|---|
-| momentum used everywhere | p_red: ⟨p⟩ 150 MeV/c, p < 100: 24 % | pure ball: ⟨p⟩ 203, p < 100: 5 %, cut 270 |
-| corr(p, r) | −0.65 (LFG-like) | 0 (factorized) |
-| E − m used by the lepton kinematics | −31 MeV | ≈ −22 MeV |
-| E_m (pre-FSI) | V₀ − T_red: mean 31.0 | V₀ − T: mean ≈ 22 |
-| Dutta windows [10,25) / [30,50) | 27 % / 58 % | ≈ 50 % / 24 % |
+| momentum used everywhere | p_red: ⟨p⟩ 150 MeV/c, p < 100: 24 % | ball with floor: ⟨p⟩ 225, p < 100: 1 %, cut 270 |
+| corr(p, r) | −0.65 (LFG-like) | +0.46 (INCL-like) |
+| E − m used by the lepton kinematics | −31 MeV | −17.5 MeV |
+| E_m (pre-FSI) | V₀ − T_red: mean 31.0 | V₀ − T_ball: mean 17.5 |
+| Dutta windows [10,25) / [30,50) | 27 % / 58 % | 58 % / 10 % |
 | Moniz C12 Fermi-gas reference | ⟨p⟩ 166 (k_F 221) | |
 
-(For reference, "no local energy but keep INCL's floor" — not selectable in this
-design — would give ⟨p⟩ 225, corr +0.46, E_m mean 17.5, windows 58 % / 10 %.)
+(A pure p_F ball without the floor — the 2026-09-03 first version of `never`,
+replaced on 2026-09-04 — gave ⟨p⟩ 203, corr 0, E_m mean 22, windows ≈ 50 % / 24 %.)
 
 ## Notes
 - The option is read once per job from the `NucleusGenINCL` param_set the tune
