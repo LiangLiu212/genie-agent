@@ -67,6 +67,8 @@ TUNE_GS = {
     "GEM26_22b_05_000": (True,  "SpectralFunc"),
     "GEM21_11a_05_000": (False, "LocalFGM"),
     "GEM26_44b_05_000": (False, "INCL++ GS+FSI"),   # local C12 sample
+    "GEM26_44b_05_000_locEon":    (False, "INCL++ new vertex, local energy ON"),
+    "GEM26_44b_05_000_locEnever": (False, "INCL++ new vertex, never"),
 }
 # tunes whose struck-nucleon record E sits below every E_m window
 RECORD_NOTE = {

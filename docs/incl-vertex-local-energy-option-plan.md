@@ -11,8 +11,17 @@ stage-3 E_m identical, `|p_p′ − q| = p_rec` to 0.004 MeV/c, record `Q2 == Q2
 `E_m = V₀ − T` to 0.01 MeV; corr(p, r) = −0.67 (on, ⟨p⟩ 147 MeV/c, E_m mean
 31.5) / +0.45 (`never`, floor kept, ⟨p⟩ 226, E_m mean 17.4; fork commit of
 2026-09-04 — the first version had dropped the floor for `never`: ⟨p⟩ 203,
-corr 0.00). Not done: new splines (E7) and the tune overlay (E8) — the `never`
-runs used a scratch `GXMLPATH` override of `NucleusGenINCL.xml`.
+corr 0.00). Splines (E7) regenerated 2026-09-04 with `gmkspl -n 30 -e 3.0` (EMQE, e⁻ C12):
+`genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-043319-d42.xml`
+(label `locE-on`, 5157 s) and `…-043319-f8a.xml` (label `locE-never`, 5350 s,
+run with the tracked override `genie-agent/tunes-locE-never/` first in
+`GXMLPATH`). Against the 07-31 spline at 2.445 GeV: e-p ×0.859 (on) / ×0.844
+(never), e-n ×0.860 / ×0.816 — the 45 MeV binding now in the kinematics
+(ε_B in q̃) plus the changed momenta; figure
+`results/prd-analyzer-v1.0/spline_gem26_44b_locE.png`
+(`make_spline_44b_locE.py`). The tune overlay (E8) is still open — the `never`
+setting is selected by the override directory, and runs must carry the matching
+spline and `--label`.
 Companion to [`incl-local-frame-binding-plan.md`](incl-local-frame-binding-plan.md)
 (the E = E_red − V₀ convention) and grounded in
 [`incl-ground-state-review.md`](incl-ground-state-review.md).
@@ -151,6 +160,36 @@ used); 20k events each for the new runs (`make_struck_pr.py --csv …`).
 
 (A pure p_F ball without the floor — the 2026-09-03 first version of `never`,
 replaced on 2026-09-04 — gave ⟨p⟩ 203, corr 0, E_m mean 22, windows ≈ 50 % / 24 %.)
+
+## Samples (2026-09-04): 200k events per setting
+
+`genie-runs/GEM26_44b_05_000-2026-09-04/`, e⁻ C12 2.445 GeV EMQE, 4 × 50k chunks
+each, distinct seeds, the matching new spline, `--label`:
+- `locE-on` (d42 spline): `eminus_C12_20260904-135725-84c`, `-135727-8b5`,
+  `-135727-a11`, `-135728-d90` — 200,000 gst entries.
+- `locE-never` (f8a spline, override dir first in `GXMLPATH`):
+  `-135728-089`, `-135728-a87`, `-143137-3cd`, `-143137-546` — 200,000 gst
+  entries (`-135728-69b` and `-135729-d99` aborted, see below; their partial
+  outputs are unreadable and their logs carry rc −6).
+The first two `never` chunks and all `on` chunks were generated with the
+rejection-loop resampling, the last two with the direct draw — statistically
+the same distribution.
+
+## Resampling exhaustion (found and fixed 2026-09-04)
+
+Producing 200k events per setting (4 × 50k chunks), two `never` chunks aborted
+(`double free or corruption` at ROOT teardown). Reproduced deterministically
+(seed 914797872, event 11209) with unbuffered output: `FATAL
+INCLNucleus::ResamplingHitNucleon: Resampling the momentum of struck nucleon
+more than 10000 times!` → `exit(1)` with the output TFile open. Cause: with the
+floor evaluated strictly on the resampled state, a nucleon sampled within
+~0.05 fm of R_max has an acceptance `1 − (p_min/p_F)³ ≲ 10⁻⁴` per throw, so the
+10,000-throw loop exhausts at ≈ 10⁻⁵ per event (2 in 157k); the `on` setting
+is equally exposed (0 in 200k, consistent with chance). Fix (fork commit after
+`cbffacc10`): `ResamplingHitNucleon` draws `|p|³` uniformly on `[p_min(r)³, p_F³]`
+with an isotropic direction — the exact distribution the loop accepted, with no
+rejection and no `exit`. Chunks generated before the fix are statistically
+identical and were kept; the two lost chunks were regenerated.
 
 ## Notes
 - The option is read once per job from the `NucleusGenINCL` param_set the tune

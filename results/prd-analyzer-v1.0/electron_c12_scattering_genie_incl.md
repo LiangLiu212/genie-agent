@@ -462,3 +462,79 @@ then
 `GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python results/template/make_struck_pr.py --dump-dir results/prd-analyzer-v0.1/cache/hitnuc_c12 --target C12 --tunes GEM26_11a_05_000 GEM26_22a_05_000 GEM26_22b_05_000 GEM21_11a_05_000 GEM26_44b_05_000 --sel-qel --tag _qel --r-on-x --out-dir results/prd-analyzer-v1.0`
 (`--tunes GEM26_44b_05_000` alone for the single figure; `--r-on-x` puts the
 radius on x and the momentum on y, the orientation used here).
+
+## 4. The new vertex: E_m and |p_m| with local energy on / never
+
+The fork branch `feature/incl-vertex-local-energy` (`LiangLiu212/Generator`
+@ `4fc6f094e`; plans in [`docs/incl-vertex-local-energy-option-plan.md`](../../docs/incl-vertex-local-energy-option-plan.md)
+and [`docs/incl-local-frame-binding-plan.md`](../../docs/incl-local-frame-binding-plan.md))
+hands **one** struck nucleon to the cross section, the lepton kinematics, INCL's
+energy balance and the record: momentum in the local-energy frame (when
+`local-energy-BB` applies it) or the INCL ball nucleon (`never`), with the well
+depth as binding, `E_i = √(p_i² + m²) − V₀`, V₀ = T_F + S = 45.0 MeV. The
+resampling keeps INCL's floor `p > p_min(r)` in both modes. Samples: 200k events
+per setting (4 × 50k, 2026-09-04), each with its own regenerated spline
+(σ 14–18 % below the 07-31 one, `spline_gem26_44b_locE.png`); registered here as
+the pseudo-tunes `GEM26_44b_05_000_locEon` / `_locEnever` with explicit chunk
+lists in the ladder scripts. Section 2's construction, unchanged:
+
+![C12 v1.0 ladder, new vertex, local energy on](em_ladder_restored_c12_GEM26_44b_05_000_locEon.png)
+![C12 v1.0 ladder, new vertex, never](em_ladder_restored_c12_GEM26_44b_05_000_locEnever.png)
+
+| sample | qel ∧ hit p | 1p fraction | I2r | I3r | I4r | I4r/I3r | record median [MeV] |
+|---|---|---|---|---|---|---|---|
+| old chain (section 2, 500k) | 346,164 (69.2 %) | 65.0 % | 0 (record E < 0) | 6.000 | 3.119 | 0.520 | −29.39 |
+| **new, local energy on** | 139,869 (69.9 %) | 65.0 % | **6.000** | 6.000 | 3.114 | 0.519 | **+32.86** (p5–p95 13.4–44.2) |
+| **new, never** | 139,972 (70.0 %) | 65.2 % | **6.000** | 6.000 | 3.130 | 0.522 | **+15.45** (7.4–34.0) |
+
+- **Stage 2 is no longer empty and equals stage 3 bin by bin**: the recorded
+  struck nucleon is the one the kinematics conserved (`m_N − E_n = V₀ − T`,
+  positive, on the Dutta axis), the pre-FSI proton carries the same E_m, and
+  `|p_p′ − q| = p_rec` to 0.004 MeV/c — the old chain's stage-2/stage-3 split
+  (raw ball vs reduced nucleon, with the lepton and proton rescaled by INCL) is
+  gone. Every stage integrates to Z = 6 before FSI.
+- **`never` reproduces the old chain's physical stages**: the pre-FSI spectrum
+  is `V₀ − T_ball` (floor S = 6.83 MeV, 10–15 MeV peak, tail to 45) and the
+  post-FSI spectrum is the section-2 one (15–20 MeV peak, tail to ≈ 55); only
+  the bookkeeping changed. Survival 0.522.
+- **Local energy on moves the strength up**: `V₀ − T_red` with the reduced
+  kinetic energy is a triangle rising to a hard edge at 45 MeV (median 33 MeV),
+  and after FSI a peak at 50–55 MeV — the data's 17.5 MeV p-shell peak is
+  missed by ≈ 30 MeV. Survival 0.519. This is the E_m cost of the LFG-like
+  momentum predicted in the plan (E_m mean 17.5 → 31).
+- The FSI transformation is the same +10 MeV shift and 0.52 survival in both —
+  the cascade does not care which vertex convention produced the proton.
+
+**|p_m| ladders** (section 2.1 construction; shell windows applied):
+
+![C12 v1.0 pm ladder, new vertex, local energy on](pm_ladder_c12_GEM26_44b_05_000_locEon.png)
+![C12 v1.0 pm ladder, new vertex, never](pm_ladder_c12_GEM26_44b_05_000_locEnever.png)
+
+| sample | I2 (record) | I3 (pre-FSI) | I4 (post-FSI) | I4/I3 | I(data) |
+|---|---|---|---|---|---|
+| old chain | 0 (record E < 0) | 4.112 | 2.551 | 0.620 | 4.917 |
+| **new, local energy on** | 5.099 | 5.099 | 2.057 | **0.404** | 4.917 |
+| **new, never** | 4.071 | 4.071 | 2.583 | 0.634 | 4.917 |
+
+- **The shell windows have become momentum bands.** With `E_m = V₀ − T(|p|)`
+  exactly, the fig 6 windows select `|p_m|` slices: 10–25 MeV ⇔ 195–258 MeV/c
+  and 30–50 MeV ⇔ |p_m| < 168 MeV/c, and the 25–30 MeV gap between them cuts
+  a hole at 168–195 MeV/c — visible as the two-lump pre-FSI shapes in both
+  ladders (the old chain's stage 3 showed the same thing on the reduced
+  momentum, blurred by the rescaling). The p-shell window therefore holds the
+  fast nucleons and the s-shell window the slow ones — the physical sign of the
+  E_m–p_m correlation, but as a step function rather than as shells.
+- **Local energy on**: the record is the LFG-like reduced momentum (⟨p⟩ 147
+  MeV/c, corr(p, r) −0.67), so the pre-FSI ladder has the data's low-|p_m|
+  plateau region populated (0–150 MeV/c) instead of the ball's cliff; but the
+  shell-window survival collapses to 0.404 (22a-like): the reduced nucleon's
+  E_m sits high, and FSI pushes most survivors out of the 30–50 window.
+- **`never`**: the ball with the rising floor (⟨p⟩ 226, corr +0.47), pre-FSI
+  concentrated at 200–260 MeV/c, survival 0.634 — the section-2.1 picture
+  with stage 2 now filled.
+- Companions from the same runs: `em_postfsi_shape_c12_GEM26_44b_05_000_locE*.png`,
+  `pm_ladder_dens_c12_GEM26_44b_05_000_locE*.png`.
+
+Regenerate (caches `cache/ladder_c12/GEM26_44b_05_000_locE{on,never}.npz`):
+`GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python results/template/make_emiss_ladder_q2cut.py --target C12 --tune GEM26_44b_05_000_locEon --proton-sel 1p --no-q2cut`
+(and `…_locEnever`; the same for `make_pmiss_ladder_q2cut.py`).
