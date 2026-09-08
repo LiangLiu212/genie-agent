@@ -1,0 +1,300 @@
+# pm_ladder_fe56_GEM26_22b_05_000.png
+# tune GEM26_22b_05_000, Fe56; selection qel && hit p && Q2 slice && N_p=1; E window $E_m+T_{rec}$ < 80 MeV
+# stages: 2 = record |p_n|, 3 = pre-FSI |p_p - q|, 4 = post-FSI |p_p - q|; native 20 MeV/c bins
+# occupancy scale Z*cnt/(N*20 MeV/c) with N_sel = qel && hit p && window = 50,727
+# data: Dutta fig 7, convention raw (fold factor 1), weighted 4 pi p^2 onto the occupancy axis; I(data, <320) = 9.103
+# MC integrals (<320): I2 = 24.163, I3 = 24.163, I4 = 9.925
+
+
+==============================================================================
+## describe1d stage 2 record WITHOUT the E window (raw counts, 50,727)
+==============================================================================
+== 1D  stage 2 unwindowed: 41 bins on [0, 820], integral 50727
+   shape   |..::-+#@@@%*+-:........................  |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 187.7   std 81.97   skew 1.84   excess kurtosis 6.71
+   peak    bin 8, x = 170 (6573 entries)   FWHM 137.8 on [107.8, 245.6]
+   quantiles  5%: 80.86  16%: 120.3  25%: 138.6  50%: 178.6  75%: 221.8  84%: 244.1  95%: 314.3
+   nonempty bins 0..38 (x in [0, 780]);  first bin 0.09%, last bin 0.00% of the integral;  2 empty bins
+   per bin relative error: median 7.5%, worst nonempty bin 70.7%
+
+==============================================================================
+## describe1d stage 2 in the E window (raw counts, 47,782)
+==============================================================================
+== 1D  stage 2: 41 bins on [0, 820], integral 47782
+   shape   |..::-+#@@@%*+-:.................  . .    |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 177.2   std 61.87   skew 0.623   excess kurtosis 2.55
+   peak    bin 8, x = 170 (6469 entries)   FWHM 136.6 on [108.1, 244.8]
+   quantiles  5%: 80.03  16%: 118.7  25%: 136.6  50%: 175.4  75%: 215.6  84%: 234.7  95%: 275.3
+   nonempty bins 0..36 (x in [0, 740]);  first bin 0.09%, last bin 0.00% of the integral;  7 empty bins
+   per bin relative error: median 10.0%, worst nonempty bin 100.0%
+   bin  [lo, hi)                 count       err    frac
+     0  [        0,        20)          44      6.63    0.09%
+     1  [       20,        40)         299      17.3    0.63%
+     2  [       40,        60)         787      28.1    1.65%
+     3  [       60,        80)        1256      35.4    2.63%
+     4  [       80,       100)        2120        46    4.44%
+     5  [      100,       120)        3350      57.9    7.01%
+     6  [      120,       140)        4915      70.1   10.29%
+     7  [      140,       160)        6148      78.4   12.87%
+     8  [      160,       180)        6469      80.4   13.54%
+     9  [      180,       200)        6271      79.2   13.12%
+    10  [      200,       220)        5362      73.2   11.22%
+    11  [      220,       240)        4234      65.1    8.86%
+    12  [      240,       260)        2880      53.7    6.03%
+    13  [      260,       280)        1649      40.6    3.45%
+    14  [      280,       300)         948      30.8    1.98%
+    15  [      300,       320)         411      20.3    0.86%
+    16  [      320,       340)         135      11.6    0.28%
+    17  [      340,       360)         103      10.1    0.22%
+    18  [      360,       380)          99      9.95    0.21%
+    19  [      380,       400)          67      8.19    0.14%
+    20  [      400,       420)          54      7.35    0.11%
+    21  [      420,       440)          49         7    0.10%
+    22  [      440,       460)          35      5.92    0.07%
+    23  [      460,       480)          17      4.12    0.04%
+    24  [      480,       500)          23       4.8    0.05%
+    25  [      500,       520)          11      3.32    0.02%
+    26  [      520,       540)          12      3.46    0.03%
+    27  [      540,       560)          16         4    0.03%
+    28  [      560,       580)           6      2.45    0.01%
+    29  [      580,       600)           5      2.24    0.01%
+    30  [      600,       620)           4         2    0.01%
+    31  [      620,       640)           1         1    0.00%
+    32  [      640,       660)           0         0    0.00%
+    33  [      660,       680)           0         0    0.00%
+    34  [      680,       700)           1         1    0.00%
+    35  [      700,       720)           0         0    0.00%
+    36  [      720,       740)           1         1    0.00%
+    37  [      740,       760)           0         0    0.00%
+    38  [      760,       780)           0         0    0.00%
+    39  [      780,       800)           0         0    0.00%
+    40  [      800,       820)           0         0    0.00%
+
+==============================================================================
+## describe1d stage 3 in the E window (raw counts, 47,782)
+==============================================================================
+== 1D  stage 3: 41 bins on [0, 820], integral 47782
+   shape   |..::-+#@@@%*+-:.................  . .    |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 177.2   std 61.87   skew 0.623   excess kurtosis 2.55
+   peak    bin 8, x = 170 (6469 entries)   FWHM 136.6 on [108.1, 244.8]
+   quantiles  5%: 80.03  16%: 118.7  25%: 136.6  50%: 175.4  75%: 215.6  84%: 234.7  95%: 275.3
+   nonempty bins 0..36 (x in [0, 740]);  first bin 0.09%, last bin 0.00% of the integral;  7 empty bins
+   per bin relative error: median 10.0%, worst nonempty bin 100.0%
+   bin  [lo, hi)                 count       err    frac
+     0  [        0,        20)          44      6.63    0.09%
+     1  [       20,        40)         299      17.3    0.63%
+     2  [       40,        60)         787      28.1    1.65%
+     3  [       60,        80)        1256      35.4    2.63%
+     4  [       80,       100)        2120        46    4.44%
+     5  [      100,       120)        3350      57.9    7.01%
+     6  [      120,       140)        4915      70.1   10.29%
+     7  [      140,       160)        6148      78.4   12.87%
+     8  [      160,       180)        6469      80.4   13.54%
+     9  [      180,       200)        6271      79.2   13.12%
+    10  [      200,       220)        5362      73.2   11.22%
+    11  [      220,       240)        4234      65.1    8.86%
+    12  [      240,       260)        2880      53.7    6.03%
+    13  [      260,       280)        1649      40.6    3.45%
+    14  [      280,       300)         948      30.8    1.98%
+    15  [      300,       320)         411      20.3    0.86%
+    16  [      320,       340)         135      11.6    0.28%
+    17  [      340,       360)         103      10.1    0.22%
+    18  [      360,       380)          99      9.95    0.21%
+    19  [      380,       400)          67      8.19    0.14%
+    20  [      400,       420)          54      7.35    0.11%
+    21  [      420,       440)          49         7    0.10%
+    22  [      440,       460)          35      5.92    0.07%
+    23  [      460,       480)          17      4.12    0.04%
+    24  [      480,       500)          23       4.8    0.05%
+    25  [      500,       520)          11      3.32    0.02%
+    26  [      520,       540)          12      3.46    0.03%
+    27  [      540,       560)          16         4    0.03%
+    28  [      560,       580)           6      2.45    0.01%
+    29  [      580,       600)           5      2.24    0.01%
+    30  [      600,       620)           4         2    0.01%
+    31  [      620,       640)           1         1    0.00%
+    32  [      640,       660)           0         0    0.00%
+    33  [      660,       680)           0         0    0.00%
+    34  [      680,       700)           1         1    0.00%
+    35  [      700,       720)           0         0    0.00%
+    36  [      720,       740)           1         1    0.00%
+    37  [      740,       760)           0         0    0.00%
+    38  [      760,       780)           0         0    0.00%
+    39  [      780,       800)           0         0    0.00%
+    40  [      800,       820)           0         0    0.00%
+
+==============================================================================
+## describe1d stage 4 in the E window (raw counts, 20,222)
+==============================================================================
+== 1D  stage 4: 41 bins on [0, 820], integral 20222
+   shape   |..::=+#@@@%#+-:......................... |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 187.9   std 77.94   skew 1.67   excess kurtosis 6.72
+   peak    bin 9, x = 190 (2546 entries)   FWHM 141.4 on [108.4, 249.8]
+   quantiles  5%: 82.61  16%: 121.6  25%: 140.5  50%: 180.5  75%: 223.7  84%: 246.2  95%: 307.6
+   nonempty bins 0..39 (x in [0, 800]);  first bin 0.08%, last bin 0.00% of the integral;  1 empty bins
+   per bin relative error: median 12.0%, worst nonempty bin 100.0%
+   bin  [lo, hi)                 count       err    frac
+     0  [        0,        20)          16         4    0.08%
+     1  [       20,        40)         118      10.9    0.58%
+     2  [       40,        60)         295      17.2    1.46%
+     3  [       60,        80)         468      21.6    2.31%
+     4  [       80,       100)         875      29.6    4.33%
+     5  [      100,       120)        1307      36.2    6.46%
+     6  [      120,       140)        1915      43.8    9.47%
+     7  [      140,       160)        2508      50.1   12.40%
+     8  [      160,       180)        2541      50.4   12.57%
+     9  [      180,       200)        2546      50.5   12.59%
+    10  [      200,       220)        2255      47.5   11.15%
+    11  [      220,       240)        1748      41.8    8.64%
+    12  [      240,       260)        1268      35.6    6.27%
+    13  [      260,       280)         770      27.7    3.81%
+    14  [      280,       300)         488      22.1    2.41%
+    15  [      300,       320)         246      15.7    1.22%
+    16  [      320,       340)         121        11    0.60%
+    17  [      340,       360)         105      10.2    0.52%
+    18  [      360,       380)         108      10.4    0.53%
+    19  [      380,       400)          90      9.49    0.45%
+    20  [      400,       420)          76      8.72    0.38%
+    21  [      420,       440)          56      7.48    0.28%
+    22  [      440,       460)          64         8    0.32%
+    23  [      460,       480)          38      6.16    0.19%
+    24  [      480,       500)          33      5.74    0.16%
+    25  [      500,       520)          25         5    0.12%
+    26  [      520,       540)          30      5.48    0.15%
+    27  [      540,       560)          25         5    0.12%
+    28  [      560,       580)          21      4.58    0.10%
+    29  [      580,       600)          15      3.87    0.07%
+    30  [      600,       620)          10      3.16    0.05%
+    31  [      620,       640)           7      2.65    0.03%
+    32  [      640,       660)           8      2.83    0.04%
+    33  [      660,       680)           5      2.24    0.02%
+    34  [      680,       700)           2      1.41    0.01%
+    35  [      700,       720)           7      2.65    0.03%
+    36  [      720,       740)           6      2.45    0.03%
+    37  [      740,       760)           1         1    0.00%
+    38  [      760,       780)           2      1.41    0.01%
+    39  [      780,       800)           3      1.73    0.01%
+    40  [      800,       820)           0         0    0.00%
+
+==============================================================================
+## compare1d stage 4 (post-FSI) vs stage 3 (pre-FSI), raw counts, |p_m| < 320
+==============================================================================
+== 1D compare  stage 4 post-FSI vs stage 3 pre-FSI: 16 bins on [0, 320]   (stage 3 pre-FSI is the reference)
+   integrals  stage 4 post-FSI 19364 ± 139   stage 3 pre-FSI 47143 ± 217   ratio stage 4 post-FSI/stage 3 pre-FSI = 0.4108 ± 0.0035  (-168.1 sigma from 1)
+   shape stage 4 post-FSI |..::=+#@@@%#+-:.|
+   shape stage 3 pre-FSI  |..::-+#@@@%*+-:.|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   177.3 vs 174.3   diff +3.008 ± 0.49  (+0.15 median bin widths, +6.2 sigma)
+   std    57.3 vs 56.21   ratio 1.019     skew -0.04 vs -0.06
+   peak   |p_m| [MeV/c] = 190 (bin 9) vs |p_m| [MeV/c] = 170 (bin 8)   shift +1 bins     FWHM 141.4 vs 136.6 (ratio 1.035)
+   quantiles stage 4 post-FSI minus stage 3 pre-FSI:  5%: +2.09   16%: +2.07   50%: +2.77   84%: +4.08   95%: +6.02
+   chi2/ndf   raw 11659.0/16 (p = 0)   shape, after scaling stage 3 pre-FSI by 0.4108: 63.2/15 (p = 7e-08)
+   KS   max |CDF diff| = 0.0214 at |p_m| [MeV/c] = 200  (stage 4 post-FSI has relatively more entries above that x)   p = 6.53e-06
+   per bin, low x -> high x   (|pull| > 2:  + stage 4 post-FSI above stage 3 pre-FSI,  - below,  . within,  blank both empty)
+     pull raw    |----------------|
+     pull shape  |............++++|
+     ratio shape |-============+++|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! stage 3 pre-FSI empty)
+   runs of same sign shape deviations (bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 12..15, |p_m| [MeV/c] in [240, 320)   stage 4 post-FSI minus scaled stage 3 pre-FSI = +353.5  (+5.8 sigma combined, +14.6% of stage 3 pre-FSI there)
+   regions from the 16% and 84% quantiles of stage 3 pre-FSI:
+     left tail  (|p_m| [MeV/c] < 118) stage 4 post-FSI       3079   stage 3 pre-FSI       7856   raw ratio 0.392 (-45.7 sigma)   shape ratio 0.954 (-2.2 sigma)
+     core       (|p_m| [MeV/c] in 118 .. 232) stage 4 post-FSI      13513   stage 3 pre-FSI      33399   raw ratio 0.405 (-91.8 sigma)   shape ratio 0.985 (-1.5 sigma)
+     right tail (|p_m| [MeV/c] > 232) stage 4 post-FSI       2772   stage 3 pre-FSI       5888   raw ratio 0.471 (-33.5 sigma)   shape ratio 1.146 (+5.8 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: stage 4 post-FSI is -58.9% relative to stage 3 pre-FSI (-168.1 sigma)
+     * one localized excess of stage 4 post-FSI for |p_m| [MeV/c] in [240, 320) (right tail, +14.6%, +5.8 sigma); plus smaller deviations elsewhere (chi2/ndf 17.0/11 outside the run)
+     * right tail: stage 4 post-FSI has +15% relative to stage 3 pre-FSI after normalization (+5.8 sigma)
+   bin  [lo, hi)               stage 4 post-FSI stage 3 pre-FSI    stage 4 post-FSI/stage 3 pre-FSI ± err     pull raw  pull shape
+     0  [        0,        20)          16         44      0.364 ±  0.106       -3.61       -0.43
+     1  [       20,        40)         118        299      0.395 ±  0.043       -8.86       -0.37
+     2  [       40,        60)         295        787      0.375 ±  0.026      -14.96       -1.37
+     3  [       60,        80)         468       1256      0.373 ±  0.020      -18.98       -1.84
+     4  [       80,       100)         875       2120      0.413 ±  0.017      -22.75       +0.12
+     5  [      100,       120)        1307       3350      0.390 ±  0.013      -29.94       -1.59
+     6  [      120,       140)        1915       4915      0.390 ±  0.010      -36.30       -1.98
+     7  [      140,       160)        2508       6148      0.408 ±  0.010      -39.12       -0.29
+     8  [      160,       180)        2541       6469      0.393 ±  0.009      -41.38       -1.93
+     9  [      180,       200)        2546       6271      0.406 ±  0.010      -39.67       -0.50
+    10  [      200,       220)        2255       5362      0.421 ±  0.011      -35.60       +0.93
+    11  [      220,       240)        1748       4234      0.413 ±  0.012      -32.14       +0.18
+    12  [      240,       260)        1268       2880      0.440 ±  0.015      -25.03       +2.03
+    13  [      260,       280)         770       1649      0.467 ±  0.020      -17.87       +2.86
+    14  [      280,       300)         488        948      0.515 ±  0.029      -12.14       +3.87
+    15  [      300,       320)         246        411      0.599 ±  0.048       -6.44       +4.35
+
+==============================================================================
+## compare1d stage 4 (occupancy, 40 MeV/c) vs Dutta fig 7 (raw), with errors
+==============================================================================
+== 1D compare  stage 4 MC vs Dutta fig 7 raw: 8 bins on [0, 320]   (Dutta fig 7 raw is the reference)
+   integrals  stage 4 MC 0.248124 ± 0.00178   Dutta fig 7 raw 0.227572 ± 0.00124   ratio stage 4 MC/Dutta fig 7 raw = 1.0903 ± 0.0098  (+9.2 sigma from 1)
+   shape stage 4 MC      |.:=%@%=:|
+   shape Dutta fig 7 raw |.:+@@#=:|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   177.3 vs 172.4   diff +4.858 ± 0.53  (+0.12 median bin widths, +9.1 sigma)
+   std    58.08 vs 61.03   ratio 0.952     skew -0.04 vs +0.08
+   peak   |p_m| [MeV/c] = 180 (bin 4) vs |p_m| [MeV/c] = 180 (bin 4)   shift +0 bins     FWHM 143.3 vs 150.2 (ratio 0.954)
+   quantiles stage 4 MC minus Dutta fig 7 raw:  5%: +9.53   16%: +11.8   50%: +5.77   84%: +1.29   95%: -3.75
+   chi2/ndf   raw 304.2/8 (p = 5.3e-61)   shape, after scaling Dutta fig 7 raw by 1.0903: 254.0/7 (p = 3.86e-51)
+   KS   max |CDF diff| = 0.0414 at |p_m| [MeV/c] = 120  (stage 4 MC has relatively more entries above that x)   p = 1.1e-18
+   per bin, low x -> high x   (|pull| > 2:  + stage 4 MC above Dutta fig 7 raw,  - below,  . within,  blank both empty)
+     pull raw    |.--++++-|
+     pull shape  |.--.+++-|
+     ratio shape |=--==++-|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! Dutta fig 7 raw empty)
+   runs of same sign shape deviations (bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+       -  bins 1..2, |p_m| [MeV/c] in [40, 120)   stage 4 MC minus scaled Dutta fig 7 raw = -0.01015  (-12.5 sigma combined, -21.2% of Dutta fig 7 raw there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+       +  bins 4..6, |p_m| [MeV/c] in [160, 280)   stage 4 MC minus scaled Dutta fig 7 raw = +0.01262  (+7.3 sigma combined, +9.7% of Dutta fig 7 raw there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+       -  bins 7..7, |p_m| [MeV/c] in [280, 320)   stage 4 MC minus scaled Dutta fig 7 raw = -0.002519  (-4.8 sigma combined, -21.1% of Dutta fig 7 raw there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+   regions from the 16% and 84% quantiles of Dutta fig 7 raw:
+     left tail  (|p_m| [MeV/c] < 108) stage 4 MC   0.039453   Dutta fig 7 raw   0.045598   raw ratio 0.865 (-7.6 sigma)   shape ratio 0.794 (-12.4 sigma)
+     core       (|p_m| [MeV/c] in 108 .. 235) stage 4 MC    0.17315   Dutta fig 7 raw    0.15021   raw ratio 1.153 (+12.7 sigma)   shape ratio 1.057 (+5.0 sigma)
+     right tail (|p_m| [MeV/c] > 235) stage 4 MC    0.03552   Dutta fig 7 raw   0.031762   raw ratio 1.118 (+4.2 sigma)   shape ratio 1.026 (+1.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: stage 4 MC is +9.0% relative to Dutta fig 7 raw (+9.2 sigma)
+     * left tail: stage 4 MC has -21% relative to Dutta fig 7 raw after normalization (-12.4 sigma)
+   bin  [lo, hi)               stage 4 MC Dutta fig 7 raw    stage 4 MC/Dutta fig 7 raw ± err     pull raw  pull shape
+     0  [        0,        40)    0.001717  0.0016781      1.023 ±  0.097       +0.24       -0.68
+     1  [       40,        80)   0.0097768   0.012213      0.801 ±  0.031       -6.13       -8.74
+     2  [       80,       120)    0.027959   0.031708      0.882 ±  0.021       -5.45       -9.40
+     3  [      120,       160)    0.056675   0.051835      1.093 ±  0.020       +4.83       +0.15
+     4  [      160,       200)    0.065183   0.057515      1.133 ±  0.020       +6.90       +2.16
+     5  [      200,       240)    0.051293   0.040862      1.255 ±  0.027      +10.28       +6.43
+     6  [      240,       280)    0.026114   0.020825      1.254 ±  0.039       +7.13       +4.43
+     7  [      280,       320)   0.0094052   0.010937      0.860 ±  0.043       -3.06       -4.80
+
+==============================================================================
+## compare1d stage 3 (occupancy, 40 MeV/c) vs Dutta fig 7 (raw), with errors
+==============================================================================
+== 1D compare  stage 3 MC vs Dutta fig 7 raw: 8 bins on [0, 320]   (Dutta fig 7 raw is the reference)
+   integrals  stage 3 MC 0.604076 ± 0.00278   Dutta fig 7 raw 0.227572 ± 0.00124   ratio stage 3 MC/Dutta fig 7 raw = 2.6544 ± 0.0190  (+87.2 sigma from 1)
+   shape stage 3 MC      |.:=%@#=.|
+   shape Dutta fig 7 raw |.:+@@#=:|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   174.3 vs 172.4   diff +1.86 ± 0.42  (+0.05 median bin widths, +4.4 sigma)
+   std    57.02 vs 61.03   ratio 0.934     skew -0.06 vs +0.08
+   peak   |p_m| [MeV/c] = 180 (bin 4) vs |p_m| [MeV/c] = 180 (bin 4)   shift +0 bins     FWHM 139 vs 150.2 (ratio 0.926)
+   quantiles stage 3 MC minus Dutta fig 7 raw:  5%: +7.66   16%: +9.3   50%: +3.23   84%: -2.35   95%: -7.97
+   chi2/ndf   raw 15473.1/8 (p = 0)   shape, after scaling Dutta fig 7 raw by 2.6544: 384.3/7 (p = 5.53e-79)
+   KS   max |CDF diff| = 0.0337 at |p_m| [MeV/c] = 120  (stage 3 MC has relatively more entries above that x)   p = 8.74e-20
+   per bin, low x -> high x   (|pull| > 2:  + stage 3 MC above Dutta fig 7 raw,  - below,  . within,  blank both empty)
+     pull raw    |++++++++|
+     pull shape  |.--+++.-|
+     ratio shape |=--==+=v|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! Dutta fig 7 raw empty)
+   runs of same sign shape deviations (bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+       -  bins 1..2, |p_m| [MeV/c] in [40, 120)   stage 3 MC minus scaled Dutta fig 7 raw = -0.02031  (-13.5 sigma combined, -17.4% of Dutta fig 7 raw there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+       +  bins 3..5, |p_m| [MeV/c] in [120, 240)   stage 3 MC minus scaled Dutta fig 7 raw = +0.02924  (+8.1 sigma combined, +7.3% of Dutta fig 7 raw there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+       -  bins 7..7, |p_m| [MeV/c] in [280, 320)   stage 3 MC minus scaled Dutta fig 7 raw = -0.01162  (-10.9 sigma combined, -40.0% of Dutta fig 7 raw there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+   regions from the 16% and 84% quantiles of Dutta fig 7 raw:
+     left tail  (|p_m| [MeV/c] < 108) stage 3 MC    0.10066   Dutta fig 7 raw   0.045598   raw ratio 2.208 (+45.9 sigma)   shape ratio 0.832 (-13.3 sigma)
+     core       (|p_m| [MeV/c] in 108 .. 235) stage 3 MC    0.42796   Dutta fig 7 raw    0.15021   raw ratio 2.849 (+108.6 sigma)   shape ratio 1.073 (+8.1 sigma)
+     right tail (|p_m| [MeV/c] > 235) stage 3 MC   0.075447   Dutta fig 7 raw   0.031762   raw ratio 2.375 (+38.1 sigma)   shape ratio 0.895 (-4.8 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: stage 3 MC is +165.4% relative to Dutta fig 7 raw (+87.2 sigma)
+     * width: stage 3 MC is narrower than Dutta fig 7 raw (std ratio 0.934, 68% interval ratio 0.908, FWHM ratio 0.926)
+     * left tail: stage 3 MC has -17% relative to Dutta fig 7 raw after normalization (-13.3 sigma)
+     * right tail: stage 3 MC has -11% relative to Dutta fig 7 raw after normalization (-4.8 sigma)
+   bin  [lo, hi)               stage 3 MC Dutta fig 7 raw    stage 3 MC/Dutta fig 7 raw ± err     pull raw  pull shape
+     0  [        0,        40)   0.0043951  0.0016781      2.619 ±  0.175      +11.04       -0.20
+     1  [       40,        80)    0.026178   0.012213      2.144 ±  0.057      +23.03       -8.31
+     2  [       80,       120)    0.070091   0.031708      2.211 ±  0.038      +38.14      -10.77
+     3  [      120,       160)     0.14176   0.051835      2.735 ±  0.038      +62.11       +2.14
+     4  [      160,       200)     0.16325   0.057515      2.838 ±  0.040      +66.97       +4.77
+     5  [      200,       240)     0.12296   0.040862      3.009 ±  0.054      +58.83       +7.08
+     6  [      240,       280)    0.058033   0.020825      2.787 ±  0.075      +37.98       +1.83
+     7  [      280,       320)    0.017414   0.010937      1.592 ±  0.068      +10.90      -10.88

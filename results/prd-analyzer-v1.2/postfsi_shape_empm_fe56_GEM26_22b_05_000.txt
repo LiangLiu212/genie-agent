@@ -1,0 +1,78 @@
+# postfsi_shape_empm_fe56_GEM26_22b_05_000.png
+# right panel: post-FSI |p_m| (E window, < 320) unit-normalized vs Dutta fig 7 unit-normalized;
+# left panel: see em_postfsi_shape_fe56_GEM26_22b_05_000.txt (same E_m construction)
+
+
+==============================================================================
+## compare1d stage 4 |p_m| shape (40 MeV/c) vs Dutta fig 7 shape, both unit integral over [0, 320)
+==============================================================================
+== 1D compare  stage 4 shape vs Dutta fig 7 shape: 8 bins on [0, 320]   (Dutta fig 7 shape is the reference)
+   integrals  stage 4 shape 0.025 ± 0.00018   Dutta fig 7 shape 0.025 ± 0.000137   ratio stage 4 shape/Dutta fig 7 shape = 1.0000 ± 0.0090  (+0.0 sigma from 1)
+   shape stage 4 shape     |.:=%@%=:|
+   shape Dutta fig 7 shape |.:+@@#=:|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   177.3 vs 172.4   diff +4.858 ± 0.53  (+0.12 median bin widths, +9.1 sigma)
+   std    58.08 vs 61.03   ratio 0.952     skew -0.04 vs +0.08
+   peak   |p_m| [MeV/c] = 180 (bin 4) vs |p_m| [MeV/c] = 180 (bin 4)   shift +0 bins     FWHM 143.3 vs 150.2 (ratio 0.954)
+   quantiles stage 4 shape minus Dutta fig 7 shape:  5%: +9.53   16%: +11.8   50%: +5.77   84%: +1.29   95%: -3.75
+   chi2/ndf   raw 254.0/8 (p = 2.42e-50)   shape, after scaling Dutta fig 7 shape by 1.0000: 254.0/7 (p = 3.86e-51)
+   KS   max |CDF diff| = 0.0414 at |p_m| [MeV/c] = 120  (stage 4 shape has relatively more entries above that x)   p = 1.1e-18
+   per bin, low x -> high x   (|pull| > 2:  + stage 4 shape above Dutta fig 7 shape,  - below,  . within,  blank both empty)
+     pull raw    |.--.+++-|
+     pull shape  |.--.+++-|
+     ratio shape |=--==++-|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! Dutta fig 7 shape empty)
+   runs of same sign shape deviations (bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+       -  bins 1..2, |p_m| [MeV/c] in [40, 120)   stage 4 shape minus scaled Dutta fig 7 shape = -0.001023  (-12.5 sigma combined, -21.2% of Dutta fig 7 shape there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+       +  bins 4..6, |p_m| [MeV/c] in [160, 280)   stage 4 shape minus scaled Dutta fig 7 shape = +0.001272  (+7.3 sigma combined, +9.7% of Dutta fig 7 shape there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+       -  bins 7..7, |p_m| [MeV/c] in [280, 320)   stage 4 shape minus scaled Dutta fig 7 shape = -0.0002538  (-4.8 sigma combined, -21.1% of Dutta fig 7 shape there)  [fewer than 10 entries in total: Gaussian pull not reliable]
+   regions from the 16% and 84% quantiles of Dutta fig 7 shape:
+     left tail  (|p_m| [MeV/c] < 108) stage 4 shape  0.0039752   Dutta fig 7 shape  0.0050092   raw ratio 0.794 (-12.4 sigma)   shape ratio 0.794 (-12.4 sigma)
+     core       (|p_m| [MeV/c] in 108 .. 235) stage 4 shape   0.017446   Dutta fig 7 shape   0.016502   raw ratio 1.057 (+5.0 sigma)   shape ratio 1.057 (+5.0 sigma)
+     right tail (|p_m| [MeV/c] > 235) stage 4 shape  0.0035788   Dutta fig 7 shape  0.0034892   raw ratio 1.026 (+1.0 sigma)   shape ratio 1.026 (+1.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * left tail: stage 4 shape has -21% relative to Dutta fig 7 shape after normalization (-12.4 sigma)
+   bin  [lo, hi)               stage 4 shape Dutta fig 7 shape    stage 4 shape/Dutta fig 7 shape ± err     pull raw  pull shape
+     0  [        0,        40)    0.000173 0.00018435      0.938 ±  0.089       -0.68       -0.68
+     1  [       40,        80)  0.00098508  0.0013416      0.734 ±  0.029       -8.74       -8.74
+     2  [       80,       120)   0.0028171  0.0034833      0.809 ±  0.019       -9.40       -9.40
+     3  [      120,       160)   0.0057103  0.0056943      1.003 ±  0.018       +0.15       +0.15
+     4  [      160,       200)   0.0065676  0.0063184      1.039 ±  0.019       +2.16       +2.16
+     5  [      200,       240)   0.0051681  0.0044889      1.151 ±  0.025       +6.43       +6.43
+     6  [      240,       280)   0.0026312  0.0022878      1.150 ±  0.036       +4.43       +4.43
+     7  [      280,       320)  0.00094763  0.0012014      0.789 ±  0.039       -4.80       -4.80
+
+==============================================================================
+## compare1d stage 4 vs stage 3 |p_m| shapes (raw counts, 40 MeV/c)
+==============================================================================
+== 1D compare  stage 4 post-FSI vs stage 3 pre-FSI: 8 bins on [0, 320]   (stage 3 pre-FSI is the reference)
+   integrals  stage 4 post-FSI 19364 ± 139   stage 3 pre-FSI 47143 ± 217   ratio stage 4 post-FSI/stage 3 pre-FSI = 0.4108 ± 0.0035  (-168.1 sigma from 1)
+   shape stage 4 post-FSI |.:=%@%=:|
+   shape stage 3 pre-FSI  |.:=%@#=.|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   177.3 vs 174.3   diff +2.997 ± 0.49  (+0.07 median bin widths, +6.1 sigma)
+   std    58.08 vs 57.02   ratio 1.019     skew -0.04 vs -0.06
+   peak   |p_m| [MeV/c] = 180 (bin 4) vs |p_m| [MeV/c] = 180 (bin 4)   shift +0 bins     FWHM 143.3 vs 139 (ratio 1.030)
+   quantiles stage 4 post-FSI minus stage 3 pre-FSI:  5%: +1.87   16%: +2.46   50%: +2.53   84%: +3.64   95%: +4.22
+   chi2/ndf   raw 11652.5/8 (p = 0)   shape, after scaling stage 3 pre-FSI by 0.4108: 56.1/7 (p = 8.88e-10)
+   KS   max |CDF diff| = 0.0214 at |p_m| [MeV/c] = 200  (stage 4 post-FSI has relatively more entries above that x)   p = 6.53e-06
+   per bin, low x -> high x   (|pull| > 2:  + stage 4 post-FSI above stage 3 pre-FSI,  - below,  . within,  blank both empty)
+     pull raw    |--------|
+     pull shape  |.-....++|
+     ratio shape |=======+|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! stage 3 pre-FSI empty)
+   runs of same sign shape deviations (bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 6..7, |p_m| [MeV/c] in [240, 320)   stage 4 post-FSI minus scaled stage 3 pre-FSI = +353.5  (+5.8 sigma combined, +14.6% of stage 3 pre-FSI there)
+   regions from the 16% and 84% quantiles of stage 3 pre-FSI:
+     left tail  (|p_m| [MeV/c] < 118) stage 4 post-FSI       3079   stage 3 pre-FSI       7856   raw ratio 0.392 (-45.7 sigma)   shape ratio 0.954 (-2.2 sigma)
+     core       (|p_m| [MeV/c] in 118 .. 233) stage 4 post-FSI      13513   stage 3 pre-FSI      33399   raw ratio 0.405 (-91.8 sigma)   shape ratio 0.985 (-1.5 sigma)
+     right tail (|p_m| [MeV/c] > 233) stage 4 post-FSI       2772   stage 3 pre-FSI       5888   raw ratio 0.471 (-33.5 sigma)   shape ratio 1.146 (+5.8 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: stage 4 post-FSI is -58.9% relative to stage 3 pre-FSI (-168.1 sigma)
+     * one localized excess of stage 4 post-FSI for |p_m| [MeV/c] in [240, 320) (right tail, +14.6%, +5.8 sigma); plus smaller deviations elsewhere (chi2/ndf 12.8/5 outside the run)
+     * right tail: stage 4 post-FSI has +15% relative to stage 3 pre-FSI after normalization (+5.8 sigma)
+   bin  [lo, hi)               stage 4 post-FSI stage 3 pre-FSI    stage 4 post-FSI/stage 3 pre-FSI ± err     pull raw  pull shape
+     0  [        0,        40)         134        343      0.391 ±  0.040       -9.57       -0.50
+     1  [       40,        80)         763       2043      0.373 ±  0.016      -24.16       -2.29
+     2  [       80,       120)        2182       5470      0.399 ±  0.010      -37.59       -1.16
+     3  [      120,       160)        4423      11063      0.400 ±  0.007      -53.36       -1.53
+     4  [      160,       200)        5087      12740      0.399 ±  0.007      -57.32       -1.72
+     5  [      200,       240)        4003       9596      0.417 ±  0.008      -47.96       +0.82
+     6  [      240,       280)        2038       4529      0.450 ±  0.012      -30.74       +3.36
+     7  [      280,       320)         734       1359      0.540 ±  0.025      -13.66       +5.66

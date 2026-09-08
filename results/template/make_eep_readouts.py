@@ -22,8 +22,9 @@ Figures covered (stems as written by the generators, C12 shown):
                                     and T_p (raw events)
   pmiss_signed_c12_<tune>           + side vs - side, stages 3 and 4
 
-Data enter with their statistical errors (E_m: fig 9 stat column; |p_m|:
-fig 6 column 4), MC with sqrt(N) scaled like the occupancy curve.
+Data enter with their statistical errors (E_m: fig 9 / fig 11 stat column;
+|p_m|: fig 6 / fig 7 column 4), MC with sqrt(N) scaled like the occupancy
+curve. Figure names per target: FIGS.
 
 Usage (v1.2):
   GENIE_AGENT_INSTALLATION=genie_inclxx pixi run python results/template/make_eep_readouts.py \
@@ -47,6 +48,9 @@ import make_fsi_proton_choice as fp                    # noqa: E402
 import make_kin_qel_q2cut as kq                        # noqa: E402
 from qe_norm import norm_count                         # noqa: E402
 
+# Dutta figure names per target: (E_m figure, |p_m| figure)
+FIGS = {"C12": ("fig 9", "fig 6 p+s"), "Fe56": ("fig 11", "fig 7")}
+
 
 def header(fh, title, lines):
     fh.write(f"# {title}\n")
@@ -68,6 +72,7 @@ def restored(c, m_rec):
 
 def em_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
     cfg = em.TGT[target]
+    figE, figP = FIGS[target]
     Z = cfg["Z"]
     dem, dsf, dstat, dtot = dutta
     E, B = em.EDGES, em.BINW
@@ -85,7 +90,7 @@ def em_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
             f"tune {tune}, {target}; selection qel && hit p && Q2 slice && N_p=1; p_s < {em.PM_MAX:.0f} MeV/c",
             f"stages: 2 = record m_N - E_n, 3 = pre-FSI omega - T_p, 4 = post-FSI omega - T_p, restored axis",
             f"occupancy scale Z*cnt/(N*{B:.0f} MeV) with {norm_desc}",
-            f"data: Dutta fig 9, convention {em.DATA_CONV} (scale factor {em.DATA_SCALE:g} on S(Em)); "
+            f"data: Dutta {figE}, convention {em.DATA_CONV} (scale factor {em.DATA_SCALE:g} on S(Em)); "
             f"I(data) = {dsf.sum() * B:.3f}",
             "MC integrals (E<80): " + ", ".join(f"I{s}r = {cnt[s].sum() * f * B:.3f}" for s in (2, 3, 4)),
             "histdiag: raw counts for MC-only reports; scaled values + errors for MC vs data",
@@ -97,9 +102,9 @@ def em_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
         hd.compare1d(cnt[3], cnt[2], E, labels=("stage 3 pre-FSI", "stage 2 record"),
                      xname=xname, quiet=True, save=fh)
         for s in (4, 3):
-            section(fh, f"compare1d stage {s} (occupancy scale) vs Dutta fig 9 ({em.DATA_CONV}), with errors")
+            section(fh, f"compare1d stage {s} (occupancy scale) vs Dutta {figE} ({em.DATA_CONV}), with errors")
             hd.compare1d(f * cnt[s], dsf, E, e1=f * np.sqrt(cnt[s]), e2=dstat,
-                         labels=(f"stage {s} MC", f"Dutta fig 9 {em.DATA_CONV}"),
+                         labels=(f"stage {s} MC", f"Dutta {figE} {em.DATA_CONV}"),
                          xname=xname, quiet=True, save=fh)
     print("wrote", f"{stem}.txt")
 
@@ -114,11 +119,11 @@ def em_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
         hd.compare1d(cnt[4], cnt[3], E, labels=("stage 4 post-FSI", "stage 3 pre-FSI"),
                      xname=xname, quiet=True, save=fh)
         dn = dsf / (dsf.sum() * B)
-        section(fh, "compare1d stage 4 unit-normalized vs Dutta fig 9 unit-normalized (errors propagated)")
+        section(fh, f"compare1d stage 4 unit-normalized vs Dutta {figE} unit-normalized (errors propagated)")
         n4 = max(cnt[4].sum(), 1)
         hd.compare1d(cnt[4] / (n4 * B), dn, E, e1=np.sqrt(cnt[4]) / (n4 * B),
                      e2=dstat / (dsf.sum() * B),
-                     labels=("stage 4 shape", "Dutta fig 9 shape"), xname=xname,
+                     labels=("stage 4 shape", f"Dutta {figE} shape"), xname=xname,
                      quiet=True, save=fh)
     print("wrote", f"{stem}.txt")
     return cnt
@@ -126,6 +131,7 @@ def em_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
 
 def pm_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
     cfg = pm.TGT[target]
+    figE, figP = FIGS[target]
     Z = cfg["Z"]
     dx, dy, de = dutta
     E, B = pm.EDGES, pm.DK
@@ -150,7 +156,7 @@ def pm_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
             f"tune {tune}, {target}; selection qel && hit p && Q2 slice && N_p=1; E window {cfg['win_label']}",
             "stages: 2 = record |p_n|, 3 = pre-FSI |p_p - q|, 4 = post-FSI |p_p - q|; native 20 MeV/c bins",
             f"occupancy scale Z*cnt/(N*{B:.0f} MeV/c) with {norm_desc}",
-            f"data: Dutta fig 6 top+bottom, convention {pm.DATA_CONV} (fold factor {pm.DATA_FOLD:g}), "
+            f"data: Dutta {figP}, convention {pm.DATA_CONV} (fold factor {pm.DATA_FOLD:g}), "
             f"weighted 4 pi p^2 onto the occupancy axis; I(data, <320) = {(dy * dx ** 2).sum() * 4 * np.pi * 40:.3f}",
             "MC integrals (<320): " + ", ".join(f"I{s} = {cnt[s][:nb].sum() * f * B:.3f}" for s in (2, 3, 4)),
         ])
@@ -165,9 +171,9 @@ def pm_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
         for s in (4, 3):
             c40, _, _ = hd.rebin1d(cnt[s][:nb], E320, 2)
             f40 = Z / (n_norm * 40.0)
-            section(fh, f"compare1d stage {s} (occupancy, 40 MeV/c) vs Dutta fig 6 p+s ({pm.DATA_CONV}), with errors")
+            section(fh, f"compare1d stage {s} (occupancy, 40 MeV/c) vs Dutta {figP} ({pm.DATA_CONV}), with errors")
             hd.compare1d(f40 * c40, wgt * dy, edges40, e1=f40 * np.sqrt(c40), e2=wgt * de,
-                         labels=(f"stage {s} MC", f"Dutta fig 6 {pm.DATA_CONV}"),
+                         labels=(f"stage {s} MC", f"Dutta {figP} {pm.DATA_CONV}"),
                          xname=xname, quiet=True, save=fh)
     print("wrote", f"{stem}.txt")
 
@@ -182,16 +188,16 @@ def pm_ladder_readouts(out, target, tune, c, n_norm, norm_desc, dutta):
     stem = out / f"postfsi_shape_empm_{target.lower()}_{tune}"
     with open(f"{stem}.txt", "w") as fh:
         header(fh, f"{stem.name}.png", [
-            "right panel: post-FSI |p_m| (shell windows, < 320) unit-normalized vs Dutta fig 6 p+s unit-normalized;",
+            f"right panel: post-FSI |p_m| (E window, < 320) unit-normalized vs Dutta {figP} unit-normalized;",
             f"left panel: see em_postfsi_shape_{target.lower()}_{tune}.txt (same E_m construction)",
         ])
         c40, _, _ = hd.rebin1d(cnt[4][:nb], E320, 2)
         n4 = max(c40.sum(), 1)
         dsum = (wgt * dy).sum() * 40.0
-        section(fh, "compare1d stage 4 |p_m| shape (40 MeV/c) vs Dutta fig 6 p+s shape, both unit integral over [0, 320)")
+        section(fh, f"compare1d stage 4 |p_m| shape (40 MeV/c) vs Dutta {figP} shape, both unit integral over [0, 320)")
         hd.compare1d(c40 / (n4 * 40.0), wgt * dy / dsum, edges40,
                      e1=np.sqrt(c40) / (n4 * 40.0), e2=wgt * de / dsum,
-                     labels=("stage 4 shape", "Dutta fig 6 shape"), xname=xname,
+                     labels=("stage 4 shape", f"Dutta {figP} shape"), xname=xname,
                      quiet=True, save=fh)
         c40_3, _, _ = hd.rebin1d(cnt[3][:nb], E320, 2)
         section(fh, "compare1d stage 4 vs stage 3 |p_m| shapes (raw counts, 40 MeV/c)")

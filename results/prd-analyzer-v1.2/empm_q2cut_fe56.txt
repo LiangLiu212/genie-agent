@@ -1,0 +1,27 @@
+# empm_q2cut_fe56.png  (+ _counts, _lin: same counts, other axes)
+# tune GEM26_22b_05_000; qel && Q2 slice && N_p = 1, E_m/p_m UNCUT: N = 44,045
+# grey dashed section-4 window in the figure = 0 < E_m < 80 MeV, p_m < 300 MeV/c (not applied)
+
+# in-window fraction (of N_p = 1): 0.446
+
+==============================================================================
+## describe1d E_miss (E_m = omega - T_p [MeV])
+==============================================================================
+== 1D  E_miss: 54 bins on [-40, 1200], integral 43894
+   shape   |..@=:.................................................|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 256.6   std 281.9   skew 0.878   excess kurtosis -0.528
+   peak    bin 2, x = 17.41 (13802 entries)   FWHM 29.48 on [5.862, 35.34]
+   quantiles  5%: 9.384  16%: 17.42  25%: 23.99  50%: 91.62  75%: 490.2  84%: 606.2  95%: 788.1
+   nonempty bins 0..53 (x in [-40, 1200]);  first bin 0.09%, last bin 0.03% of the integral;  0 empty bins
+   per bin relative error: median 4.4%, worst nonempty bin 28.9%
+
+==============================================================================
+## describe1d p_miss (p_m [MeV/c])
+==============================================================================
+== 1D  p_miss: 54 bins on [0, 1900], integral 44024
+   shape   |.:-*@@#=-::::::::::::::::::::::::::::::...............|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 557.2   std 442.8   skew 0.722   excess kurtosis -0.832
+   peak    bin 4, x = 158.3 (4672 entries)   FWHM 151.3 on [106, 257.3]
+   quantiles  5%: 104.7  16%: 153.6  25%: 183.8  50%: 357.6  75%: 934.7  84%: 1127  95%: 1370
+   nonempty bins 0..53 (x in [0, 1900]);  first bin 0.25%, last bin 0.02% of the integral;  0 empty bins
+   per bin relative error: median 3.9%, worst nonempty bin 35.4%
