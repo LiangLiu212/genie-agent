@@ -20,6 +20,16 @@ with the 2% pt-to-pt (+) 5% model inflation; fig9 for C12 via
 fig9_common.load_dutta incl. the pixel-measured p-shell bars) — the data IS
 the Q^2 = 1.28 setting, so the window brings MC phase space closer to it.
 
+v1.2 switches:
+  --data-conv raw   halve S(Em): the plotted fig 9/11 integrate 4pi p^2 S^D
+                    over SIGNED p_m (-300..+300) and so count each |p_m|
+                    twice; Sum S dE / 2 = 3.04 (C12) / 9.10 (Fe56) is the
+                    nucleon count, a raw distorted strength ~ T Z / f_corr
+                    (author-confirmed 2026-09-06, report/dutta-integral/).
+                    Default `folded` = published scale (v0.2-v1.1).
+  --norm total-qe   occupancy count N = all generated QE events of the
+                    sample (qe_norm.py) instead of the windowed N_sel.
+
 Cache: results/prd-analyzer-v0.2/cache/ladder_<target>/<tune>.npz
 (E2/p2/E3/p3/E4/p4 [MeV, MeV/c] + ntot/n_sel; same fields as the v0.1 Fe56
 caches, consumed by make_pmiss_q2cut.py). Delete to re-stream.
@@ -41,6 +51,7 @@ from plot_style import (apply_style, new_panels, style_axis,
                         FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE, DPI)
 from make_sf2d_table import resolve_sf_table, read_pke_table  # noqa: E402
 from pnfs_ls import gst_urls, xrootd_url                      # noqa: E402
+from qe_norm import norm_count, NORMS, NORM_LABELS            # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 GRIDLOG_ROOT = REPO / "jobsub-agent/jobsub-runs"
@@ -55,6 +66,9 @@ SEL_TAG = ""                    # "_leading" for the uncut leading-p variant
 PM_MAX = 300.0
 BINW = 5.0
 EDGES = np.arange(0.0, 85.0, 5.0)
+DATA_CONV = "folded"            # --data-conv: "folded" (publ. scale) | "raw" (/2)
+DATA_SCALE = 1.0                # factor on S(Em) and its errors
+NORM = "windowed"               # --norm: "windowed" (cache n_sel) | "total-qe"
 
 # proton mass from the repo-shared PDG table (same provenance as v0.1)
 _nuc = json.load(open(REPO / "shared/pdg.json"))["nucleons"]
@@ -97,6 +111,22 @@ def _dutta_fe56():
 def _dutta_c12():
     from fig9_common import load_dutta
     return load_dutta()
+
+
+def scale_dutta(d):
+    """(dem, dsf, dstat, dtot) -> the same with S and errors x DATA_SCALE."""
+    dem, dsf, dstat, dtot = d
+    return dem, DATA_SCALE * dsf, DATA_SCALE * dstat, DATA_SCALE * dtot
+
+
+def set_data_conv(conv):
+    """Select the Dutta E_m data convention (applied by scale_dutta)."""
+    global DATA_CONV, DATA_SCALE
+    DATA_CONV = conv
+    DATA_SCALE = 1.0 if conv == "folded" else 0.5
+    if conv == "raw":
+        TGT["Fe56"]["data_label"] = "Dutta Fig. 11 (publ./2 = count)"
+        TGT["C12"]["data_label"] = "Dutta Fig. 9 (publ./2 = count)"
 
 
 # per-target configuration
@@ -274,7 +304,7 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
     if not cache.exists():
         build_cache(target, tune, max_files)
     c = dict(np.load(cache))
-    n_sel = float(c["n_sel"][0])
+    n_sel, norm_desc = norm_count(NORM, target, tune, c)
     with np.errstate(invalid="ignore"):
         for s in (2, 3, 4):          # restored axis: E_s + p_s^2/(2 M_rec)
             c[f"E{s}r"] = c[f"E{s}"] + c[f"p{s}"] ** 2 / (2.0 * m_rec * 1000.0)
@@ -288,10 +318,12 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
 
     h = {s: occ_hist(c[f"E{s}r"], c[f"p{s}"], n_sel, cfg["Z"]) for s in (2, 3, 4)}
     w2 = c["p2"] < PM_MAX
-    print(f"[{tune}] windowed restored ladder (E<80, p_s<300; occupancy):")
+    print(f"[{tune}] windowed restored ladder (E<80, p_s<300; occupancy, "
+          f"{norm_desc}; data {DATA_CONV}):")
     if y_in is not None:
         print(f"  I1(table,k<300)={y_in.sum() * BINW:.3f}", end="  ")
-    print("  ".join(f"I{s}r={h[s].sum() * BINW:.3f}" for s in (2, 3, 4))
+    print(f"  I(data)={dsf.sum() * BINW:.3f}  "
+          + "  ".join(f"I{s}r={h[s].sum() * BINW:.3f}" for s in (2, 3, 4))
           + f"  I4r/I3r={h[4].sum() / max(h[3].sum(), 1e-12):.3f}")
     print(f"  stage-2 record: median {np.median(c['E2r'][w2]):.2f} MeV, "
           f"p5-p95 [{np.percentile(c['E2r'][w2], 5):.2f}, "
@@ -361,7 +393,8 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
         ax.set_xlim(0, 85)
         ax.set_ylim(0, cfg["ymax"])
         if i % 2 == 0:
-            ax.set_ylabel(r"$Z\cdot$ d$N/$d$(E_m+T_{rec})\,/\,N_{sel}$   (MeV$^{-1}$)",
+            ax.set_ylabel(r"$Z\cdot$ d$N/$d$(E_m+T_{rec})\,/\,"
+                          + NORM_LABELS[NORM] + r"$   (MeV$^{-1}$)",
                           fontsize=FS_LABEL)
 
     fig.suptitle(f"{target} restored E$_m$ ladder — {tune}  "
@@ -370,7 +403,8 @@ def make_figure(target, tune, max_files, dutta, table_stem, table):
                  + ("" if NO_Q2CUT else " && $Q^2=1.28\\pm5\\%$")
                  + (" && N$_p$=1" if PROTON_SEL == "1p" else "")
                  + (", NO $Q^2$ cut" if NO_Q2CUT else "")
-                 + ", $p_m<300$ MeV/$c$; " + cfg["data_label"],
+                 + ", $p_m<300$ MeV/$c$; " + cfg["data_label"]
+                 + ("\n$N_{QE}$ = all generated QE events (both species, no window)" if NORM == "total-qe" else ""),
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
     out = OUT_DIR / f"em_ladder_restored{SEL_TAG}_{tlow}_{tune}.png"
@@ -409,8 +443,7 @@ def make_shape_figure(target, tune, c, dutta):
                 elinewidth=3, alpha=0.8, zorder=8)
     ax.errorbar(dem, dsf * dnorm, yerr=dstat * dnorm, fmt="s", ms=4,
                 color="black", capsize=2, zorder=9,
-                label=cfg["data_label"].replace("publ. scale",
-                                                "unit-normalized"))
+                label=cfg["data_label"].split(" (")[0] + " (unit-normalized)")
     style_axis(ax, title=None, xlabel=r"$E_m+T_{rec}$  (MeV)",
                logx=False, logy=False, ymin=None)
     ax.set_xlim(0, 85)
@@ -448,9 +481,17 @@ if __name__ == "__main__":
                     help="write the figures here instead of the version default")
     ap.add_argument("--build-only", action="store_true",
                     help="only build missing caches, write no figures")
+    ap.add_argument("--data-conv", default="folded", choices=["folded", "raw"],
+                    help="Dutta E_m data: published scale (v0.2-v1.1) or "
+                         "halved = nucleon count (v1.2+, author-confirmed)")
+    ap.add_argument("--norm", default="windowed", choices=list(NORMS),
+                    help="occupancy count: windowed N_sel (v0.2-v1.1) or "
+                         "total-qe = all generated QE events (v1.2+)")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
     NO_Q2CUT = args.no_q2cut
+    NORM = args.norm
+    set_data_conv(args.data_conv)
     if PROTON_SEL == "1p":
         CACHE_ROOT = REPO / "results/prd-analyzer-v0.3/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
@@ -464,7 +505,7 @@ if __name__ == "__main__":
 
     apply_style()
     table_stem, table = load_table(args.target, "GEM26_22a_05_000")
-    dutta = TGT[args.target]["dutta"]()
+    dutta = scale_dutta(TGT[args.target]["dutta"]())
     for tune in (sorted(TUNE_GS) if args.all_tunes else [args.tune]):
         if args.build_only:
             cache = (CACHE_ROOT / f"ladder_{args.target.lower()}{SEL_TAG}"

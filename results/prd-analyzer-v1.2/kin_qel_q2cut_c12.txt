@@ -1,0 +1,60 @@
+# kin_qel_q2cut_c12.png  (+ _counts: same counts, raw axis)
+# tune GEM26_22b_05_000; qel && Q2 slice (both hit-nucleon species): N = 75,664 of qel = 277,035 of ntot = 2,000,000
+# proton panels (T_p, theta_p): N_p = 1 -> 48,324 events
+# bin ranges: pooled p0.2-p99.8 rounded to the panel step, as in the figure
+
+
+==============================================================================
+## describe1d El (E$_{e'}$  [GeV])
+==============================================================================
+== 1D  El: 59 bins on [0.8, 2.1], integral 75487
+   shape   |..........................:::--==++*#%%%@@@@@@@%#*+=-::....|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 1.708   std 0.1619   skew -0.783   excess kurtosis 1.52
+   peak    bin 43, x = 1.758 (4263 entries)   FWHM 0.3606 on [1.553, 1.914]
+   quantiles  5%: 1.427  16%: 1.556  25%: 1.613  50%: 1.723  75%: 1.823  84%: 1.864  95%: 1.94
+   nonempty bins 0..58 (x in [0.8, 2.1]);  first bin 0.02%, last bin 0.06% of the integral;  0 empty bins
+   per bin relative error: median 5.3%, worst nonempty bin 30.2%
+
+==============================================================================
+## describe1d theta_e ($\theta_{e'}$  [deg])
+==============================================================================
+== 1D  theta_e: 59 bins on [28, 47], integral 75528
+   shape   |...::=+#%@@@@%##*+=--:::...................................|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 32.2   std 1.839   skew 1.48   excess kurtosis 5.48
+   peak    bin 10, x = 31.38 (6253 entries)   FWHM 3.595 on [30.01, 33.6]
+   quantiles  5%: 29.79  16%: 30.53  25%: 30.95  50%: 31.95  75%: 33.14  84%: 33.78  95%: 35.39
+   nonempty bins 0..58 (x in [28, 47]);  first bin 0.03%, last bin 0.02% of the integral;  0 empty bins
+   per bin relative error: median 9.5%, worst nonempty bin 44.7%
+
+==============================================================================
+## describe1d Tp (T$_p$  [GeV])
+==============================================================================
+== 1D  Tp: 59 bins on [0, 1.4], integral 48241
+   shape   |+**++==----:--::--=+**#%@@@@@@@%##*+==--:::................|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.5499   std 0.2745   skew -0.395   excess kurtosis -0.576
+   peak    bin 26, x = 0.6288 (2145 entries)   FWHM 0.3787 on [0.4714, 0.8502]
+   quantiles  5%: 0.04795  16%: 0.1798  25%: 0.375  50%: 0.6027  75%: 0.7417  84%: 0.8045  95%: 0.9362
+   nonempty bins 0..58 (x in [0, 1.4]);  first bin 2.22%, last bin 0.01% of the integral;  0 empty bins
+   per bin relative error: median 3.9%, worst nonempty bin 37.8%
+
+==============================================================================
+## describe1d theta_p ($\theta_p$  [deg])
+==============================================================================
+== 1D  theta_p: 55 bins on [5, 160], integral 48219
+   shape   |.......::=*%@@@%#+-:::.................................|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 48.39   std 18.91   skew 2.01   excess kurtosis 6.24
+   peak    bin 13, x = 43.05 (5296 entries)   FWHM 20.15 on [33.67, 53.81]
+   quantiles  5%: 26.88  16%: 35.16  25%: 38.3  50%: 44.94  75%: 52.64  84%: 58.41  95%: 87.83
+   nonempty bins 0..54 (x in [5, 160]);  first bin 0.19%, last bin 0.04% of the integral;  0 empty bins
+   per bin relative error: median 6.5%, worst nonempty bin 25.0%
+
+==============================================================================
+## describe1d Q2 (Q$^2$  [(GeV/c)$^2$])
+==============================================================================
+== 1D  Q2: 55 bins on [1.2, 1.36], integral 75664
+   shape   |     +@@@@@@@@@@@%%@%%%%%%%%%%%#%#############***-     |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 1.275   std 0.03677   skew 0.147   excess kurtosis -1.17
+   peak    bin 6, x = 1.219 (2104 entries)   FWHM 0.1264 on [1.216, 1.342]
+   quantiles  5%: 1.221  16%: 1.233  25%: 1.243  50%: 1.273  75%: 1.306  84%: 1.319  95%: 1.336
+   nonempty bins 5..49 (x in [1.215, 1.345]);  first bin 0.00%, last bin 0.00% of the integral;  10 empty bins
+   per bin relative error: median 2.4%, worst nonempty bin 3.8%

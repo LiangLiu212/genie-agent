@@ -1,0 +1,4 @@
+# pm_ladder_dens_c12_GEM26_22b_05_000.png
+# same counts as pm_ladder_c12_GEM26_22b_05_000.txt: the density figure divides every MC
+# stage by 4 pi p_c^2 (bin centres) and draws the data as tabulated; no separate histogram.
+

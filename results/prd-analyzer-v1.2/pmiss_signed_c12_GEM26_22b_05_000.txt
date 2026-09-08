@@ -1,0 +1,106 @@
+# pmiss_signed_c12_GEM26_22b_05_000.png
+# tune GEM26_22b_05_000; qel && hit p && Q2 slice && N_p=1, 0 < E_m < 80 MeV; signed p_m = sign(p_m . x_e') |p_m|
+# density scale Z*cnt/(N*dp*4 pi p_c^2) with N_sel = qel && hit p && window = 53,517; data overlay shape-scaled (not compared here)
+
+
+==============================================================================
+## describe1d stage 3 (pre-FSI primary p) signed p_m, raw counts; integrated A = -0.1318
+==============================================================================
+== 1D  stage 3 signed: 16 bins on [-320, 320], integral 49841
+   shape   |:-*@@#-..-*%#=:.|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean -23.68   std 168.9   skew 0.213   excess kurtosis -1.45
+   peak    bin 4, x = -140 (7112 entries)   FWHM 153.5 on [-233.9, -80.39]
+   quantiles  5%: -251.1  16%: -196.2  25%: -168.4  50%: -88.8  75%: 141.2  84%: 175.2  95%: 233.9
+   nonempty bins 0..15 (x in [-320, 320]);  first bin 1.74%, last bin 1.03% of the integral;  0 empty bins
+   per bin relative error: median 2.0%, worst nonempty bin 6.9%
+
+==============================================================================
+## compare1d stage 3: + side vs - side (|p_m| bins, raw counts)
+==============================================================================
+== 1D compare  + side (toward e') vs - side: 8 bins on [0, 320]   (- side is the reference)
+   integrals  + side (toward e') 21636 ± 147   - side 28205 ± 168   ratio + side (toward e')/- side = 0.7671 ± 0.0069  (-33.6 sigma from 1)
+   shape + side (toward e') |.-#@%+-.|
+   shape - side             |.-#@@*-:|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   156.7 vs 162   diff -5.352 ± 0.54  (-0.13 median bin widths, -9.9 sigma)
+   std    59.51 vs 60.19   ratio 0.989     skew +0.24 vs +0.21
+   peak   |p_m| [MeV/c] = 140 (bin 3) vs |p_m| [MeV/c] = 140 (bin 3)   shift +0 bins     FWHM 146.1 vs 153.5 (ratio 0.952)
+   quantiles + side (toward e') minus - side:  5%: -4.38   16%: -4.06   50%: -5.64   84%: -6.11   95%: -5.22
+   chi2/ndf   raw 963.4/8 (p = 1.19e-202)   shape, after scaling - side by 0.7671: 99.8/7 (p = 1.19e-18)
+   KS   max |CDF diff| = 0.0372 at |p_m| [MeV/c] = 160  (+ side (toward e') has relatively more entries below that x)   p = 3.35e-15
+   per bin, low x -> high x   (|pull| > 2:  + + side (toward e') above - side,  - below,  . within,  blank both empty)
+     pull raw    |.-------|
+     pull shape  |++++.---|
+     ratio shape |++====--|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! - side empty)
+   runs of same sign shape deviations (bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 0..3, |p_m| [MeV/c] in [0, 160)   + side (toward e') minus scaled - side = +805.6  (+5.7 sigma combined, +7.3% of - side there)
+     * -  bins 5..7, |p_m| [MeV/c] in [200, 320)   + side (toward e') minus scaled - side = -656  (-6.8 sigma combined, -11.6% of - side there)
+   regions from the 16% and 84% quantiles of - side:
+     left tail  (|p_m| [MeV/c] < 98.4) + side (toward e')       1937   - side       2160   raw ratio 0.897 (-3.5 sigma)   shape ratio 1.169 (+4.9 sigma)
+     core       (|p_m| [MeV/c] in 98.4 .. 227) + side (toward e')      17659   - side      22928   raw ratio 0.770 (-26.2 sigma)   shape ratio 1.004 (+0.4 sigma)
+     right tail (|p_m| [MeV/c] > 227) + side (toward e')       2040   - side       3117   raw ratio 0.654 (-15.0 sigma)   shape ratio 0.853 (-5.6 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: + side (toward e') is -23.3% relative to - side (-33.6 sigma)
+     * rigid shift: every quantile of + side (toward e') sits about -5.64 (-0.14 bin widths) from - side while the width is unchanged (std ratio 0.989); + side (toward e') is at lower |p_m| [MeV/c]
+     * pull pattern + then - across the peak: + side (toward e') is displaced to lower |p_m| [MeV/c] relative to - side
+     * left tail: + side (toward e') has +17% relative to - side after normalization (+4.9 sigma)
+     * right tail: + side (toward e') has -15% relative to - side after normalization (-5.6 sigma)
+   bin  [lo, hi)               + side (toward e')     - side    + side (toward e')/- side ± err     pull raw  pull shape
+     0  [        0,        40)         213        220      0.968 ±  0.093       -0.34       +2.39
+     1  [       40,        80)        1724       1940      0.889 ±  0.029       -3.57       +4.41
+     2  [       80,       120)        4247       5110      0.831 ±  0.017       -8.92       +3.84
+     3  [      120,       160)        5654       7112      0.795 ±  0.014      -12.90       +2.00
+     4  [      160,       200)        4802       6455      0.744 ±  0.014      -15.58       -1.61
+     5  [      200,       240)        2956       4251      0.695 ±  0.017      -15.25       -4.13
+     6  [      240,       280)        1527       2252      0.678 ±  0.022      -11.79       -3.75
+     7  [      280,       320)         513        865      0.593 ±  0.033       -9.48       -4.71
+
+==============================================================================
+## describe1d stage 4 (post-FSI p) signed p_m, raw counts; integrated A = -0.1268
+==============================================================================
+== 1D  stage 4 signed: 16 bins on [-320, 320], integral 29334
+   shape   |:-*@@#-..-*%#=-.|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean -23.06   std 170.8   skew 0.207   excess kurtosis -1.45
+   peak    bin 4, x = -140 (4132 entries)   FWHM 154.8 on [-236.3, -81.53]
+   quantiles  5%: -253.5  16%: -197.7  25%: -170  50%: -89.2  75%: 143.4  84%: 177.6  95%: 236.5
+   nonempty bins 0..15 (x in [-320, 320]);  first bin 1.92%, last bin 1.20% of the integral;  0 empty bins
+   per bin relative error: median 2.5%, worst nonempty bin 8.9%
+
+==============================================================================
+## compare1d stage 4: + side vs - side (|p_m| bins, raw counts)
+==============================================================================
+== 1D compare  + side (toward e') vs - side: 8 bins on [0, 320]   (- side is the reference)
+   integrals  + side (toward e') 12807 ± 113   - side 16527 ± 129   ratio + side (toward e')/- side = 0.7749 ± 0.0091  (-24.7 sigma from 1)
+   shape + side (toward e') |.-#@%+-.|
+   shape - side             |.-#@@*-:|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   158.5 vs 163.8   diff -5.248 ± 0.71  (-0.13 median bin widths, -7.4 sigma)
+   std    60.14 vs 60.45   ratio 0.995     skew +0.24 vs +0.20
+   peak   |p_m| [MeV/c] = 140 (bin 3) vs |p_m| [MeV/c] = 140 (bin 3)   shift +0 bins     FWHM 147.3 vs 154.8 (ratio 0.951)
+   quantiles + side (toward e') minus - side:  5%: -5.31   16%: -4.38   50%: -5.54   84%: -5.44   95%: -4.31
+   chi2/ndf   raw 528.4/8 (p = 5.57e-109)   shape, after scaling - side by 0.7749: 57.6/7 (p = 4.53e-10)
+   KS   max |CDF diff| = 0.0355 at |p_m| [MeV/c] = 160  (+ side (toward e') has relatively more entries below that x)   p = 2.32e-08
+   per bin, low x -> high x   (|pull| > 2:  + + side (toward e') above - side,  - below,  . within,  blank both empty)
+     pull raw    |.-------|
+     pull shape  |+++..---|
+     ratio shape |++===-=-|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! - side empty)
+   runs of same sign shape deviations (bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 0..2, |p_m| [MeV/c] in [0, 120)   + side (toward e') minus scaled - side = +357  (+4.6 sigma combined, +11.2% of - side there)
+     * -  bins 5..7, |p_m| [MeV/c] in [200, 320)   + side (toward e') minus scaled - side = -392.3  (-5.2 sigma combined, -11.3% of - side there)
+   regions from the 16% and 84% quantiles of - side:
+     left tail  (|p_m| [MeV/c] < 99.9) + side (toward e')       1099   - side       1187   raw ratio 0.926 (-1.8 sigma)   shape ratio 1.195 (+4.2 sigma)
+     core       (|p_m| [MeV/c] in 99.9 .. 229) + side (toward e')      10395   - side      13413   raw ratio 0.775 (-19.6 sigma)   shape ratio 1.000 (+0.0 sigma)
+     right tail (|p_m| [MeV/c] > 229) + side (toward e')       1313   - side       1927   raw ratio 0.681 (-10.8 sigma)   shape ratio 0.879 (-3.6 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: + side (toward e') is -22.5% relative to - side (-24.7 sigma)
+     * rigid shift: every quantile of + side (toward e') sits about -5.54 (-0.14 bin widths) from - side while the width is unchanged (std ratio 0.995); + side (toward e') is at lower |p_m| [MeV/c]
+     * pull pattern + then - across the peak: + side (toward e') is displaced to lower |p_m| [MeV/c] relative to - side
+     * left tail: + side (toward e') has +19% relative to - side after normalization (+4.2 sigma)
+     * right tail: + side (toward e') has -12% relative to - side after normalization (-3.6 sigma)
+   bin  [lo, hi)               + side (toward e')     - side    + side (toward e')/- side ± err     pull raw  pull shape
+     0  [        0,        40)         128        125      1.024 ±  0.129       +0.19       +2.18
+     1  [       40,        80)         971       1062      0.914 ±  0.041       -2.02       +3.69
+     2  [       80,       120)        2446       2927      0.836 ±  0.023       -6.56       +2.74
+     3  [      120,       160)        3300       4132      0.799 ±  0.019       -9.65       +1.29
+     4  [      160,       200)        2885       3804      0.758 ±  0.019      -11.24       -0.87
+     5  [      200,       240)        1764       2550      0.692 ±  0.021      -11.97       -3.69
+     6  [      240,       280)         962       1364      0.705 ±  0.030       -8.34       -2.25
+     7  [      280,       320)         351        563      0.623 ±  0.042       -7.01       -3.25

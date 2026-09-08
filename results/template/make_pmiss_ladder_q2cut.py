@@ -16,7 +16,19 @@ onto the occupancy axis):
     C12:  fig 6 top+bottom summed (Q^2 = 1.28), E_m 10-25 (+) 30-50 MeV
 
 so each panel's strength is directly comparable to the data with no window
-mismatch (the folded-data convention: results/normalization/README.md).
+mismatch.
+
+v1.2 switches:
+  --data-conv raw   draw the positive-|p_m| side AS TABULATED (no L+R fold):
+                    the p_m files carry the full density on each side and the
+                    signed axis counts each |p_m| twice, so the positive half
+                    alone is the nucleon count (C12 shells 1.765 + 0.693 =
+                    2.459, raw distorted ~ T Z / f_corr; author-confirmed
+                    2026-09-06, report/dutta-integral/integrate_dutta.py).
+                    Default `folded` (x2) = the v0.2-v1.1 reading of
+                    results/normalization/README.md.
+  --norm total-qe   occupancy count N = all generated QE events of the
+                    sample (qe_norm.py) instead of the windowed N_sel.
 
 Reads the ladder caches built by make_emiss_ladder_q2cut.py (run that first;
 --proton-sel 1p reads/writes the v0.3 caches, where stage 4 = the unique
@@ -47,6 +59,7 @@ import numpy as np
 from plot_style import (apply_style, new_panels, style_axis,
                         FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE, DPI)
 from make_sf2d_table import resolve_sf_table, read_pke_table  # noqa: E402
+from qe_norm import norm_count, NORMS, NORM_LABELS            # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 CACHE_ROOT = REPO / "results/prd-analyzer-v0.2/cache"
@@ -59,6 +72,9 @@ DK = 20.0                       # native table k grid [MeV/c]
 EDGES = np.arange(0.0, 820.0 + 1.0, DK)
 PM_PLOT = 330.0                 # plotted |p_m| range (data reach 300)
 PM_SUM = 320.0                  # strength sums, aligned with the data grid
+DATA_CONV = "folded"            # --data-conv: "folded" (x2, old reading) | "raw"
+DATA_FOLD = 2.0                 # factor on the positive-|p_m| data side
+NORM = "windowed"               # --norm: "windowed" (cache n_sel) | "total-qe"
 
 # tune -> (has 2D SF table, ground-state label stem)
 TUNE_GS = {
@@ -90,18 +106,30 @@ def _m_rec_c12():
 
 
 def _dutta_fe56():
-    """fig7 folded L+R: full |p_m| density on the published scale."""
+    """fig7 positive side x DATA_FOLD (2 = folded L+R, 1 = raw), publ. scale."""
     x, y, _, e = np.loadtxt(DATA_DIR / "fig7_q1p2.dat", unpack=True)
     m = x > 0
-    return x[m], 2.0 * y[m], 2.0 * e[m]
+    return x[m], DATA_FOLD * y[m], DATA_FOLD * e[m]
 
 
 def _dutta_c12():
-    """fig6 top+bottom summed, then folded L+R (windows 10-25 (+) 30-50)."""
+    """fig6 top+bottom summed (windows 10-25 (+) 30-50), positive side
+    x DATA_FOLD (2 = folded L+R, 1 = raw)."""
     x, y_p, _, e_p = np.loadtxt(DATA_DIR / "fig6_top_q1p2.dat", unpack=True)
     _, y_s, _, e_s = np.loadtxt(DATA_DIR / "fig6_bot_q1p2.dat", unpack=True)
     m = x > 0
-    return x[m], 2.0 * (y_p + y_s)[m], 2.0 * np.sqrt(e_p ** 2 + e_s ** 2)[m]
+    return (x[m], DATA_FOLD * (y_p + y_s)[m],
+            DATA_FOLD * np.sqrt(e_p ** 2 + e_s ** 2)[m])
+
+
+def set_data_conv(conv):
+    """Select the Dutta |p_m| data convention for every later loader call."""
+    global DATA_CONV, DATA_FOLD
+    DATA_CONV = conv
+    DATA_FOLD = 2.0 if conv == "folded" else 1.0
+    if conv == "raw":
+        TGT["Fe56"]["data_label"] = "Dutta Fig. 7 (publ. scale, no fold)"
+        TGT["C12"]["data_label"] = "Dutta Fig. 6 p+s (publ. scale, no fold)"
 
 
 # per-target configuration (E windows match the overlaid data)
@@ -173,7 +201,7 @@ def make_figure(target, tune, table_stem, table, dutta):
                          "make_emiss_ladder_q2cut.py"
                          + (" --proton-sel 1p" if PROTON_SEL == "1p" else ""))
     c = dict(np.load(cache))
-    n_sel = float(c["n_sel"][0])
+    n_sel, norm_desc = norm_count(NORM, target, tune, c)
     with np.errstate(invalid="ignore"):
         for s in (2, 3, 4):          # restored axis: E_s + p_s^2/(2 M_rec)
             c[f"E{s}r"] = c[f"E{s}"] + c[f"p{s}"] ** 2 / (2.0 * m_rec * 1000.0)
@@ -192,7 +220,7 @@ def make_figure(target, tune, table_stem, table, dutta):
         h[s] = occ_hist(np.where(win, c[f"p{s}"], np.nan), n_sel, cfg["Z"])
 
     print(f"[{tune}] windowed |p_m| ladder ({cfg['win_label']}, "
-          f"strengths |p_m|<{PM_SUM:.0f}):")
+          f"strengths |p_m|<{PM_SUM:.0f}; {norm_desc}; data {DATA_CONV}):")
     if y_in is not None:
         print(f"  I1(table)={strength(y_in, k_edges):.3f}", end="  ")
     print(f"I(data)={s_data:.3f}  "
@@ -221,7 +249,9 @@ def make_figure(target, tune, table_stem, table, dutta):
                     xy=(0.40, 0.55), xycoords="axes fraction",
                     fontsize=FS_LEGEND - 2, color="0.35")
     draw_data(ax, with_label=True)
-    ax.legend(fontsize=FS_LEGEND - 3, title="folded data = full $|p_m|$ density",
+    ax.legend(fontsize=FS_LEGEND - 3,
+              title=("folded data = full $|p_m|$ density" if DATA_CONV == "folded"
+                     else "data: positive side as tabulated (count scale)"),
               title_fontsize=FS_LEGEND_TITLE - 3, loc="upper right")
 
     for i, s in zip((1, 2, 3), (2, 3, 4)):
@@ -258,15 +288,16 @@ def make_figure(target, tune, table_stem, table, dutta):
         ax.set_xlim(0, PM_PLOT)
         ax.set_ylim(0, ymax)
         if i % 2 == 0:
-            ax.set_ylabel(r"$Z\cdot$ d$N/$d$|p_m|\,/\,N_{sel}$   [(MeV/c)$^{-1}$]",
-                          fontsize=FS_LABEL)
+            ax.set_ylabel(r"$Z\cdot$ d$N/$d$|p_m|\,/\," + NORM_LABELS[NORM]
+                          + r"$   [(MeV/c)$^{-1}$]", fontsize=FS_LABEL)
 
     fig.suptitle(f"{target} $|p_m|$ ladder — {tune}  ({TUNE_GS[tune][1]})\n"
                  "qel && hit p"
                  + ("" if NO_Q2CUT else " && $Q^2=1.28\\pm5\\%$")
                  + (" && N$_p$=1" if PROTON_SEL == "1p" else "")
                  + (", NO $Q^2$ cut" if NO_Q2CUT else "")
-                 + "; " + cfg["win_label"],
+                 + "; " + cfg["win_label"]
+                 + ("\n$N_{QE}$ = all generated QE events (both species, no window)" if NORM == "total-qe" else ""),
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
     out = OUT_DIR / f"pm_ladder_{tlow}_{tune}.png"
@@ -363,7 +394,8 @@ def make_density_figure(target, tune, table_stem, y_in, k_edges,
                  + ("" if NO_Q2CUT else " && $Q^2=1.28\\pm5\\%$")
                  + (" && N$_p$=1" if PROTON_SEL == "1p" else "")
                  + (", NO $Q^2$ cut" if NO_Q2CUT else "")
-                 + "; " + cfg["win_label"],
+                 + "; " + cfg["win_label"]
+                 + ("\n$N_{QE}$ = all generated QE events (both species, no window)" if NORM == "total-qe" else ""),
                  fontsize=FS_SUPTITLE - 2)
     fig.tight_layout()
     out = OUT_DIR / f"pm_ladder_dens_{tlow}_{tune}.png"
@@ -383,9 +415,17 @@ if __name__ == "__main__":
                          "the uncut v1.0 caches, writes v1.0 figures")
     ap.add_argument("--out-dir", default=None,
                     help="write the figures here instead of the version default")
+    ap.add_argument("--data-conv", default="folded", choices=["folded", "raw"],
+                    help="Dutta |p_m| data: folded L+R (x2, v0.2-v1.1) or raw "
+                         "positive side as tabulated (v1.2+, author-confirmed)")
+    ap.add_argument("--norm", default="windowed", choices=list(NORMS),
+                    help="occupancy count: windowed N_sel (v0.2-v1.1) or "
+                         "total-qe = all generated QE events (v1.2+)")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
     NO_Q2CUT = args.no_q2cut
+    NORM = args.norm
+    set_data_conv(args.data_conv)
     if NO_Q2CUT and PROTON_SEL != "1p":
         raise SystemExit("--no-q2cut is the v1.0 construction (N_p=1): "
                          "pass --proton-sel 1p")

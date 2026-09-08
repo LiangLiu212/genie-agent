@@ -179,10 +179,18 @@ if __name__ == "__main__":
     ap.add_argument("--target", default="Fe56", choices=["Fe56", "C12"])
     ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
                     help="1p: exactly one FS proton (v0.3), outputs to v0.3")
+    ap.add_argument("--tunes", nargs="+", default=None, choices=list(TUNES),
+                    help="restrict the overlay to these tunes (default: all four)")
+    ap.add_argument("--out-dir", default=None,
+                    help="write the figures here instead of the version default")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
     if PROTON_SEL == "1p":
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
+    if args.out_dir:
+        OUT_DIR = Path(args.out_dir)
+    if args.tunes:
+        TUNES = {t: TUNES[t] for t in args.tunes}
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     apply_style()

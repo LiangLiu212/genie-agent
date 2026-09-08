@@ -15,6 +15,8 @@ style live under [`template/`](template/).
 | [EM-QES spline vs Q²-cut (GEM26)](pages/spline_gem26_q2cut.md) | Grid `gmkspl` σ(E) for the `GEM26` Rosenbluth Q²-cut tunes t04–t08 on C12; SF and LFG splines coincide (ground-state independent). |
 | [EM-QES Q²: SF vs LFG (grid)](pages/q2_gem26_sf_lfg.md) | Per-event Q² SF vs LFG across the 6 E91-013 points, from the C12 grid campaign (10M ev/point). |
 | [Hit-nucleon momentum & missing E (grid)](pages/groundstate_gem26_sf_lfg.md) | Initial hit-nucleon `|pₙ|` and removal energy `M_N−Eₙ`, SF vs LFG (C12, ~600k ev/config) — the ground-state signature. |
+| [prd-analyzer v1.2: 22b, Dutta ÷ 2, N = all QE](prd-analyzer-v1.2/README.md) | The v0.3 C12 Q²-slice / N_p = 1 analysis for `GEM26_22b_05_000` alone, with the Dutta data at half the published scale (no L+R fold; author-confirmed count 3.04) and the occupancy scale on all generated QE events (`N_QE` = 277,035) instead of the windowed `N_sel`; histdiag readouts next to every figure. |
+| [prd-analyzer v1.2: (e,e′p) Q² slice, Dutta data on the count scale](prd-analyzer-v1.2/README.md) | The v0.3 C12 analysis for `GEM26_22b_05_000` with the Dutta data halved (author-confirmed 2026-09-06: no L+R fold, fig 9 = 2 × count), N_sel as in v0.3; every histogram carries a histdiag readout. Post-FSI, not pre-FSI, sits at the data's absolute strength (E_m 1.07, |p_m| 1.14). |
 | [prd-analyzer v0.1: (e,e′p) convergence](prd-analyzer-v0.1/README.md) | **Active** convergence iteration of the prd-analyzer study; scripts and figures land here as they are finalized. |
 | [prd-analyzer v0: (e,e′p) missing E/p at Q²=1.28](prd-analyzer-v0/README.md) | *Frozen archive (exploratory phase).* Spectrometer-cut (e,e′p) replication of Dutta et al. E91-013 Table I row 5; reconstructed missing energy & momentum across five QE-EM models — LFG/SF/SuSAv2, UnifiedQEL with old (`22b`) vs 2024 ABS (`33b`) spectral function. |
 | [C12 Benhar spectral function P(k,E)](prd-analyzer-v0/spectral_function_c12.md) | The input ground state from `pke12_tot.data` in (missing energy, missing momentum); `f(E)`/`n(k)` marginals — the baseline SF+Rosenbluth carries and SF+UnifiedQEL reshapes. |
@@ -26,6 +28,9 @@ style live under [`template/`](template/).
 
 - **Style:** all figures follow the personal plot style in
   [`template/plot_style.py`](template/plot_style.py) (see the `plot-style` skill).
+- **Readouts:** histogram figures get a text report from the same counts via
+  [`template/histdiag.py`](template/histdiag.py) (see the `histdiag` skill), kept
+  next to the PNG as `<stem>.txt`; interpretation is done on the numbers, not the picture.
 - **Generators:** one script per figure under [`template/`](template/), run with
   `pixi run python results/template/<script>.py`.
 - **Pages:** one markdown page per figure under [`pages/`](pages/), linked from

@@ -20,6 +20,9 @@ results/prd-analyzer-v0.2/pmiss_signed_<target>_<tune>.png.
 Usage:
   pixi run python results/template/make_pmiss_signed_q2cut.py --target Fe56 --all-tunes
   pixi run python results/template/make_pmiss_signed_q2cut.py --target C12 --all-tunes
+v1.2: --norm total-qe (density scale on N_QE = all generated QE events,
+qe_norm.py; the data overlay is shape-scaled to stage 4 either way) and
+--out-dir.
 """
 import argparse
 import json
@@ -40,6 +43,7 @@ GRIDLOG_ROOT = REPO / "jobsub-agent/jobsub-runs"
 CACHE_ROOT = REPO / "results/prd-analyzer-v0.2/cache"
 OUT_DIR = REPO / "results/prd-analyzer-v0.2"
 DATA_DIR = REPO / "data/Dipingkar-dutta-data-prc_figs"
+NORM = "windowed"               # --norm: "windowed" (cache n_sel) | "total-qe"
 
 Q2_CENTER, Q2_FRAC = 1.28, 0.05
 PROTON_SEL = "leading"          # or "1p": stage 4 requires exactly one FS proton
@@ -183,11 +187,12 @@ def make_figure(target, tune, max_files, dutta):
     if not cache.exists():
         build_cache(target, tune, max_files)
     c = dict(np.load(cache))
-    n_sel = float(c["n_sel"][0])
+    from qe_norm import norm_count
+    n_sel, norm_desc = norm_count(NORM, target, tune, c)
     gs, gen = TUNE_INFO[tune]
 
     stages = {}
-    print(f"[{tune}] ({gs}, {gen}):")
+    print(f"[{tune}] ({gs}, {gen}; {norm_desc}):")
     for s, label in ((3, "pre-FSI primary p"), (4, "post-FSI leading p")):
         cnt, y = occ_hist(c[f"pm{s}"], c[f"Em{s}"], n_sel, cfg["Z"])
         A, dA = asym(cnt)
@@ -213,8 +218,9 @@ def make_figure(target, tune, max_files, dutta):
     style_axis(ax, title="signed missing momentum, 0 < $E_m$ < 80 MeV",
                logx=False, logy=False, ymin=None)
     ax.set_ylim(0, None)
-    ax.set_ylabel(r"$Z\cdot$ d$N/$d$^3p_m\,/\,N_{sel}$   [(MeV/c)$^{-3}$]",
-                  fontsize=FS_LABEL)
+    from qe_norm import NORM_LABELS
+    ax.set_ylabel(r"$Z\cdot$ d$N/$d$^3p_m\,/\," + NORM_LABELS[NORM]
+                  + r"$   [(MeV/c)$^{-3}$]", fontsize=FS_LABEL)
     ax.legend(fontsize=FS_LEGEND - 3, loc="upper right",
               title="sign: $p_m\\cdot\\hat{x}_{e'}$ (toward e$'$ = +)",
               title_fontsize=FS_LEGEND_TITLE - 3)
@@ -250,12 +256,19 @@ if __name__ == "__main__":
     ap.add_argument("--max-files", type=int, default=20)
     ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
                     help="1p: stage 4 = exactly one FS proton, outputs to v0.3")
+    ap.add_argument("--norm", default="windowed", choices=["windowed", "total-qe"],
+                    help="density count: windowed N_sel or total-qe (v1.2+)")
+    ap.add_argument("--out-dir", default=None,
+                    help="write the figures here instead of the version default")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
+    NORM = args.norm
     if PROTON_SEL == "1p":
         CACHE_ROOT = REPO / "results/prd-analyzer-v0.3/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
-        OUT_DIR.mkdir(parents=True, exist_ok=True)
+    if args.out_dir:
+        OUT_DIR = Path(args.out_dir)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     apply_style()
     dutta = TGT[args.target]["dutta"]()

@@ -36,6 +36,7 @@ from plot_style import (apply_style, new_panels, style_axis,
                         FS_LABEL, FS_LEGEND, FS_LEGEND_TITLE, FS_SUPTITLE, DPI)
 from make_pmiss_ladder_q2cut import (TGT, TUNE_GS, load_table, n_windowed,
                                      in_windows)                # noqa: E402
+import make_pmiss_ladder_q2cut as pm_mod                        # noqa: E402
 from make_emiss_ladder_q2cut import rebin, f_restricted         # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
@@ -187,11 +188,20 @@ if __name__ == "__main__":
     ap.add_argument("--all-tunes", action="store_true")
     ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
                     help="1p: stage 4 = exactly one FS proton, reads/writes v0.3")
+    ap.add_argument("--data-conv", default="folded", choices=["folded", "raw"],
+                    help="Dutta |p_m| data label/fold convention (the unit "
+                         "normalization cancels the factor; v1.2 uses raw)")
+    ap.add_argument("--out-dir", default=None,
+                    help="write the figures here instead of the version default")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
+    pm_mod.set_data_conv(args.data_conv)
     if PROTON_SEL == "1p":
         CACHE_ROOT = REPO / "results/prd-analyzer-v0.3/cache"
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
+    if args.out_dir:
+        OUT_DIR = Path(args.out_dir)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     apply_style()
     for tune in (sorted(TUNE_GS) if args.all_tunes else [args.tune]):

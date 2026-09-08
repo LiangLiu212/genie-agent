@@ -54,3 +54,6 @@ data/luren/
 
 # compiled ELF of dump_qel_1p.cxx (source is tracked)
 results/template/dump_qel_1p
+
+# JupyterLab preview checkpoints (created by viewing PNGs in the browser)
+.ipynb_checkpoints/

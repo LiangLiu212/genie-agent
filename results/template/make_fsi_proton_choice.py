@@ -151,11 +151,15 @@ if __name__ == "__main__":
     ap.add_argument("--all-tunes", action="store_true")
     ap.add_argument("--proton-sel", default="leading", choices=["leading", "1p"],
                     help="1p: exactly one FS proton, outputs to v0.3")
+    ap.add_argument("--out-dir", default=None,
+                    help="write the figures here instead of the version default")
     args = ap.parse_args()
     PROTON_SEL = args.proton_sel
     if PROTON_SEL == "1p":
         OUT_DIR = REPO / "results/prd-analyzer-v0.3"
-        OUT_DIR.mkdir(parents=True, exist_ok=True)
+    if args.out_dir:
+        OUT_DIR = Path(args.out_dir)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     apply_style()
     for t in (sorted(TUNE_GS) if args.all_tunes else [args.tune]):
