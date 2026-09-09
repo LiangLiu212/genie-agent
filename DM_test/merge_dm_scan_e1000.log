@@ -1,0 +1,81 @@
+[m=100] == GDM18_00a_00_000 Ar40  m=100 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=100]   DMEL  gmkspl_dm-dm_Ar40_20260909-180713-1cf-6db451  splines=2
+[m=100]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180713-0fb-45197e  splines=16
+[m=100]   DME  gmkspl_dm-dm_Ar40_20260909-180713-9db-a99cf2  splines=1
+[m=100]   DMRES  gmkspl_dm-dm_Ar40_20260909-180714-c31-7bc145  splines=34
+[m=100]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m100-z0.5-g1.0-k100-e1000.xml
+[m=100]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=100]   sha256=21cf150a8ca5bf4746a6d416ac5d9f43978fdda8644950a30edc30ca1d556d56
+[m=100]   ALL CHECKS OK
+[m=200] == GDM18_00a_00_000 Ar40  m=200 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=200]   DMEL  gmkspl_dm-dm_Ar40_20260909-180714-9fc-df4876  splines=2
+[m=200]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180714-0a3-af52d0  splines=16
+[m=200]   DME  gmkspl_dm-dm_Ar40_20260909-180715-e9b-0e5251  splines=1
+[m=200]   DMRES  gmkspl_dm-dm_Ar40_20260909-180715-70d-523fc9  splines=34
+[m=200]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m200-z0.5-g1.0-k100-e1000.xml
+[m=200]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=200]   sha256=fc2eef64023cfe31ac92563667e95feddb28b84bb730ec887ef234713d43f6d4
+[m=200]   ALL CHECKS OK
+[m=300] == GDM18_00a_00_000 Ar40  m=300 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=300]   DMEL  gmkspl_dm-dm_Ar40_20260909-180715-d44-49eb81  splines=2
+[m=300]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180716-c8f-007e68  splines=16
+[m=300]   DME  gmkspl_dm-dm_Ar40_20260909-180716-070-0b4949  splines=1
+[m=300]   DMRES  gmkspl_dm-dm_Ar40_20260909-180716-f9a-66cad4  splines=34
+[m=300]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m300-z0.5-g1.0-k100-e1000.xml
+[m=300]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=300]   sha256=f40db7bea562178f68620d052a96b9480912ee9cdcca6d4b38c9def90c00f288
+[m=300]   ALL CHECKS OK
+[m=400] == GDM18_00a_00_000 Ar40  m=400 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=400]   DMEL  gmkspl_dm-dm_Ar40_20260909-180716-3ba-8b4b57  splines=2
+[m=400]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180717-6dd-f879be  splines=16
+[m=400]   DME  gmkspl_dm-dm_Ar40_20260909-180717-afb-edd458  splines=1
+[m=400]   DMRES  gmkspl_dm-dm_Ar40_20260909-180717-642-021ef3  splines=34
+[m=400]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m400-z0.5-g1.0-k100-e1000.xml
+[m=400]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=400]   sha256=c7b4baf033d64e43c5455059392759de5843750b883d7bd25c9705d4e54483bf
+[m=400]   ALL CHECKS OK
+[m=500] == GDM18_00a_00_000 Ar40  m=500 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=500]   DMEL  gmkspl_dm-dm_Ar40_20260909-180718-8b8-f6e4ff  splines=2
+[m=500]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180718-b73-bb6778  splines=16
+[m=500]   DME  gmkspl_dm-dm_Ar40_20260909-180718-fff-873eda  splines=1
+[m=500]   DMRES  gmkspl_dm-dm_Ar40_20260909-180719-a62-321953  splines=34
+[m=500]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m500-z0.5-g1.0-k100-e1000.xml
+[m=500]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=500]   sha256=86f50dc42a0ffd7ee8401b02219aad4525f08fe86738be8eff2a7aa8ae31e460
+[m=500]   ALL CHECKS OK
+[m=600] == GDM18_00a_00_000 Ar40  m=600 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=600]   DMEL  gmkspl_dm-dm_Ar40_20260909-180719-1df-90860b  splines=2
+[m=600]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180719-153-7cd401  splines=16
+[m=600]   DME  gmkspl_dm-dm_Ar40_20260909-180719-3f7-c50796  splines=1
+[m=600]   DMRES  gmkspl_dm-dm_Ar40_20260909-180720-d53-b69d6e  splines=34
+[m=600]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m600-z0.5-g1.0-k100-e1000.xml
+[m=600]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=600]   sha256=9cc30e1b092535623edd94e4b59de67157af8d8750a137d67003a61eb04a28f6
+[m=600]   ALL CHECKS OK
+[m=700] == GDM18_00a_00_000 Ar40  m=700 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=700]   DMEL  gmkspl_dm-dm_Ar40_20260909-180720-79d-b22273  splines=2
+[m=700]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180720-661-b8ede1  splines=16
+[m=700]   DME  gmkspl_dm-dm_Ar40_20260909-180720-af3-eb9614  splines=1
+[m=700]   DMRES  gmkspl_dm-dm_Ar40_20260909-180721-38d-3ecc34  splines=34
+[m=700]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m700-z0.5-g1.0-k100-e1000.xml
+[m=700]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=700]   sha256=620a0026efd31fec11ad4c9506249261c90f25932c1efc7332e21c73bb55d879
+[m=700]   ALL CHECKS OK
+[m=800] == GDM18_00a_00_000 Ar40  m=800 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=800]   DMEL  gmkspl_dm-dm_Ar40_20260909-180721-356-0cc42f  splines=2
+[m=800]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180721-a87-677c27  splines=16
+[m=800]   DME  gmkspl_dm-dm_Ar40_20260909-180722-178-6c9ad5  splines=1
+[m=800]   DMRES  gmkspl_dm-dm_Ar40_20260909-180722-73d-b5f62f  splines=34
+[m=800]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m800-z0.5-g1.0-k100-e1000.xml
+[m=800]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=800]   sha256=f3e7554451fe381714c2ae8ad10c94475ca2268a6b7c8ac48c7c4874429eeaad
+[m=800]   ALL CHECKS OK
+[m=900] == GDM18_00a_00_000 Ar40  m=900 z=0.5 g=1.0  knots=100 Emax=1000  lists: DMEL DMDIS DME DMRES
+[m=900]   DMEL  gmkspl_dm-dm_Ar40_20260909-180722-6c0-337537  splines=2
+[m=900]   DMDIS  gmkspl_dm-dm_Ar40_20260909-180722-aef-4422de  splines=16
+[m=900]   DME  gmkspl_dm-dm_Ar40_20260909-180723-75d-df6567  splines=1
+[m=900]   DMRES  gmkspl_dm-dm_Ar40_20260909-180723-9cf-e8259d  splines=34
+[m=900]   merged: /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m900-z0.5-g1.0-k100-e1000.xml
+[m=900]   splines=53 (inputs sum 53) duplicates=0 nknots={nknots="100" } tune_sections=1 tune={genie_tune name="GDM18_00a_00_000" }
+[m=900]   sha256=36ed638d66ebdc053a0064fb56deb854a5f1b30a74d0531e30929289dabb1863
+[m=900]   ALL CHECKS OK

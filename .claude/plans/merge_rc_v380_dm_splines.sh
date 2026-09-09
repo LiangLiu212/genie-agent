@@ -44,9 +44,9 @@ missing=(); expected_total=0
 for gl in $LISTS; do
   best=""; best_t=""
   for llog in genie-agent/genie-runs/${TUNE}-*/*.log; do
-    row=$(jq -r --arg tune "$TUNE" --arg tgt "$TARGET" --arg gl "$gl" --arg label "$LABEL" \
+    row=$(jq -r --arg tune "$TUNE" --arg tgt "$TARGET" --arg gl "$gl" --arg lbl "$LABEL" \
              --argjson m "$MASS" --argjson z "$Z" --argjson g "$G" --argjson k "$KNOTS" --argjson e "$EMAX" \
-      'select(.runtype=="gmkspl_dm" and .inputs.label==$label and .inputs.tune_resolved==$tune
+      'select(.runtype=="gmkspl_dm" and .inputs.label==$lbl and .inputs.tune_resolved==$tune
               and .inputs.genlist_resolved==$gl
               and ((.inputs.canonical_targets|join(","))==$tgt)
               and .inputs.dm_mass==$m and .inputs.med_ratio==$z and .inputs.zp_coupling==$g

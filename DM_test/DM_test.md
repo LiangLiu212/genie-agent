@@ -266,3 +266,105 @@ pixi run python genie-agent/scripts/run_gevgen_dm.py --installation genie_rc --t
 #         GHEP entries == 200; run_gntpc.py -f gst; build_run_manifest.py; mirror_rc_v380_splines.sh --go; sha256 into the campaign table
 ```
 Not done on purpose: grid tarball republish (`tarball.py … --label genie_rc --overwrite`), any commit.
+
+---
+
+## 7. Mass scan — 10 masses × 4 lists, Emax 1000 GeV, 100 knots (launched 2026-09-09 18:07 UTC)
+
+**Request:** spline energy range 0 → 1000 GeV, DM mass 1 → 900 GeV in 10 steps.
+**Decisions:** masses **1, 100, 200, …, 900 GeV** (10 values); `-n 100` knots; per-process lists
+(DMEL/DMDIS/DME/DMRES) merged per mass; Ar40, tune `GDM18_00a_00_000`, `-z 0.5 -g 1.0`; label
+`dm_scan_e1000`. One job and one XML **per mass** is mandatory: the spline key carries no mass and
+`GEVGDriver::CreateSplines` skips a key that already exists, so a multi-mass `-m m1,m2,…` call would
+only compute the first mass.
+
+**Pre-checks (source):** the default validity context is `GVLD-Emin 0.010 / GVLD-Emax 1000`
+(`config/CommonParam.xml:333-334`, used because the DM generators have an empty `VldContext`),
+so `-e 1000` is exactly the allowed maximum and a 900 GeV threshold still fits. Probe at m = 900,
+`-e 1000`, min knots: DMEL 2 splines (threshold 900 GeV), DME 1 spline — rc 0.
+
+**Launch (as run):**
+```bash
+for m in 1 100 200 300 400 500 600 700 800 900; do
+  for gl in DMEL DMDIS DME DMRES; do
+    pixi run python genie-agent/scripts/run_gmkspl_dm.py --installation genie_rc --targets Ar40 \
+        --mass $m --tune GDM18_00a_00_000 --genlist $gl -n 100 -e 1000 --label dm_scan_e1000
+  done
+done
+```
+Jobids: `DM_test/dm_mass_scan_e1000_jobs.tsv` (mass, list, jobid, log). 40 launched, 0 failed.
+
+**Status at 18:12 UTC** (poll with the loop in §4.5 or `job.py list --active`):
+
+| list | done | result |
+|---|---|---|
+| DMEL | all 10 masses | 2 splines each, 100 knots spanning 0.01–1000 GeV, non-zero from the threshold (m = 1: first non-zero knot 1.08 GeV, σ(9.8 GeV) = 0.359 ×10⁻³⁸ cm², matching the smoke run; m = 900: non-zero from 901 GeV, max 3×10⁻¹¹) |
+| DME | all 10 masses | 1 spline each (m = 1: 60 non-zero knots from 1.05 GeV, falls to 0 at high E) |
+| DMRES | m ≥ 500 done in ~1 s, m ≤ 400 running | **m ≥ 500: all 34 splines are identically zero** — `DMRESXSecFast` caches its resonance cross section only up to `ESplineMax` = 500 GeV (`config/DMRESXSec.xml:12`; `DMRESXSecFast.cxx:155,218`), so a threshold at/above 500 GeV gets nothing. For m ≤ 400 the DMRES cross section is **frozen at its 499 GeV value** between 500 and 1000 GeV. |
+| DMDIS | all 10 running | at 30 knots the smoke probe is still running after 3.5 h (14+ splines); expect > 11 h per mass at 100 knots |
+
+**Caveat to decide:** if resonance production is wanted above 500 GeV, `ESplineMax` must be
+raised (e.g. 1000) in a copy of `DMRESXSec.xml` placed in a `--gxmlpath` overlay dir, and the
+DMRES jobs re-run for every mass (that change is not in the tune family dir, so it shows up in the
+runlog only as `inputs.gxmlpath`). Not done.
+
+**Merge, once the DMDIS/DMRES jobs of a mass are finished** (one product per mass):
+```bash
+for m in 1 100 200 300 400 500 600 700 800 900; do
+  .claude/plans/merge_rc_v380_dm_splines.sh --mass $m --emax 1000 --knots 100 --label dm_scan_e1000
+done
+# -> /exp/dune/data/users/liangliu/runarea/genie_xsec/rc-v380/GDM18_00a_00_000/gxspl-Ar40-dm-m<m>-z0.5-g1.0-k100-e1000.xml
+```
+The script refuses to merge a mass whose four lists are not all finished with rc 0 and > 0 splines.
+Note: the zero DMRES files for m ≥ 500 **do** count as "> 0 splines" (34 entries, all zero), so
+those merges will go through with an empty resonance contribution.
+
+**Events from a merged file** (flux range must stay above the mass to avoid wasted throws):
+```bash
+pixi run python genie-agent/scripts/run_gevgen_dm.py --installation genie_rc --target Ar40 --mass <m> \
+    -n 1000 -e <m>,1000 --flux 1 --cross-sections <merged.xml> --tune GDM18_00a_00_000 --genlist Default
+```
+
+### Merged products (2026-09-09 20:3x UTC), `runarea/genie_xsec/rc-v380/GDM18_00a_00_000/`
+
+| mass (GeV) | file | splines | sha256 |
+|---|---|---|---|
+| 100 | `gxspl-Ar40-dm-m100-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `100]   sha256` |
+| 200 | `gxspl-Ar40-dm-m200-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `200]   sha256` |
+| 300 | `gxspl-Ar40-dm-m300-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `300]   sha256` |
+| 400 | `gxspl-Ar40-dm-m400-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `400]   sha256` |
+| 500 | `gxspl-Ar40-dm-m500-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `500]   sha256` |
+| 600 | `gxspl-Ar40-dm-m600-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `600]   sha256` |
+| 700 | `gxspl-Ar40-dm-m700-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `700]   sha256` |
+| 800 | `gxspl-Ar40-dm-m800-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `800]   sha256` |
+| 900 | `gxspl-Ar40-dm-m900-z0.5-g1.0-k100-e1000.xml` | 53 (2 DMEL + 16 DMDIS + 1 DME + 34 DMRES) | `900]   sha256` |
+
+Each: 0 duplicate keys, nknots 100, one `genie_tune` section, spline count equal to the sum of the four
+inputs (merge log `DM_test/merge_dm_scan_e1000.log`, staging `work/Ar40-dm-m<m>-z0.5-g1.0/`). m = 1 waits
+for its DMDIS job. **Bug fixed on the way:** `merge_rc_v380_dm_splines.sh` used `--arg label`, and `label`
+is a jq reserved word, so the selector never compiled and every list was reported MISSING; renamed to
+`$lbl` (uncommitted). For m ≥ 500 the 34 DMRES splines in the product are all zero (§7 caveat).
+
+### Spline plots (2026-09-09 20:4x UTC)
+
+Generator `results/template/plot_dm_splines.py` (house style, parses the XML directly since
+`gspl2root` cannot read DM splines; XML GeV⁻² → 10⁻³⁸ cm² with ×3.89379×10¹⁰; each process is the
+sum of its splines on the union of their knots, so the dots are real knots). Re-run after the
+m = 1 DMDIS job finishes:
+```bash
+pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test
+```
+- `DM_test/dm_splines_dm_scan_e1000_per_mass.png` — one panel per mass, DMEL/DMDIS/DME/DMRES/Total
+- `DM_test/dm_splines_dm_scan_e1000_per_process.png` — one panel per process, one line per mass
+- `DM_test/dm_splines_dm_scan_e1000.txt` — readout: threshold, σ_max, σ at 10/100/1000 GeV per (mass, process)
+
+What the numbers say (σ in 10⁻³⁸ cm², Ar40, z = 0.5, g = 1.0):
+- m = 1 GeV (DMDIS still pending): DMEL 2.5×10¹⁰ plateau, DMRES 3.7×10¹¹, DME rising to 1.5×10¹¹ at
+  1 TeV, total ≈ 5×10¹¹ = 5×10⁻²⁷ cm² — millibarn-scale, i.e. the GENIE default coupling g = 1 is not
+  a weak-scale choice; scale g down if physical rates are wanted.
+- m = 100 → 900 GeV: total at 1 TeV falls 1.3×10⁶ → 3.1, dominated by DMDIS (DMEL ≤ 10³,
+  DMRES 2×10⁴ at m = 100 and ≤ 0.15 for m = 400 because of the 500 GeV cache; zero for m ≥ 500).
+- **DME artefact:** the DM–electron spline carries small *negative* values below its threshold
+  (m = 100: −0.014 at 10 GeV) and is negative at every knot for m ≥ 600 (≈ −10⁻⁶ … −10⁻⁵),
+  i.e. numerical noise of the `DMElectronPXSec` integration. Harmless where other processes are
+  non-zero (10⁶ larger) but note that GENIE will happily load them; they show as floored points.
