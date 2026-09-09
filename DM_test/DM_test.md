@@ -482,3 +482,54 @@ is emitted within a fraction of a degree — the textbook boosted-DM electron si
 DM the recoil is capped at 2 m_e p²/m² ≈ MeV (101 MeV at m = 100, 3 MeV at m = 500) and comes out at
 tens of degrees, i.e. a low-energy, wide-angle electron that no longer points back to the source.
 The band width is the flux range; at fixed T_e the pair (T_e, θ_e) fixes E for an assumed m.
+
+---
+
+## 11. DMEL recoil proton: (T_p, θ_p) per mass (2026-09-09 ~22:10 UTC)
+
+**Samples:** DMEL-only 10k events per mass, `--genlist DMEL` on each mass's DMEL spline file, flat
+flux 1.03 m – 999 GeV, label `dm_scan_e1000_DMEL` (`DM_test/dm_mass_scan_e1000_DMEL_events.tsv`).
+m = 100 … 900 ran cleanly (16–29 s each).
+
+**m = 1 GeV crashed at event 370** (`malloc(): smallbin double linked list corrupted`, rc −6),
+reproduced bit-for-bit with the logged seed: the flux particle at **E = 1.934 GeV** gets an
+interaction probability sum Psum = 1.30 > 1, GMCJDriver prints
+`FATAL Negative no-interaction probability! (P = -30.4 %)` and the process then dies in a heap
+corruption. Cause: GMCJDriver scales the interaction probability by the maximum of its *summed*
+cross-section spline, which is rebuilt on a coarse log grid between the flux edges (§ Bootstrap);
+for m = 1 the DMEL cross section has a sharp threshold peak (2.5×10¹¹ at 1.076 GeV falling to
+2.5×10¹⁰ by 10 GeV) that the coarse grid up to 999 GeV misses, so the true σ(E) near threshold
+exceeds the assumed maximum. With the flux restricted to **1.08–10 GeV** (the sample-F beam range)
+the grid resolves the peak and 10 000 events generate without a hitch (28 s,
+`gevgen_dm-dm_Ar40_20260909-220807-3f1-c3969e`, label `dm_scan_e1000_DMEL_lowE`); that sample is
+the m = 1 entry of the figure. Second rc-v380 robustness item to report (after the selector assert
+of §8).
+
+**Figure** `DM_test/dmel_recoil_Tp_theta.png` (generator `results/template/plot_dmel_recoil.py`):
+one log–log 2D panel per mass of the **leading final-state proton after FSI** — DMEL on a neutron
+leaves a neutron unless FSI charge-exchanges it, so only ≈ 60 % of DMEL events contain a proton
+(struck nucleon is a proton in 45 %). Overlaid: the free-proton two-body relation at the flux edges.
+Readouts: `DM_test/dmel_recoil_Tp_theta.txt` (per mass: post-FSI proton, pre-FSI struck nucleon,
+histdiag 1D/2D).
+
+| m [GeV] | flux [GeV] | events with a p | T_p median | T_p max (free-p kin. max) | θ_p median | struck-N T median / θ median |
+|---|---|---|---|---|---|---|
+| 1 | 1.08–10 | 59.1 % | 29 MeV | 3.58 GeV (9) | 66.5° | 87 MeV / 64.0° |
+| 100 | 103–999 | 62.8 % | 69 MeV | 6.97 GeV (156) | 66.7° | 180 MeV / 62.7° |
+| 200 | 206–999 | 63.0 % | 62 MeV | 8.16 GeV (42.9) | 64.1° | 175 MeV / 60.7° |
+| 300 | 309–999 | 61.9 % | 57 MeV | 5.08 GeV (18.6) | 62.4° | 156 MeV / 57.1° |
+| 400 | 412–999 | 62.7 % | 61 MeV | 9.47 GeV (9.71) | 60.4° | 166 MeV / 56.4° |
+| 500 | 515–999 | 63.3 % | 59 MeV | 3.77 GeV (5.57) | 59.4° | 162 MeV / 54.3° |
+| 600 | 618–999 | 61.5 % | 49 MeV | 2.27 GeV (3.31) | 55.9° | 134 MeV / 50.5° |
+| 700 | 721–999 | 60.9 % | 44 MeV | 1.48 GeV (1.94) | 54.6° | 126 MeV / 48.0° |
+| 800 | 824–999 | 61.3 % | 46 MeV | 0.936 GeV (1.05) | 53.5° | 136 MeV / 46.3° |
+| 900 | 927–999 | 59.3 % | 32 MeV | 0.569 GeV (0.434) | 49.7° | 98 MeV / 41.8° |
+
+Reading: unlike the electron, the recoil proton is **not** on the free two-body curve. Nucleon form
+factors cut the momentum transfer off at Q² ≲ 1 GeV², so T_p ≈ Q²/2M_p stays at tens of MeV
+(median 30–70 MeV, tails to a few GeV) whatever the DM energy, and the elastic angle
+cos θ_p ≈ √(T_p/2M_p) puts the proton at 50–70°, wide and only weakly correlated with the DM
+direction; Fermi motion and FSI then smear both (post-FSI median T_p is ≈ 40 % of the pre-FSI struck
+nucleon's). The heaviest masses move slowly to smaller angles / lower T_p because their flux windows
+sit closer to threshold. Consequence for a search: a DMEL signal is a single low-energy proton with
+poor pointing — the electron channel, not the nucleon channel, carries the directional information.

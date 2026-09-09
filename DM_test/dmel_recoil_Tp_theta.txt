@@ -1,0 +1,951 @@
+# DMEL recoil proton readouts (histdiag); leading final-state proton after FSI; T_p log bins 1e-3..1e3 GeV, theta_p log bins 1e-2..1e2 deg
+
+===== m = 1 GeV, flux 1.08-10 GeV: 10000 DMEL events of 10000; leading final-state proton in 59.1%; struck nucleon is a proton in 45.3% =====
+T_p [GeV] (post-FSI leading p): min 6.756e-06 median 0.02866 mean 0.06588 max 3.576; free-p kinematic max at E=10: 8.998
+theta_p [deg]: min 0.6038 median 66.49 mean 68.85 max 178.5
+struck nucleon before FSI: T median 0.0868 max 4.849 GeV; theta median 63.99 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 5866
+   shape   |...::-==*#%@@@@@@%%#*+=--:....... ..                        |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.06702   std 0.1245   skew 9.21   excess kurtosis 173
+   peak    bin 12, x = 0.0179 (404 entries)   FWHM 0.1413 on [0.006394, 0.1477]
+   quantiles  5%: 0.004014  16%: 0.008526  25%: 0.01235  50%: 0.02924  75%: 0.07327  84%: 0.1106  95%: 0.2484
+   nonempty bins 0..35 (x in [0.001, 3.981]);  first bin 0.29%, last bin 0.00% of the integral;  25 empty bins
+   per bin relative error: median 8.7%, worst nonempty bin 100.0%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5049
+   shape   |                 . .  ............::=*@+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 60.04   std 20.65   skew -0.454   excess kurtosis -0.4
+   peak    bin 38, x = 71.26 (1663 entries)   FWHM 38.55 on [50.72, 89.27]
+   quantiles  5%: 20.96  16%: 37.43  25%: 46.18  50%: 62.5  75%: 75  84%: 79.51  95%: 93.6
+   nonempty bins 17..39 (x in [0.5012, 100]);  first bin 0.00%, last bin 16.06% of the integral;  20 empty bins
+   per bin relative error: median 22.7%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5019
+   T_p          marginal |....:-==+*%%@@@@@%%%#*==-::...... ..                        |  mean 0.07393  std 0.1328  peak 0.04496  16/50/84%: 0.009318 / 0.03319 / 0.1223
+   theta_p      marginal |                 . .  ............::=*@+|  mean 60.05  std 20.62  peak 71.26  16/50/84%: 37.5 / 62.52 / 79.46
+   dependence: Pearson r = -0.145   Spearman rho = -0.083   mutual information 0.076 nat, normalized 0.041 (0 = independent)
+   densest cell: x in [0.03981, 0.05012), y in [63.1, 79.43): 120 entries (2.39%)
+   occupancy: 87% of cells empty; 68% of entries in the 54 densest cells (2.2% of cells), 95% in 169 (7.0%); the 95% set spans x in [0.001585, 0.7943], y in [12.59, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   3.3  19.7  32.7  22.2   4.1   <.1     .     .     .     .
+   y8  [   15.8,    39.8)   0.9   3.9   5.5   3.4   1.3   0.2     .     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.7   1.1   0.4   0.1   <.1     .     .     .     .
+   y6  [   2.51,    6.31)   <.1   0.1   0.1   0.1     .     .     .     .     .     .
+   y5  [      1,    2.51)     .   <.1   <.1     .     .     .     .     .     .     .
+   y4  [  0.398,       1)   <.1   <.1     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 9 2 . . . .
+   y8  [   15.8,    39.8) 3 2 2 2 3 9 . . . .
+   y7  [   6.31,    15.8) 1 1 1 1 1 2 . . . .
+   y6  [   2.51,    6.31) 1 1 1 1 . . . . . .
+   y5  [      1,    2.51) . 1 1 . . . . . . .
+   y4  [  0.398,       1) 1 1 . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 6 9 7 2 1 . . . .
+   y8  [   15.8,    39.8) 2 7 9 6 3 1 . . . .
+   y7  [   6.31,    15.8) 2 6 9 4 1 1 . . . .
+   y6  [   2.51,    6.31) 2 8 8 9 . . . . . .
+   y5  [      1,    2.51) . 5 9 . . . . . . .
+   y4  [  0.398,       1) 9 9 . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        222   0.00273       59.31 ± 1.5         23.1        64      71.3  |        .    ....-+@|
+     1  [ 0.00398,   0.0158)       1223   0.00966       60.83 ± 0.64        22.2      64.2      71.3  |         . ......:+@|
+     2  [  0.0158,   0.0631)       1978    0.0341       61.34 ± 0.47        20.7      64.4      71.3  |           ......:*@|
+     3  [  0.0631,    0.251)       1312     0.122       59.93 ± 0.51        18.5        62      71.3  |            .....:#@|
+     4  [   0.251,        1)        274     0.417       49.66 ± 0.99        16.4      51.4      56.6  |               .:-@-|
+     5  [       1,     3.98)         10      1.73       28.14 ± 3           9.44      28.4      35.7  |               :*@: |
+     6  [    3.98,     15.8)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 61.7 + (-21.82 ± 1.5) * T_p   (-14.6 sigma from flat; change across the slices -37.6); straight line chi2/ndf = 17.8/4; a quadratic term (4.7 T_p^2) lowers chi2 by 4.3 -> no evidence of curvature
+   caution: slices 0, 1, 2, 3, 4 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): ..---   (monotonic)
+   spread: std of theta_p goes from 23.1 (first slice) to 9.44 (last slice); slope -9.1 ± 1.1 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.55   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     4  [   0.398,        1)          2     0.732    0.005381 ± 0.0025   0.00359     0.002   0.00179  | @  @                         |
+     5  [       1,     2.51)          3       2.1      0.0261 ± 0.0052   0.00892    0.0284    0.0142  |     + @                      |
+     6  [    2.51,     6.31)         17      4.69     0.06164 ± 0.016     0.0645    0.0357    0.0897  |  --**-**@-*                  |
+     7  [    6.31,     15.8)        118      12.3     0.06369 ± 0.015      0.159    0.0263    0.0225  |..:-*#%@#*-.: ..              |
+     8  [    15.8,     39.8)        757      29.5      0.1018 ± 0.0089     0.244    0.0327    0.0225  |.:-+*%@%@%+==::...            |
+     9  [    39.8,      100)       4122      67.3     0.06923 ± 0.0015    0.0983    0.0336    0.0284  |..:=*%@@@%#=-...              |
+   trend: <T_p> = 0.08632 + (-0.0002503 ± 0.00015) * theta_p   (-1.7 sigma from flat; change across the slices -0.0157); straight line chi2/ndf = 10.7/2; a quadratic term (-4.24e-05 theta_p^2) lowers chi2 by 10.0 -> clearly curved (quadratic part is 1060% of the linear change)
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): .+-   (1 direction change(s))
+
+===== m = 100 GeV, flux 103-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 62.8%; struck nucleon is a proton in 45.9% =====
+T_p [GeV] (post-FSI leading p): min 0.0001119 median 0.06924 mean 0.1607 max 6.971; free-p kinematic max at E=999: 156.1
+theta_p [deg]: min 1.416 median 66.73 mean 69.14 max 176.8
+struck nucleon before FSI: T median 0.1799 max 9.018 GeV; theta median 62.66 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6252
+   shape   |.....::--+++*#%@@%@@@@%%#*+=-::........                     |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.1624   std 0.2919   skew 7.36   excess kurtosis 106
+   peak    bin 20, x = 0.1129 (393 entries)   FWHM 0.4672 on [0.01041, 0.4776]
+   quantiles  5%: 0.006181  16%: 0.01526  25%: 0.02488  50%: 0.06938  75%: 0.1839  84%: 0.2814  95%: 0.5947
+   nonempty bins 0..38 (x in [0.001, 7.943]);  first bin 0.13%, last bin 0.00% of the integral;  21 empty bins
+   per bin relative error: median 8.9%, worst nonempty bin 100.0%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5408
+   shape   |                     . ...........::=#@+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 60.67   std 20.49   skew -0.443   excess kurtosis -0.394
+   peak    bin 38, x = 71.26 (1747 entries)   FWHM 50.11 on [49.89, 100]
+   quantiles  5%: 21.99  16%: 38.95  25%: 46.97  50%: 62.81  75%: 75.5  84%: 80.88  95%: 94.03
+   nonempty bins 21..39 (x in [1.259, 100]);  first bin 0.00%, last bin 17.22% of the integral;  22 empty bins
+   per bin relative error: median 15.5%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5388
+   T_p          marginal |.....::--=+=+*#%%%@@@@@%#**=-::........                     |  mean 0.1808  std 0.3098  peak 0.1129  16/50/84%: 0.01761 / 0.08228 / 0.314
+   theta_p      marginal |                     . ...........::=#@+|  mean 60.67  std 20.47  peak 71.26  16/50/84%: 38.99 / 62.83 / 80.81
+   dependence: Pearson r = -0.211   Spearman rho = -0.198   mutual information 0.108 nat, normalized 0.059 (0 = independent)
+   densest cell: x in [0.1, 0.1259), y in [63.1, 79.43): 146 entries (2.71%)
+   occupancy: 86% of cells empty; 68% of entries in the 58 densest cells (2.4% of cells), 95% in 175 (7.3%); the 95% set spans x in [0.001259, 2.512], y in [12.59, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   1.5  10.7  24.2  30.3  15.2   1.5   <.1     .     .     .
+   y8  [   15.8,    39.8)   0.4   1.5   3.7   5.3   2.8   0.6   <.1     .     .     .
+   y7  [   6.31,    15.8)   <.1   0.4   0.6   0.5   0.3   0.1   <.1     .     .     .
+   y6  [   2.51,    6.31)     .   <.1   0.1   0.1   0.1     .     .     .     .     .
+   y5  [      1,    2.51)     .     .   <.1   <.1     .     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 9 9 5 . . .
+   y8  [   15.8,    39.8) 3 2 2 2 2 4 9 . . .
+   y7  [   6.31,    15.8) 1 1 1 1 1 1 5 . . .
+   y6  [   2.51,    6.31) . 1 1 1 1 . . . . .
+   y5  [      1,    2.51) . . 1 1 . . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 4 8 9 5 1 1 . . .
+   y8  [   15.8,    39.8) 1 3 7 9 5 2 1 . . .
+   y7  [   6.31,    15.8) 1 6 9 8 5 2 1 . . .
+   y6  [   2.51,    6.31) . 2 8 5 9 . . . . .
+   y5  [      1,    2.51) . . 9 5 . . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        101   0.00272       61.62 ± 2.1         21.3      64.8      71.3  |               ..-+@|
+     1  [ 0.00398,   0.0158)        679   0.00967        64.6 ± 0.85        22.2      67.9      71.3  |             ....:=@|
+     2  [  0.0158,   0.0631)       1541    0.0361       63.33 ± 0.55        21.7      66.6      71.3  |          .......:+@|
+     3  [  0.0631,    0.251)       1951     0.135       61.17 ± 0.44        19.5      64.5      71.3  |           . ....:*@|
+     4  [   0.251,        1)        992     0.452       55.07 ± 0.54          17      56.1      56.6  |            .....:@+|
+     5  [       1,     3.98)        120      1.49       42.71 ± 1.2         12.8      43.9        45  |              ...=@.|
+     6  [    3.98,     15.8)          4      5.45       26.36 ± 6           11.9        20      14.2  |               @@@@ |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 63.27 + (-15.11 ± 0.8) * T_p   (-18.9 sigma from flat; change across the slices -22.4); straight line chi2/ndf = 14.0/4; a quadratic term (5.63 T_p^2) lowers chi2 by 12.1 -> clearly curved (quadratic part is 55% of the linear change)
+   caution: slices 0, 1, 2, 3, 4 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): ..---   (monotonic)
+   spread: std of theta_p goes from 21.3 (first slice) to 12.8 (last slice); slope -6.57 ± 0.56 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.32   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     4  [   0.398,        1)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     5  [       1,     2.51)          3      1.98     0.08217 ± 0.04      0.0691     0.045    0.0225  |      @ @  @                  |
+     6  [    2.51,     6.31)         15      4.56      0.2385 ± 0.068      0.263     0.106     0.713  |     -*@ -* @ @               |
+     7  [    6.31,     15.8)        112        12      0.2932 ± 0.074      0.779    0.0566    0.0897  |  .=:@#%@@*===*::. .          |
+     8  [    15.8,     39.8)        766      29.4      0.2435 ± 0.017      0.463    0.0937     0.113  |..:---+##@@%*+-::..           |
+     9  [    39.8,      100)       4492      67.4      0.1671 ± 0.0037     0.249     0.081     0.113  |...:=+*%%@@@#+::...           |
+   trend: <T_p> = 0.2965 + (-0.001917 ± 0.0004) * theta_p   (-4.8 sigma from flat; change across the slices -0.121); straight line chi2/ndf = 0.6/2; a quadratic term (-2.38e-05 theta_p^2) lowers chi2 by 0.3 -> no evidence of curvature
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): ..-   (monotonic)
+
+===== m = 200 GeV, flux 206-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 63.0%; struck nucleon is a proton in 45.3% =====
+T_p [GeV] (post-FSI leading p): min 5.542e-05 median 0.06232 mean 0.1502 max 8.164; free-p kinematic max at E=999: 42.93
+theta_p [deg]: min 0.9713 median 64.08 mean 66.26 max 178.4
+struck nucleon before FSI: T median 0.1752 max 10.23 GeV; theta median 60.72 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6268
+   shape   |.....::-=+**##%%@@@@@@#%*++=::.... ... .                    |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.1525   std 0.2868   skew 9.88   excess kurtosis 206
+   peak    bin 17, x = 0.05661 (393 entries)   FWHM 0.4067 on [0.009709, 0.4164]
+   quantiles  5%: 0.00589  16%: 0.01386  25%: 0.02238  50%: 0.0631  75%: 0.1725  84%: 0.2608  95%: 0.568
+   nonempty bins 0..39 (x in [0.001, 10]);  first bin 0.14%, last bin 0.00% of the integral;  22 empty bins
+   per bin relative error: median 8.3%, worst nonempty bin 100.0%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5473
+   shape   |                   .. ............:-=#@+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 58.24   std 21.18   skew -0.359   excess kurtosis -0.517
+   peak    bin 38, x = 71.26 (1606 entries)   FWHM 52.86 on [47.14, 100]
+   quantiles  5%: 19.57  16%: 34.97  25%: 43.6  50%: 59.88  75%: 73.93  84%: 78.94  95%: 93.19
+   nonempty bins 19..39 (x in [0.7943, 100]);  first bin 0.00%, last bin 15.11% of the integral;  20 empty bins
+   per bin relative error: median 17.6%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5449
+   T_p          marginal |......:--=+**#%%%@@@@@%@#*+=-:.... ... .                    |  mean 0.1688  std 0.3037  peak 0.1422  16/50/84%: 0.01576 / 0.07531 / 0.2944
+   theta_p      marginal |                   .. ............:-=#@+|  mean 58.23  std 21.17  peak 71.26  16/50/84%: 34.97 / 59.87 / 78.9
+   dependence: Pearson r = -0.208   Spearman rho = -0.217   mutual information 0.105 nat, normalized 0.054 (0 = independent)
+   densest cell: x in [0.1259, 0.1585), y in [63.1, 79.43): 129 entries (2.37%)
+   occupancy: 85% of cells empty; 68% of entries in the 63 densest cells (2.6% of cells), 95% in 192 (8.0%); the 95% set spans x in [0.001585, 2.512], y in [12.59, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   1.9  11.4  23.9  28.5  13.3   0.8     .     .     .     .
+   y8  [   15.8,    39.8)   0.3   2.0   4.8   5.7   3.2   0.9   0.1     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.3   0.8   0.9   0.6   0.1     .     .     .     .
+   y6  [   2.51,    6.31)   <.1   0.1   0.1   0.2   0.1   <.1     .     .     .     .
+   y5  [      1,    2.51)     .   <.1   <.1   0.1     .     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .   <.1     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 9 8 . . . .
+   y8  [   15.8,    39.8) 2 2 2 2 3 9 9 . . .
+   y7  [   6.31,    15.8) 1 1 1 1 1 1 . . . .
+   y6  [   2.51,    6.31) 1 1 1 1 1 1 . . . .
+   y5  [      1,    2.51) . 1 1 1 . . . . . .
+   y4  [  0.398,       1) . . . 1 . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 4 8 9 5 1 . . . .
+   y8  [   15.8,    39.8) 1 4 8 9 6 2 1 . . .
+   y7  [   6.31,    15.8) 1 4 8 9 7 1 . . . .
+   y6  [   2.51,    6.31) 1 4 5 9 4 1 . . . .
+   y5  [      1,    2.51) . 5 3 9 . . . . . .
+   y4  [  0.398,       1) . . . 9 . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        125    0.0026       62.24 ± 2.1           23      67.4      71.3  |            . ...:=@|
+     1  [ 0.00398,   0.0158)        752   0.00996       62.43 ± 0.83        22.8      65.6      71.3  |           . ....:+@|
+     2  [  0.0158,   0.0631)       1612    0.0361       61.19 ± 0.55        22.2      64.2      71.3  |           ......:+@|
+     3  [  0.0631,    0.251)       1924     0.136       58.24 ± 0.46        20.2      60.8      71.3  |         ........-#@|
+     4  [   0.251,        1)        938     0.456       51.43 ± 0.56        17.2      53.3      56.6  |             ....-@=|
+     5  [       1,     3.98)         94      1.49       37.47 ± 1.3         12.6      37.8        45  |             ...=%@.|
+     6  [    3.98,     15.8)          4       6.2       22.54 ± 0              0      22.5      22.5  |                @   |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 61.03 + (-17.62 ± 0.86) * T_p   (-20.5 sigma from flat; change across the slices -26.2); straight line chi2/ndf = 18.9/4; a quadratic term (7.09 T_p^2) lowers chi2 by 17.8 -> clearly curved (quadratic part is 60% of the linear change)
+   caution: slices 0, 1, 2, 3, 4 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): ..---   (monotonic)
+   spread: std of theta_p goes from 23 (first slice) to 12.6 (last slice); slope -7.46 ± 0.61 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.46   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     4  [   0.398,        1)          1     0.897     0.08972 ± 0              0    0.0897    0.0897  |         @                    |
+     5  [       1,     2.51)          7      1.83     0.09596 ± 0.03        0.08    0.0713    0.0113  |     @ + ++@                  |
+     6  [    2.51,     6.31)         25      4.74      0.2043 ± 0.059      0.297     0.142     0.179  | : : =:=:-:@-:::              |
+     7  [    6.31,     15.8)        149      11.7      0.1906 ± 0.022      0.273    0.0806     0.045  |....=+*%%@%%##=..             |
+     8  [    15.8,     39.8)        922      29.3      0.2644 ± 0.019      0.568    0.0916    0.0566  |...:-+*%@%@@#+=-:...          |
+     9  [    39.8,      100)       4345      66.4      0.1477 ± 0.0031     0.204    0.0724     0.142  |...:=*#%@@@%#+:..             |
+   trend: <T_p> = 0.2566 + (-0.001633 ± 0.00031) * theta_p   (-5.3 sigma from flat; change across the slices -0.101); straight line chi2/ndf = 13.8/2; a quadratic term (-0.000119 theta_p^2) lowers chi2 by 12.9 -> clearly curved (quadratic part is 448% of the linear change)
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): .+-   (1 direction change(s))
+
+===== m = 300 GeV, flux 309-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 61.9%; struck nucleon is a proton in 45.1% =====
+T_p [GeV] (post-FSI leading p): min 0.0001028 median 0.05695 mean 0.1403 max 5.079; free-p kinematic max at E=999: 18.55
+theta_p [deg]: min 0.3425 median 62.4 mean 64.58 max 178.8
+struck nucleon before FSI: T median 0.1563 max 5.108 GeV; theta median 57.1 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6153
+   shape   |....::--=++*#%%@@@%@@%%#*+==-:........                      |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.1423   std 0.2577   skew 6.73   excess kurtosis 82.8
+   peak    bin 19, x = 0.08972 (391 entries)   FWHM 0.3531 on [0.01007, 0.3632]
+   quantiles  5%: 0.005643  16%: 0.01353  25%: 0.02116  50%: 0.05765  75%: 0.1567  84%: 0.2415  95%: 0.5602
+   nonempty bins 0..37 (x in [0.001, 6.31]);  first bin 0.13%, last bin 0.00% of the integral;  22 empty bins
+   per bin relative error: median 8.5%, worst nonempty bin 100.0%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5401
+   shape   |               .   .  ...........::-+%@+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 56.54   std 21.79   skew -0.24   excess kurtosis -0.702
+   peak    bin 38, x = 71.26 (1442 entries)   FWHM 55.89 on [44.11, 100]
+   quantiles  5%: 18.39  16%: 32.4  25%: 40.6  50%: 57.72  75%: 73.1  84%: 78.6  95%: 92.98
+   nonempty bins 15..39 (x in [0.3162, 100]);  first bin 0.00%, last bin 14.65% of the integral;  20 empty bins
+   per bin relative error: median 17.3%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5376
+   T_p          marginal |.....::-==+*##%%%@%@@@%%**==-:........                      |  mean 0.157  std 0.272  peak 0.08972  16/50/84%: 0.01534 / 0.06725 / 0.2712
+   theta_p      marginal |               .   .  ...........::-+%@+|  mean 56.5  std 21.79  peak 71.26  16/50/84%: 32.39 / 57.69 / 78.57
+   dependence: Pearson r = -0.231   Spearman rho = -0.224   mutual information 0.094 nat, normalized 0.047 (0 = independent)
+   densest cell: x in [0.07943, 0.1), y in [63.1, 79.43): 112 entries (2.08%)
+   occupancy: 85% of cells empty; 68% of entries in the 70 densest cells (2.9% of cells), 95% in 197 (8.2%); the 95% set spans x in [0.001585, 1.995], y in [10, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   2.0  11.5  25.1  25.9  11.1   0.4     .     .     .     .
+   y8  [   15.8,    39.8)   0.4   2.2   5.9   6.9   4.0   0.8   <.1     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.3   0.8   1.0   0.6   0.2     .     .     .     .
+   y6  [   2.51,    6.31)   <.1   0.1   0.1   0.2   0.1   <.1     .     .     .     .
+   y5  [      1,    2.51)     .   <.1   <.1   0.1     .     .     .     .     .     .
+   y4  [  0.398,       1)     .   <.1     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .   <.1     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 9 5 . . . .
+   y8  [   15.8,    39.8) 2 2 3 3 4 9 9 . . .
+   y7  [   6.31,    15.8) 1 1 1 1 1 2 . . . .
+   y6  [   2.51,    6.31) 1 1 1 1 1 1 . . . .
+   y5  [      1,    2.51) . 1 1 1 . . . . . .
+   y4  [  0.398,       1) . 1 . . . . . . . .
+   y3  [  0.158,   0.398) . . . . 1 . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 4 9 9 4 1 . . . .
+   y8  [   15.8,    39.8) 1 3 8 9 6 2 1 . . .
+   y7  [   6.31,    15.8) 1 3 8 9 5 2 . . . .
+   y6  [   2.51,    6.31) 1 4 8 9 6 1 . . . .
+   y5  [      1,    2.51) . 3 6 9 . . . . . .
+   y4  [  0.398,       1) . 9 . . . . . . . .
+   y3  [  0.158,   0.398) . . . . 9 . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        133   0.00272       60.95 ± 1.9         21.5      64.7      71.3  |             . ..-+@|
+     1  [ 0.00398,   0.0158)        759   0.00986       61.79 ± 0.81        22.4      64.7      71.3  |         . .. ...:+@|
+     2  [  0.0158,   0.0631)       1725     0.036       59.52 ± 0.54        22.3      61.8      71.3  |           ......-*@|
+     3  [  0.0631,    0.251)       1833     0.134       55.99 ± 0.5         21.2      57.8      71.3  |           .....:=%@|
+     4  [   0.251,        1)        846     0.467       48.27 ± 0.61        17.8      49.9      56.6  |       .    ....:-@=|
+     5  [       1,     3.98)         78      1.57       33.05 ± 1.5         13.5      34.4      35.7  |             .::=@*.|
+     6  [    3.98,     15.8)          2      5.08       20.22 ± 1.6         2.32        20      17.9  |                @   |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 59.44 + (-19.55 ± 0.93) * T_p   (-21.1 sigma from flat; change across the slices -30.6); straight line chi2/ndf = 34.5/4; a quadratic term (9.05 T_p^2) lowers chi2 by 29.5 -> clearly curved (quadratic part is 73% of the linear change)
+   caution: slices 0, 1, 2, 3, 4 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): .----   (monotonic)
+   spread: std of theta_p goes from 21.5 (first slice) to 13.5 (last slice); slope -6.76 ± 0.65 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.47   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          1     0.357      0.2837 ± 0              0     0.284     0.284  |            @                 |
+     4  [   0.398,        1)          1     0.897    0.008972 ± 0              0   0.00897   0.00897  |    @                         |
+     5  [       1,     2.51)          6      2.02     0.08983 ± 0.03      0.0746    0.0501    0.0142  |     @@ @@@@                  |
+     6  [    2.51,     6.31)         30      4.67      0.2168 ± 0.051       0.28     0.134     0.142  |  : *:==% @@* *:              |
+     7  [    6.31,     15.8)        159      11.7      0.2835 ± 0.045      0.562     0.104     0.113  |  ::---*%+#@+=-:.:            |
+     8  [    15.8,     39.8)       1093      29.3      0.2305 ± 0.013      0.427    0.0851    0.0897  |...:-=*#@@%%*+=:...           |
+     9  [    39.8,      100)       4086        66       0.132 ± 0.0028     0.181    0.0615    0.0897  |..:-=*%@@@@%*=:.              |
+   trend: <T_p> = 0.2989 + (-0.002527 ± 0.00031) * theta_p   (-8.1 sigma from flat; change across the slices -0.155); straight line chi2/ndf = 2.2/2; a quadratic term (-3.44e-05 theta_p^2) lowers chi2 by 1.2 -> no evidence of curvature
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): ..-   (monotonic)
+
+===== m = 400 GeV, flux 412-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 62.7%; struck nucleon is a proton in 45.0% =====
+T_p [GeV] (post-FSI leading p): min 1.524e-05 median 0.06053 mean 0.1367 max 9.468; free-p kinematic max at E=999: 9.715
+theta_p [deg]: min 1.24 median 60.35 mean 63.23 max 169.7
+struck nucleon before FSI: T median 0.1663 max 9.679 GeV; theta median 56.42 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6243
+   shape   |....:::-==+##%%@@@@@@@%#*++-:........  .                    |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.1385   std 0.2547   skew 11.3   excess kurtosis 280
+   peak    bin 18, x = 0.07126 (389 entries)   FWHM 0.3817 on [0.01064, 0.3923]
+   quantiles  5%: 0.006039  16%: 0.01449  25%: 0.02249  50%: 0.06156  75%: 0.1579  84%: 0.2421  95%: 0.4988
+   nonempty bins 0..39 (x in [0.001, 10]);  first bin 0.11%, last bin 0.00% of the integral;  22 empty bins
+   per bin relative error: median 8.9%, worst nonempty bin 100.0%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5521
+   shape   |                    . ...........:-=*@@+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 55.61   std 21.2   skew -0.171   excess kurtosis -0.64
+   peak    bin 38, x = 71.26 (1373 entries)   FWHM 59.53 on [40.47, 100]
+   quantiles  5%: 18.78  16%: 32.85  25%: 39.91  50%: 56.24  75%: 71.58  84%: 77.49  95%: 92.11
+   nonempty bins 20..39 (x in [1, 100]);  first bin 0.00%, last bin 13.04% of the integral;  21 empty bins
+   per bin relative error: median 15.2%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5499
+   T_p          marginal |......::--=+*##%%%@@@@%##++-:........  .                    |  mean 0.1521  std 0.2681  peak 0.1422  16/50/84%: 0.01685 / 0.07213 / 0.2677
+   theta_p      marginal |                    . ...........:-=*@@+|  mean 55.58  std 21.2  peak 71.26  16/50/84%: 32.81 / 56.21 / 77.46
+   dependence: Pearson r = -0.225   Spearman rho = -0.214   mutual information 0.102 nat, normalized 0.051 (0 = independent)
+   densest cell: x in [0.0631, 0.07943), y in [63.1, 79.43): 120 entries (2.18%)
+   occupancy: 86% of cells empty; 68% of entries in the 66 densest cells (2.8% of cells), 95% in 190 (7.9%); the 95% set spans x in [0.001585, 1.585], y in [6.31, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   1.7  10.0  24.7  27.7  10.8   0.2     .     .     .     .
+   y8  [   15.8,    39.8)   0.4   2.3   5.8   7.4   4.3   0.7   <.1     .     .     .
+   y7  [   6.31,    15.8)   <.1   0.4   0.9   1.0   0.7   0.2   <.1     .     .     .
+   y6  [   2.51,    6.31)     .   <.1   0.1   0.2   0.1   <.1     .     .     .     .
+   y5  [      1,    2.51)     .     .   <.1   <.1     .     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 9 3 . . . .
+   y8  [   15.8,    39.8) 3 3 3 3 4 9 5 . . .
+   y7  [   6.31,    15.8) 1 1 1 1 1 3 9 . . .
+   y6  [   2.51,    6.31) . 1 1 1 1 1 . . . .
+   y5  [      1,    2.51) . . 1 1 . . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 4 9 9 4 1 . . . .
+   y8  [   15.8,    39.8) 1 3 8 9 6 1 1 . . .
+   y7  [   6.31,    15.8) 1 4 8 9 7 2 1 . . .
+   y6  [   2.51,    6.31) . 2 6 9 4 1 . . . .
+   y5  [      1,    2.51) . . 9 9 . . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        118   0.00269       58.78 ± 1.9         20.4      60.3      71.3  |              ...=#@|
+     1  [ 0.00398,   0.0158)        704    0.0101       59.81 ± 0.85        22.5      61.8      71.3  |             ....-*@|
+     2  [  0.0158,   0.0631)       1735    0.0354       58.75 ± 0.53        21.9      60.7      71.3  |           ......-#@|
+     3  [  0.0631,    0.251)       1997     0.133       55.87 ± 0.46        20.4        57      71.3  |          ......:=@@|
+     4  [   0.251,        1)        878     0.441       46.84 ± 0.56        16.6      48.1      56.6  |             ....=@-|
+     5  [       1,     3.98)         64       1.5       29.69 ± 1.6         12.7      30.4      35.7  |             ..-=@+ |
+     6  [    3.98,     15.8)          3      5.99       17.19 ± 4.7         8.19      14.2      8.97  |              @@ @  |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 58.8 + (-22.42 ± 0.98) * T_p   (-22.9 sigma from flat; change across the slices -33.6); straight line chi2/ndf = 26.4/4; a quadratic term (8.99 T_p^2) lowers chi2 by 25.8 -> clearly curved (quadratic part is 60% of the linear change)
+   caution: slices 0, 1, 2, 3 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): ..---   (monotonic)
+   spread: std of theta_p goes from 20.4 (first slice) to 12.7 (last slice); slope -8 ± 0.69 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.58   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     4  [   0.398,        1)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     5  [       1,     2.51)          4      1.86     0.09607 ± 0.028     0.0556    0.0631    0.0357  |       @@ @@                  |
+     6  [    2.51,     6.31)         29      4.68      0.1792 ± 0.044      0.236     0.088    0.0897  |     -:-*@=--= :              |
+     7  [    6.31,     15.8)        181      11.7      0.2988 ± 0.059      0.789    0.0889    0.0897  |  .=:++@#@*%%*==. ..          |
+     8  [    15.8,     39.8)       1156      30.4      0.2199 ± 0.011      0.375     0.093     0.142  |..::-+#%%@@@#*=:...           |
+     9  [    39.8,      100)       4129        65      0.1265 ± 0.0025     0.161    0.0669     0.142  |...:-+#%@@@%*=:.              |
+   trend: <T_p> = 0.2863 + (-0.002457 ± 0.00029) * theta_p   (-8.5 sigma from flat; change across the slices -0.148); straight line chi2/ndf = 5.8/2; a quadratic term (-5.39e-05 theta_p^2) lowers chi2 by 3.5 -> no evidence of curvature
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): ..-   (monotonic)
+
+===== m = 500 GeV, flux 515-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 63.3%; struck nucleon is a proton in 45.6% =====
+T_p [GeV] (post-FSI leading p): min 1.465e-05 median 0.05895 mean 0.1318 max 3.77; free-p kinematic max at E=999: 5.573
+theta_p [deg]: min 0.1909 median 59.36 mean 62.51 max 173.8
+struck nucleon before FSI: T median 0.1624 max 3.849 GeV; theta median 54.32 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6303
+   shape   |.....::-=++##%@%@@@%@@%#*+=-:.......                        |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.1334   std 0.2206   skew 5.51   excess kurtosis 50.9
+   peak    bin 17, x = 0.05661 (401 entries)   FWHM 0.3676 on [0.01048, 0.3781]
+   quantiles  5%: 0.005969  16%: 0.01406  25%: 0.02156  50%: 0.0592  75%: 0.1567  84%: 0.2368  95%: 0.484
+   nonempty bins 0..35 (x in [0.001, 3.981]);  first bin 0.10%, last bin 0.00% of the integral;  24 empty bins
+   per bin relative error: median 8.4%, worst nonempty bin 70.7%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5598
+   shape   |            .       .  .........::-=*@@*|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 54.95   std 21.92   skew -0.148   excess kurtosis -0.734
+   peak    bin 38, x = 71.26 (1310 entries)   FWHM 60.18 on [39.82, 100]
+   quantiles  5%: 16.99  16%: 30.82  25%: 38.99  50%: 55.53  75%: 71.56  84%: 77.84  95%: 92.5
+   nonempty bins 12..39 (x in [0.1585, 100]);  first bin 0.00%, last bin 13.72% of the integral;  21 empty bins
+   per bin relative error: median 13.1%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5583
+   T_p          marginal |.....::--=+*#%%%%@@@@@@%#*=-::......                        |  mean 0.1458  std 0.231  peak 0.07126  16/50/84%: 0.01571 / 0.06914 / 0.2577
+   theta_p      marginal |            .       .  .........::-=*@@*|  mean 54.95  std 21.9  peak 71.26  16/50/84%: 30.83 / 55.53 / 77.83
+   dependence: Pearson r = -0.265   Spearman rho = -0.258   mutual information 0.102 nat, normalized 0.050 (0 = independent)
+   densest cell: x in [0.0631, 0.07943), y in [63.1, 79.43): 103 entries (1.84%)
+   occupancy: 85% of cells empty; 68% of entries in the 69 densest cells (2.9% of cells), 95% in 196 (8.2%); the 95% set spans x in [0.001585, 3.162], y in [7.943, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   1.7  11.4  24.5  27.2   9.1   0.2     .     .     .     .
+   y8  [   15.8,    39.8)   0.4   2.0   5.8   7.3   5.4   0.8     .     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.6   0.9   1.1   0.7   0.1     .     .     .     .
+   y6  [   2.51,    6.31)     .   <.1   0.2   0.1   0.1   <.1     .     .     .     .
+   y5  [      1,    2.51)     .     .   <.1   <.1   <.1     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .   <.1     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 9 3 . . . .
+   y8  [   15.8,    39.8) 2 2 3 3 6 9 . . . .
+   y7  [   6.31,    15.8) 1 1 1 1 1 2 . . . .
+   y6  [   2.51,    6.31) . 1 1 1 1 1 . . . .
+   y5  [      1,    2.51) . . 1 1 1 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . 1 . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 4 9 9 3 1 . . . .
+   y8  [   15.8,    39.8) 1 3 8 9 7 1 . . . .
+   y7  [   6.31,    15.8) 1 5 8 9 6 1 . . . .
+   y6  [   2.51,    6.31) . 2 9 5 5 2 . . . .
+   y5  [      1,    2.51) . . 5 9 5 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . 9 . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        119   0.00278        58.1 ± 2           21.8        60      71.3  |              ..:-#@|
+     1  [ 0.00398,   0.0158)        784   0.00999        61.5 ± 0.81        22.6      63.9      71.3  |             ....:*@|
+     2  [  0.0158,   0.0631)       1758    0.0357       58.25 ± 0.54        22.5      60.3      71.3  |          . ....:-#@|
+     3  [  0.0631,    0.251)       2002     0.134       54.82 ± 0.46        20.8      55.6      71.3  |      .   ......:=@@|
+     4  [   0.251,        1)        854     0.433       44.08 ± 0.6         17.5      44.2      56.6  |           .....:+@:|
+     5  [       1,     3.98)         66      1.59        28.4 ± 1.4         11.3      27.3      35.7  |             . -%@+ |
+     6  [    3.98,     15.8)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 58.01 + (-22.49 ± 0.87) * T_p   (-25.9 sigma from flat; change across the slices -35.6); straight line chi2/ndf = 93.9/4; a quadratic term (15.3 T_p^2) lowers chi2 by 87.8 -> clearly curved (quadratic part is 108% of the linear change)
+   caution: slices 0, 1, 2, 3, 4 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): .----   (monotonic)
+   spread: std of theta_p goes from 21.8 (first slice) to 11.3 (last slice); slope -7.88 ± 0.61 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.63   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          1     0.179       0.179 ± 0              0     0.179     0.179  |           @                  |
+     4  [   0.398,        1)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     5  [       1,     2.51)          4      1.69      0.1401 ± 0.045     0.0897       0.1     0.045  |        @@@ @                 |
+     6  [    2.51,     6.31)         31      4.67      0.2184 ± 0.053      0.297     0.104     0.045  |    ::**% @:++:-              |
+     7  [    6.31,     15.8)        199      11.9      0.2195 ± 0.031      0.439    0.0775    0.0713  |. ::*+=%@@#@@+-:..            |
+     8  [    15.8,     39.8)       1211      29.1      0.2329 ± 0.01       0.351     0.112     0.142  |...:-=*%##@@@#=:..            |
+     9  [    39.8,      100)       4137        65      0.1162 ± 0.0023     0.151    0.0616    0.0713  |...:=*#%@@@%*-..              |
+   trend: <T_p> = 0.3052 + (-0.002902 ± 0.00025) * theta_p   (-11.6 sigma from flat; change across the slices -0.175); straight line chi2/ndf = 6.1/2; a quadratic term (-6.99e-05 theta_p^2) lowers chi2 by 6.0 -> no evidence of curvature
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): ..-   (monotonic)
+
+===== m = 600 GeV, flux 618-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 61.5%; struck nucleon is a proton in 45.9% =====
+T_p [GeV] (post-FSI leading p): min 1.003e-05 median 0.04864 mean 0.1051 max 2.273; free-p kinematic max at E=999: 3.308
+theta_p [deg]: min 1.699 median 55.92 mean 59.73 max 177.1
+struck nucleon before FSI: T median 0.134 max 3.797 GeV; theta median 50.49 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6114
+   shape   |.....::-=+#*%%@%@@@%@%**+==::.....                          |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.1066   std 0.1602   skew 4.06   excess kurtosis 27.4
+   peak    bin 16, x = 0.04496 (404 entries)   FWHM 0.2828 on [0.009097, 0.2919]
+   quantiles  5%: 0.005248  16%: 0.01202  25%: 0.01883  50%: 0.04907  75%: 0.1245  84%: 0.1894  95%: 0.4098
+   nonempty bins 0..33 (x in [0.001, 2.512]);  first bin 0.11%, last bin 0.00% of the integral;  26 empty bins
+   per bin relative error: median 8.1%, worst nonempty bin 70.7%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5494
+   shape   |                      .. .......::-+#@@+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 52.51   std 21.86   skew -0.0208   excess kurtosis -0.745
+   peak    bin 37, x = 56.61 (1182 entries)   FWHM 63.7 on [36.3, 100]
+   quantiles  5%: 16.21  16%: 28.54  25%: 36.04  50%: 52.39  75%: 68.85  84%: 75.99  95%: 91.19
+   nonempty bins 22..39 (x in [1.585, 100]);  first bin 0.00%, last bin 11.67% of the integral;  23 empty bins
+   per bin relative error: median 10.1%, worst nonempty bin 70.7%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5464
+   T_p          marginal |.....::-==+*##@%@@@%@%#**==::.....                          |  mean 0.1155  std 0.1668  peak 0.07126  16/50/84%: 0.01367 / 0.05623 / 0.2074
+   theta_p      marginal |                      .. .......::-+#@@+|  mean 52.48  std 21.86  peak 56.61  16/50/84%: 28.5 / 52.37 / 75.95
+   dependence: Pearson r = -0.280   Spearman rho = -0.248   mutual information 0.103 nat, normalized 0.049 (0 = independent)
+   densest cell: x in [0.0631, 0.07943), y in [63.1, 79.43): 101 entries (1.85%)
+   occupancy: 85% of cells empty; 68% of entries in the 73 densest cells (3.0% of cells), 95% in 196 (8.2%); the 95% set spans x in [0.001585, 1], y in [6.31, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   2.0  11.9  26.7  23.7   5.8   <.1     .     .     .     .
+   y8  [   15.8,    39.8)   0.7   3.1   7.1   9.1   4.9   0.2     .     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.7   0.9   1.1   1.0   0.1     .     .     .     .
+   y6  [   2.51,    6.31)   <.1   0.1   0.1   0.2   0.1   <.1     .     .     .     .
+   y5  [      1,    2.51)     .     .   <.1   <.1   0.1     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 9 2 . . . .
+   y8  [   15.8,    39.8) 3 3 3 4 8 9 . . . .
+   y7  [   6.31,    15.8) 1 1 1 1 2 8 . . . .
+   y6  [   2.51,    6.31) 1 1 1 1 1 1 . . . .
+   y5  [      1,    2.51) . . 1 1 1 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 5 9 8 2 1 . . . .
+   y8  [   15.8,    39.8) 1 4 7 9 5 1 . . . .
+   y7  [   6.31,    15.8) 1 6 8 9 9 2 . . . .
+   y6  [   2.51,    6.31) 2 3 7 9 6 1 . . . .
+   y5  [      1,    2.51) . . 4 4 9 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        156    0.0027       55.34 ± 1.9         24.3      56.6      56.6  |            ....:=%@|
+     1  [ 0.00398,   0.0158)        859   0.00978       56.97 ± 0.76        22.3      58.5      71.3  |            .....=#@|
+     2  [  0.0158,   0.0631)       1906    0.0356       56.72 ± 0.5         21.7      57.1      71.3  |           .....:=@@|
+     3  [  0.0631,    0.251)       1868     0.129       50.94 ± 0.48        20.6      50.7      56.6  |           .....:+@#|
+     4  [   0.251,        1)        654     0.434       38.94 ± 0.68        17.3      39.1        45  |           ....:=*@:|
+     5  [       1,     3.98)         21      1.41       21.12 ± 2.4           11      18.9      14.2  |             ::@@=- |
+     6  [    3.98,     15.8)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 56.24 + (-33.37 ± 1.4) * T_p   (-24.7 sigma from flat; change across the slices -47.1); straight line chi2/ndf = 60.2/4; a quadratic term (18.6 T_p^2) lowers chi2 by 55.3 -> clearly curved (quadratic part is 79% of the linear change)
+   caution: slices 0, 1, 2, 3 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): ..---   (monotonic)
+   spread: std of theta_p goes from 24.3 (first slice) to 11 (last slice); slope -9.46 ± 0.96 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.23   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     4  [   0.398,        1)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     5  [       1,     2.51)          9      2.15      0.2683 ± 0.066      0.198     0.337     0.357  |      -- -- *@                |
+     6  [    2.51,     6.31)         32      4.68      0.1987 ± 0.07       0.393    0.0846    0.0566  | - :- :+*@*:*+  :             |
+     7  [    6.31,     15.8)        219      11.7      0.2237 ± 0.023      0.334    0.0897     0.142  |...:=%#=##@+%%=:.             |
+     8  [    15.8,     39.8)       1369      29.1      0.1626 ± 0.0057     0.212     0.082     0.113  |...:-++#%%@%*+-..             |
+     9  [    39.8,      100)       3835      63.7     0.09151 ± 0.0019     0.117    0.0486     0.045  |..:-=*%@@@%*=:..              |
+   trend: <T_p> = 0.2262 + (-0.002117 ± 0.00016) * theta_p   (-13.0 sigma from flat; change across the slices -0.125); straight line chi2/ndf = 1.2/2; a quadratic term (1.96e-05 theta_p^2) lowers chi2 by 0.7 -> no evidence of curvature
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): .--   (monotonic)
+
+===== m = 700 GeV, flux 721-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 60.9%; struck nucleon is a proton in 45.6% =====
+T_p [GeV] (post-FSI leading p): min 3.197e-05 median 0.04415 mean 0.09596 max 1.482; free-p kinematic max at E=999: 1.938
+theta_p [deg]: min 1.054 median 54.64 mean 58.5 max 175.8
+struck nucleon before FSI: T median 0.1257 max 1.996 GeV; theta median 48.02 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6058
+   shape   |.....::-=+##%%@@%@%%%%#*==-:....                            |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.09747   std 0.142   skew 3.61   excess kurtosis 18.8
+   peak    bin 15, x = 0.03572 (413 entries)   FWHM 0.2458 on [0.008313, 0.2541]
+   quantiles  5%: 0.005433  16%: 0.01173  25%: 0.01772  50%: 0.04483  75%: 0.1197  84%: 0.1754  95%: 0.3637
+   nonempty bins 0..31 (x in [0.001, 1.585]);  first bin 0.18%, last bin 0.00% of the integral;  28 empty bins
+   per bin relative error: median 7.7%, worst nonempty bin 44.7%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5477
+   shape   |                    .. .........::=+%@@+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 51.62   std 22.04   skew 0.0349   excess kurtosis -0.753
+   peak    bin 37, x = 56.61 (1146 entries)   FWHM 65.58 on [34.42, 100]
+   quantiles  5%: 15.39  16%: 27.84  25%: 34.92  50%: 51.05  75%: 67.88  84%: 75.61  95%: 91.09
+   nonempty bins 20..39 (x in [1, 100]);  first bin 0.00%, last bin 11.54% of the integral;  21 empty bins
+   per bin relative error: median 11.5%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5458
+   T_p          marginal |.....::-=+**#%@@%@%%@@%*+=-:....                            |  mean 0.1049  std 0.1473  peak 0.03572  16/50/84%: 0.01287 / 0.05087 / 0.188
+   theta_p      marginal |                    .. .........::=+%@@+|  mean 51.62  std 22.01  peak 56.61  16/50/84%: 27.85 / 51.07 / 75.56
+   dependence: Pearson r = -0.282   Spearman rho = -0.274   mutual information 0.104 nat, normalized 0.049 (0 = independent)
+   densest cell: x in [0.02512, 0.03162), y in [63.1, 79.43): 88 entries (1.61%)
+   occupancy: 86% of cells empty; 68% of entries in the 74 densest cells (3.1% of cells), 95% in 198 (8.2%); the 95% set spans x in [0.001995, 1.259], y in [6.31, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   2.2  13.4  26.4  22.4   4.1   <.1     .     .     .     .
+   y8  [   15.8,    39.8)   0.5   3.3   8.1   9.3   4.9   0.3     .     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.6   1.2   1.9   0.5   0.1     .     .     .     .
+   y6  [   2.51,    6.31)     .   0.1   0.2   0.3   0.1     .     .     .     .     .
+   y5  [      1,    2.51)     .     .   <.1   <.1   <.1     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 8 1 . . . .
+   y8  [   15.8,    39.8) 2 3 3 4 9 9 . . . .
+   y7  [   6.31,    15.8) 1 1 1 1 1 4 . . . .
+   y6  [   2.51,    6.31) . 1 1 1 1 . . . . .
+   y5  [      1,    2.51) . . 1 1 1 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 5 9 8 2 1 . . . .
+   y8  [   15.8,    39.8) 1 4 8 9 5 1 . . . .
+   y7  [   6.31,    15.8) 1 3 6 9 3 1 . . . .
+   y6  [   2.51,    6.31) . 3 6 9 4 . . . . .
+   y5  [      1,    2.51) . . 5 9 9 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        150   0.00273       59.62 ± 1.9           23      63.1      71.3  |               .::*@|
+     1  [ 0.00398,   0.0158)        948   0.00995       58.17 ± 0.74        22.9      59.2      71.3  |             ...:-#@|
+     2  [  0.0158,   0.0631)       1957    0.0352       55.13 ± 0.5         21.9      55.7      71.3  |          . ....:=@@|
+     3  [  0.0631,    0.251)       1850     0.132       48.25 ± 0.48        20.6      48.4      56.6  |          ......:=@+|
+     4  [   0.251,        1)        532     0.422       37.68 ± 0.66        15.3        37        45  |          . ....=@@:|
+     5  [       1,     3.98)         21       1.2       21.86 ± 1.9         8.64      20.6      28.4  |              -+@#: |
+     6  [    3.98,     15.8)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 55.19 + (-35.9 ± 1.3) * T_p   (-27.2 sigma from flat; change across the slices -43); straight line chi2/ndf = 92.2/4; a quadratic term (25.8 T_p^2) lowers chi2 by 72.8 -> clearly curved (quadratic part is 86% of the linear change)
+   caution: slices 0, 1, 2, 3 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): .----   (monotonic)
+   spread: std of theta_p goes from 23 (first slice) to 8.64 (last slice); slope -14 ± 0.93 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.57   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     4  [   0.398,        1)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     5  [       1,     2.51)          5      1.41      0.2094 ± 0.065      0.145     0.179     0.045  |        @@ @@@                |
+     6  [    2.51,     6.31)         38       4.7       0.181 ± 0.038      0.232    0.0918    0.0284  |   ::+*%:@%%:-*               |
+     7  [    6.31,     15.8)        244      11.7      0.1464 ± 0.014      0.211    0.0886     0.179  |...:-=++**@%--.:              |
+     8  [    15.8,     39.8)       1433      29.2      0.1584 ± 0.0055     0.208     0.077     0.179  |...:=+#@%@@@%+-.              |
+     9  [    39.8,      100)       3738      63.4     0.08075 ± 0.0016    0.0987     0.043    0.0357  |..:-=#%@@%%*-:..              |
+   trend: <T_p> = 0.2064 + (-0.001979 ± 0.00014) * theta_p   (-14.1 sigma from flat; change across the slices -0.116); straight line chi2/ndf = 10.9/2; a quadratic term (-4.8e-05 theta_p^2) lowers chi2 by 9.6 -> clearly curved (quadratic part is 142% of the linear change)
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): ..-   (monotonic)
+
+===== m = 800 GeV, flux 824-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 61.3%; struck nucleon is a proton in 45.1% =====
+T_p [GeV] (post-FSI leading p): min 1.052e-05 median 0.04592 mean 0.08958 max 0.9361; free-p kinematic max at E=999: 1.047
+theta_p [deg]: min 0.1863 median 53.45 mean 57.49 max 174.2
+struck nucleon before FSI: T median 0.1365 max 1.377 GeV; theta median 46.28 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 6109
+   shape   |....::--=+*##%@@@@%@%%#*+=-:..                              |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.09082   std 0.1133   skew 2.41   excess kurtosis 7.38
+   peak    bin 17, x = 0.05661 (415 entries)   FWHM 0.2662 on [0.009416, 0.2756]
+   quantiles  5%: 0.005157  16%: 0.01223  25%: 0.01845  50%: 0.04663  75%: 0.1168  84%: 0.1738  95%: 0.3339
+   nonempty bins 0..29 (x in [0.001, 1]);  first bin 0.15%, last bin 0.00% of the integral;  30 empty bins
+   per bin relative error: median 7.1%, worst nonempty bin 40.8%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5521
+   shape   |            .         ..........:-=*%@%+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 50.7   std 22.07   skew 0.076   excess kurtosis -0.746
+   peak    bin 37, x = 56.61 (1145 entries)   FWHM 67 on [33, 100]
+   quantiles  5%: 14.73  16%: 26.89  25%: 33.99  50%: 49.95  75%: 66.7  84%: 74.85  95%: 90.6
+   nonempty bins 12..39 (x in [0.1585, 100]);  first bin 0.00%, last bin 10.94% of the integral;  21 empty bins
+   per bin relative error: median 10.6%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5505
+   T_p          marginal |....:::--=+*##%@@@%@%%##+=-:..                              |  mean 0.09781  std 0.1169  peak 0.05661  16/50/84%: 0.01347 / 0.0529 / 0.1876
+   theta_p      marginal |            .         ..........:-=*%@%+|  mean 50.67  std 22.05  peak 56.61  16/50/84%: 26.87 / 49.93 / 74.78
+   dependence: Pearson r = -0.359   Spearman rho = -0.338   mutual information 0.129 nat, normalized 0.060 (0 = independent)
+   densest cell: x in [0.07943, 0.1), y in [50.12, 63.1): 101 entries (1.83%)
+   occupancy: 86% of cells empty; 68% of entries in the 71 densest cells (3.0% of cells), 95% in 186 (7.8%); the 95% set spans x in [0.001995, 0.631], y in [6.31, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   2.0  12.9  27.3  21.5   2.8     .     .     .     .     .
+   y8  [   15.8,    39.8)   0.7   3.2   7.6  11.0   5.4     .     .     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.4   1.1   1.9   1.3     .     .     .     .     .
+   y6  [   2.51,    6.31)     .   0.1   0.1   0.2   0.2     .     .     .     .     .
+   y5  [      1,    2.51)     .   <.1   0.1   <.1   <.1     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .     .     .     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .   <.1     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 5 . . . . .
+   y8  [   15.8,    39.8) 3 3 3 5 9 . . . . .
+   y7  [   6.31,    15.8) 1 1 1 1 3 . . . . .
+   y6  [   2.51,    6.31) . 1 1 1 1 . . . . .
+   y5  [      1,    2.51) . 1 1 1 1 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . 1 . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 5 9 8 1 . . . . .
+   y8  [   15.8,    39.8) 1 3 7 9 5 . . . . .
+   y7  [   6.31,    15.8) 1 3 6 9 7 . . . . .
+   y6  [   2.51,    6.31) . 5 6 9 7 . . . . .
+   y5  [      1,    2.51) . 6 9 3 6 . . . . .
+   y4  [  0.398,       1) . . . . . . . . . .
+   y3  [  0.158,   0.398) . . . 9 . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        151   0.00275       56.65 ± 1.8         22.3      57.3      71.3  |              ..:+#@|
+     1  [ 0.00398,   0.0158)        914   0.00986       58.02 ± 0.73        22.2        59      71.3  |           .....:-%@|
+     2  [  0.0158,   0.0631)       1990    0.0359       55.75 ± 0.49        21.8        56      56.6  |           .....:=@@|
+     3  [  0.0631,    0.251)       1912     0.131       46.65 ± 0.46          20      45.9      56.6  |      .    .....:+@+|
+     4  [   0.251,        1)        538     0.385          32 ± 0.63        14.6      31.4      35.7  |           ...:-+@#.|
+     5  [       1,     3.98)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     6  [    3.98,     15.8)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 57.35 + (-68.43 ± 2.1) * T_p   (-32.9 sigma from flat; change across the slices -26.1); straight line chi2/ndf = 23.5/3; a quadratic term (95.9 T_p^2) lowers chi2 by 21.5 -> clearly curved (quadratic part is 54% of the linear change)
+   caution: slices 0, 1, 2, 3 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): .---   (monotonic)
+   spread: std of theta_p goes from 22.3 (first slice) to 14.6 (last slice); slope -20.4 ± 1.5 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.41   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          1     0.179     0.07126 ± 0              0    0.0713    0.0713  |         @                    |
+     4  [   0.398,        1)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     5  [       1,     2.51)          8      2.02       0.123 ± 0.053       0.15    0.0398   0.00897  |    @@@@@ @ @@                |
+     6  [    2.51,     6.31)         35       4.6      0.1967 ± 0.039      0.233     0.113     0.179  |    %=%*:*%@%=*               |
+     7  [    6.31,     15.8)        266      11.6      0.1649 ± 0.0097     0.159    0.0992     0.284  | ..::--=*@%*@*.               |
+     8  [    15.8,     39.8)       1535      29.2      0.1464 ± 0.0039     0.151    0.0889     0.179  |...::-=*###@#+.               |
+     9  [    39.8,      100)       3660      63.1     0.07158 ± 0.0013    0.0805    0.0424    0.0566  |..:-=*%@@%#+-..               |
+   trend: <T_p> = 0.2043 + (-0.002102 ± 0.0001) * theta_p   (-20.4 sigma from flat; change across the slices -0.123); straight line chi2/ndf = 3.3/2; a quadratic term (-1.97e-05 theta_p^2) lowers chi2 by 2.8 -> no evidence of curvature
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): ..-   (monotonic)
+
+===== m = 900 GeV, flux 927-999 GeV: 10000 DMEL events of 10000; leading final-state proton in 59.3%; struck nucleon is a proton in 46.5% =====
+T_p [GeV] (post-FSI leading p): min 2.754e-05 median 0.03209 mean 0.05664 max 0.5689; free-p kinematic max at E=999: 0.4345
+theta_p [deg]: min 0.6304 median 49.69 mean 54.66 max 175.3
+struck nucleon before FSI: T median 0.09847 max 0.5981 GeV; theta median 41.77 deg
+== 1D  T_p [GeV] (log bins): 60 bins on [0.001, 1000], integral 5892
+   shape   |....::-=+*#%@@@@%%%%#*==:...                                |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0.05741   std 0.06419   skew 2.11   excess kurtosis 5.56
+   peak    bin 15, x = 0.03572 (443 entries)   FWHM 0.1599 on [0.0077, 0.1676]
+   quantiles  5%: 0.004767  16%: 0.009989  25%: 0.01435  50%: 0.03255  75%: 0.07671  84%: 0.1094  95%: 0.1954
+   nonempty bins 0..27 (x in [0.001, 0.631]);  first bin 0.24%, last bin 0.00% of the integral;  32 empty bins
+   per bin relative error: median 7.0%, worst nonempty bin 100.0%
+== 1D  theta_p [deg] (log bins): 40 bins on [0.01, 100], integral 5364
+   shape   |                 ..    ........::-+*%@#+|   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 47.94   std 22.19   skew 0.215   excess kurtosis -0.701
+   peak    bin 37, x = 56.61 (1066 entries)   FWHM 58.86 on [30.13, 88.99]
+   quantiles  5%: 13.22  16%: 24.19  25%: 30.66  50%: 46.62  75%: 62.6  84%: 72.38  95%: 89.45
+   nonempty bins 17..39 (x in [0.5012, 100]);  first bin 0.00%, last bin 9.75% of the integral;  21 empty bins
+   per bin relative error: median 10.5%, worst nonempty bin 100.0%
+== 2D  x = T_p (60 bins on [0.001, 1000])   y = theta_p (40 bins on [0.01, 100])   integral 5332
+   T_p          marginal |.....::-=+##%%@@@@%%##+=:...                                |  mean 0.06131  std 0.06603  peak 0.03572  16/50/84%: 0.01089 / 0.03625 / 0.1171
+   theta_p      marginal |                 ..    ........::-+*%@#+|  mean 47.87  std 22.16  peak 56.61  16/50/84%: 24.18 / 46.55 / 72.27
+   dependence: Pearson r = -0.353   Spearman rho = -0.337   mutual information 0.119 nat, normalized 0.054 (0 = independent)
+   densest cell: x in [0.03981, 0.05012), y in [50.12, 63.1): 100 entries (1.88%)
+   occupancy: 87% of cells empty; 68% of entries in the 70 densest cells (2.9% of cells), 95% in 179 (7.5%); the 95% set spans x in [0.001585, 0.3981], y in [6.31, 100]
+   density map (10 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7     8     9
+   y9  [   39.8,     100)   2.6  16.1  28.2  14.3   0.1     .     .     .     .     .
+   y8  [   15.8,    39.8)   0.7   4.8  11.2  13.7   1.4     .     .     .     .     .
+   y7  [   6.31,    15.8)   0.1   0.8   2.2   2.5   0.6     .     .     .     .     .
+   y6  [   2.51,    6.31)     .   0.1   0.2   0.3   0.1     .     .     .     .     .
+   y5  [      1,    2.51)     .   <.1   <.1   <.1     .     .     .     .     .     .
+   y4  [  0.398,       1)     .     .     .   <.1   <.1     .     .     .     .     .
+   y3  [  0.158,   0.398)     .     .     .     .     .     .     .     .     .     .
+   y2  [ 0.0631,   0.158)     .     .     .     .     .     .     .     .     .     .
+   y1  [ 0.0251,  0.0631)     .     .     .     .     .     .     .     .     .     .
+   y0  [   0.01,  0.0251)     .     .     .     .     .     .     .     .     .     .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 9 9 9 9 1 . . . . .
+   y8  [   15.8,    39.8) 3 3 4 9 9 . . . . .
+   y7  [   6.31,    15.8) 1 1 1 2 4 . . . . .
+   y6  [   2.51,    6.31) . 1 1 1 1 . . . . .
+   y5  [      1,    2.51) . 1 1 1 . . . . . .
+   y4  [  0.398,       1) . . . 1 1 . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7 8 9
+   y9  [   39.8,     100) 1 6 9 5 1 . . . . .
+   y8  [   15.8,    39.8) 1 4 8 9 1 . . . . .
+   y7  [   6.31,    15.8) 1 3 8 9 3 . . . . .
+   y6  [   2.51,    6.31) . 2 7 9 2 . . . . .
+   y5  [      1,    2.51) . 5 9 5 . . . . . .
+   y4  [  0.398,       1) . . . 9 9 . . . . .
+   y3  [  0.158,   0.398) . . . . . . . . . .
+   y2  [ 0.0631,   0.158) . . . . . . . . . .
+   y1  [ 0.0251,  0.0631) . . . . . . . . . .
+   y0  [   0.01,  0.0251) . . . . . . . . . .
+                         x column index; x edges: 0.001, 0.00398, 0.0158, 0.0631, 0.251, 1, 3.98, 15.8, 63.1, 251, 1e+03
+   profile: <theta_p> inside slices of T_p   (spark = theta_p distribution in that slice, low -> high, scaled to its own max)
+     k  T_p        slice          N       <T_p>        <theta_> ± err       std    median      mode  |spark|
+     0  [   0.001,  0.00398)        176   0.00275       57.43 ± 1.6         21.8      59.2      71.3  |              ..--%@|
+     1  [ 0.00398,   0.0158)       1160   0.00994       55.89 ± 0.67        22.8      55.4      71.3  |           .....:=@@|
+     2  [  0.0158,   0.0631)       2233    0.0344       50.55 ± 0.46        21.8      50.6      56.6  |           .....:+@#|
+     3  [  0.0631,    0.251)       1647     0.123       39.33 ± 0.45        18.3      38.1        45  |         . ....:=%@-|
+     4  [   0.251,        1)        116     0.313       23.05 ± 1.2         12.7      22.4      28.4  |        .   ..==#@..|
+     5  [       1,     3.98)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     6  [    3.98,     15.8)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     7  [    15.8,     63.1)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     8  [    63.1,      251)          0       nan         nan ± nan          nan       nan       nan  |                    |
+     9  [     251,    1e+03)          0       nan         nan ± nan          nan       nan       nan  |                    |
+   trend: <theta_p> = 54.82 + (-114.3 ± 3.8) * T_p   (-30.4 sigma from flat; change across the slices -35.4); straight line chi2/ndf = 36.8/3; a quadratic term (193 T_p^2) lowers chi2 by 32.6 -> clearly curved (quadratic part is 52% of the linear change)
+   caution: slices 0, 1, 2, 3 have > 2% of their entries in the first or last theta_p bin, so the theta_p axis range may be cutting them (biases <theta_p> and the curvature there)
+   slice to slice change of <theta_p> (+ rises, - falls, . flat within 2 sigma): .---   (monotonic)
+   spread: std of theta_p goes from 21.8 (first slice) to 12.7 (last slice); slope -34.5 ± 2.7 per unit T_p (narrowing with T_p)
+   asymmetry: (<theta_p> minus mode)/std averaged over slices = -0.46   (positive = tail towards high theta_p)
+   profile: <T_p> inside slices of theta_p   (spark = T_p distribution in that slice, low -> high, scaled to its own max)
+     k  theta_p    slice          N       <theta_>        <T_p> ± err       std    median      mode  |spark|
+     0  [    0.01,   0.0251)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     1  [  0.0251,   0.0631)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     2  [  0.0631,    0.158)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     3  [   0.158,    0.398)          0       nan         nan ± nan          nan       nan       nan  |                              |
+     4  [   0.398,        1)          2     0.639      0.2913 ± 0.047     0.0659     0.251     0.225  |           @@                 |
+     5  [       1,     2.51)          4      2.25     0.04508 ± 0.021     0.0418      0.02    0.0045  |   @  @ @ @                   |
+     6  [    2.51,     6.31)         38      4.47      0.1085 ± 0.015     0.0907    0.0794    0.0284  |    --:@++@#=                 |
+     7  [    6.31,     15.8)        326      11.4     0.09806 ± 0.0052    0.0935    0.0646    0.0284  |.. :-=*@%@@#*.                |
+     8  [    15.8,     39.8)       1691      28.8     0.08495 ± 0.002     0.0802     0.058     0.142  |...:-+#%%@@%-.                |
+     9  [    39.8,      100)       3271        62     0.04475 ± 0.00079   0.0453    0.0287    0.0357  |..:-+%@@@#+:..                |
+   trend: <T_p> = 0.1172 + (-0.001167 ± 5.4e-05) * theta_p   (-21.5 sigma from flat; change across the slices -0.0671); straight line chi2/ndf = 1.8/2; a quadratic term (-7.71e-06 theta_p^2) lowers chi2 by 1.6 -> no evidence of curvature
+   slice to slice change of <T_p> (+ rises, - falls, . flat within 2 sigma): .--   (monotonic)
