@@ -9,6 +9,10 @@ XML cross sections are in natural units (GeV^-2); they are shown in 1e-38 cm^2
 (1 GeV^-2 = 3.89379e-28 cm^2 = 3.89379e10 x 1e-38 cm^2).
 
     pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test
+    pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test --logx --logy
+
+Axes are linear by default (house style); --logx/--logy opt into log scales and add a
+`_log` suffix to the output stem. With linear y the panels do not share a y range.
 """
 from __future__ import annotations
 
@@ -85,15 +89,18 @@ def main() -> int:
     ap.add_argument("--tune", default="GDM18_00a_00_000")
     ap.add_argument("--target", default="Ar40")
     ap.add_argument("--out-dir", default="DM_test")
-    ap.add_argument("--stem", default=None, help="output stem (default dm_splines_<label>)")
+    ap.add_argument("--stem", default=None, help="output stem (default dm_splines_<label>[_log])")
+    ap.add_argument("--logx", action="store_true", help="log x axis (default linear)")
+    ap.add_argument("--logy", action="store_true", help="log y axis (default linear)")
     args = ap.parse_args()
+    anylog = args.logx or args.logy
     apply_style()
 
     data = collect(args.label, args.tune, args.target)
     if not data:
         sys.stderr.write("no gmkspl_dm runs found for that label/tune/target\n"); return 2
     masses = list(data)
-    stem = args.stem or f"dm_splines_{args.label}"
+    stem = args.stem or (f"dm_splines_{args.label}" + ("_log" if anylog else ""))
     out_dir = REPO / args.out_dir; out_dir.mkdir(parents=True, exist_ok=True)
 
     # per (mass, list): summed curve; per mass: total on the union grid
@@ -112,44 +119,46 @@ def main() -> int:
 
     # ---- Figure 1: one panel per mass -------------------------------------
     ncols = 5; nrows = int(np.ceil(len(masses) / ncols))
-    fig, axes = new_panels(ncols=ncols, nrows=nrows)
+    fig, axes = new_panels(ncols=ncols, nrows=nrows, sharey=args.logy)
     for ax, m in zip(axes, masses):
         for s in series:
             if s not in curves[m] or not len(curves[m][s][0]):
                 continue
             e, x = curves[m][s]
-            ax.plot(e, np.maximum(x, FLOOR), "-o", ms=2, color=colors[s],
+            ax.plot(e, np.maximum(x, FLOOR) if args.logy else x, "-o", ms=2, color=colors[s],
                     label=s + (" (all 0)" if x.max() <= 0 else ""))
         missing = [gl for gl in LISTS if gl not in curves[m]]
         title = f"m = {m:g} GeV" + (f"  [{','.join(missing)} pending]" if missing else "")
-        style_axis(ax, title=title, xlabel="E [GeV]", logx=True, logy=True)
-        ax.set_xlim(0.3, 1.2e3)
+        style_axis(ax, title=title, xlabel="E [GeV]", logx=args.logx, logy=args.logy)
+        ax.set_xlim(0.3 if args.logx else 0.0, 1.2e3 if args.logx else 1050.0)
     for ax in axes[len(masses):]:
         ax.set_visible(False)
     for r in range(nrows):
         axes[r * ncols].set_ylabel(r"$\sigma$(DM Ar40)  [$10^{-38}$ cm$^2$]", fontsize=FS_LABEL)
-    axes[0].legend(title="process", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE, loc="lower right")
+    axes[0].legend(title="process", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE,
+                   loc="lower right" if args.logy else "upper left")
+    floor_note = f"; y floor {FLOOR:g} for zeros" if args.logy else "; independent y ranges"
     fig.suptitle(f"GENIE rc-v380 {args.tune}: DM-{args.target} splines per DM mass "
-                 f"(z = 0.5, g = 1.0, 100 knots, E$_{{max}}$ = 1000 GeV; y floor {FLOOR:g} for zeros)",
+                 f"(z = 0.5, g = 1.0, 100 knots, E$_{{max}}$ = 1000 GeV{floor_note})",
                  fontsize=FS_SUPTITLE)
     fig.tight_layout()
     p1 = out_dir / f"{stem}_per_mass.png"; fig.savefig(p1, dpi=DPI); plt.close(fig)
 
     # ---- Figure 2: one panel per process, one line per mass ---------------
-    fig, axes = new_panels(ncols=len(series), nrows=1)
+    fig, axes = new_panels(ncols=len(series), nrows=1, sharey=args.logy)
     for ax, s in zip(axes, series):
         for i, m in enumerate(masses):
             if s not in curves[m] or not len(curves[m][s][0]):
                 continue
             e, x = curves[m][s]
-            ax.plot(e, np.maximum(x, FLOOR), "-o", ms=2, color=f"C{i % 10}", label=f"{m:g}")
-        style_axis(ax, title=s, xlabel="E [GeV]", logx=True, logy=True)
-        ax.set_xlim(0.3, 1.2e3)
+            ax.plot(e, np.maximum(x, FLOOR) if args.logy else x, "-o", ms=2, color=f"C{i % 10}", label=f"{m:g}")
+        style_axis(ax, title=s, xlabel="E [GeV]", logx=args.logx, logy=args.logy)
+        ax.set_xlim(0.3 if args.logx else 0.0, 1.2e3 if args.logx else 1050.0)
     axes[0].set_ylabel(r"$\sigma$(DM Ar40)  [$10^{-38}$ cm$^2$]", fontsize=FS_LABEL)
     axes[0].legend(title="m$_{DM}$ [GeV]", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE,
-                   loc="lower right", ncol=2)
+                   loc="lower right" if args.logy else "upper right", ncol=2)
     fig.suptitle(f"GENIE rc-v380 {args.tune}: DM-{args.target} cross section per process vs DM mass "
-                 f"(z = 0.5, g = 1.0; y floor {FLOOR:g} for zeros)", fontsize=FS_SUPTITLE)
+                 f"(z = 0.5, g = 1.0{floor_note})", fontsize=FS_SUPTITLE)
     fig.tight_layout()
     p2 = out_dir / f"{stem}_per_process.png"; fig.savefig(p2, dpi=DPI); plt.close(fig)
 

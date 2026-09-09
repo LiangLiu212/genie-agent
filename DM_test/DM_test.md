@@ -354,8 +354,11 @@ m = 1 DMDIS job finishes:
 ```bash
 pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test
 ```
-- `DM_test/dm_splines_dm_scan_e1000_per_mass.png` — one panel per mass, DMEL/DMDIS/DME/DMRES/Total
-- `DM_test/dm_splines_dm_scan_e1000_per_process.png` — one panel per process, one line per mass
+- `DM_test/dm_splines_dm_scan_e1000_per_mass.png` — one panel per mass, DMEL/DMDIS/DME/DMRES/Total,
+  **linear axes** (independent y ranges; requested 2026-09-09)
+- `DM_test/dm_splines_dm_scan_e1000_per_process.png` — one panel per process, one line per mass, linear axes
+- `DM_test/dm_splines_dm_scan_e1000_log_per_mass.png`, `…_log_per_process.png` — the same with
+  `--logx --logy` (shared log y, floor 10⁻¹² for zeros)
 - `DM_test/dm_splines_dm_scan_e1000.txt` — readout: threshold, σ_max, σ at 10/100/1000 GeV per (mass, process)
 
 What the numbers say (σ in 10⁻³⁸ cm², Ar40, z = 0.5, g = 1.0):
