@@ -11,6 +11,8 @@ XML cross sections are in natural units (GeV^-2); they are shown in 1e-38 cm^2
     pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test
     pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test --logx --logy
     pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test --linear
+    pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test \
+        --masses 200,300,400 --vlines 499        # subset of masses, DMRES cache edge marked
 
 Default axes: linear x, log y (the look chosen for this scan on 2026-09-09; the cross
 sections span 12 decades). --logx --logy gives log-log (stem suffix `_log`), --linear both
@@ -95,6 +97,11 @@ def main() -> int:
     ap.add_argument("--logx", action="store_true", help="log x axis (default linear)")
     ap.add_argument("--logy", action="store_true", help="log y axis (the default unless --linear)")
     ap.add_argument("--linear", action="store_true", help="both axes linear (stem suffix _lin)")
+    ap.add_argument("--masses", default=None,
+                    help="comma list of DM masses [GeV] to plot (default all found); adds _m<..> to the stem")
+    ap.add_argument("--vlines", default=None,
+                    help="comma list of energies [GeV] to mark with a dashed vertical line, "
+                         "e.g. 499 = DMRES cache edge (ESplineMax-1)")
     args = ap.parse_args()
     if not (args.logx or args.logy or args.linear):
         args.logy = True                       # default: linear x, log y
@@ -108,6 +115,16 @@ def main() -> int:
     if not data:
         sys.stderr.write("no gmkspl_dm runs found for that label/tune/target\n"); return 2
     masses = list(data)
+    if args.masses:
+        want = [float(v) for v in args.masses.split(",")]
+        masses = [m for m in masses if any(abs(m - w) < 1e-9 for w in want)]
+        missing = [w for w in want if not any(abs(m - w) < 1e-9 for m in masses)]
+        if missing:
+            sys.stderr.write(f"warning: no runs for mass(es) {missing}\n")
+        if not masses:
+            sys.stderr.write("no requested mass found\n"); return 2
+        suffix += "_m" + "-".join(f"{m:g}" for m in masses)
+    vlines = [float(v) for v in args.vlines.split(",")] if args.vlines else []
     stem = args.stem or f"dm_splines_{args.label}{suffix}"
     out_dir = REPO / args.out_dir; out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -126,7 +143,7 @@ def main() -> int:
     colors = {s: f"C{i}" for i, s in enumerate(series)}
 
     # ---- Figure 1: one panel per mass -------------------------------------
-    ncols = 5; nrows = int(np.ceil(len(masses) / ncols))
+    ncols = min(5, len(masses)); nrows = int(np.ceil(len(masses) / ncols))
     fig, axes = new_panels(ncols=ncols, nrows=nrows, sharey=args.logy)
     for ax, m in zip(axes, masses):
         for s in series:
@@ -139,6 +156,10 @@ def main() -> int:
         title = f"m = {m:g} GeV" + (f"  [{','.join(missing)} pending]" if missing else "")
         style_axis(ax, title=title, xlabel="E [GeV]", logx=args.logx, logy=args.logy)
         ax.set_xlim(0.3 if args.logx else 0.0, 1.2e3 if args.logx else 1050.0)
+        for v in vlines:
+            ax.axvline(v, color="0.4", ls="--", lw=1)
+            ax.text(v, 0.98, f" {v:g} GeV", transform=ax.get_xaxis_transform(),
+                    ha="left", va="top", fontsize=FS_LEGEND, color="0.3")
     for ax in axes[len(masses):]:
         ax.set_visible(False)
     for r in range(nrows):
@@ -146,7 +167,8 @@ def main() -> int:
     axes[0].legend(title="process", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE,
                    loc="lower right" if args.logy else "upper left")
     floor_note = f"; y floor {FLOOR:g} for zeros" if args.logy else "; independent y ranges"
-    fig.suptitle(f"GENIE rc-v380 {args.tune}: DM-{args.target} splines per DM mass "
+    sep = "\n" if ncols < 5 else " "      # narrow canvas: wrap the title
+    fig.suptitle(f"GENIE rc-v380 {args.tune}: DM-{args.target} splines per DM mass{sep}"
                  f"(z = 0.5, g = 1.0, 100 knots, E$_{{max}}$ = 1000 GeV{floor_note})",
                  fontsize=FS_SUPTITLE)
     fig.tight_layout()
@@ -162,6 +184,8 @@ def main() -> int:
             ax.plot(e, np.maximum(x, FLOOR) if args.logy else x, "-o", ms=2, color=f"C{i % 10}", label=f"{m:g}")
         style_axis(ax, title=s, xlabel="E [GeV]", logx=args.logx, logy=args.logy)
         ax.set_xlim(0.3 if args.logx else 0.0, 1.2e3 if args.logx else 1050.0)
+        for v in vlines:
+            ax.axvline(v, color="0.4", ls="--", lw=1)
     axes[0].set_ylabel(r"$\sigma$(DM Ar40)  [$10^{-38}$ cm$^2$]", fontsize=FS_LABEL)
     axes[0].legend(title="m$_{DM}$ [GeV]", fontsize=FS_LEGEND, title_fontsize=FS_LEGEND_TITLE,
                    loc="lower right" if args.logy else "upper right", ncol=2)
