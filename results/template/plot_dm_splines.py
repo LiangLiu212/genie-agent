@@ -10,9 +10,11 @@ XML cross sections are in natural units (GeV^-2); they are shown in 1e-38 cm^2
 
     pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test
     pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test --logx --logy
+    pixi run python results/template/plot_dm_splines.py --label dm_scan_e1000 --out-dir DM_test --linear
 
-Axes are linear by default (house style); --logx/--logy opt into log scales and add a
-`_log` suffix to the output stem. With linear y the panels do not share a y range.
+Default axes: linear x, log y (the look chosen for this scan on 2026-09-09; the cross
+sections span 12 decades). --logx --logy gives log-log (stem suffix `_log`), --linear both
+linear (suffix `_lin`, independent y ranges), --logx alone (suffix `_logx`).
 """
 from __future__ import annotations
 
@@ -91,16 +93,22 @@ def main() -> int:
     ap.add_argument("--out-dir", default="DM_test")
     ap.add_argument("--stem", default=None, help="output stem (default dm_splines_<label>[_log])")
     ap.add_argument("--logx", action="store_true", help="log x axis (default linear)")
-    ap.add_argument("--logy", action="store_true", help="log y axis (default linear)")
+    ap.add_argument("--logy", action="store_true", help="log y axis (the default unless --linear)")
+    ap.add_argument("--linear", action="store_true", help="both axes linear (stem suffix _lin)")
     args = ap.parse_args()
-    anylog = args.logx or args.logy
+    if not (args.logx or args.logy or args.linear):
+        args.logy = True                       # default: linear x, log y
+    if args.linear:
+        args.logx = args.logy = False
+    suffix = ("_log" if (args.logx and args.logy) else "_logx" if args.logx
+              else "" if args.logy else "_lin")
     apply_style()
 
     data = collect(args.label, args.tune, args.target)
     if not data:
         sys.stderr.write("no gmkspl_dm runs found for that label/tune/target\n"); return 2
     masses = list(data)
-    stem = args.stem or (f"dm_splines_{args.label}" + ("_log" if anylog else ""))
+    stem = args.stem or f"dm_splines_{args.label}{suffix}"
     out_dir = REPO / args.out_dir; out_dir.mkdir(parents=True, exist_ok=True)
 
     # per (mass, list): summed curve; per mass: total on the union grid
