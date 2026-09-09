@@ -337,9 +337,9 @@ def _supervise_impl(*, log_path: Path, env: dict[str, str]) -> int:
         output_sha256=sha256_short(primary_output) if primary_output else None,
     )
 
-    # gmkspl can exit 0 with an empty spline list (free-nucleon targets);
-    # outputs.spline_count makes that detectable from the runlog.
-    if record.get("runtype") == "gmkspl" and rc == 0 and primary_output:
+    # gmkspl (and gmkspl_dm) can exit 0 with an empty spline list (free-nucleon
+    # targets); outputs.spline_count makes that detectable from the runlog.
+    if record.get("runtype") in ("gmkspl", "gmkspl_dm") and rc == 0 and primary_output:
         n_spl = _count_splines(primary_output)
         if n_spl is not None:
             final_fields["outputs"] = {**outputs, "spline_count": n_spl}

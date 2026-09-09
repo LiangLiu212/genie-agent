@@ -374,3 +374,19 @@ Expect `.log` files (flat, not under `log/`) plus matching ghep + gst artifacts 
 - Flux registry: `genie-fsi-prd/genie-mcp/genie_mcp/tools/flux_tools.py`
 - runlog_tools docstring fix target: `genie-dev/runlog_tools/runlog_tools/{run_log.py,__init__.py}`
 - Workflow narrative source: `genie-fsi-prd/genie-mcp/.claude/commands/genie-sim.md`
+
+
+## 2026-09-09 — boosted-dark-matter runners (rc-v380 sample F)
+
+Two more copies of the runner skeleton, `scripts/run_gmkspl_dm.py` and
+`scripts/run_gevgen_dm.py` (`runtype` `gmkspl_dm` / `gevgen_dm`), drive GENIE's
+`gmkspl_dm` / `gevgen_dm` (install configured with `--enable-boosted-dark-matter`).
+Design points: probe implicit (`dm` = 2000010000, a synthetic `_SYNTHETIC_PROBES`
+entry in `shared/build_pdg.py` → `shared/pdg.json`, `lib/pdg.py::DARK_MATTER_PDGS`);
+`--mass/--med-ratio/--zp-coupling` recorded in `inputs` because spline keys carry
+none of them; `--tune` required (GDM* only, `lib/validation.py::_validate_dm_common`);
+gevgen_dm `-e` is a string (`E` or `emin,emax` + mandatory `--flux`); the spline's
+sibling `gmkspl_dm` log is cross-checked for mass/z/g; `lib/jobs.py` records
+`spline_count` for `gmkspl_dm` too. The neutrino runners refuse a DM probe and
+point at the DM scripts. Merge helper for the campaign:
+`.claude/plans/merge_rc_v380_dm_splines.sh`.

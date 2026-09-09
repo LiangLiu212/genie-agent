@@ -35,16 +35,64 @@ Template campaign: `g18_02a-v362-5tev-spline-set.md` (v3.6.2, 5 TeV) / `incl26_0
 | D | G24_12a_00_000 | Ar40 | 0.1–5 GeV | 5 | 100 | Person 2 | pending |
 | E | AR25_20i_00_000 | C12 | 0.1–3 GeV | 3 | 100 | Person 3 | pending |
 | E | AR25_20i_00_000 | Ar40 | 0.1–3 GeV | 3 | 100 | Person 3 | pending |
-| F | GDM18_00a_00_000 | Ar40 | DM beam range | – | – | Person 4 | **deferred** (see below) |
+| F | GDM18_00a_00_000 | Ar40 | DM beam 0.1–10 GeV, flat flux | 10 | 100 | Person 4 | **ready to launch** (needs the DM mass; see Sample F) |
 | G | G18_10a_02_11b | Fe56 | 5–50 GeV | 50 | 200 | Person 4 | pending |
 
 Submissions: 7 rows × 2 probes × 15 lists (IMD dropped, see deviations) + Fe56 2 × 16 = **242**.
 
-### Sample F deferral
-`gmkspl_dm`/`gevgen_dm` are not in the `genie_rc` build (needs `./configure --enable-boosted-dark-matter`).
-Needed before F can run: DM mass, mediator mass/coupling, DM beam energy range. Then: rebuild
-(`build_genie.sh` + the BDM flag), `tarball.py build` + `publish --label genie_rc --overwrite`,
-re-snapshot `genie_rc`, add a `gmkspl_dm` row.
+### Sample F — preparation done 2026-09-09 (plan `~/.claude/plans/give-me-a-plan-encapsulated-wind.md`)
+Deferred on 2026-09-03 because `gmkspl_dm`/`gevgen_dm` were not built and genie-agent had no DM
+runner. Decisions (2026-09-09): local runs only (no grid, tarball `genie_rc` **not** republished);
+DM beam 0.1–10 GeV with a flat flux for the gevgen_dm check; `-z 0.5 -g 1.0` (GENIE defaults);
+**one DM mass, value still to be supplied (`xxx` below)**.
+
+- [x] `genie_rc` rebuilt **in place** with `--enable-boosted-dark-matter` (14:45–14:48 UTC, 2 min 43 s
+      incremental, `GENIE_RC/build_bdm.log`): only `src/Physics/BoostedDarkMatter` (→ `libGPhBDMEG`,
+      `libGPhBDMXS`) and the `src/Apps` objects were compiled; the other 96 `.so` are untouched.
+      `gevgen`/`gmkspl`/`gntpc` were relinked against the BDM libs, so their sha256 changed
+      (`genie_bin_sha256` in runlogs from 14:48 UTC on) with no physics change:
+      gevgen `31ca4335…` → `21bb322b…`, gmkspl `e47d59b4…` → `be3c2a48…`, gntpc `74268f2f…` → `3c7e0157…`.
+      Env re-snapshotted; note in `genie_env.json`.
+- [x] Runners `genie-agent/scripts/run_gmkspl_dm.py` / `run_gevgen_dm.py` (runtypes `gmkspl_dm`,
+      `gevgen_dm`; probe `dm` = 2000010000 added to `shared/pdg.json`; `--mass/--med-ratio/--zp-coupling`
+      logged in `inputs`; `lib/validation.py` DM rules; `spline_count` also for `gmkspl_dm`).
+      Merge helper `.claude/plans/merge_rc_v380_dm_splines.sh --mass <GeV>`.
+- [x] **Smoke chain (test mass 1.0 GeV = GENIE's gntpc default, label `smoke_dm`; not a physics
+      choice)**: `gmkspl_dm` DMEL Ar40 `-n 10 -e 10` → `gmkspl_dm-dm_Ar40_20260909-144948-8c8-089a94`
+      rc 0, 28.5 s, **2 splines** (`AhrensDMELPXSec/Velocity0/dm;tgt:1000180400;N:2112|2212;proc:DarkMatter,DMEL`),
+      GENIE enforces `nknots="30"` minimum. `gevgen_dm` flat flux `-e 2,10 --flux 1` 20 events
+      (`gevgen_dm-dm_Ar40_20260909-145422-c28-f7838c`): rc 0, 1.7 s, 2 splines loaded, **0 on-the-fly
+      (`CreateSpline`) lines, 0 `Could not select interaction`**, 20 GHEP entries; gntpc → gst
+      (`gntpc-dm_Ar40_20260909-145422-c28.gst-3eb3a6`) 20 entries, `neu`=2000010000, `tgt`=Ar40,
+      Ev 2.49–9.25 GeV, Q² 0.006–0.415, gst `qel/res/dis/cc/nc` all 0 (expected for DM). Fixed-E
+      `-e 5` 10 events rc 0.
+- Lessons (all in `genie-agent/README.md` + `genie-runlog` skill):
+  - DM spline keys carry **no mass/z/g** → one XML per (m, z, g); `run_gevgen_dm.py` refuses when the
+    sibling `gmkspl_dm` log disagrees (verified: mass 2.0 vs a 1.0 spline → exit 2).
+  - In **flux mode a missing spline aborts** (`GEVGDriver.cxx:456 Assertion fUseSplines failed`,
+    rc −6) instead of the on-the-fly computation of fixed-E mode — seen when a DME-only XML was fed
+    to a DMEL run. Merged products must be complete.
+  - Flux throws below the DM mass get a NaN momentum and are rejected ("no-interaction probability
+    100 %", next throw); the run still completes (5/5 events with `-e 0.5,10`, m = 1.0). So
+    `-e 0.1,10` with a mass above 0.1 GeV works but wastes throws.
+  - gevgen_dm's per-event marker is `Generated Event GHEP Record` (not gevgen's); count events from
+    the GHEP tree (`uproot … ['gtree'].num_entries`). `gspl2root` cannot read DM splines.
+  - Cost probes at the 30-knot minimum, Ar40, `-e 10` (label `smoke_dm`): DMEL 28.5 s (2 splines),
+    DME 0.5 s (1 spline), DMDIS / DMRES: see the F cost line below.
+
+**Launch (fill in the mass):**
+```bash
+for gl in DMEL DMDIS DME DMRES; do
+  pixi run python genie-agent/scripts/run_gmkspl_dm.py --installation genie_rc --targets Ar40 \
+    --mass xxx --tune GDM18_00a_00_000 --genlist $gl -n 100 -e 10 --label rc_v380_splines
+done
+.claude/plans/merge_rc_v380_dm_splines.sh --mass xxx            # → GDM18_00a_00_000/gxspl-Ar40-dm-mxxx-z0.5-g1.0-k100-e10.xml
+pixi run python genie-agent/scripts/run_gevgen_dm.py --installation genie_rc --target Ar40 --mass xxx \
+  -n 200 -e 0.1,10 --flux 1 --cross-sections <merged.xml> --tune GDM18_00a_00_000 --genlist Default --foreground
+```
+Checks after gevgen_dm: `grep -c 'Loading spline:'` == merged count, `grep -c CreateSpline` == 0,
+`grep -c 'Could not select interaction'` == 0, GHEP entries == 200, then `run_gntpc.py -f gst`,
+`build_run_manifest.py`, `mirror_rc_v380_splines.sh --go`, sha256 into the table below.
 
 ## Stage 0 — preconditions and gates (2026-09-03)
 
@@ -251,7 +299,7 @@ numu | numubar, from the gspl2root `tot_cc + tot_nc` graphs; generator
 
 Every file: one `genie_tune` section, 0 duplicate keys, all knots reach Emax, `gspl2root` converts,
 and a 200-event `Default` gevgen (numu and/or numubar, at 0.6 × Emax) runs with 0 on-the-fly
-spline computations and 0 selection failures. F (GDM18 DM beam) remains deferred.
+spline computations and 0 selection failures. F (GDM18 DM beam): tooling ready 2026-09-09, waiting for the DM mass (see Sample F).
 
 ## Stage 6 — preserve
 
@@ -266,7 +314,7 @@ spline computations and 0 selection failures. F (GDM18 DM beam) remains deferred
 - [x] `genie-grid` skill (Pythia8 worker note, `-N` caveat, per-tune spline cost) and memory notes
       (`genie-rc-v380-install`, `rc-v380-spline-campaign`) updated.
 - Left as is: `active_installation` = `genie_rc` (switch back to `genie_v3_6_2` in
-  `genie-agent/config/genie_env.json` when the rc-v380 work is over); F (GDM18) deferred.
+  `genie-agent/config/genie_env.json` when the rc-v380 work is over); F (GDM18) ready to launch once the DM mass is given.
 
 ## Deviations / notes
 

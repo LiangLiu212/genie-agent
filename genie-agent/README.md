@@ -17,6 +17,8 @@ genie-agent/
 ├── scripts/                    # CLI entry points
 │   ├── run_gmkspl.py           # generate cross-section splines
 │   ├── run_gevgen.py           # generate neutrino events (mono-energetic)
+│   ├── run_gmkspl_dm.py        # boosted-dark-matter splines (gmkspl_dm)
+│   ├── run_gevgen_dm.py        # boosted-dark-matter events (gevgen_dm)
 │   ├── run_gntpc.py            # convert GHEP events to gst / other formats
 │   ├── refresh_genie_env.py    # snapshot a setup_env.sh to config/env/
 │   └── job.py                  # status / cancel / list background jobs
@@ -122,6 +124,43 @@ Artefacts per run, under `genie-runs/<tune>-YYYY-MM-DD/`:
 <probe>_<target>_<YYYYMMDD-HHMMSS>.stderr      # gevgen stderr
 <probe>_<target>_<YYYYMMDD-HHMMSS>.ghep.root   # the event file
 ```
+
+### `run_gmkspl_dm.py` / `run_gevgen_dm.py` — boosted dark matter
+
+Same skeleton and log schema as the neutrino runners, driving GENIE's BDM apps
+`gmkspl_dm` / `gevgen_dm` (present only in an installation configured with
+`--enable-boosted-dark-matter`; `genie_rc` since 2026-09-09). The probe is
+implicit — GENIE's `kPdgDarkMatter` 2000010000, alias `dm` in
+`shared/pdg.json` — and the model is set by `--mass` (GeV, required),
+`--med-ratio` (mediator/DM mass ratio, default 0.5) and `--zp-coupling`
+(default 1.0). `--tune` is required (a GDM* tune such as `GDM18_00a_00_000`;
+its `Default` list is DMEL+DMDIS+DME+DMRES, per-process lists `DMEL`, `DMDIS`,
+`DME`, `DMRES`); the config `default_tune`/`default_generator_list` are not
+used.
+
+```
+pixi run python genie-agent/scripts/run_gmkspl_dm.py \
+    --targets Ar40 --mass <GeV> --tune GDM18_00a_00_000 --genlist DMEL -n 100 -e 10
+pixi run python genie-agent/scripts/run_gevgen_dm.py \
+    --target Ar40 --mass <GeV> -n 200 -e 0.1,10 --flux 1 \
+    --cross-sections /abs/path/to/dm-spline.xml --tune GDM18_00a_00_000
+```
+
+`gevgen_dm -e` takes a fixed energy (`3.0`) or a range (`0.1,10`); a range
+needs `--flux` (`1` = flat, a TF1 expression in `x`, a 2-column text file, or
+`file.root,hist`) — without one gevgen_dm silently runs at fixed E = emin, so
+the runner rejects that. Flux mode writes `input-flux.root` into the run dir
+(`outputs.flux_hist`).
+
+**Trap:** DM spline keys are `dm;tgt:<pdg>;N:…;proc:…` — they carry **no**
+mass / ratio / coupling — so gevgen_dm happily uses splines built for another
+mass. One XML per (mass, z, g); the values are in `inputs.dm_mass`,
+`inputs.med_ratio`, `inputs.zp_coupling` of the runlog, and `run_gevgen_dm.py`
+refuses when the spline's sibling `<stem>.log` (a `gmkspl_dm` run) disagrees
+(merged products have no sibling log: it can only warn, so put the values in
+the product filename). `gspl2root` cannot read DM splines (no
+`AddDarkMatter`), and the gst `qel/res/dis/cc/nc` flags are all false for DM
+events — read the process from the GHEP record.
 
 ### `run_gntpc.py` — run `gntpc`
 
@@ -318,7 +357,7 @@ jq -r 'select(.running==null) | .jobid' genie-runs/*/*.log
 **Filter by metadata** (resolved values live under `.inputs`):
 
 ```bash
-# by runtype
+# by runtype (gmkspl | gevgen | gntpc | gmkspl_dm | gevgen_dm)
 jq -r 'select(.runtype=="gevgen") | .jobid' genie-runs/*/*.log
 
 # by tune / generator list

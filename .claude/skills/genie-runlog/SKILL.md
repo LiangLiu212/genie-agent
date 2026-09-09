@@ -15,7 +15,7 @@ Glob from the repo root (genie-dev): **`genie-agent/genie-runs/*/*.log`**.
 ## Fields you can filter on
 
 Top-level (uniform across all runners):
-`jobid`, `runtype` (`gmkspl`|`gevgen`), `returncode`, `running`, `failed`,
+`jobid`, `runtype` (`gmkspl`|`gevgen`|`gntpc`|`gmkspl_dm`|`gevgen_dm`), `returncode`, `running`, `failed`,
 `canceled`, `duration_s`, `pid`, `started`, `finished`, `timestamp`,
 `description`, `output_sha256`, `error`, `git_sha`, `git_dirty` (tracked-file
 modifications only), `script_sha256`.
@@ -28,7 +28,9 @@ Under `.inputs` (resolved values, uniform): `tune_resolved`,
 - `tune_xml_sha256` — `{relpath: sha}` of every XML in the resolved tune
   family dir (knot subdirs included).
 - `env_sha256` — hash of the base installation env snapshot.
-- `genie_bin_sha256` — hash of the gmkspl/gevgen binary that ran.
+- `genie_bin_sha256` — hash of the gmkspl/gevgen binary that ran (the
+  `genie_rc` binaries were relinked on 2026-09-09 for the BDM rebuild, so
+  their hash differs before/after that date with no physics change).
 - `genie_install_git` — `{sha, branch, dirty}` of the GENIE install checkout
   (captures install-level config+data, e.g. SpectralFunc param_sets).
 
@@ -41,8 +43,17 @@ from clobbering each other, so prefix-match with `test("numu_C12")`).
 
 Under `.outputs`: `primary_output` (the spline `.xml` or event `.ghep.root`),
 `stdout_log`, `stderr_log`, `run_dir`, `stem`, `genie_command`, `warnings`,
-and for successful gmkspl runs `spline_count` (number of `<spline>` entries —
-**0 = empty spline list despite returncode 0**, e.g. free-nucleon targets).
+and for successful gmkspl / gmkspl_dm runs `spline_count` (number of `<spline>`
+entries — **0 = empty spline list despite returncode 0**, e.g. free-nucleon
+targets).
+
+Boosted-dark-matter runs (`runtype` `gmkspl_dm` / `gevgen_dm`, probe
+`canonical_probe(s)` = `"dm"`, stem `dm_<target>_…`) add `.inputs.dm_mass`,
+`.inputs.med_ratio`, `.inputs.zp_coupling` (GeV / ratio / coupling; NOT in the
+spline keys, so filter on them to find the spline for a given mass), and
+gevgen_dm adds `.inputs.energy` (raw `E` or `emin,emax`), `.inputs.energy_min`,
+`.inputs.energy_max` (null = fixed energy), `.inputs.flux`, and
+`.outputs.flux_hist` in flux mode.
 
 `running`/`failed`/`canceled` start `null` and become `true`/`false`;
 `returncode` is `null` until the process exits.
@@ -98,7 +109,7 @@ jq 'select(.jobid=="gevgen-numu_C12_20260528-140326-c98dcb")' genie-agent/genie-
 
 ```bash
 # empty-spline detector: gmkspl runs that "succeeded" but produced no splines
-jq -r 'select(.runtype=="gmkspl" and .returncode==0 and .outputs.spline_count==0)
+jq -r 'select((.runtype=="gmkspl" or .runtype=="gmkspl_dm") and .returncode==0 and .outputs.spline_count==0)
        | .jobid' genie-agent/genie-runs/*/*.log
 
 # everything needed to replay a gevgen run without the LLM

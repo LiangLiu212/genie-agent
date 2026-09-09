@@ -61,7 +61,13 @@ parse args → `load_config(args.installation)` → `load_genie_env(cfg)` →
 resolve PDGs/aliases (`lib/pdg.py`) → validate (`lib/validation.py`) →
 build the GENIE argv → `run_foreground(...)` if `--foreground` else
 `launch_background(...)`. When adding a runner, copy this skeleton; don't invent
-a new control flow. Each also carries hidden `--supervise/--log-path/--env-path`
+a new control flow. `run_gmkspl_dm.py` / `run_gevgen_dm.py` are such copies
+for GENIE's boosted-dark-matter apps (`gmkspl_dm`/`gevgen_dm`, only in an
+install configured with `--enable-boosted-dark-matter`): the probe is implicit
+(`dm` = 2000010000, a synthetic entry in `shared/pdg.json`), `--mass` /
+`--med-ratio` / `--zp-coupling` set the model, `--tune` (a GDM* tune) is
+required. DM spline keys carry **no** mass/z/g, so one XML per (m, z, g) and
+`run_gevgen_dm.py` cross-checks the spline's sibling `gmkspl_dm` log. Each also carries hidden `--supervise/--log-path/--env-path`
 flags — that's the detached child re-entering the same script (see below); never
 call them by hand.
 
@@ -90,7 +96,7 @@ family), `env_sha256`, `genie_bin_sha256`, `genie_install_git`
 config+data like SpectralFunc param_sets); top level carries `git_sha` +
 `git_dirty`. Paths + `genie_command` go in `outputs`; `outputs.primary_output`
 is the one file the supervisor hashes into `output_sha256`, and successful
-gmkspl runs also record `outputs.spline_count` (0 = empty spline list).
+gmkspl / gmkspl_dm runs also record `outputs.spline_count` (0 = empty spline list).
 Replay-without-the-LLM: re-running the logged command with the logged seed
 reproduces the events exactly (compare gst content, not .ghep.root bytes —
 ROOT headers embed timestamps). `scripts/build_run_manifest.py` projects all
@@ -128,6 +134,8 @@ merges the chosen install over the defaults; precedence is `--installation` flag
 `shared/build_pdg.py` (build-time only; needs the `pdg` PyPI dep in `pixi.toml`),
 which **combines** GENIE's `genie_pdg_table*.txt` (names+codes GENIE uses) with
 the PDG API (`pdg.connect()` — validates codes, adds canonical name/mass).
+The boosted-DM probe (`dm`, 2000010000, GENIE's run-time `chi_dm`) is a
+synthetic entry in `build_pdg.py` (`_SYNTHETIC_PROBES`), known to neither source.
 Nuclei aren't enumerated by either source: `lib/pdg.py` resolves any `<Sym><A>`
 (e.g. `Ar40`) at runtime by formula `1000000000+Z*10000+A*10` from the embedded
 element→Z table. Runtime reads only the JSON (no `pdg` import). Regenerate after

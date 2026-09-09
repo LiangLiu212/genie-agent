@@ -126,6 +126,17 @@ confirmed working for `rc-v380` @ `29238ed` on 2026-09-03 (Pythia8 **only**, rec
 - The grid worker templates still `spack load pythia6@6.4.28` and set
   `PYTHIA6_LIB_DIR`; to run this install on the grid they need `pythia8@8.317` +
   `PYTHIA8DATA` added (not done as of 2026-09-03).
+- **Boosted dark matter** (`gmkspl_dm`, `gevgen_dm`, `gevgen_lardm`) needs
+  `./configure --enable-boosted-dark-matter` (default off; `GENIE_RC` got it in
+  place on 2026-09-09 by re-running `build_genie.sh` with the flag added). It is
+  additive: it compiles `src/Physics/BoostedDarkMatter/{EventGen,XSection}` into
+  `libGPhBDMEG`/`libGPhBDMXS` and links the three DM apps; there is no
+  preprocessor effect on the other libraries (all 96 existing `.so` were left
+  untouched by the incremental rebuild). Every app under `src/Apps` is
+  recompiled and relinked against the BDM libs, though, so the `sha256` of
+  `gevgen`/`gmkspl`/`gntpc` (runlog `genie_bin_sha256`) changes with no
+  behaviour change. The whole incremental pass takes a few minutes. Re-run
+  `refresh_genie_env.py` afterwards and note the rebuild in `genie_env.json`.
 
 ### Parallel make on EAF
 `nproc` reports 1 on the EAF pod (`OMP_NUM_THREADS=1`) but the cgroup allows 32 cores.

@@ -15,8 +15,8 @@ Sources combined:
      at runtime from the embedded element->Z table via
      code = 1000000000 + Z*10000 + A*10.
 
-Scope (per design): probes (charged leptons + neutrinos) + free nucleons +
-nuclei. Run:
+Scope (per design): probes (charged leptons + neutrinos + the synthetic
+boosted-dark-matter probe `dm` = 2000010000) + free nucleons + nuclei. Run:
 
     pixi run python shared/build_pdg.py            # default table + output
     pixi run python shared/build_pdg.py --table <file> --output <file>
@@ -76,6 +76,25 @@ _ELEMENTS = {
 _PROBE_CODES = [11, -11, 13, -13, 15, -15, 12, -12, 14, -14, 16, -16]
 _NUCLEON_CODES = [2212, -2212, 2112, -2112]
 
+# Probes GENIE registers at run time instead of listing in its PDG table: the
+# boosted-dark-matter particle (kPdgDarkMatter, `PDGLibrary::AddDarkMatter`,
+# GENIE name "chi_dm"). Neither the GENIE table nor the PDG API knows the code
+# and its mass is a per-run parameter (gmkspl_dm / gevgen_dm `-m`), so the
+# entry is emitted verbatim, with no table/API lookup.
+_SYNTHETIC_PROBES = {
+    2000010000: {
+        "kind": "dark_matter",
+        "genie_name": "chi_dm",
+        "canonical": "dm",
+        "aliases": ["chi_dm", "dm", "darkmatter", "dark_matter", "bdm", "2000010000"],
+        "pdg_name": None,
+        "mass_gev": None,
+        "_note": ("GENIE boosted dark matter (kPdgDarkMatter), registered at run "
+                  "time by PDGLibrary::AddDarkMatter; the mass is the "
+                  "gmkspl_dm/gevgen_dm -m parameter, not a particle property"),
+    },
+}
+
 
 def parse_genie_table(path: Path) -> dict[int, str]:
     """Return {code: genie_name} for every named row in the GENIE PDG table.
@@ -108,6 +127,8 @@ def canonical_alias(code: int) -> str:
     if code == -2212: return "antiproton"
     if code == 2112:  return "neutron"
     if code == -2112: return "antineutron"
+    if code in _SYNTHETIC_PROBES:
+        return _SYNTHETIC_PROBES[code]["canonical"]
     raise ValueError(f"no canonical alias rule for code {code}")
 
 
@@ -175,6 +196,8 @@ def main() -> int:
         kind = "neutrino" if abs(code) in _NEUTRINO_FLAVOUR else "charged_lepton"
         e = build_entry(code, kind, genie_names, api, warnings)
         probes[e["canonical"]] = e
+    for code, spec in _SYNTHETIC_PROBES.items():
+        probes[spec["canonical"]] = {"code": code, **spec}
 
     nucleons = {}
     for code in _NUCLEON_CODES:

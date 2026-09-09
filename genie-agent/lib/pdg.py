@@ -11,7 +11,9 @@ Public API (unchanged for callers):
   canonical_probe(value)   -> filename-safe probe alias (numu, eminus, ...).
   canonical_target(value)  -> filename-safe nucleus alias (Ar40), proton/neutron,
                               else str(code).
-  CHARGED_LEPTON_PDGS, NEUTRINO_PDGS -> frozensets of int codes.
+  CHARGED_LEPTON_PDGS, NEUTRINO_PDGS, DARK_MATTER_PDGS -> frozensets of int
+                              codes (DARK_MATTER_PDGS = {2000010000}, GENIE's
+                              boosted-DM probe `dm`; its mass is a run parameter).
 """
 from __future__ import annotations
 
@@ -44,6 +46,9 @@ CHARGED_LEPTON_PDGS = frozenset(
 )
 NEUTRINO_PDGS = frozenset(
     e["code"] for e in _PROBES.values() if e["kind"] == "neutrino"
+)
+DARK_MATTER_PDGS = frozenset(
+    e["code"] for e in _PROBES.values() if e["kind"] == "dark_matter"
 )
 
 _NUCLEUS_RE = re.compile(r"^([A-Z][a-z]?)(\d+)$")   # e.g. "Ar40", "C12", "H1"
