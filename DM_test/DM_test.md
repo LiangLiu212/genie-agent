@@ -371,3 +371,114 @@ What the numbers say (σ in 10⁻³⁸ cm², Ar40, z = 0.5, g = 1.0):
   (m = 100: −0.014 at 10 GeV) and is negative at every knot for m ≥ 600 (≈ −10⁻⁶ … −10⁻⁵),
   i.e. numerical noise of the `DMElectronPXSec` integration. Harmless where other processes are
   non-zero (10⁶ larger) but note that GENIE will happily load them; they show as floored points.
+
+---
+
+## 8. 10k-event samples per mass (2026-09-09 21:34–21:45 UTC)
+
+**Request:** 10 000 `gevgen_dm` events for each mass point of the scan. **Assumptions:** flat flux
+(`--flux 1`) from the DM mass up to the top of the spline, `--genlist Default`, `-z 0.5 -g 1.0`,
+label `dm_scan_e1000`, background jobs. Jobids in `DM_test/dm_mass_scan_e1000_events.tsv`; per-run
+checks in `DM_test/dm_mass_scan_e1000_events_summary.tsv`; process mix in
+`DM_test/dm_mass_scan_e1000_process_mix.tsv`. m = 1 waits for its DMDIS spline (last of 16 at 21:34 UTC).
+
+### Two failure modes met on the way (both now guarded in `run_gevgen_dm.py`)
+
+1. **Flux top edge = spline Emax** (`-e m,1000` against `-e 1000` splines): 8 of 9 jobs aborted at
+   start with `GMCJDriver.cxx:649 Assertion fEmax<rE.max && fEmax>rE.min` (rc −6); m = 200 slipped
+   through by a float hair and finished. Same class as the gevgen "generate strictly inside the
+   spline range" gotcha. Runner now reads the largest knot of the spline XML and refuses a fixed
+   energy or flux upper edge that is not strictly below it (verified: `-e 100,1000` → exit 2).
+2. **Flux starting at the threshold** (`-e m,999`): 7 of 8 relaunched jobs aborted after 126–6289
+   events with `PhysInteractionSelector.cxx:188 Assertion xsec>0` (rc −6). Reproduced bit-for-bit
+   with the logged seed (m = 600, seed 413164798, unbuffered stdout): the failing flux particle has
+   E = 602.18 GeV, i.e. between the threshold knot (600) and the second knot (603.3). Mechanism,
+   from `PhysInteractionSelector::SelectInteraction`: for E below a spline's second knot the
+   selector sets that channel's xsec to 0 (`ClosestKnotValueIsZero`), so all hadronic channels are
+   0 there while the DM–electron spline is slightly **negative** (§7); the line
+   `TMath::Max(0., xsec);` discards its result (GENIE bug: the clamp is never applied), the sum is
+   negative, `R = sum × rnd < 0`, the first channel (xsec 0) is "selected" and the assert fires.
+   GMCJDriver still throws interactions there because its summed spline interpolates to > 0 between
+   the zero knot and the second knot. **Worth reporting upstream for rc-v380.** Work-around used:
+   start the flux at **1.03 m** (above the second knot for every mass; for m = 100 and 200 the
+   original runs from m had already survived and were kept).
+
+### Result: 9 × 10 000 events, all rc 0, 0 on-the-fly splines, 0 selection failures, gst + rootracker written
+
+| m [GeV] | flux range [GeV] | wall [s] | events | DMEL | DMDIS | DME | DMRES | ⟨σ_evt⟩ [10⁻³⁸ cm²] |
+|---|---|---|---|---|---|---|---|---|
+| 100 | 100,999 | 65.593 | 10000 | 26 | 9614 | 0 | 360 | 1.729e+05 |
+| 200 | 200,1000 | 68.215 | 10000 | 135 | 8717 | 0 | 1148 | 3295 |
+| 300 | 309,999 | 50.987 | 10000 | 360 | 8928 | 0 | 712 | 351.1 |
+| 400 | 412,999 | 42.595 | 10000 | 822 | 9170 | 0 | 8 | 75.54 |
+| 500 | 515,999 | 45.76 | 10000 | 1456 | 8544 | 0 | 0 | 21.47 |
+| 600 | 618,999 | 43.732 | 10000 | 2623 | 7377 | 0 | 0 | 7.4 |
+| 700 | 721,999 | 50.206 | 10000 | 4646 | 5354 | 0 | 0 | 2.715 |
+| 800 | 824,999 | 53.218 | 10000 | 7483 | 2517 | 0 | 0 | 1.066 |
+| 900 | 927,999 | 48.21 | 10000 | 9935 | 65 | 0 | 0 | 0.7687 |
+
+Process mix from the rootracker `EvtCode` (gst has no DM process flags): DMDIS dominates up to
+m ≈ 700 GeV, DMEL takes over above because DMDIS closes towards the 1 TeV edge; DMRES follows the
+spline caveat (8 events at m = 400, none from 500 on); DME never fires (its σ is ≤ 10⁻⁶ of the
+total, and negative where the hadronic channels are off). `input-flux.root` in the run dir is
+written by every flux-mode run of the day (last writer wins) — bookkeeping only.
+
+---
+
+## 9. DME-only samples (DM–electron elastic), 2026-09-09 21:48–21:50 UTC
+
+**Request:** generate only DME events. Done with `--genlist DME` against each mass's own DME spline
+file from the scan (sibling `gmkspl_dm` log, so the provenance check passes), 10 000 events, flat
+flux, label `dm_scan_e1000_DME`. Jobids: `DM_test/dm_mass_scan_e1000_DME_events.tsv`; checks:
+`DM_test/dm_mass_scan_e1000_DME_summary.tsv`.
+
+**Flux window per mass.** The DME spline is *negative* below its physical onset (§7), and GENIE's
+selector would then pick a channel with σ ≤ 0 and abort (same assertion as in §8), so the flux
+starts 1 % above the spline's **second positive knot** (m = 500: the only positive knots are 890 and
+1000 GeV, so its window is 900–999 GeV). For **m ≥ 600 GeV the DME spline has no positive knot at
+all → no DME events can be generated** with this build/config (4 masses skipped).
+
+| m [GeV] | flux [GeV] | wall [s] | events | all DME | ⟨σ_evt⟩ [10⁻³⁸ cm²] | E_DM of events [GeV] |
+|---|---|---|---|---|---|---|
+| 1 | 1.18858,999 | 21.054 | 10000 | yes | 1.181e+11 | 14.83–998.8 |
+| 100 | 139.874,999 | 24.898 | 10000 | yes | 0.8184 | 140.41–998.9 |
+| 200 | 281.039,999 | 18.115 | 10000 | yes | 0.01168 | 281.39–999.0 |
+| 300 | 502.679,999 | 21.061 | 10000 | yes | 0.0008863 | 502.99–999.0 |
+| 400 | 712.535,999 | 18.588 | 10000 | yes | 0.0001212 | 712.59–999.0 |
+| 500 | 900,999 | 11.818 | 10000 | yes | 1.758e-05 | 900.01–999.0 |
+
+Notes: the m = 1 sample starts at 14.8 GeV although the flux began at 1.19 GeV — the DME cross
+section rises steeply with E (10⁸ at 10 GeV vs 1.5×10¹¹ at 1 TeV), so low-energy throws rarely
+interact. **gntpc `-f gst` cannot convert DME events**: `gNtpConv.cxx:665 ConvertToGST()` asserts
+on the process type (DM–electron scattering has no hit nucleon and is not in its allowed list), rc −6;
+`-f rootracker` works and carries the process in `EvtCode` — use that for DME samples.
+
+---
+
+## 10. DME recoil electron: (T_e, θ_e) per mass (2026-09-09 ~22:00 UTC)
+
+Generator `results/template/plot_dme_recoil.py` (reads the rootracker files of §9: incoming DM =
+StdHep entry 0, recoil electron = the status-1 e⁻; T_e = E_e − m_e, θ_e = angle to the DM
+direction). Figure `DM_test/dme_recoil_Te_theta.png` (one log–log 2D panel per mass, colour =
+events/bin), histdiag readouts `DM_test/dme_recoil_Te_theta.txt` (1D projections + 2D map, ridge,
+profiles), band check `DM_test/dme_recoil_band_check.txt`.
+
+Overlaid two-body relation cos θ_e = (E + m_e)/p · √(T_e/(T_e + 2m_e)) at the two flux edges: at a
+given T_e the angle grows with E, so the E = 999 GeV curve is the upper edge of the band and the
+E = E_min curve the lower one; every sample lies inside (see band check). Kinematic recoil limit
+T_e,max = 2 m_e p²/(m² + m_e² + 2 m_e E).
+
+| m [GeV] | T_e median | T_e max (kin. max at 999 GeV) | θ_e median | θ_e 5–95 % |
+|---|---|---|---|---|
+| 1 | 73096.991 MeV | 496685.523 MeV (504683.812) | 0.16° | 0.04°–0.78° |
+| 100 | 29.629 MeV | 98.727 MeV (100.963) | 6.71° | 1.72°–27.19° |
+| 200 | 7.445 MeV | 23.208 MeV (24.476) | 13.15° | 4.35°–36.84° |
+| 300 | 3.365 MeV | 9.289 MeV (10.311) | 18.77° | 8.25°–39.07° |
+| 400 | 1.962 MeV | 4.314 MeV (5.353) | 23.77° | 13.70°–37.55° |
+| 500 | 1.353 MeV | 2.051 MeV (3.058) | 27.27° | 21.23°–34.30° |
+
+Reading: for a light DM (m = 1) the electron takes up to half the DM energy (T_e up to ~500 GeV) and
+is emitted within a fraction of a degree — the textbook boosted-DM electron signature. For heavy
+DM the recoil is capped at 2 m_e p²/m² ≈ MeV (101 MeV at m = 100, 3 MeV at m = 500) and comes out at
+tens of degrees, i.e. a low-energy, wide-angle electron that no longer points back to the source.
+The band width is the flux range; at fixed T_e the pair (T_e, θ_e) fixes E for an assumed m.

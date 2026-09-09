@@ -1,0 +1,7 @@
+two-body band check: theta(E=emin) <= theta_e <= theta(E=emax) at the event's T_e (2% tolerance)
+m=   1: inside 100.0%   theta/theta(emax) median 0.914   T_e median 73096.991 MeV, max 496685.523 MeV (kinematic max 504683.812 MeV)   theta median   0.16 deg, 5-95%: 0.04-0.78
+m= 100: inside 100.0%   theta/theta(emax) median 0.840   T_e median   29.629 MeV, max   98.727 MeV (kinematic max 100.963 MeV)   theta median   6.71 deg, 5-95%: 1.72-27.19
+m= 200: inside 100.0%   theta/theta(emax) median 0.844   T_e median    7.445 MeV, max   23.208 MeV (kinematic max 24.476 MeV)   theta median  13.15 deg, 5-95%: 4.35-36.84
+m= 300: inside 100.0%   theta/theta(emax) median 0.862   T_e median    3.365 MeV, max    9.289 MeV (kinematic max 10.311 MeV)   theta median  18.77 deg, 5-95%: 8.25-39.07
+m= 400: inside 100.0%   theta/theta(emax) median 0.895   T_e median    1.962 MeV, max    4.314 MeV (kinematic max 5.353 MeV)   theta median  23.77 deg, 5-95%: 13.70-37.55
+m= 500: inside 100.0%   theta/theta(emax) median 0.946   T_e median    1.353 MeV, max    2.051 MeV (kinematic max 3.058 MeV)   theta median  27.27 deg, 5-95%: 21.23-34.30

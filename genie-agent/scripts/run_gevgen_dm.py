@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import secrets
 import sys
 from datetime import datetime
@@ -65,6 +66,38 @@ def _parse_energy(text: str) -> tuple[Optional[float], Optional[float]]:
     if len(parts) == 2:
         return float(parts[0]), float(parts[1])
     raise ValueError(f"energy must be 'E' or 'emin,emax', got {text!r}")
+
+
+_KNOT_E_RE = re.compile(r"<E>\s*([0-9.eE+-]+)\s*</E>")
+
+
+def _spline_emax(cross_sections: str) -> Optional[float]:
+    """Largest knot energy in the spline XML (None if unreadable)."""
+    try:
+        vals = [float(v) for v in _KNOT_E_RE.findall(Path(cross_sections).read_text())]
+        return max(vals) if vals else None
+    except Exception:
+        return None
+
+
+def _spline_range_check(cross_sections: str, energy_min: float,
+                        energy_max: Optional[float]) -> list[str]:
+    """Refuse energies at/above the spline's Emax.
+
+    gevgen_dm at a fixed E >= spline Emax loops forever on 'Could not select
+    interaction'; in flux mode GMCJDriver asserts fEmax < spline Emax
+    (GMCJDriver.cxx BootstrapXSecSplineSummation) and aborts with rc -6.
+    """
+    emax = _spline_emax(cross_sections)
+    if emax is None:
+        return []
+    top = energy_max if energy_max is not None else energy_min
+    if top >= emax:
+        what = "flux upper edge" if energy_max is not None else "fixed energy"
+        return [f"{what} {top:g} GeV is not strictly below the spline Emax {emax:g} GeV "
+                f"({Path(cross_sections).name}); GENIE asserts/loops there -- use e.g. "
+                f"{0.999 * emax:g}"]
+    return []
 
 
 def _spline_provenance_check(cross_sections: str, dm_mass: float,
@@ -215,6 +248,7 @@ def main() -> int:
         gxmlpath_dirs=gxmlpath_dirs,
     )
     if not errors:
+        errors += _spline_range_check(cross_sections, energy_min, energy_max)
         e2, w2 = _spline_provenance_check(cross_sections, args.dm_mass,
                                           args.med_ratio, args.zp_coupling)
         errors += e2
@@ -295,8 +329,11 @@ def main() -> int:
         "genie_command":  " ".join(cmd),
     }
     if args.flux:
-        # gevgen_dm writes the sampled spectrum to ./input-flux.root (cwd=run_dir)
+        # gevgen_dm writes the sampled spectrum to ./input-flux.root (cwd=run_dir).
+        # The run dir is shared by every run of the tune that day, so concurrent
+        # flux-mode runs overwrite it: bookkeeping only, last writer wins.
         outputs["flux_hist"] = str(run_dir / "input-flux.root")
+        outputs["flux_hist_note"] = "shared per run_dir; overwritten by concurrent flux-mode runs"
 
     e_desc = (f"E={energy_min} GeV" if energy_max is None
               else f"E in [{energy_min},{energy_max}] GeV flux={args.flux}")
