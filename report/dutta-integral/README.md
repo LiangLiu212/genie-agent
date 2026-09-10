@@ -298,28 +298,55 @@ Errors are column 4 in quadrature (statistical only). All numbers are the
 
 ### 3.1 ¹²C (fig 6, p-shell and s-shell windows)
 
-The 16 rows of `fig6_top_q1p2.dat` and `fig6_bot_q1p2.dat` (column 1 = bin
-centre, column 2 = S(p_m) as plotted):
+The 16 rows of `fig6_top_q1p2.dat` (p-shell window) and `fig6_bot_q1p2.dat`
+(s-shell window), column 1 = bin centre, column 2 = S(p_m) as plotted, with
+the per-bin 3D weights (Δp = 40 MeV/c, p_m at the bin centre). As for iron,
+the 2π column summed over all 16 signed bins is the 3D integral N and the
+4π column over all 16 bins is twice that.
 
-| bin | p_m (MeV/c) | S(p_m), p-shell 10 < E_m < 25 MeV (MeV⁻³) | S(p_m), s-shell 30 < E_m < 50 MeV (MeV⁻³) |
-|---|---|---|---|
-| 1 | -300 | 1.31822e-09 | 7.38319e-10 |
-| 2 | -260 | 4.15417e-09 | 1.29075e-09 |
-| 3 | -220 | 1.13985e-08 | 3.29055e-09 |
-| 4 | -180 | 2.61633e-08 | 7.72794e-09 |
-| 5 | -140 | 4.86048e-08 | 1.72738e-08 |
-| 6 | -100 | 5.89047e-08 | 3.00671e-08 |
-| 7 | -60 | 4.55982e-08 | 4.34589e-08 |
-| 8 | -20 | 1.81916e-08 | 5.10294e-08 |
-| 9 | +20 | 1.81916e-08 | 5.10294e-08 |
-| 10 | +60 | 4.55982e-08 | 4.34589e-08 |
-| 11 | +100 | 5.89047e-08 | 3.00671e-08 |
-| 12 | +140 | 4.86048e-08 | 1.72738e-08 |
-| 13 | +180 | 2.61633e-08 | 7.72794e-09 |
-| 14 | +220 | 1.13985e-08 | 3.29055e-09 |
-| 15 | +260 | 4.15417e-09 | 1.29075e-09 |
-| 16 | +300 | 1.31822e-09 | 7.38319e-10 |
-| **sum** | | **4.28667e-07** | **3.09754e-07** |
+**p-shell window, 10 < E_m < 25 MeV**
+
+| bin | p_m (MeV/c) | S(p_m), p-shell 10 < E_m < 25 MeV (MeV⁻³) | 4π S(p_m) p_m² Δp | 2π S(p_m) p_m² Δp |
+|---|---|---|---|---|
+| 1 | -300 | 1.31822e-09 | 0.0596 | 0.0298 |
+| 2 | -260 | 4.15417e-09 | 0.1412 | 0.0706 |
+| 3 | -220 | 1.13985e-08 | 0.2773 | 0.1387 |
+| 4 | -180 | 2.61633e-08 | 0.4261 | 0.2130 |
+| 5 | -140 | 4.86048e-08 | 0.4789 | 0.2394 |
+| 6 | -100 | 5.89047e-08 | 0.2961 | 0.1480 |
+| 7 | -60 | 4.55982e-08 | 0.0825 | 0.0413 |
+| 8 | -20 | 1.81916e-08 | 0.0037 | 0.0018 |
+| 9 | +20 | 1.81916e-08 | 0.0037 | 0.0018 |
+| 10 | +60 | 4.55982e-08 | 0.0825 | 0.0413 |
+| 11 | +100 | 5.89047e-08 | 0.2961 | 0.1480 |
+| 12 | +140 | 4.86048e-08 | 0.4789 | 0.2394 |
+| 13 | +180 | 2.61633e-08 | 0.4261 | 0.2130 |
+| 14 | +220 | 1.13985e-08 | 0.2773 | 0.1387 |
+| 15 | +260 | 4.15417e-09 | 0.1412 | 0.0706 |
+| 16 | +300 | 1.31822e-09 | 0.0596 | 0.0298 |
+| **sum, all 16 bins** | | **4.28667e-07** | **3.5306** | **1.7653** |
+
+**s-shell window, 30 < E_m < 50 MeV**
+
+| bin | p_m (MeV/c) | S(p_m), s-shell 30 < E_m < 50 MeV (MeV⁻³) | 4π S(p_m) p_m² Δp | 2π S(p_m) p_m² Δp |
+|---|---|---|---|---|
+| 1 | -300 | 7.38319e-10 | 0.0334 | 0.0167 |
+| 2 | -260 | 1.29075e-09 | 0.0439 | 0.0219 |
+| 3 | -220 | 3.29055e-09 | 0.0801 | 0.0400 |
+| 4 | -180 | 7.72794e-09 | 0.1259 | 0.0629 |
+| 5 | -140 | 1.72738e-08 | 0.1702 | 0.0851 |
+| 6 | -100 | 3.00671e-08 | 0.1511 | 0.0756 |
+| 7 | -60 | 4.34589e-08 | 0.0786 | 0.0393 |
+| 8 | -20 | 5.10294e-08 | 0.0103 | 0.0051 |
+| 9 | +20 | 5.10294e-08 | 0.0103 | 0.0051 |
+| 10 | +60 | 4.34589e-08 | 0.0786 | 0.0393 |
+| 11 | +100 | 3.00671e-08 | 0.1511 | 0.0756 |
+| 12 | +140 | 1.72738e-08 | 0.1702 | 0.0851 |
+| 13 | +180 | 7.72794e-09 | 0.1259 | 0.0629 |
+| 14 | +220 | 3.29055e-09 | 0.0801 | 0.0400 |
+| 15 | +260 | 1.29075e-09 | 0.0439 | 0.0219 |
+| 16 | +300 | 7.38319e-10 | 0.0334 | 0.0167 |
+| **sum, all 16 bins** | | **3.09754e-07** | **1.3868** | **0.6934** |
 
 | quantity | p-shell window | s-shell window |
 |---|---|---|
@@ -330,9 +357,9 @@ centre, column 2 = S(p_m) as plotted):
 ### 3.2 ⁵⁶Fe (fig 7, full 0–80 MeV window)
 
 The 16 rows of `fig7_q1p2.dat`, with the per-bin 3D weights (Δp = 40 MeV/c,
-p_m at the bin centre): the 4π column summed over the positive half is the
-3D integral N; the 2π column summed over all 16 signed bins gives the same
-number, since the file is symmetric:
+p_m at the bin centre): the 2π column summed over all 16 signed bins is the
+3D integral N; the 4π column over all 16 bins is twice that, since the file
+is symmetric and each |p_m| appears on both sides:
 
 | bin | p_m (MeV/c) | S(p_m), 0 < E_m < 80 MeV (MeV⁻³) | 4π S(p_m) p_m² Δp | 2π S(p_m) p_m² Δp |
 |---|---|---|---|---|
@@ -353,7 +380,6 @@ number, since the file is symmetric:
 | 15 | +260 | 2.45150e-08 | 0.8330 | 0.4165 |
 | 16 | +300 | 9.66999e-09 | 0.4375 | 0.2187 |
 | **sum, all 16 bins** | | **2.61842e-06** | **18.2057** | **9.1029** |
-| **sum, p_m > 0 only** | | 1.30921e-06 | **9.1029** | 4.5514 |
 
 | quantity | value |
 |---|---|
