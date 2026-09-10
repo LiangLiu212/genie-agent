@@ -4,22 +4,23 @@ Summary of what the author data tables behind the Dutta *et al.* JLab Hall C
 **E91-013** paper ([nucl-ex/0303011](https://arxiv.org/abs/nucl-ex/0303011),
 ¹²C / ⁵⁶Fe / ¹⁹⁷Au quasi-elastic (e,e′p)) integrate to, and on which scale.
 This document is the write-up that goes with
-[`integrate_dutta.py`](integrate_dutta.py) (the integrator) and
-[`make_empm_sidebyside.py`](make_empm_sidebyside.py) (the figure of section 1).
+[`integrate_dutta.py`](integrate_dutta.py) (the integrator),
+[`make_published_vs_table.py`](make_published_vs_table.py) (the
+published-vs-table figures of section 1) and
+[`make_empm_sidebyside.py`](make_empm_sidebyside.py) (the one-canvas overview).
 
 - Paper source: [`papers/nucl-ex_0303011/`](../../papers/nucl-ex_0303011/paper_nucl-ex_0303011.md)
   (tex `longpaper2.tex`; every `tex:line` below anchors to it); published
   figure renders in `papers/nucl-ex_0303011/figures/`
 - Author data: [`data/Dipingkar-dutta-data-prc_figs/`](../../data/Dipingkar-dutta-data-prc_figs)
   — 14 files, exactly figs 6, 7, 9, 11 of the paper
-- Earlier per-figure report (replots of all 14 files against the published
-  renders): [`report/dutta-e91013-figures.md`](../dutta-e91013-figures.md).
+- Earlier per-figure report: [`report/dutta-e91013-figures.md`](../dutta-e91013-figures.md).
   Its normalization reading of figs 9/11 ("≈ Z, full-occupancy scale") is the
   old one; the sections after section 1 here supersede it.
 
 Sections:
 
-1. [E_m and p_m for ¹²C and ⁵⁶Fe: the paper's definitions and the data tables, plotted side by side](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
+1. [E_m and p_m for C12 and Fe56: the paper's definitions, and each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
 2. *(to be written)* integration conventions on the tabulated grids
 3. *(to be written)* nucleon counts per file and the fig 7 / fig 11 consistency check
 4. *(to be written)* the scale of figs 9/11 against T·Z/f_corr
@@ -61,9 +62,9 @@ acceptance window in both variables is |p_m| ≤ 300 MeV/c and E_m ≤ 80 MeV
 
 ### 1.2 Kinematics of the data used here
 
-All four data-backed figures exist at **Q² = 1.28 (GeV/c)²** (figs 9 and 11
-only there), so section 1 uses that setting throughout. Table I of the paper
-(tex:682–685) gives for it:
+The two missing-energy figures exist only at **Q² = 1.28 (GeV/c)²**; the two
+momentum-distribution figures overlay four Q² settings. Table I of the paper
+(tex:682–685) gives for the Q² = 1.28 setting:
 
 | beam energy | central e′ energy / angle | central proton energy | proton angles (conjugate in bold) | Q² | ε |
 |---|---|---|---|---|---|
@@ -100,7 +101,7 @@ MeV⁻¹ for the E_m files. The E_m files' y is S^D integrated over the *signed*
 p_m axis from −300 to +300 MeV/c (author's column description; this is what
 makes the later factor 2).
 
-Two structural facts about the tables that the plot makes visible:
+Two structural facts about the tables:
 
 - every p_m file is **exactly left–right symmetrized**, y(−p_m) ≡ y(+p_m) to
   full precision, so each holds 8 independent values (the ± asymmetry the
@@ -108,56 +109,100 @@ Two structural facts about the tables that the plot makes visible:
 - the E_m files are **zero below the first shell**: fig 9 has no strength
   below E_m = 15 MeV (three empty bins), fig 11 none below 10 MeV (two).
 
-The two fig 6 Q² = 0.64 files do not reproduce the published panel
-(×1.3 high, p_m-dependent; [`dutta-e91013-figures.md` §3](../dutta-e91013-figures.md))
-and are not used anywhere in this document.
+### 1.4 Each published figure next to its data table
 
-### 1.4 E_m and p_m side by side
+Left: the paper's render (autocropped). Right: the same quantity drawn from
+the `.dat` files on the paper's axes — points with the tabulated statistical
+errors, **no rescaling** (no ½ on the E_m files, no L+R fold on the p_m
+files; those conventions are the subject of the next sections). The p_m
+replots use the house colour cycle with fig 6's marker shapes per Q²
+(fig 7 in print assigns markers differently; the legends identify the sets).
+Numbers quoted below come from
+[`dutta_published_vs_table.txt`](figures/dutta_published_vs_table.txt): a
+per-file ratio to the Q² = 1.8 reference and a histdiag `describe1d` readout
+of all 14 files, computed on the tabulated values.
+
+**¹²C missing energy (fig 9)**
+
+![fig 9 published vs table](figures/dutta_fig9_c12_em_published_vs_table.png)
+
+The 16 tabulated points are the published ones: 0.571 ± 0.005 MeV⁻¹ at
+E_m = 17.5 MeV, 0.269 at 22.5, the s-shell bump peaking at 0.077 at 37.5, and
+three exact zeros below 15 MeV. The IPSM curve exists only in print. The one
+visible difference is the error bars: the file's column 4 is statistical
+(0.8 % at the peak), while the published bars at 17.5 and 22.5 MeV are
+several times larger (pixel-measured in
+[`dutta-e91013-figures.md` §5](../dutta-e91013-figures.md)).
+
+**¹²C missing momentum, p-shell and s-shell windows (fig 6)**
+
+![fig 6 published vs table](figures/dutta_fig6_c12_pm_published_vs_table.png)
+
+Three of the four Q² sets sit on the published points: relative to the
+Q² = 1.8 reference file the bin-wise median ratio is 1.01 (Q² = 1.28) and
+0.97 (3.25) in the p-shell panel, 1.14 and 1.20 in the s-shell panel, with the
+signed-axis sums equal to within 5–8 %. The **Q² = 0.64 files do not**: their
+median ratio to the reference is 1.27 (p-shell) and 1.33 (s-shell) with a
+p_m-dependent spread (1.07–1.44), whereas in print all four Q² coincide within
+marker size. Those two files are excluded from every integral in this
+document (open question tracked in
+[`open_questions.md`](../../papers/nucl-ex_0303011/open_questions.md)).
+The ℓ = 1 dip at p_m = 0 in the p-shell window and the ℓ = 0 peak in the
+s-shell window (tex:920–922) are in the tables as printed: in the Q² = 1.28
+file the p-shell dip bin is 0.31 of its peak at |p_m| = 100 MeV/c.
+
+**⁵⁶Fe missing energy (fig 11)**
+
+![fig 11 published vs table](figures/dutta_fig11_fe56_em_published_vs_table.png)
+
+The table reproduces the published points (0.810 ± 0.009 MeV⁻¹ at
+E_m = 12.5 MeV, then a monotone fall to 0.055 at 77.5; two exact zeros below
+10 MeV). The three theory curves (IPSM, Benhar, TIMORA) exist only in print.
+
+**⁵⁶Fe missing momentum (fig 7)**
+
+![fig 7 published vs table](figures/dutta_fig7_fe56_pm_published_vs_table.png)
+
+All four files coincide as printed: median ratios to the Q² = 1.8 reference
+1.17 (0.64), 1.09 (1.28), 1.08 (3.25), signed-axis sums equal to within 5 %
+(the caption's normalization). No fig 6-type anomaly here. Bin-wise
+statistical errors are 1–5 %, largest at |p_m| = 20 and 300 MeV/c.
+
+### 1.5 The Q² = 1.28 tables on one canvas
 
 ![E_m and p_m side by side, linear axes](figures/dutta_empm_sidebyside.png)
 
-Rows: ¹²C (top), ⁵⁶Fe (bottom). Left: the missing-energy spectral function
-(fig 9 / fig 11), with the E_m windows of the right-hand panels shaded.
-Right: the missing-momentum distributions at the same Q² = 1.28 (GeV/c)²
-(fig 6 top and bottom for ¹²C, fig 7 for ⁵⁶Fe), on the signed p_m axis as
-tabulated. Every point is the file's y with its statistical error, **no
-rescaling** (in particular no ½ on the E_m files and no L+R fold on the p_m
-files — those conventions are the subject of the next sections, not of this
-figure). The log-y version is
-[`dutta_empm_sidebyside_log.png`](figures/dutta_empm_sidebyside_log.png)
-(zero bins not drawn). A histdiag `describe1d` readout of all five series,
-computed on the tabulated values with the tabulated errors, is in
-[`dutta_empm_sidebyside.txt`](figures/dutta_empm_sidebyside.txt); the
-numbers below are quoted from it.
+Rows ¹²C / ⁵⁶Fe; left the missing-energy spectral function with the E_m
+windows of the right-hand panels shaded, right the missing-momentum
+distributions at the same Q². Log-y version:
+[`dutta_empm_sidebyside_log.png`](figures/dutta_empm_sidebyside_log.png);
+histdiag readout of the five series:
+[`dutta_empm_sidebyside.txt`](figures/dutta_empm_sidebyside.txt).
 
 | series | file | peak | width / spread | share of the plotted sum |
 |---|---|---|---|---|
 | ¹²C E_m | `fig9_q1p2.dat` | 0.571 ± 0.005 MeV⁻¹ at E_m = 17.5 MeV | FWHM 7.2 MeV; median 20.7 MeV | p-shell window 10–25: **69.1 %**; dip bin 25–30: 4.7 %; s-shell window 30–50: **21.4 %**; tail 50–80: 4.9 % |
 | ⁵⁶Fe E_m | `fig11_q1p2.dat` | 0.810 ± 0.009 MeV⁻¹ at E_m = 12.5 MeV | FWHM 14.9 MeV; median 24.2 MeV; monotone fall | 10–25: 52.0 %; 25–50: 33.8 %; 50–80: 14.3 % (last bin alone 1.5 %) |
-| ¹²C p_m, p-shell window | `fig6_top_q1p2.dat` | 5.89 × 10⁻⁸ MeV⁻³ at \|p_m\| = 100 MeV/c | σ(p_m) = 128 MeV/c; median \|p_m\| = 110 MeV/c | dip at \|p_m\| = 20: 1.82 × 10⁻⁸ = 0.31 × peak (ℓ = 1 signature, tex:920–922) |
+| ¹²C p_m, p-shell window | `fig6_top_q1p2.dat` | 5.89 × 10⁻⁸ MeV⁻³ at \|p_m\| = 100 MeV/c | σ(p_m) = 128 MeV/c; median \|p_m\| = 110 MeV/c | dip at \|p_m\| = 20: 1.82 × 10⁻⁸ = 0.31 × peak |
 | ¹²C p_m, s-shell window | `fig6_bot_q1p2.dat` | 5.10 × 10⁻⁸ MeV⁻³ at \|p_m\| = 20 MeV/c | σ(p_m) = 94 MeV/c; median \|p_m\| = 64 MeV/c | peaks at p_m = 0 as ℓ = 0 should |
 | ⁵⁶Fe p_m, 0–80 MeV | `fig7_q1p2.dat` | 3.34 × 10⁻⁷ MeV⁻³ at \|p_m\| = 20 MeV/c | σ(p_m) = 118 MeV/c; median \|p_m\| = 88 MeV/c | no dip: the unresolved Fe shells mix ℓ = 0 and ℓ > 0 |
 
-What the side-by-side view shows: the two columns are projections of one
-S^D(E_m, p_m) per nucleus. On carbon the E_m spectrum separates the p₃/₂
-peak from the s₁/₂ bump, and the p_m panel shows the corresponding ℓ = 1
-(dip at zero) and ℓ = 0 (peak at zero) momentum shapes for those two windows.
-On iron neither variable resolves shells: E_m falls monotonically from its
-first non-zero bin and p_m is a single broad, ℓ-mixed distribution. The
-per-bin statistical errors are 1–3 % on the E_m files and 2–13 % on the p_m
-files (largest at |p_m| = 20 and 300); they are the only errors in the
-tables (the published fig 9 bars are 5–10× larger,
-[`dutta-e91013-figures.md` §5](../dutta-e91013-figures.md)).
+On carbon the E_m spectrum separates the p₃/₂ peak from the s₁/₂ bump and
+the p_m panel shows the matching ℓ = 1 (dip) and ℓ = 0 (peak) shapes for the
+two windows; on iron neither variable resolves shells.
 
-### 1.5 Reproduce
+### 1.6 Reproduce
 
 From the repo root:
 
 ```bash
+pixi run python report/dutta-integral/make_published_vs_table.py
+# -> figures/dutta_fig{9,6,11,7}_*_published_vs_table.png, dutta_published_vs_table.txt
 pixi run python report/dutta-integral/make_empm_sidebyside.py
-# -> report/dutta-integral/figures/dutta_empm_sidebyside{,_log}.png and dutta_empm_sidebyside.txt
+# -> figures/dutta_empm_sidebyside{,_log}.png, dutta_empm_sidebyside.txt
 ```
 
-The script reads the five Q² = 1.28 files directly, uses the house plot style
-(`results/template/plot_style.py`) and writes the histdiag readout with
-`results/template/histdiag.py`.
+Both scripts read the `.dat` files directly, use the house plot style
+(`results/template/plot_style.py`) and write their histdiag readouts with
+`results/template/histdiag.py`; the published renders come from
+`papers/nucl-ex_0303011/figures/`.
