@@ -21,8 +21,8 @@ Sections:
 
 1. [E_m and p_m for C12 and Fe56: the paper's definitions, and each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
 2. Missing energy at Q² = 1.28 for ¹²C (fig 9) and ⁵⁶Fe (fig 11): the tabulated points and their sums (section 2 below)
-3. *(to be written)* integration conventions: the factor ½ on the signed p_m axis, the positive-half 3D integral of the p_m files
-4. *(to be written)* nucleon counts per file, the fig 7 / fig 11 consistency check, the scale against T·Z/f_corr
+3. Missing momentum at Q² = 1.28 for ¹²C (fig 6) and ⁵⁶Fe (fig 7): the tabulated points, their integrals for every Q², and the cross-check against section 2 (section 3 below)
+4. *(to be written)* the conventions behind the factor ½ and the positive-half 3D integral; nucleon counts against T·Z/f_corr
 5. *(to be written)* windowed integrals (shell occupancies) and caveats
 
 ---
@@ -276,4 +276,135 @@ Reproduce:
 
 ```bash
 pixi run python report/dutta-integral/integrate_dutta.py --files fig11_q1p2
+```
+
+---
+
+## 3. Missing momentum at Q² = 1.28 (GeV/c)²: the tabulated points and their integrals
+
+The p_m files are tabulated on the signed axis, 16 bins of Δp = 40 MeV/c
+centred at −300 … +300 MeV/c, and every file is exactly left–right symmetric
+(section 1.3). Two integrals are quoted per file:
+
+- **the plotted area** Σ S(p_m) Δp over all 16 signed bins (MeV⁻²) — the
+  quantity the paper's rescale-to-Q² = 1.8 caption equalizes;
+- **the 3D integral** N = 4π Σ_{p_m>0} S(p_m) p_m² Δp over the **positive
+  half only** (p_m at the bin centre, rectangle rule), dimensionless — the
+  number of protons in the file's E_m window. Summing both halves would count
+  each |p_m| twice, since the files are symmetrized.
+
+Errors are column 4 in quadrature (statistical only). All numbers are the
+`plotted sum` / `N` columns of `integrate_dutta.py`.
+
+### 3.1 ¹²C (fig 6, p-shell and s-shell windows)
+
+The 16 rows of `fig6_top_q1p2.dat` and `fig6_bot_q1p2.dat` (column 1 = bin
+centre, column 2 = S(p_m) as plotted):
+
+| bin | p_m (MeV/c) | S(p_m), p-shell 10 < E_m < 25 MeV (MeV⁻³) | S(p_m), s-shell 30 < E_m < 50 MeV (MeV⁻³) |
+|---|---|---|---|
+| 1 | -300 | 1.31822e-09 | 7.38319e-10 |
+| 2 | -260 | 4.15417e-09 | 1.29075e-09 |
+| 3 | -220 | 1.13985e-08 | 3.29055e-09 |
+| 4 | -180 | 2.61633e-08 | 7.72794e-09 |
+| 5 | -140 | 4.86048e-08 | 1.72738e-08 |
+| 6 | -100 | 5.89047e-08 | 3.00671e-08 |
+| 7 | -60 | 4.55982e-08 | 4.34589e-08 |
+| 8 | -20 | 1.81916e-08 | 5.10294e-08 |
+| 9 | +20 | 1.81916e-08 | 5.10294e-08 |
+| 10 | +60 | 4.55982e-08 | 4.34589e-08 |
+| 11 | +100 | 5.89047e-08 | 3.00671e-08 |
+| 12 | +140 | 4.86048e-08 | 1.72738e-08 |
+| 13 | +180 | 2.61633e-08 | 7.72794e-09 |
+| 14 | +220 | 1.13985e-08 | 3.29055e-09 |
+| 15 | +260 | 4.15417e-09 | 1.29075e-09 |
+| 16 | +300 | 1.31822e-09 | 7.38319e-10 |
+| **sum** | | **4.28667e-07** | **3.09754e-07** |
+
+| quantity | p-shell window | s-shell window |
+|---|---|---|
+| Σ S(p_m), plain sum of the 16 values (MeV⁻³) | 4.28667e-07 ± 4.3e-09 | 3.09754e-07 ± 3.8e-09 |
+| Σ S(p_m) Δp, Δp = 40 MeV/c, signed axis (MeV⁻²) | 1.7147e-05 ± 1.7e-07 | 1.2390e-05 ± 1.5e-07 |
+| 4π Σ_{p_m>0} S(p_m) p_m² Δp, positive half | **1.7653 ± 0.0198** | **0.6934 ± 0.0065** |
+
+### 3.2 ⁵⁶Fe (fig 7, full 0–80 MeV window)
+
+The 16 rows of `fig7_q1p2.dat`:
+
+| bin | p_m (MeV/c) | S(p_m), 0 < E_m < 80 MeV (MeV⁻³) |
+|---|---|---|
+| 1 | -300 | 9.66999e-09 |
+| 2 | -260 | 2.45150e-08 |
+| 3 | -220 | 6.71838e-08 |
+| 4 | -180 | 1.41263e-07 |
+| 5 | -140 | 2.10452e-07 |
+| 6 | -100 | 2.52322e-07 |
+| 7 | -60 | 2.69957e-07 |
+| 8 | -20 | 3.33847e-07 |
+| 9 | +20 | 3.33847e-07 |
+| 10 | +60 | 2.69957e-07 |
+| 11 | +100 | 2.52322e-07 |
+| 12 | +140 | 2.10452e-07 |
+| 13 | +180 | 1.41263e-07 |
+| 14 | +220 | 6.71838e-08 |
+| 15 | +260 | 2.45150e-08 |
+| 16 | +300 | 9.66999e-09 |
+| **sum** | | **2.61842e-06** |
+
+| quantity | value |
+|---|---|
+| Σ S(p_m), plain sum of the 16 values (MeV⁻³) | 2.61842e-06 ± 2.4e-08 |
+| Σ S(p_m) Δp, Δp = 40 MeV/c, signed axis (MeV⁻²) | 1.0474e-04 ± 9.4e-07 |
+| 4π Σ_{p_m>0} S(p_m) p_m² Δp, positive half | **9.1029 ± 0.0498** |
+
+### 3.3 The same integrals for every Q² set
+
+| panel | E_m window | Q² (GeV/c)² | Σ S(p_m) Δp, signed axis (MeV⁻²) | 4π Σ_{p_m>0} S p_m² Δp | note |
+|---|---|---|---|---|---|
+| fig6_top (¹²C) | 10–25 MeV | 0.64 | 2.3319e-05 ± 1.8e-07 | **2.3683 ± 0.0214** | excluded: ×1.3 above the published panel |
+| fig6_top (¹²C) | 10–25 MeV | 1.28 | 1.7147e-05 ± 1.7e-07 | **1.7653 ± 0.0198** |  |
+| fig6_top (¹²C) | 10–25 MeV | 1.8 | 1.8032e-05 ± 1.9e-07 | **1.7529 ± 0.0140** | rescale reference (caption) |
+| fig6_top (¹²C) | 10–25 MeV | 3.25 | 1.6510e-05 ± 5.0e-07 | **1.7409 ± 0.0358** |  |
+| fig6_bot (¹²C) | 30–50 MeV | 0.64 | 1.5136e-05 ± 1.8e-07 | **0.8225 ± 0.0069** | excluded: ×1.3 above the published panel |
+| fig6_bot (¹²C) | 30–50 MeV | 1.28 | 1.2390e-05 ± 1.5e-07 | **0.6934 ± 0.0065** |  |
+| fig6_bot (¹²C) | 30–50 MeV | 1.8 | 1.1538e-05 ± 1.9e-07 | **0.6077 ± 0.0060** | rescale reference (caption) |
+| fig6_bot (¹²C) | 30–50 MeV | 3.25 | 1.2304e-05 ± 6.2e-07 | **0.7759 ± 0.0169** |  |
+| fig7 (⁵⁶Fe) | 0–80 MeV | 0.64 | 1.0468e-04 ± 9.0e-07 | **9.6246 ± 0.0693** |  |
+| fig7 (⁵⁶Fe) | 0–80 MeV | 1.28 | 1.0474e-04 ± 9.4e-07 | **9.1029 ± 0.0498** |  |
+| fig7 (⁵⁶Fe) | 0–80 MeV | 1.8 | 1.0001e-04 ± 1.6e-06 | **8.1500 ± 0.0540** | rescale reference (caption) |
+| fig7 (⁵⁶Fe) | 0–80 MeV | 3.25 | 1.0182e-04 ± 2.4e-06 | **8.9114 ± 0.1095** |  |
+
+The signed-axis areas of a panel agree across Q² to 5 % (fig 7) and 5–8 %
+(fig 6, Q² = 0.64 aside), as the caption's normalization implies. The 3D
+integrals behave differently per panel: the three usable p-shell sets agree
+to 1.4 % (1.741–1.765), while the s-shell sets spread over 0.61–0.78 and the
+iron sets over 8.2–9.6, because those Q² sets differ at large |p_m|, where
+the p_m² weight is largest.
+
+### 3.4 Cross-check against the E_m files of section 2
+
+The E_m and p_m files are projections of the same S^D, so the 3D integral of
+a p_m file must equal half the E_m sum over the same window (half because
+S(E_m) integrates over the signed p_m axis, section 2):
+
+| window | from the p_m file: 4π Σ_{p_m>0} S p_m² Δp | from the E_m file: ½ Σ_window S(E_m) ΔE | ratio p_m / E_m |
+|---|---|---|---|
+| ¹²C p-shell, 10 < E_m < 25 MeV | 1.765 ± 0.020 | 2.100 ± 0.014 | 0.840 |
+| ¹²C s-shell, 30 < E_m < 50 MeV | 0.693 ± 0.007 | 0.650 ± 0.004 | 1.067 |
+| ¹²C both windows | 2.459 ± 0.021 | 2.750 ± 0.014 | 0.894 |
+| ⁵⁶Fe, 0 < E_m < 80 MeV | 9.103 ± 0.050 | 9.100 ± 0.039 | 1.0003 |
+
+For iron the two projections agree to 0.03 %. For carbon they do not: the
+p-shell file carries 16 % less than the fig 9 window and the s-shell file 7 %
+more, 11 % less for the two windows together. Candidate reasons, to be
+settled in section 4: the fig 6 files are rescaled to the Q² = 1.8 integral
+(caption, tex:891–893) while fig 9 is not; the p_m² weight at the bin centre;
+and the unknown 2D grid behind the windowed projections.
+
+Reproduce:
+
+```bash
+pixi run python report/dutta-integral/integrate_dutta.py --files fig6_top_q1p2 fig6_bot_q1p2 fig7_q1p2
+pixi run python report/dutta-integral/integrate_dutta.py --em-window 10 25 --files fig9_q1p2
+pixi run python report/dutta-integral/integrate_dutta.py --em-window 30 50 --files fig9_q1p2
 ```
