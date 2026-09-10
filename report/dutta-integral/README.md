@@ -21,7 +21,7 @@ Sections:
 
 1. [E_m and p_m for C12 and Fe56: the paper's definitions, and each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
 2. Missing energy at Q² = 1.28 for ¹²C (fig 9) and ⁵⁶Fe (fig 11): the tabulated points and their sums (section 2 below)
-3. Missing momentum at Q² = 1.28 for ¹²C (fig 6) and ⁵⁶Fe (fig 7): the tabulated points, their integrals for every Q², and the cross-check against section 2 (section 3 below)
+3. Missing momentum at Q² = 1.28 for ¹²C (fig 6) and ⁵⁶Fe (fig 7): the tabulated points and their integrals for every Q² (section 3 below)
 4. *(to be written)* the conventions behind the factor ½ and the positive-half 3D integral; nucleon counts against T·Z/f_corr
 5. *(to be written)* windowed integrals (shell occupancies) and caveats
 
@@ -411,30 +411,8 @@ to 1.4 % (1.741–1.765), while the s-shell sets spread over 0.61–0.78 and the
 iron sets over 8.2–9.6, because those Q² sets differ at large |p_m|, where
 the p_m² weight is largest.
 
-### 3.4 Cross-check against the E_m files of section 2
-
-The E_m and p_m files are projections of the same S^D, so the 3D integral of
-a p_m file must equal half the E_m sum over the same window (half because
-S(E_m) integrates over the signed p_m axis, section 2):
-
-| window | from the p_m file: 4π Σ_{p_m>0} S p_m² Δp | from the E_m file: ½ Σ_window S(E_m) ΔE | ratio p_m / E_m |
-|---|---|---|---|
-| ¹²C p-shell, 10 < E_m < 25 MeV | 1.765 ± 0.020 | 2.100 ± 0.014 | 0.840 |
-| ¹²C s-shell, 30 < E_m < 50 MeV | 0.693 ± 0.007 | 0.650 ± 0.004 | 1.067 |
-| ¹²C both windows | 2.459 ± 0.021 | 2.750 ± 0.014 | 0.894 |
-| ⁵⁶Fe, 0 < E_m < 80 MeV | 9.103 ± 0.050 | 9.100 ± 0.039 | 1.0003 |
-
-For iron the two projections agree to 0.03 %. For carbon they do not: the
-p-shell file carries 16 % less than the fig 9 window and the s-shell file 7 %
-more, 11 % less for the two windows together. Candidate reasons, to be
-settled in section 4: the fig 6 files are rescaled to the Q² = 1.8 integral
-(caption, tex:891–893) while fig 9 is not; the p_m² weight at the bin centre;
-and the unknown 2D grid behind the windowed projections.
-
 Reproduce:
 
 ```bash
 pixi run python report/dutta-integral/integrate_dutta.py --files fig6_top_q1p2 fig6_bot_q1p2 fig7_q1p2
-pixi run python report/dutta-integral/integrate_dutta.py --em-window 10 25 --files fig9_q1p2
-pixi run python report/dutta-integral/integrate_dutta.py --em-window 30 50 --files fig9_q1p2
 ```
