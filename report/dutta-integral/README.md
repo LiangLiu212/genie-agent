@@ -19,7 +19,7 @@ published-vs-table figures of section 1).
 
 Sections:
 
-1. [E_m and p_m for C12 and Fe56: the paper's definitions, and each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
+1. [E_m and p_m for C12 and Fe56: each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-each-published-figure-next-to-its-data-table)
 2. Missing energy at Q² = 1.28 for ¹²C (fig 9) and ⁵⁶Fe (fig 11): the tabulated points and their sums (section 2 below)
 3. Missing momentum at Q² = 1.28 for ¹²C (fig 6) and ⁵⁶Fe (fig 7): the tabulated points and their integrals (section 3 below)
 4. *(to be written)* the conventions behind the factor ½ and the positive-half 3D integral; nucleon counts against T·Z/f_corr
@@ -27,88 +27,9 @@ Sections:
 
 ---
 
-## 1. E_m and p_m for C12 and Fe56, from the paper and from the data tables
+## 1. E_m and p_m for C12 and Fe56: each published figure next to its data table
 
-### 1.1 What the paper measures
-
-For an electron knocking a proton out of nucleus A with energy transfer ω and
-three-momentum transfer **q**, leaving a scattered proton p′ and a residual
-nucleus A−1, the paper defines (tex:221–227)
-
-    E_m = ω − T_p′ − T_{A−1}          missing energy
-    p_m = p_p′ − q                    missing momentum (vector)
-
-with T_p′ and T_{A−1} the kinetic energies of the knocked-out proton and the
-recoiling nucleus. The spectral function S(E_s, **p**_m) is "the probability of
-finding a proton with separation energy E_s and momentum **p**_m inside that
-nucleus" (tex:700–702).
-
-The experimental spectral function is built bin by bin in (E_m, p_m)
-(tex:852–856): counts in each bin are weighted by the inverse off-shell e–p
-cross section and kinematic factors (σ_cc1), divided by luminosity and by the
-SIMC phase space H(E_m, p_m), and multiplied by a SIMC radiative-correction
-factor C^rad(E_m, p_m); the model spectral function is iterated until the
-result no longer depends on it. The result is a **distorted** spectral
-function S^D: "these corrected spectral functions still include distortions
-due the effects of final state nuclear interactions, including absorption"
-(tex:871–873). Nothing in the paper renormalizes S^D back to full occupancy.
-
-The paper shows two projections of S^D (tex:881–884): "the missing momentum
-was integrated over in order to obtain the energy spectral functions and the
-missing energy was integrated over to obtain momentum distributions". The
-acceptance window in both variables is |p_m| ≤ 300 MeV/c and E_m ≤ 80 MeV
-(tex:1086–1087, the transparency window).
-
-### 1.2 Kinematics of the data used here
-
-The two missing-energy figures exist only at **Q² = 1.28 (GeV/c)²**; the two
-momentum-distribution figures overlay four Q² settings. Table I of the paper
-(tex:682–685) gives for the Q² = 1.28 setting:
-
-| beam energy | central e′ energy / angle | central proton energy | proton angles (conjugate in bold) | Q² | ε |
-|---|---|---|---|---|---|
-| 2.445 GeV | 1.725 GeV / 32.0° | 700 MeV | 31.5, 35.5, 39.5, **43.5**, 47.5, 51.4, 55.4° | 1.28 (GeV/c)² | 0.81 |
-
-Two more numbers from the paper belong to the same setting and enter the
-later sections: the nuclear transparencies at Q² = 1.28, **T(C) = 0.60(2)**
-and **T(Fe) = 0.44(1)** (Table III, tex:1227, statistical errors), and the
-short-range-correlation factors applied to the PWIA yield, **1.11 ± 0.03 (C)**
-and **1.26 ± 0.08 (Fe)** (tex:1134–1135).
-
-### 1.3 The four figures and the 14 data files
-
-| figure | nucleus | quantity plotted (y) | integrated over | x grid | Q² sets in the files | files |
-|---|---|---|---|---|---|---|
-| fig 6 top | ¹²C | ∫S^D dE_m, p-shell window | 10 < E_m < 25 MeV | p_m = −300 … +300 MeV/c, 16 bins of 40 MeV/c | 0.64, 1.28, 1.8, 3.25 | `fig6_top_{q0p6,q1p2,q1p8,q3p2}.dat` |
-| fig 6 bottom | ¹²C | ∫S^D dE_m, s-shell window | 30 < E_m < 50 MeV | same | same | `fig6_bot_{…}.dat` |
-| fig 7 | ⁵⁶Fe | ∫S^D dE_m | 0 < E_m < 80 MeV | same | same | `fig7_{…}.dat` |
-| fig 9 | ¹²C | ∫S^D d³p_m | −300 < p_m < 300 MeV/c (signed) | E_m = 2.5 … 77.5 MeV, 16 bins of 5 MeV | 1.28 only | `fig9_q1p2.dat` |
-| fig 11 | ⁵⁶Fe | ∫S^D d³p_m | −300 < p_m < 300 MeV/c (signed) | same | 1.28 only | `fig11_q1p2.dat` |
-
-Caption facts: fig 6 (tex:891–893) and fig 7 (tex:901–902) are "normalized so
-that the integral of the measured spectral functions over |p_m| < 300 MeV/c is
-equal to the integral of the spectral function at Q² of 1.8 (GeV/c)²" — a
-shape-comparison convention across Q²; the Q² = 1.8 file is therefore the
-unrescaled reference. Figs 9 (tex:965–966) and 11 (tex:999–1004) carry no
-normalization statement at all; they are compared with IPSM (and, for iron,
-Benhar and TIMORA) curves that exist only in print.
-
-Columns of every file, per the author's description: x, y as plotted, an
-x-uncertainty of 0.5 % of x (unused; one sign glitch in `fig7_q1p2.dat` row 1),
-and the **statistical** error on y. Units: y in MeV⁻³ for the p_m files and
-MeV⁻¹ for the E_m files. The E_m files' y is S^D integrated over the *signed*
-p_m axis from −300 to +300 MeV/c (author's column description; this is what
-makes the later factor 2).
-
-Two structural facts about the tables:
-
-- every p_m file is **exactly left–right symmetrized**, y(−p_m) ≡ y(+p_m) to
-  full precision, so each holds 8 independent values (the ± asymmetry the
-  paper discusses at tex:922 is absent by construction);
-- the E_m files are **zero below the first shell**: fig 9 has no strength
-  below E_m = 15 MeV (three empty bins), fig 11 none below 10 MeV (two).
-
-### 1.4 Each published figure next to its data table
+### 1.1 The four figures, published vs table
 
 Left: the paper's render (autocropped). Right: the same quantity drawn from
 the `.dat` files on the paper's axes — points with the tabulated statistical
@@ -167,7 +88,7 @@ All four files coincide as printed: median ratios to the Q² = 1.8 reference
 (the caption's normalization). No fig 6-type anomaly here. Bin-wise
 statistical errors are 1–5 %, largest at |p_m| = 20 and 300 MeV/c.
 
-### 1.5 Reproduce
+### 1.2 Reproduce
 
 From the repo root:
 
@@ -283,8 +204,8 @@ pixi run python report/dutta-integral/integrate_dutta.py --files fig11_q1p2
 ## 3. Missing momentum at Q² = 1.28 (GeV/c)²: the tabulated points and their integrals
 
 The p_m files are tabulated on the signed axis, 16 bins of Δp = 40 MeV/c
-centred at −300 … +300 MeV/c, and every file is exactly left–right symmetric
-(section 1.3). Two integrals are quoted per file:
+centred at −300 … +300 MeV/c, and every file is exactly left–right symmetric,
+y(−p_m) ≡ y(+p_m) to full precision. Two integrals are quoted per file:
 
 - **the plotted area** Σ S(p_m) Δp over all 16 signed bins (MeV⁻²) — the
   quantity the paper's rescale-to-Q² = 1.8 caption equalizes;
