@@ -21,7 +21,7 @@ Sections:
 
 1. [E_m and p_m for C12 and Fe56: the paper's definitions, and each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
 2. Missing energy at Q² = 1.28 for ¹²C (fig 9) and ⁵⁶Fe (fig 11): the tabulated points and their sums (section 2 below)
-3. Missing momentum at Q² = 1.28 for ¹²C (fig 6) and ⁵⁶Fe (fig 7): the tabulated points and their integrals for every Q² (section 3 below)
+3. Missing momentum at Q² = 1.28 for ¹²C (fig 6) and ⁵⁶Fe (fig 7): the tabulated points and their integrals (section 3 below)
 4. *(to be written)* the conventions behind the factor ½ and the positive-half 3D integral; nucleon counts against T·Z/f_corr
 5. *(to be written)* windowed integrals (shell occupancies) and caveats
 
@@ -386,30 +386,6 @@ is symmetric and each |p_m| appears on both sides:
 | Σ S(p_m), plain sum of the 16 values (MeV⁻³) | 2.61842e-06 ± 2.4e-08 |
 | Σ S(p_m) Δp, Δp = 40 MeV/c, signed axis (MeV⁻²) | 1.0474e-04 ± 9.4e-07 |
 | 4π Σ_{p_m>0} S(p_m) p_m² Δp, positive half | **9.1029 ± 0.0498** |
-
-### 3.3 The same integrals for every Q² set
-
-| panel | E_m window | Q² (GeV/c)² | Σ S(p_m) Δp, signed axis (MeV⁻²) | 4π Σ_{p_m>0} S p_m² Δp | note |
-|---|---|---|---|---|---|
-| fig6_top (¹²C) | 10–25 MeV | 0.64 | 2.3319e-05 ± 1.8e-07 | **2.3683 ± 0.0214** | excluded: ×1.3 above the published panel |
-| fig6_top (¹²C) | 10–25 MeV | 1.28 | 1.7147e-05 ± 1.7e-07 | **1.7653 ± 0.0198** |  |
-| fig6_top (¹²C) | 10–25 MeV | 1.8 | 1.8032e-05 ± 1.9e-07 | **1.7529 ± 0.0140** | rescale reference (caption) |
-| fig6_top (¹²C) | 10–25 MeV | 3.25 | 1.6510e-05 ± 5.0e-07 | **1.7409 ± 0.0358** |  |
-| fig6_bot (¹²C) | 30–50 MeV | 0.64 | 1.5136e-05 ± 1.8e-07 | **0.8225 ± 0.0069** | excluded: ×1.3 above the published panel |
-| fig6_bot (¹²C) | 30–50 MeV | 1.28 | 1.2390e-05 ± 1.5e-07 | **0.6934 ± 0.0065** |  |
-| fig6_bot (¹²C) | 30–50 MeV | 1.8 | 1.1538e-05 ± 1.9e-07 | **0.6077 ± 0.0060** | rescale reference (caption) |
-| fig6_bot (¹²C) | 30–50 MeV | 3.25 | 1.2304e-05 ± 6.2e-07 | **0.7759 ± 0.0169** |  |
-| fig7 (⁵⁶Fe) | 0–80 MeV | 0.64 | 1.0468e-04 ± 9.0e-07 | **9.6246 ± 0.0693** |  |
-| fig7 (⁵⁶Fe) | 0–80 MeV | 1.28 | 1.0474e-04 ± 9.4e-07 | **9.1029 ± 0.0498** |  |
-| fig7 (⁵⁶Fe) | 0–80 MeV | 1.8 | 1.0001e-04 ± 1.6e-06 | **8.1500 ± 0.0540** | rescale reference (caption) |
-| fig7 (⁵⁶Fe) | 0–80 MeV | 3.25 | 1.0182e-04 ± 2.4e-06 | **8.9114 ± 0.1095** |  |
-
-The signed-axis areas of a panel agree across Q² to 5 % (fig 7) and 5–8 %
-(fig 6, Q² = 0.64 aside), as the caption's normalization implies. The 3D
-integrals behave differently per panel: the three usable p-shell sets agree
-to 1.4 % (1.741–1.765), while the s-shell sets spread over 0.61–0.78 and the
-iron sets over 8.2–9.6, because those Q² sets differ at large |p_m|, where
-the p_m² weight is largest.
 
 Reproduce:
 
