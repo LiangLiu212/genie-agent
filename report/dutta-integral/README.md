@@ -6,7 +6,10 @@ Summary of what the author data tables behind the Dutta *et al.* JLab Hall C
 This document is the write-up that goes with
 [`integrate_dutta.py`](integrate_dutta.py) (the integrator) and
 [`make_published_vs_table.py`](make_published_vs_table.py) (the
-published-vs-table figures of section 1).
+published-vs-table figures of section 1). A LaTeX/PDF version,
+[`dutta-integral.tex`](dutta-integral.tex) / [`dutta-integral.pdf`](dutta-integral.pdf),
+is generated from the same data files by
+[`make_report_tex.py`](make_report_tex.py) and compiled with tectonic.
 
 - Paper source: [`papers/nucl-ex_0303011/`](../../papers/nucl-ex_0303011/paper_nucl-ex_0303011.md)
   (tex `longpaper2.tex`; every `tex:line` below anchors to it); published
@@ -95,6 +98,10 @@ From the repo root:
 ```bash
 pixi run python report/dutta-integral/make_published_vs_table.py
 # -> figures/dutta_fig{9,6,11,7}_*_published_vs_table.png, dutta_published_vs_table.txt
+pixi run python report/dutta-integral/make_report_tex.py      # -> dutta-integral.tex
+cd report/dutta-integral && pixi run \
+    --manifest-path /exp/dune/data/users/liangliu/texenv/pixi.toml \
+    tectonic --outdir . dutta-integral.tex                    # -> dutta-integral.pdf
 ```
 
 The script reads the `.dat` files directly, uses the house plot style
