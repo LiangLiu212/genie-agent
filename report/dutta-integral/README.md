@@ -20,7 +20,7 @@ published-vs-table figures of section 1).
 Sections:
 
 1. [E_m and p_m for C12 and Fe56: the paper's definitions, and each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
-2. ¹²C missing energy at Q² = 1.28: the tabulated points and their sum (section 2 below)
+2. Missing energy at Q² = 1.28 for ¹²C (fig 9) and ⁵⁶Fe (fig 11): the tabulated points and their sums (section 2 below)
 3. *(to be written)* integration conventions: the factor ½ on the signed p_m axis, the positive-half 3D integral of the p_m files
 4. *(to be written)* nucleon counts per file, the fig 7 / fig 11 consistency check, the scale against T·Z/f_corr
 5. *(to be written)* windowed integrals (shell occupancies) and caveats
@@ -183,7 +183,9 @@ The script reads the `.dat` files directly, uses the house plot style
 
 ---
 
-## 2. C12 missing energy at Q² = 1.28 (GeV/c)²: the tabulated points and their sum
+## 2. Missing energy at Q² = 1.28 (GeV/c)²: the tabulated points and their sums
+
+### 2.1 ¹²C (fig 9)
 
 The 16 rows of `fig9_q1p2.dat` (column 1 = bin centre, column 2 = S(E_m) as
 plotted):
@@ -228,4 +230,50 @@ columns):
 
 ```bash
 pixi run python report/dutta-integral/integrate_dutta.py --files fig9_q1p2
+```
+
+### 2.2 ⁵⁶Fe (fig 11)
+
+The 16 rows of `fig11_q1p2.dat` (column 1 = bin centre, column 2 = S(E_m) as
+plotted):
+
+| bin | E_m (MeV) | S(E_m) (MeV⁻¹) |
+|---|---|---|
+| 1 | 2.5 | 0.00000 |
+| 2 | 7.5 | 0.00000 |
+| 3 | 12.5 | 0.80983 |
+| 4 | 17.5 | 0.63965 |
+| 5 | 22.5 | 0.44406 |
+| 6 | 27.5 | 0.36284 |
+| 7 | 32.5 | 0.28453 |
+| 8 | 37.5 | 0.23175 |
+| 9 | 42.5 | 0.20011 |
+| 10 | 47.5 | 0.14872 |
+| 11 | 52.5 | 0.13002 |
+| 12 | 57.5 | 0.11820 |
+| 13 | 62.5 | 0.08474 |
+| 14 | 67.5 | 0.06965 |
+| 15 | 72.5 | 0.06070 |
+| 16 | 77.5 | 0.05527 |
+| **sum** | | **3.64006** |
+
+Sums over the 16 points (errors: column 4 in quadrature, statistical only):
+
+| quantity | value |
+|---|---|
+| Σ S(E_m), plain sum of the tabulated values | **3.64006 ± 0.01579 MeV⁻¹** |
+| Σ S(E_m) ΔE with ΔE = 5 MeV (the plotted area, 0–80 MeV) | **18.2003 ± 0.0790** |
+| ½ Σ S(E_m) ΔE | 9.1001 ± 0.0395 |
+
+Where the strength sits: the three bins 10–25 MeV carry 52.0 % of the
+sum, 25–50 MeV 33.7 %, and the tail 50–80 MeV 14.2 % (the last
+bin alone 1.5 %), against 4.9 % above 50 MeV for carbon. No author-quoted
+integral exists for this figure; the same ½ convention as for fig 9 gives
+9.10, to be cross-checked against the fig 7 momentum-distribution integral
+in section 4.
+
+Reproduce:
+
+```bash
+pixi run python report/dutta-integral/integrate_dutta.py --files fig11_q1p2
 ```
