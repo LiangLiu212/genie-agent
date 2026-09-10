@@ -4,10 +4,9 @@ Summary of what the author data tables behind the Dutta *et al.* JLab Hall C
 **E91-013** paper ([nucl-ex/0303011](https://arxiv.org/abs/nucl-ex/0303011),
 ¹²C / ⁵⁶Fe / ¹⁹⁷Au quasi-elastic (e,e′p)) integrate to, and on which scale.
 This document is the write-up that goes with
-[`integrate_dutta.py`](integrate_dutta.py) (the integrator),
+[`integrate_dutta.py`](integrate_dutta.py) (the integrator) and
 [`make_published_vs_table.py`](make_published_vs_table.py) (the
-published-vs-table figures of section 1) and
-[`make_empm_sidebyside.py`](make_empm_sidebyside.py) (the one-canvas overview).
+published-vs-table figures of section 1).
 
 - Paper source: [`papers/nucl-ex_0303011/`](../../papers/nucl-ex_0303011/paper_nucl-ex_0303011.md)
   (tex `longpaper2.tex`; every `tex:line` below anchors to it); published
@@ -21,9 +20,9 @@ published-vs-table figures of section 1) and
 Sections:
 
 1. [E_m and p_m for C12 and Fe56: the paper's definitions, and each published figure next to its data table](#1-e_m-and-p_m-for-c12-and-fe56-from-the-paper-and-from-the-data-tables)
-2. *(to be written)* integration conventions on the tabulated grids
-3. *(to be written)* nucleon counts per file and the fig 7 / fig 11 consistency check
-4. *(to be written)* the scale of figs 9/11 against T·Z/f_corr
+2. ¹²C missing energy at Q² = 1.28: the tabulated points and their sum (section 2 below)
+3. *(to be written)* integration conventions: the factor ½ on the signed p_m axis, the positive-half 3D integral of the p_m files
+4. *(to be written)* nucleon counts per file, the fig 7 / fig 11 consistency check, the scale against T·Z/f_corr
 5. *(to be written)* windowed integrals (shell occupancies) and caveats
 
 ---
@@ -168,41 +167,66 @@ All four files coincide as printed: median ratios to the Q² = 1.8 reference
 (the caption's normalization). No fig 6-type anomaly here. Bin-wise
 statistical errors are 1–5 %, largest at |p_m| = 20 and 300 MeV/c.
 
-### 1.5 The Q² = 1.28 tables on one canvas
-
-![E_m and p_m side by side, linear axes](figures/dutta_empm_sidebyside.png)
-
-Rows ¹²C / ⁵⁶Fe; left the missing-energy spectral function with the E_m
-windows of the right-hand panels shaded, right the missing-momentum
-distributions at the same Q². Log-y version:
-[`dutta_empm_sidebyside_log.png`](figures/dutta_empm_sidebyside_log.png);
-histdiag readout of the five series:
-[`dutta_empm_sidebyside.txt`](figures/dutta_empm_sidebyside.txt).
-
-| series | file | peak | width / spread | share of the plotted sum |
-|---|---|---|---|---|
-| ¹²C E_m | `fig9_q1p2.dat` | 0.571 ± 0.005 MeV⁻¹ at E_m = 17.5 MeV | FWHM 7.2 MeV; median 20.7 MeV | p-shell window 10–25: **69.1 %**; dip bin 25–30: 4.7 %; s-shell window 30–50: **21.4 %**; tail 50–80: 4.9 % |
-| ⁵⁶Fe E_m | `fig11_q1p2.dat` | 0.810 ± 0.009 MeV⁻¹ at E_m = 12.5 MeV | FWHM 14.9 MeV; median 24.2 MeV; monotone fall | 10–25: 52.0 %; 25–50: 33.8 %; 50–80: 14.3 % (last bin alone 1.5 %) |
-| ¹²C p_m, p-shell window | `fig6_top_q1p2.dat` | 5.89 × 10⁻⁸ MeV⁻³ at \|p_m\| = 100 MeV/c | σ(p_m) = 128 MeV/c; median \|p_m\| = 110 MeV/c | dip at \|p_m\| = 20: 1.82 × 10⁻⁸ = 0.31 × peak |
-| ¹²C p_m, s-shell window | `fig6_bot_q1p2.dat` | 5.10 × 10⁻⁸ MeV⁻³ at \|p_m\| = 20 MeV/c | σ(p_m) = 94 MeV/c; median \|p_m\| = 64 MeV/c | peaks at p_m = 0 as ℓ = 0 should |
-| ⁵⁶Fe p_m, 0–80 MeV | `fig7_q1p2.dat` | 3.34 × 10⁻⁷ MeV⁻³ at \|p_m\| = 20 MeV/c | σ(p_m) = 118 MeV/c; median \|p_m\| = 88 MeV/c | no dip: the unresolved Fe shells mix ℓ = 0 and ℓ > 0 |
-
-On carbon the E_m spectrum separates the p₃/₂ peak from the s₁/₂ bump and
-the p_m panel shows the matching ℓ = 1 (dip) and ℓ = 0 (peak) shapes for the
-two windows; on iron neither variable resolves shells.
-
-### 1.6 Reproduce
+### 1.5 Reproduce
 
 From the repo root:
 
 ```bash
 pixi run python report/dutta-integral/make_published_vs_table.py
 # -> figures/dutta_fig{9,6,11,7}_*_published_vs_table.png, dutta_published_vs_table.txt
-pixi run python report/dutta-integral/make_empm_sidebyside.py
-# -> figures/dutta_empm_sidebyside{,_log}.png, dutta_empm_sidebyside.txt
 ```
 
-Both scripts read the `.dat` files directly, use the house plot style
-(`results/template/plot_style.py`) and write their histdiag readouts with
+The script reads the `.dat` files directly, uses the house plot style
+(`results/template/plot_style.py`) and writes its histdiag readout with
 `results/template/histdiag.py`; the published renders come from
 `papers/nucl-ex_0303011/figures/`.
+
+---
+
+## 2. C12 missing energy at Q² = 1.28 (GeV/c)²: the tabulated points and their sum
+
+The 16 rows of `fig9_q1p2.dat` (column 1 = bin centre, column 2 = S(E_m) as
+plotted, column 4 = statistical error), with each point's share of the plain
+sum and the running total:
+
+| bin | E_m (MeV) | S(E_m) (MeV⁻¹) | stat. error | share of the sum | cumulative |
+|---|---|---|---|---|---|
+| 1 | 2.5 | 0.00000 | 0.00000 | 0.00 % | 0.00 % |
+| 2 | 7.5 | 0.00000 | 0.00000 | 0.00 % | 0.00 % |
+| 3 | 12.5 | 0.00000 | 0.00000 | 0.00 % | 0.00 % |
+| 4 | 17.5 | 0.57130 | 0.00481 | 46.98 % | 46.98 % |
+| 5 | 22.5 | 0.26883 | 0.00253 | 22.11 % | 69.09 % |
+| 6 | 27.5 | 0.05668 | 0.00075 | 4.66 % | 73.75 % |
+| 7 | 32.5 | 0.06362 | 0.00084 | 5.23 % | 78.98 % |
+| 8 | 37.5 | 0.07718 | 0.00097 | 6.35 % | 85.33 % |
+| 9 | 42.5 | 0.06606 | 0.00087 | 5.43 % | 90.76 % |
+| 10 | 47.5 | 0.05315 | 0.00078 | 4.37 % | 95.13 % |
+| 11 | 52.5 | 0.02708 | 0.00044 | 2.23 % | 97.36 % |
+| 12 | 57.5 | 0.01514 | 0.00029 | 1.25 % | 98.60 % |
+| 13 | 62.5 | 0.00608 | 0.00013 | 0.50 % | 99.10 % |
+| 14 | 67.5 | 0.00436 | 0.00011 | 0.36 % | 99.46 % |
+| 15 | 72.5 | 0.00359 | 0.00011 | 0.30 % | 99.76 % |
+| 16 | 77.5 | 0.00297 | 0.00010 | 0.24 % | 100.00 % |
+| **sum** | | **1.21604** | **0.00578** | 100 % | |
+
+Sums over the 16 points (errors: column 4 in quadrature, statistical only):
+
+| quantity | value |
+|---|---|
+| Σ S(E_m), plain sum of the tabulated values | **1.21604 ± 0.00578 MeV⁻¹** |
+| Σ S(E_m) ΔE with ΔE = 5 MeV (the plotted area, 0–80 MeV) | **6.0802 ± 0.0289** |
+| ½ Σ S(E_m) ΔE | 3.0401 ± 0.0145 |
+
+Where the strength sits: the two p-shell bins at 17.5 and 22.5 MeV carry
+69.1 % of the sum, the four s-shell bins 30–50 MeV carry 21.4 %, the dip bin
+at 27.5 MeV 4.7 % and the tail above 50 MeV 4.9 %. The author's integral for
+this figure is **3.04**, i.e. half of Σ S(E_m) ΔE; why the plotted area is
+twice the nucleon count (the signed −300…+300 MeV/c p_m axis) is the subject
+of section 3.
+
+Reproduce (the plotted sum and its half are the `plotted sum` and `N`
+columns):
+
+```bash
+pixi run python report/dutta-integral/integrate_dutta.py --files fig9_q1p2
+```
