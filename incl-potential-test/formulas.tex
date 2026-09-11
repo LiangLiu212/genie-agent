@@ -1,0 +1,273 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parskip}{0.4em}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\vv}[1]{\vec{#1}}
+\newcommand{\ball}{\mathrm{ball}}
+\newcommand{\red}{\mathrm{red}}
+\newcommand{\loc}{\mathrm{loc}}
+\newcommand{\miss}{\mathrm{miss}}
+\newcommand{\refl}{\mathrm{refl}}
+\newcommand{\Rmax}{R_{\max}}
+\newcommand{\pF}{p_F}
+\newcommand{\TF}{T_F}
+\newcommand{\Vz}{V_0}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\codem}[1]{\text{\texttt{#1}}}
+
+\title{The GENIE--INCL quasi-elastic vertex in formulas:\\ scattering frame and INCL energy balance}
+\author{Liang Liu}
+\date{2026-09-11}
+
+\begin{document}
+\maketitle
+
+Companion to \code{README.md} in \code{incl-potential-test/}; the code is
+\code{incl\_nucleus.py} (ground state, potential, local energy) and
+\code{ep\_incl\_scatter.py} (scattering and balance). Every formula below is what the
+scripts evaluate, and every ``verified'' number is the maximum deviation over the
+200k events of the named run (\code{ep\_incl\_C12\_lf\{on,never\}[\_resample].npz},
+2026-09-11). Sources: the INCL++ tree vendored in the \code{genie\_inclxx} install and
+the fork branch \code{feature/incl-vertex-local-energy} at \code{6bd7803d6}; the
+convention is that of \code{docs/incl-vertex-local-energy-option-plan.md}
+(``Convention revised'').
+
+Units MeV, MeV/c, fm. A primed symbol is an outgoing particle; a subscript or
+superscript $0$ marks the scattering frame (before the balance); $\vv x$ is a
+3-vector and $|\vv x|$ its magnitude.
+
+\section{Notation}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+symbol & meaning & C12 value \\
+\midrule
+$m$ & INCL nucleon mass (protons and neutrons) & 938.2796 \\
+$m_e$ & electron mass (\code{shared/pdg.json}) & 0.511 \\
+$\pF$ & Fermi momentum, $1.37\,\hbar c\,(2Z/A)^{1/3}$ & 270.34 \\
+$\TF$ & $\sqrt{\pF^2+m^2}-m$ & 38.17 \\
+$S$ & INCL separation energy & 6.83 \\
+$\Vz$ & well depth $\TF+S$ & 45.00 \\
+$\Rmax$ & $5.5+0.3\,(A-6)/12$ & 5.65 \\
+$k=(E_e,\vv k)$ & beam electron, along $+z$ & $E_e=2445$ \\
+$P=(E_N,\vv p_N)$ & the nucleon handed to the scattering & section~\ref{sec:pot} \\
+$k',\ p'$ & outgoing electron and proton, final (after the balance) & \\
+$k'_0,\ p'_0$ & the same before the balance (scattering frame) & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{INCL ground state}
+
+\paragraph{Density} (modified harmonic oscillator, $6<A\le 19$):
+\begin{equation*}
+\rho(r)\propto(1+\alpha x^2)\,e^{-x^2},\qquad x=r/a,\qquad 0\le r\le\Rmax,
+\end{equation*}
+with the HFB parameters $a=1.72905$~fm, $\alpha=0.849882$ (C12 protons) for the
+default fuzzy correlation, and the medium-table values $a=1.72$~fm, $\alpha=0.84$
+for a strict correlation.
+
+\paragraph{r--p correlation.} INCL does not draw $r$ from $\rho$. It builds the
+density of \emph{reflection radii}
+\begin{align*}
+g(R) &= -R^3\,\frac{d\rho}{dR} = 2R^2x^2\,(1-\alpha+\alpha x^2)\,e^{-x^2}
+\qquad(\code{ModifiedHarmonicOscillatorRP}),\\
+F(R) &= \int_0^R g(R')\,dR' \Big/ \int_0^{\Rmax} g(R')\,dR',
+\end{align*}
+stores the inverse table $R(u)$ with $u=F^{1/3}$ at 60 equidistant $R$ nodes
+(linear interpolation, clamped at both ends), and its inverse $u(r)$. Then
+\begin{align*}
+\codem{max\_r\_from\_p}(x) &= R(x) &&\text{reflection radius of a nucleon with } |\vv p|=x\,\pF,\\
+\codem{min\_p\_from\_r}(r) &= u(r) &&p_{\min}(r)/\pF\text{: the smallest momentum that reaches } r,\\
+p_{\min}(r) &= \pF\,F(r)^{1/3}.
+\end{align*}
+
+\paragraph{Strict sampling} (coefficient $\ge 0.99999$):
+\begin{align*}
+\vv p_\ball &\ \text{ uniform in the ball } |\vv p|\le\pF \quad\big((p/\pF)^3\ \text{uniform}\big),\\
+R &= R(|\vv p_\ball|/\pF),\\
+\vv r &\ \text{ uniform in the ball } |\vv r|\le R,\\
+p_\refl &= |\vv p_\ball| \quad(\text{reflection momentum}).
+\end{align*}
+Uniformly filled nested spheres with $dN/dR=g(R)$ generate
+\begin{equation*}
+\rho_{\mathrm{gen}}(r)=\int_r^{\Rmax} g(R)\,\frac{3}{4\pi R^3}\,dR
+\;\propto\; \rho(r)-\rho(\Rmax),
+\end{equation*}
+i.e.\ the MHO tail cut sharply at $\Rmax$ (6.6\,\% low at 4.8~fm, 80\,\% low in the
+last 0.1~fm). Verified: sampled $r$ against $r^2[\rho(r)-\rho(\Rmax)]$,
+$\chi^2/\mathrm{ndf}=0.6$--$1.3$ (400k nucleons, 40 bins, strict/fuzzy $\times$
+60/3000 nodes).
+
+\paragraph{Fuzzy sampling} (coefficient $c=0.5$ for protons, $0.73$ for neutrons):
+\begin{align*}
+g_1,g_2&\sim N(0,1),\qquad x_g=g_1,\qquad y_g=c\,x_g+g_2\sqrt{1-c^2},\qquad
+u_1=\Phi(x_g),\ u_2=\Phi(y_g),\\
+x&=u_1^{1/3},\qquad y=u_2^{1/3},\\
+|\vv p_\ball|&=y\,\pF\ (\text{isotropic}),\qquad R=R(x),\qquad
+\vv r\ \text{uniform in }|\vv r|\le R,\qquad p_\refl=x\,\pF.
+\end{align*}
+The marginals of $r$ and $p$ are those of the strict draw; only the joint correlation
+is loosened ($\mathrm{corr}(p,r)=+0.34$ instead of $+0.68$), and 22\,\% of the
+nucleons lie below $p_{\min}(r)$.
+
+\paragraph{The fork's redraw at fixed $r$} (\code{ResamplingHitNucleon}, flag
+\code{--resample}; what GENIE's event loop feeds the vertex):
+\begin{equation*}
+u=\codem{min\_p\_from\_r}(r),\qquad
+|\vv p_\ball|^3\ \text{uniform on }[\,u^3\pF^3,\ \pF^3\,],\quad\text{isotropic},\qquad
+p_\refl=|\vv p_\ball|,
+\end{equation*}
+so $p_{\min}(r)\le|\vv p_\ball|\le\pF$ ($\mathrm{corr}(p,r)=+0.47$,
+$\langle p\rangle=225.5$~MeV/c). In every case $E_\ball=\sqrt{p_\ball^2+m^2}$ and
+$T_\ball=E_\ball-m\le\TF$.
+
+\section{Potential energy and local energy}\label{sec:pot}
+
+\paragraph{Potential} (\code{NuclearPotentialEnergyIsospin}, $\alpha_V=0.223$):
+\begin{equation*}
+V(T)=\begin{cases}
+\Vz, & T<\TF,\\[4pt]
+\max\!\Big(0,\ \Vz-\dfrac{\alpha_V}{1-\alpha_V}\,(T-\TF)\Big)
+=\max\big(0,\ \Vz-0.287\,(T-\TF)\big), & T\ge\TF.
+\end{cases}
+\end{equation*}
+$V=0$ above $T\approx195$~MeV; every ball nucleon has $V(T_\ball)=\Vz$.
+
+\paragraph{Local energy} (\code{KinematicsUtils::getLocalEnergy}) for a nucleon at
+radius $r$ with momentum $p$ and reflection momentum $p_\refl$:
+\begin{align*}
+p_{fl0}&=\begin{cases}
+\pF, & T\le\TF,\\[2pt]
+\sqrt{t_{f0}\,(t_{f0}+2m)},\quad t_{f0}=V(T)-S, & T>\TF
+\quad(v_\loc=0\ \text{if } t_{f0}<0 \text{ or } r>\Rmax),
+\end{cases}\\
+p_l&=p_{fl0}\;\codem{min\_p\_from\_r}\!\Big(r\,\frac{R(p/p_{fl0})}{R(p_\refl/p_{fl0})}\Big),\\
+v_\loc(r,p)&=\sqrt{p_l^2+m^2}-m.
+\end{align*}
+For a ball nucleon with $p_\refl=|\vv p|$ (strict draw, or after the redraw) the ratio
+is 1 and $v_\loc=\TF(r)\equiv\sqrt{p_{\min}(r)^2+m^2}-m$: 0 at the centre, $\TF$ at
+$\Rmax$. For a fuzzy nucleon the ratio $R(y)/R(x)$ guarantees $v_\loc\le T_\ball$
+(0 clipped nucleons of 200k).
+
+\paragraph{Local frame} (fork \code{getHitNucleonP4};
+\code{transformToLocalEnergyFrame} without mutation):
+\begin{align*}
+\text{on:}\quad & E_\loc=\max(E_\ball-v_\loc,\,m), &
+\vv p_\red&=\sqrt{E_\loc^2-m^2}\;\hat{p}_\ball \quad(\text{on shell}),\\
+\text{never:}\quad & E_\loc=E_\ball, &
+\vv p_\red&=\vv p_\ball \quad(v_\loc\equiv0),
+\end{align*}
+and $P=(E_\loc,\vv p_\red)$ is the nucleon handed to the scattering.
+
+\section{Scattering frame (before the balance)}
+
+Two-body phase space on $P$: isotropic in the CM of $k+P$, then boosted to the lab,
+so the 4-momentum of $e+P$ is conserved exactly:
+\begin{equation*}
+s=(k+P)^2,\qquad
+p^*=\frac{\sqrt{[\,s-(m_e+m)^2\,][\,s-(m_e-m)^2\,]}}{2\sqrt s},\qquad
+k+P=k'_0+p'_0 .
+\end{equation*}
+Missing quantities of this state (the green curves of the figures):
+\begin{align*}
+\omega_0&=E_e-E'_0=E_{p'0}-E_\loc, &
+\vv q_0&=\vv k-\vv k'_0=\vv p'_0-\vv p_\red,\\
+E^{(0)}_\miss&=\omega_0-T_{p'0}=m-E_\loc=-T_\red \quad(\text{never: }-T_\ball), &
+\vv p^{(0)}_\miss&=\vv p'_0-\vv q_0=\vv p_\red \quad(\text{never: }\vv p_\ball).
+\end{align*}
+Verified: $|E^{(0)}_\miss+T_\red|\le2.4\times10^{-12}$~MeV and
+$\big|\,|\vv p^{(0)}_\miss|-|\vv p_\red|\,\big|\le1.8\times10^{-12}$~MeV/c in all four
+runs. No binding appears here: the scattering sees an on-shell nucleon whose kinetic
+energy is $T_\red$ (about 0 at the surface with local energy on).
+
+\section{INCL energy balance}
+
+INCL's \code{InteractionAvatar} rule, as the fork implements it in
+\code{G4INCLGENIEAvatar}: \code{preInteraction} sets the conserved total, the
+\code{ViolationLeptonEMomentumFunctor} rescales the products, and INCL's
+\code{RootFinder} solves for the scale factor.
+\begin{enumerate}
+\item Conserved total, $E-V$ of the \emph{global} nucleon, with no local-energy term:
+  $E_{\mathrm{tot}}=E_e+E_\ball-\Vz$.
+\item Boost vector, the CM of $e$ + local-frame nucleon:
+  $\vv\beta=(\vv k+\vv p_\red)/(E_e+E_\loc)$.
+\item Boost $k'_0,\,p'_0$ by $-\vv\beta$ to $\vv k^*_0,\ \vv p^*_0$ (with
+  $\vv k^*_0+\vv p^*_0=0$); scale both by one common factor,
+  $\vv k^*=\alpha\,\vv k^*_0$, $\vv p^*=\alpha\,\vv p^*_0$, energies on shell
+  $E^*=\sqrt{|\cdot|^2+\text{mass}^2}$; boost back by $+\vv\beta$ to $k',\,p'$.
+\item The outgoing proton takes its energy-dependent potential $V_{p'}=V(T_{p'})$.
+  With local energy on, and only for slow protons ($V_{p'}\ge S$, otherwise
+  $v_\loc=0$), the fixed point $E_{p'}\leftarrow E_{p'}+v_\loc(r,|\vv p'|)$ with
+  $|\vv p'|$ re-adjusted on shell, iterated to $|\Delta v_\loc|<10^{-4}$~MeV
+  (\code{scaleParticleMomenta}).
+\item Solve for $\alpha$:
+  \begin{equation*}
+  E'+E_{p'}-V_{p'}=E_e+E_\ball-\Vz
+  \end{equation*}
+  (bisection to $|\Delta E|<2\times10^{-12}$~MeV here; INCL's \code{RootFinder}
+  stops at $10^{-4}$~MeV).
+\end{enumerate}
+$\alpha$ is 0.980--1.014 (mean 0.988 on, 0.983 never); no bracketing failures in
+800k events.
+
+\paragraph{Record} (what GENIE writes): initial nucleon $(\vv p_\ball,\,E_\ball-\Vz)$,
+lepton $k'$, pre-FSI proton $p'$. Then
+\begin{equation*}
+\omega=E_e-E',\qquad \vv q=\vv k-\vv k',\qquad E_\miss=\omega-T_{p'},\qquad
+\vv p_\miss=\vv p'-\vv q=\vv k'+\vv p'-\vv k .
+\end{equation*}
+
+\section{Closed forms}
+
+\paragraph{Energy.} Inserting the balance condition into $\omega-T_{p'}$:
+\begin{align*}
+E_\miss&=\Vz-T_\ball-V(T_{p'})\\
+&=\Vz-T_\ball\in[S,\Vz]=[6.83,\,45.0]
+\qquad\text{for fast protons } (V=0,\ T_{p'}\gtrsim195\text{ MeV}).
+\end{align*}
+Independent of the local-energy setting: $v_\loc$ moves the scattering nucleon and
+the lepton, never $E_\miss$. Slow protons keep $V(T_{p'})>0$ and reach $E_\miss$ down
+to $-\TF=-38$~MeV. Verified: $\le2.1\times10^{-12}$~MeV in all four runs.
+
+\paragraph{Momentum.} In the CM the two momenta cancel for every $\alpha$, so the
+lab total after the boost is $\gamma\vv\beta\,E^*_{\mathrm{tot}}(\alpha)$; before
+scaling it was $\vv k+\vv p_\red=\gamma\vv\beta\sqrt s$. The energy condition fixes
+$\gamma\,[E^*_{\mathrm{tot}}(\alpha)-\sqrt s]=V(T_{p'})-\Vz+v_\loc$, hence
+\begin{align*}
+\vv p_\miss&=\vv p_\red+\vv\beta\,\big[V(T_{p'})-\Vz+v_\loc(r)\big]
+&&(\text{never: } v_\loc=0,\ \vv p_\red=\vv p_\ball),\\
+&=\vv p_\red-\vv\beta\,(\Vz-v_\loc) &&\text{fast protons.}
+\end{align*}
+The rescaling therefore shifts the final-state momentum against the beam by
+$\beta_z(\Vz-v_\loc)$: mean 22~MeV/c (on, $\langle\beta_z\rangle=0.72$,
+$\langle v_\loc\rangle=13.9$) and 32~MeV/c (never), the difference between the blue
+and green $|\vv p_\miss|$ curves; the remnant absorbs it (review note item 3).
+Verified: $\le2.8\times10^{-12}$~MeV/c for fast protons in all four runs. For slow
+protons with local energy on, the fixed point $E_{p'}\leftarrow E_{p'}+v_\loc$
+re-adjusts $|\vv p'|$ after the boost and the closed form no longer applies
+(deviations up to 236~MeV/c, mean 18, for the 9\,\% of phase-space events with
+$V(T_{p'})>0$).
+
+\section{Summary of the two settings}
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+ & scattering nucleon $P$ & $E^{(0)}_\miss$, $\vv p^{(0)}_\miss$ & record $E_\miss$ & record $\vv p_\miss$ (fast $p'$) \\
+\midrule
+on & $(E_\ball-v_\loc,\ \vv p_\red)$ & $-T_\red$, $\vv p_\red$ & $\Vz-T_\ball-V(T_{p'})$ & $\vv p_\red-\vv\beta\,(\Vz-v_\loc)$ \\
+never & $(E_\ball,\ \vv p_\ball)$ & $-T_\ball$, $\vv p_\ball$ & $\Vz-T_\ball-V(T_{p'})$ & $\vv p_\ball-\vv\beta\,\Vz$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Numbers (200k events, 2.445~GeV, seed 1, \code{--resample}):
+$\langle|\vv p_\red|\rangle=147.8$~MeV/c with $\mathrm{corr}(p_\red,r)=-0.66$ (on)
+vs $\langle|\vv p_\ball|\rangle=225.5$, $+0.47$ (never); $E_\miss$ of fast protons:
+mean 17.46 in $[6.83,\,44.80]$ in both; $\langle|\vv p_\miss|\rangle=148.4$ (on) /
+224.2 (never).
+
+\end{document}

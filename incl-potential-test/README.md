@@ -14,6 +14,7 @@ the module docstrings. Units: MeV, fm. Run everything through pixi from the repo
 | `ep_phase_space.py` | step 0: e + p(free, at rest) → e' + p', flat two-body phase space; `scatter`, `boost`, `missing` helpers. E_miss = p_miss = 0 to 1e-12 (`ep_free_proton.*`). |
 | `incl_nucleus.py` | `INCLNucleus`: MHO density, INCL's r–p correlation tables (`max_r_from_p`, `min_p_from_r`), strict/fuzzy `sample`, the fork's truncated-ball `resample_at_r`, `potential_energy(T)`, `local_energy(r, p, p_refl)`, `local_frame`. Self-test: `pixi run python incl-potential-test/incl_nucleus.py`. |
 | `formulas.md` | the scattering-frame and INCL-balance formulas, closed forms for E_miss and p_miss, and their verification. |
+| `formulas.tex`, `formulas.pdf` | the same document in LaTeX, compiled with tectonic (command below). |
 | `ep_incl_scatter.py` | step 1: e + p(INCL C12) → e' + p' on the local-frame nucleon, then INCL's energy balance (`GENIEAvatar` functor port), then E_miss / p_miss of the record. |
 | `ep_incl_C12_lf{on,never}[_resample].{png,txt,npz}` | outputs, 200k events, 2.445 GeV, seed 1. `.txt` = histdiag readouts (read these, not the PNG); `.npz` = event arrays (gitignored, 55 MB each). |
 
@@ -21,6 +22,8 @@ the module docstrings. Units: MeV, fm. Run everything through pixi from the repo
 pixi run python incl-potential-test/ep_phase_space.py
 pixi run python incl-potential-test/incl_nucleus.py                       # density self-test
 pixi run python incl-potential-test/ep_incl_scatter.py --local-energy on   # add --never / --resample / --rp-coefficient 1
+cd incl-potential-test && pixi run --manifest-path /exp/dune/data/users/liangliu/texenv/pixi.toml \
+    tectonic --outdir . formulas.tex                                   # -> formulas.pdf
 ```
 
 ## The chain (per event)
