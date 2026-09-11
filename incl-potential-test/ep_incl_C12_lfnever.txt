@@ -1,0 +1,136 @@
+# ep_incl_C12_lfnever: INCLNucleus A=12 Z=6 proton: pF = 270.339 MeV/c, m = 938.2796 MeV, T_F = 38.169 MeV, S = 6.83 MeV, V0 = 44.999 MeV; MHO a = 1.72905 fm, alpha = 0.849882 (HFB table_radius_hfb.dat), R_max = 5.650 fm; r-p coefficient = 0.5 (fuzzy); table nodes = 60
+# E_beam = 2.445 GeV, N = 200000, seed = 1, local energy = never, resample = False
+# E_miss overflow: 0, |p_miss| overflow: 0
+== 2D  x = r [fm] (23 bins on [0, 5.65])   y = |p_ball| [MeV/c] (28 bins on [0, 280])   integral 200000
+   r [fm]       marginal |..:-+*%@@@@%*+=-:......|  mean 2.308  std 0.8853  peak 2.088  16/50/84%: 1.402 / 2.264 / 3.202
+   |p_ball| [Me marginal |.........:::---===++**#%%@@.|  mean 202.5  std 52.34  peak 265  16/50/84%: 146.5 / 214.4 / 254.8
+   dependence: Pearson r = +0.339   Spearman rho = +0.340   mutual information 0.071 nat, normalized 0.026 (0 = independent)
+   densest cell: x in [2.702, 2.948), y in [260, 270): 2128 entries (1.06%)
+   occupancy: 18% of cells empty; 68% of entries in the 109 densest cells (16.9% of cells), 95% in 258 (40.1%); the 95% set spans x in [0.4913, 5.159], y in [50, 270]
+   density map (8 x 10 coarse cells, cell = % of all entries; rows y high -> low, columns x low -> high)
+                              0     1     2     3     4     5     6     7
+   y9  [    270,     280)   <.1   <.1   <.1   0.1   0.1   0.1   <.1   <.1
+   y8  [    240,     270)   0.4   2.5   6.4   9.0   7.1   3.3   0.8   0.1
+   y7  [    210,     240)   0.5   3.0   6.6   7.4   4.2   1.3   0.2   <.1
+   y6  [    180,     210)   0.4   2.9   5.6   5.3   2.4   0.6   0.1   <.1
+   y5  [    150,     180)   0.4   2.4   4.5   3.5   1.4   0.3   <.1   <.1
+   y4  [    120,     150)   0.3   2.0   3.1   2.2   0.7   0.1   <.1     .
+   y3  [     90,     120)   0.3   1.4   1.9   1.1   0.3   <.1   <.1     .
+   y2  [     60,      90)   0.2   0.8   1.0   0.5   0.1   <.1   <.1     .
+   y1  [     30,      60)   0.1   0.4   0.4   0.1   <.1   <.1     .     .
+   y0  [      0,      30)   <.1   0.1   <.1   <.1   <.1     .     .     .
+                         x column index; x edges: 0, 0.737, 1.47, 2.21, 2.95, 3.68, 4.42, 5.16, 5.65
+   column normalized (each x column scaled to its own max: 9 = that column's max, . = empty): where y sits at each x, the ridge
+                          0 1 2 3 4 5 6 7
+   y9  [    270,     280) 1 1 1 1 1 1 1 1
+   y8  [    240,     270) 8 8 9 9 9 9 9 9
+   y7  [    210,     240) 9 9 9 8 6 4 3 2
+   y6  [    180,     210) 9 9 8 6 4 2 1 1
+   y5  [    150,     180) 8 8 7 4 2 1 1 1
+   y4  [    120,     150) 7 6 5 3 1 1 1 .
+   y3  [     90,     120) 5 5 3 2 1 1 1 .
+   y2  [     60,      90) 4 3 2 1 1 1 1 .
+   y1  [     30,      60) 2 2 1 1 1 1 . .
+   y0  [      0,      30) 1 1 1 1 1 . . .
+                         x column index; x edges: 0, 0.737, 1.47, 2.21, 2.95, 3.68, 4.42, 5.16, 5.65
+   row normalized (each y row scaled to its own max): where x sits at each y
+                          0 1 2 3 4 5 6 7
+   y9  [    270,     280) 1 2 4 8 9 9 4 1
+   y8  [    240,     270) 1 3 7 9 8 4 1 1
+   y7  [    210,     240) 1 4 9 9 6 2 1 1
+   y6  [    180,     210) 1 5 9 9 4 1 1 1
+   y5  [    150,     180) 1 5 9 8 3 1 1 1
+   y4  [    120,     150) 1 6 9 7 2 1 1 .
+   y3  [     90,     120) 2 7 9 6 2 1 1 .
+   y2  [     60,      90) 2 8 9 5 2 1 1 .
+   y1  [     30,      60) 3 9 9 3 1 1 . .
+   y0  [      0,      30) 3 9 5 2 1 . . .
+                         x column index; x edges: 0, 0.737, 1.47, 2.21, 2.95, 3.68, 4.42, 5.16, 5.65
+   profile: <|p_ball| [MeV/c]> inside slices of r [fm]   (spark = |p_ball| [MeV/c] distribution in that slice, low -> high, scaled to its own max)
+     k  r [fm]     slice          N       <r [fm]>        <|p_bal> ± err       std    median      mode  |spark|
+     0  [       0,    0.737)       5082     0.533       172.9 ± 0.85        60.8       181       235  | ..::--=+++++##%#%@%@@@@%%*.|
+     1  [   0.737,     1.47)      31050      1.16       179.4 ± 0.33        57.6       187       225  |....:::--=++**##%%@@@@@@@%#.|
+     2  [    1.47,     2.21)      59282      1.86       192.5 ± 0.22          53       201       245  |.......:::--==+**##%%@@@@@%.|
+     3  [    2.21,     2.95)      58152      2.56       207.8 ± 0.2         47.4       218       255  | .........:::---==+**#%%@@@.|
+     4  [    2.95,     3.68)      32651      3.27       222.9 ± 0.23          41       234       265  |  .............:::--==+*#%@.|
+     5  [    3.68,     4.42)      11253      3.98       236.5 ± 0.31        33.1       247       265  |     ..............:::-=+#@.|
+     6  [    4.42,     5.16)       2311      4.69       246.6 ± 0.54          26       256       265  |        .. ...........::-+@.|
+     7  [    5.16,     5.65)        219      5.34       254.2 ± 1.3         19.4       261       265  |               ..  ....::=@:|
+   trend: <|p_ball| [MeV/c]> = 156.8 + (19.82 ± 0.11) * r [fm]   (+182.1 sigma from flat; change across the slices 95.3); straight line chi2/ndf = 190.6/6; a quadratic term (-0.406 r [fm]^2) lowers chi2 by 20.7 -> mild curvature (quadratic part 10% of the linear change)
+   caution: slices 6, 7 have > 2% of their entries in the first or last |p_ball| [MeV/c] bin, so the |p_ball| [MeV/c] axis range may be cutting them (biases <|p_ball| [MeV/c]> and the curvature there)
+   slice to slice change of <|p_ball| [MeV/c]> (+ rises, - falls, . flat within 2 sigma): +++++++   (monotonic)
+   spread: std of |p_ball| [MeV/c] goes from 60.8 (first slice) to 19.4 (last slice); slope -8.79 ± 0.077 per unit r [fm] (narrowing with r [fm])
+   asymmetry: (<|p_ball| [MeV/c]> minus mode)/std averaged over slices = -0.87   (positive = tail towards high |p_ball| [MeV/c])
+   profile: <r [fm]> inside slices of |p_ball| [MeV/c]   (spark = r [fm] distribution in that slice, low -> high, scaled to its own max)
+     k  |p_ball| [ slice          N       <|p_bal>        <r [fm]> ± err       std    median      mode  |spark|
+     0  [       0,       30)        283      21.9       1.336 ± 0.035      0.586      1.27      1.35  |.:+%%@*=--:.  .        |
+     1  [      30,       60)       1948      47.6       1.546 ± 0.015      0.645       1.5       1.6  |.:=*%@@#*=-:.....      |
+     2  [      60,       90)       5192      76.8       1.698 ± 0.0096     0.689      1.65       1.6  |.:=+#@@@#*=-:......    |
+     3  [      90,      120)      10045       106       1.822 ± 0.0071     0.709      1.78       1.6  |..-+#@@@%#+=::..... .  |
+     4  [     120,      150)      16760       136       1.958 ± 0.0057     0.735      1.92      1.84  |..:=*%@@@%*+-:.......  |
+     5  [     150,      180)      24993       166       2.076 ± 0.0049     0.772      2.05      2.09  |..:-+#%@@%#*=-:........|
+     6  [     180,      210)      34652       196       2.204 ± 0.0043     0.806      2.18      2.09  |..:-=*%@@@%#+=-:...... |
+     7  [     210,      240)      46380       226        2.37 ± 0.0039     0.845      2.35      2.33  |..:-=+#%@@@%#+=-:......|
+     8  [     240,      270)      59068       255       2.671 ± 0.0038     0.919      2.66      2.58  |...:-=+#%@@@@#*+=::....|
+     9  [     270,      280)        679       275       3.315 ± 0.038      0.992      3.35      3.07  | ....:--=#*#@#%@%#+=::.|
+   trend: <r [fm]> = 1.198 + (0.005464 ± 3.3e-05) * |p_ball| [MeV/c]   (+163.9 sigma from flat; change across the slices 1.38); straight line chi2/ndf = 1313.3/8; a quadratic term (1.44e-05 |p_ball| [MeV/c]^2) lowers chi2 by 687.1 -> clearly curved (quadratic part is 67% of the linear change)
+   slice to slice change of <r [fm]> (+ rises, - falls, . flat within 2 sigma): +++++++++   (monotonic)
+== 1D compare  E_miss record vs V0 - T_ball - V(T_p'): 141 bins on [-60.5, 80.5]   (V0 - T_ball - V(T_p') is the reference)
+   integrals  E_miss record 200000 ± 447   V0 - T_ball - V(T_p') 200000 ± 447   ratio E_miss record/V0 - T_ball - V(T_p') = 1.0000 ± 0.0032  (+0.0 sigma from 1)
+   shape E_miss record         |           ......................=@@@@%%%###**+++=--.                  |
+   shape V0 - T_ball - V(T_p') |           ......................=@@@@%%%###**+++=--.                  |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   19.59 vs 19.59   diff +0 ± 0.042  (+0.00 median bin widths, +0.0 sigma)
+   std    13.18 vs 13.18   ratio 1.000     skew -0.91 vs -0.91
+   peak   E_miss [MeV] = 8 (bin 68) vs E_miss [MeV] = 8 (bin 68)   shift +0 bins     FWHM 27.54 vs 27.54 (ratio 1.000)
+   quantiles E_miss record minus V0 - T_ball - V(T_p'):  5%: +0   16%: +0   50%: +0   84%: +0   95%: +0
+   chi2/ndf   raw 0.0/84 (p = 1)   shape, after scaling V0 - T_ball - V(T_p') by 1.0000: 0.0/83 (p = 1)
+   KS   max |CDF diff| = 0.0000 at E_miss [MeV] = -59.5  (E_miss record has relatively more entries above that x)   p = 1
+   per bin, low x -> high x   (|pull| > 2:  + E_miss record above V0 - T_ball - V(T_p'),  - below,  . within,  blank both empty)
+     pull raw    |                      ....................................................................................                                   |
+     pull shape  |                      ....................................................................................                                   |
+     ratio shape |                      ====================================================================================                                   |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! V0 - T_ball - V(T_p') empty)
+   no run of bins deviates by more than 2 sigma after scaling to equal integrals
+   regions from the 16% and 84% quantiles of V0 - T_ball - V(T_p'):
+     left tail  (E_miss [MeV] < 9.37) E_miss record      32976   V0 - T_ball - V(T_p')      32976   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+     core       (E_miss [MeV] in 9.37 .. 32.9) E_miss record 1.3346e+05   V0 - T_ball - V(T_p') 1.3346e+05   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+     right tail (E_miss [MeV] > 32.9) E_miss record      33562   V0 - T_ball - V(T_p')      33562   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * after scaling to equal integrals the shapes agree within statistics
+== 1D compare  |p_miss| record vs p_ball: 80 bins on [0, 400]   (p_ball is the reference)
+   integrals  |p_miss| record 200000 ± 447   p_ball 200000 ± 447   ratio |p_miss| record/p_ball = 1.0000 ± 0.0032  (+0.0 sigma from 1)
+   shape |p_miss| record | ..............:::::::-----====++++***###%%%@@@@@%%##*+=--:.                    |
+   shape p_ball          | .................:::::::------=====+++*****###%%%@@@@.                         |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   201.9 vs 202.6   diff -0.7188 ± 0.17  (-0.14 median bin widths, -4.3 sigma)
+   std    53.97 vs 52.36   ratio 1.031     skew -0.70 vs -0.86
+   peak   |p_miss| [MeV/c] = 232.5 (bin 46) vs |p_miss| [MeV/c] = 267.5 (bin 53)   shift -7 bins     FWHM 107.7 vs 80.96 (ratio 1.330)
+   quantiles |p_miss| record minus p_ball:  5%: -1.46   16%: -1.8   50%: -2.72   84%: -0.0859   95%: +8.69
+   chi2/ndf   raw 16517.4/59 (p = 0)   shape, after scaling p_ball by 1.0000: 16517.4/58 (p = 0)
+   KS   max |CDF diff| = 0.0656 at |p_miss| [MeV/c] = 270  (|p_miss| record has relatively more entries above that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + |p_miss| record above p_ball,  - below,  . within,  blank both empty)
+     pull raw    | .....................+...+.+.+......++..++.+++.------++++++                    |
+     pull shape  | .....................+...+.+.+......++..++.+++.------++++++                    |
+     ratio shape | +^-+-===========================================--vvv^!!!!!                    |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! p_ball empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 14..22, |p_miss| [MeV/c] in [140, 230)   |p_miss| record minus scaled p_ball = +3705  (+8.4 sigma combined, +3.9% of p_ball there)
+     * -  bins 24..26, |p_miss| [MeV/c] in [240, 270)   |p_miss| record minus scaled p_ball = -1.81e+04  (-57.2 sigma combined, -30.7% of p_ball there)
+     * +  bins 27..29, |p_miss| [MeV/c] in [270, 300)   |p_miss| record minus scaled p_ball = +1.313e+04  (+109.1 sigma combined, +1933.3% of p_ball there)
+   regions from the 16% and 84% quantiles of p_ball:
+     left tail  (|p_miss| [MeV/c] < 147) |p_miss| record      32096   p_ball      30897   raw ratio 1.039 (+4.8 sigma)   shape ratio 1.039 (+4.8 sigma)
+     core       (|p_miss| [MeV/c] in 147 .. 255) |p_miss| record 1.3609e+05   p_ball 1.3718e+05   raw ratio 0.992 (-2.1 sigma)   shape ratio 0.992 (-2.1 sigma)
+     right tail (|p_miss| [MeV/c] > 255) |p_miss| record      31816   p_ball      31920   raw ratio 0.997 (-0.4 sigma)   shape ratio 0.997 (-0.4 sigma)
+   hints (heuristic; check them against the numbers above):
+     * pull pattern + - + (core vs both tails): |p_miss| record is broader than p_ball
+== 1D  E_miss scattering frame (before balance) [MeV]: 141 bins on [-60.5, 80.5], integral 200000
+   shape   |           %@@@@%%%###**+++=-:.                                        |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean -23   std 9.97   skew 0.352   excess kurtosis -0.933
+   peak    bin 23, x = -37 (7896 entries)   FWHM 28.52 on [-38.23, -9.713]
+   quantiles  5%: -36.88  16%: -34.02  25%: -31.56  50%: -24.2  75%: -15.3  84%: -11.39  95%: -5.248
+   nonempty bins 22..60 (x in [-38.5, 0.5]);  first bin 0.00%, last bin 0.00% of the integral;  102 empty bins
+   per bin relative error: median 1.4%, worst nonempty bin 5.8%
+== 1D  |p_miss| scattering frame (before balance) [MeV/c]: 80 bins on [0, 400], integral 200000
+   shape   | .................:::::::------=====+++*****###%%%@@@@.                         |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 202.6   std 52.36   skew -0.862   excess kurtosis 0.103
+   peak    bin 53, x = 267.5 (10786 entries)   FWHM 80.96 on [189.2, 270.2]
+   quantiles  5%: 99.49  16%: 146.7  25%: 170.1  50%: 214.5  75%: 245.4  84%: 255  95%: 265.7
+   nonempty bins 1..54 (x in [5, 275]);  first bin 0.00%, last bin 0.00% of the integral;  26 empty bins
+   per bin relative error: median 1.9%, worst nonempty bin 33.3%

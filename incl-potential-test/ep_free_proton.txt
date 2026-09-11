@@ -1,0 +1,23 @@
+# ep_free_proton: e + p(at rest) -> e' + p', two-body phase space, E_beam = 2.445 GeV, N = 200000, seed = 1
+# max|E_miss| = 1.332e-12 MeV, max|p_miss| = 8.882e-13 MeV/c, overflow E: 0, overflow p: 0
+== 1D  E_miss [MeV]: 101 bins on [-20.5, 80.5], integral 200000
+   shape   |          @                                        |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 0   std 0   skew nan   excess kurtosis nan
+   peak    bin 20, x = 0 (200000 entries)   FWHM 1 on [-0.5, 0.5]
+   quantiles  5%: -0.45  16%: -0.34  25%: -0.25  50%: -2.05e-11  75%: 0.25  84%: 0.34  95%: 0.45
+   nonempty bins 20..20 (x in [-0.5, 0.5]);  first bin 0.00%, last bin 0.00% of the integral;  100 empty bins
+   per bin relative error: median 0.2%, worst nonempty bin 0.2%
+== 1D  |p_miss| [MeV/c]: 80 bins on [0, 400], integral 200000
+   shape   |@                                                                               |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 2.5   std 0   skew nan   excess kurtosis nan
+   peak    bin 0, x = 2.5 (200000 entries)   FWHM 5 on [0, 5]
+   quantiles  5%: 0.25  16%: 0.8  25%: 1.25  50%: 2.5  75%: 3.75  84%: 4.2  95%: 4.75
+   nonempty bins 0..0 (x in [0, 5]);  first bin 100.00%, last bin 0.00% of the integral;  79 empty bins
+   per bin relative error: median 0.2%, worst nonempty bin 0.2%
+== 1D  Q^2 [GeV^2]: 42 bins on [0, 4.042], integral 200000
+   shape   |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  |   (one char per bin, low x -> high x, scaled to the max bin)
+   mean 1.926   std 1.11   skew -0.00289   excess kurtosis -1.2
+   peak    bin 28, x = 2.743 (5111 entries)   FWHM 3.848 on [0, 3.848]
+   quantiles  5%: 0.1951  16%: 0.6168  25%: 0.9606  50%: 1.927  75%: 2.885  84%: 3.232  95%: 3.656
+   nonempty bins 0..39 (x in [0, 3.85]);  first bin 2.47%, last bin 0.00% of the integral;  2 empty bins
+   per bin relative error: median 1.4%, worst nonempty bin 1.4%
