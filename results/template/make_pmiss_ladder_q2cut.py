@@ -90,6 +90,13 @@ TUNE_GS = {
     # (p_ball, E_ball - V0)); 200k local events each on their own spline
     "GEM26_44b_05_000_lfon":    (False, "INCL-scheme vertex, locE ON"),
     "GEM26_44b_05_000_lfnever": (False, "INCL-scheme vertex, never"),
+    # p_F / S_p scan sub-tunes (2026-09-12, fork commit 71b1675fa; INCL real separation
+    # energies so V0 = T_F + S_p; genie-agent/tunes/GEM26_44b/README.md): 200k local events each
+    "GEM26_44b_11_000": (False, "INCL p_F 239 (T_F 30), S_p 15.96"),
+    "GEM26_44b_12_000": (False, "INCL p_F 270 (T_F 38.2), S_p 15.96"),
+    "GEM26_44b_13_000": (False, "INCL p_F 297 (T_F 46), S_p 15.96"),
+    "GEM26_44b_14_000": (False, "INCL p_F 270, S_p 10"),
+    "GEM26_44b_15_000": (False, "INCL p_F 270, S_p 22"),
 }
 # tunes whose struck-nucleon record E sits below every E_m window
 RECORD_NOTE = {

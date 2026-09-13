@@ -159,3 +159,43 @@ e-p/e-n channel ratio via the spline normalization).
 Needs the `genie_inclxx` installation (INCL++ libs + `INCLXX_DATA_DIR`); local
 runs get it from `config/env/genie_inclxx.json`, grid workers source
 `thisinclxx.sh` from the install tarball.
+
+## p_F / S_p scan sub-tunes (2026-09-12)
+
+Five sub-tunes scan INCL's constant Fermi momentum p_F (hence T_F = sqrt(p_F^2 + m^2) - m and
+the well depth V0 = T_F + S) and the proton separation energy S_p, using INCL's real
+separation-energy scheme (S = S_p everywhere, emission Q-value consistent). Each sub-tune
+directory holds exactly two files: `CommonParam.xml` (copy of `GEM26_44b_05_000`, keeps the
+Dutta cut `EM-MinQ2Limit = 1.18`) and a complete tune-local `NucleusGenINCL.xml` whose
+`Default` set carries the knobs (GENIE loads the first `NucleusGenINCL.xml` found on
+`GXMLPATH -> tune dir -> family dir -> $GENIE/config`, whole file). Plan:
+`~/.claude/plans/it-looks-good-give-streamed-pancake.md`; toy expectations:
+`incl-potential-test/ep_incl_scan.py`.
+
+| tune | inclxx-data-dir | inclxx-fermi-momentum | inclxx-separation-energies | p_F [MeV/c] | T_F | S_p / S_n [MeV] | V0_p / V0_n [MeV] |
+|---|---|---|---|---|---|---|---|
+| `GEM26_44b_05_000` (baseline, unchanged) | `${INCLXX_DATA_DIR}/data` | (absent = -1) | (absent = INCL) | 270.34 | 38.17 | 6.83 / 6.83 | 45.00 / 45.00 |
+| `GEM26_44b_11_000` pF239 | `${INCLXX_DATA_DIR}/data` | 239.16 | real | 239.16 | 30.00 | 15.957 / 18.72 | 45.96 / 48.72 |
+| `GEM26_44b_12_000` pF270 (centre) | `${INCLXX_DATA_DIR}/data` | -1.0 | real | 270.34 | 38.17 | 15.957 / 18.72 | 54.13 / 56.89 |
+| `GEM26_44b_13_000` pF297 | `${INCLXX_DATA_DIR}/data` | 297.38 | real | 297.38 | 46.00 | 15.957 / 18.72 | 61.96 / 64.72 |
+| `GEM26_44b_14_000` Sp10 | `${INCLXX_DATA_DIR}/data-Sp10` | -1.0 | real | 270.34 | 38.17 | 10.00 / 18.72 | 48.17 / 56.89 |
+| `GEM26_44b_15_000` Sp22 | `${INCLXX_DATA_DIR}/data-Sp22` | -1.0 | real | 270.34 | 38.17 | 22.00 / 18.72 | 60.17 / 56.89 |
+
+- The two knobs are new `NucleusGenINCL` params of the fork (`feature/incl-vertex-local-energy`,
+  2026-09-12): `inclxx-fermi-momentum` -> `G4INCL::Config::setFermiMomentum` (a value <= 0
+  keeps INCL's 1.37 hbar c), `inclxx-separation-energies` (INCL | real | real-light) ->
+  `G4INCL::Config::setSeparationEnergyType`. The latter setter does not exist upstream: it is
+  a one-line inline addition to `inclxx_genie/inclxx/utils/include/G4INCLConfig.hh`, copied to
+  `inclxx_genie/install/include/` (no INCL library rebuild; not fingerprinted by the run log).
+- `data-Sp10` / `data-Sp22` are copies of `install/share/data` with the B11 row of
+  `walletlifetime.dat` rewritten (`11 5 2.7110` / `11 5 14.7110`; S_p = 7.288968 + excess),
+  made by `genie-agent/scripts/make_incl_data_variant.py --name Sp10 --sp 10.0`. S_n (C11 row)
+  is untouched. With the `real` scheme S_n = 18.72 also for the T_F sub-tunes, so the neutron
+  well is V0_n = T_F + 18.72 (analyses select `hitnuc == 2212`).
+- Splines: p_F changes the QE cross section, S does not. Run `gmkspl` for all five with the
+  09-04 seed 648585686: `_12`, `_14`, `_15` must reproduce the `locframe-on` spline
+  `genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-153639-9f4.xml` knot by knot;
+  `_11`, `_13` differ. GENIE keys splines by tune name, so never feed a `_12` spline to `_14`
+  without retagging `<genie_tune name>`.
+- Expected (toy, resampled ball, free proton): E_miss = T_F + S_p - T_ball in [S_p, T_F + S_p];
+  the record's RemovalEnergy = V0_p - T_ball in [S_p, V0_p]; |p_ball| max = p_F.

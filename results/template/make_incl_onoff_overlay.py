@@ -43,6 +43,8 @@ def main():
     ap.add_argument("--labels", nargs="+", default=["local energy on", "never"])
     ap.add_argument("--out-dir", default=str(REPO / "results/prd-analyzer-v1.1"))
     ap.add_argument("--stem", default="incl_onoff_overlay_c12")
+    ap.add_argument("--title", default="INCL-scheme vertex: local energy on vs never",
+                    help="first title line after the beam/target prefix")
     args = ap.parse_args()
     assert len(args.tunes) == len(args.labels)
     apply_style()
@@ -99,7 +101,7 @@ def main():
     axes[1].legend(fontsize=FS_LEGEND - 2, loc="upper right")
     axes[3].legend(fontsize=FS_LEGEND - 2, loc="upper left",
                    title=cfg_p["win_label"], title_fontsize=FS_LEGEND_TITLE - 3)
-    fig.suptitle("C12 e$^-$ 2.445 GeV, INCL-scheme vertex: local energy on vs never\n"
+    fig.suptitle(f"C12 e$^-$ 2.445 GeV, {args.title}\n"
                  "qel && hit p && N$_p$=1, NO $Q^2$ cut; $E_m$ panels: $p_m<300$ MeV/$c$, "
                  "$|p_m|$ panels: shell windows",
                  fontsize=FS_SUPTITLE - 3)

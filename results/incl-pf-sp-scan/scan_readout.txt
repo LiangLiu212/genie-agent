@@ -1,0 +1,556 @@
+# p_F / S_p scan readout (v1.0 ladder caches, 1p selection, no Q2 window)
+# E_m = omega - T_p' [MeV] (recoil restored); stages: 2 record hit nucleon, 3 pre-FSI proton, 4 post-FSI 1p
+
+== GEM26_44b_05_000_lfon  baseline S=6.83 (INCL): expected S_p 6.83, V0_p 45.0, p_F 270.34, T_F 38.17; n_sel = 141074
+  stage 2: E_m mean   17.44  q1/5/50/95/99 =   6.93   7.40  15.46  34.11  39.67 | |p_m| mean  225.7  q1/50/99 = 100.1 237.2 269.9  max  270.3
+  stage 3: E_m mean   17.44  q1/5/50/95/99 =   6.93   7.40  15.46  34.11  39.67 | |p_m| mean  149.1  q1/50/99 =  17.8 152.0 272.7  max  297.7
+  stage 4: E_m mean  120.31  q1/5/50/95/99 =  16.01  16.47  26.14 708.95 1094.08 | |p_m| mean  300.1  q1/50/99 =  18.9 162.3 1728.9  max 3017.6
+
+== GEM26_44b_11_000  pF239 realS: expected S_p 15.957, V0_p 45.96, p_F 239.16, T_F 30.0; n_sel = 139500
+  stage 2: E_m mean   24.31  q1/5/50/95/99 =  16.04  16.42  22.80  37.30  41.63 | |p_m| mean  199.7  q1/50/99 =  90.2 209.7 238.8  max  239.2
+  stage 3: E_m mean   24.31  q1/5/50/95/99 =  16.04  16.42  22.80  37.30  41.63 | |p_m| mean  133.1  q1/50/99 =  17.7 135.1 245.1  max  267.5
+  stage 4: E_m mean  117.20  q1/5/50/95/99 =  16.01  16.40  24.13 710.89 1079.18 | |p_m| mean  282.6  q1/50/99 =  16.7 144.2 1720.3  max 2903.2
+
+== GEM26_44b_12_000  pF270 realS (centre): expected S_p 15.957, V0_p 54.13, p_F 270.34, T_F 38.17; n_sel = 139443
+  stage 2: E_m mean   26.53  q1/5/50/95/99 =  16.06  16.54  24.57  43.05  48.68 | |p_m| mean  225.9  q1/50/99 = 101.1 237.3 270.0  max  270.3
+  stage 3: E_m mean   26.53  q1/5/50/95/99 =  16.06  16.54  24.57  43.05  48.68 | |p_m| mean  150.9  q1/50/99 =  20.0 153.2 277.6  max  303.4
+  stage 4: E_m mean  121.35  q1/5/50/95/99 =  16.01  16.49  26.21 717.80 1109.79 | |p_m| mean  300.0  q1/50/99 =  19.0 163.0 1743.4  max 3009.3
+
+== GEM26_44b_13_000  pF297 realS: expected S_p 15.957, V0_p 61.96, p_F 297.38, T_F 46.0; n_sel = 139763
+  stage 2: E_m mean   28.68  q1/5/50/95/99 =  16.08  16.67  26.32  48.63  55.30 | |p_m| mean  248.4  q1/50/99 = 111.9 261.0 296.9  max  297.4
+  stage 3: E_m mean   28.68  q1/5/50/95/99 =  16.08  16.67  26.32  48.63  55.30 | |p_m| mean  165.4  q1/50/99 =  21.8 167.7 305.5  max  333.0
+  stage 4: E_m mean  124.50  q1/5/50/95/99 =  16.01  16.59  28.16 719.29 1100.97 | |p_m| mean  315.5  q1/50/99 =  20.2 178.7 1744.8  max 2998.0
+
+== GEM26_44b_14_000  Sp10 pF270: expected S_p 10.0, V0_p 48.17, p_F 270.34, T_F 38.17; n_sel = 140814
+  stage 2: E_m mean   20.55  q1/5/50/95/99 =  10.10  10.57  18.58  37.12  42.77 | |p_m| mean  226.0  q1/50/99 = 100.7 237.5 270.0  max  270.3
+  stage 3: E_m mean   20.55  q1/5/50/95/99 =  10.10  10.57  18.58  37.12  42.77 | |p_m| mean  149.7  q1/50/99 =  18.5 152.5 274.5  max  299.6
+  stage 4: E_m mean  111.29  q1/5/50/95/99 =  10.06  10.53  20.18 702.83 1088.35 | |p_m| mean  292.4  q1/50/99 =  17.4 161.1 1731.7  max 2964.5
+
+== GEM26_44b_15_000  Sp22 pF270: expected S_p 22.0, V0_p 60.17, p_F 270.34, T_F 38.17; n_sel = 141418
+  stage 2: E_m mean   32.59  q1/5/50/95/99 =  22.10  22.58  30.61  49.15  54.74 | |p_m| mean  225.8  q1/50/99 = 101.0 237.3 269.9  max  270.3
+  stage 3: E_m mean   32.59  q1/5/50/95/99 =  22.10  22.58  30.61  49.15  54.74 | |p_m| mean  150.9  q1/50/99 =  21.5 152.6 280.1  max  304.4
+  stage 4: E_m mean  135.65  q1/5/50/95/99 =  22.05  22.53  32.47 745.47 1119.56 | |p_m| mean  314.0  q1/50/99 =  20.2 164.6 1774.4  max 2990.9
+== 1D compare  baseline S=6.83 (INCL) vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  baseline S=6.83 (INCL) 141074 ± 376   pF270 realS (centre) 139443 ± 373   ratio baseline S=6.83 (INCL)/pF270 realS (centre) = 1.0117 ± 0.0038  (+3.1 sigma from 1)
+   shape baseline S=6.83 (INCL) |             =@%#**++==--:::.....                            |
+   shape pF270 realS (centre)   |                  @@%#**++==--:::.....                       |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   17.43 vs 26.53   diff -9.093 ± 0.032  (-9.09 median bin widths, -286.2 sigma)
+   std    8.43 vs 8.396   ratio 1.004     skew +0.80 vs +0.80
+   peak   E_m stage 3 = 8 (bin 28) vs E_m stage 3 = 17 (bin 37)   shift -9 bins     FWHM 11.01 vs 10.9 (ratio 1.010)
+   quantiles baseline S=6.83 (INCL) minus pF270 realS (centre):  5%: -9.18   16%: -9.14   50%: -9.1   84%: -9.07   95%: -8.97
+   chi2/ndf   raw 98631.8/48 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0117: 99271.2/47 (p = 0)
+   KS   max |CDF diff| = 0.5015 at E_m stage 3 = 15.5  (baseline S=6.83 (INCL) has relatively more entries below that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + baseline S=6.83 (INCL) above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |                           +++++++++---------------------------------------                                              |
+     pull shape  |                           +++++++++---------------------------------------                                              |
+     ratio shape |                           !!!!!!!!!-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv                                              |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 6..8, E_m stage 3 in [3.5, 15.5)   baseline S=6.83 (INCL) minus scaled pF270 realS (centre) = +7.074e+04  (+266.0 sigma combined, +nan% of pF270 realS (centre) there)
+     * -  bins 9..18, E_m stage 3 in [15.5, 55.5)   baseline S=6.83 (INCL) minus scaled pF270 realS (centre) = -7.074e+04  (-153.3 sigma combined, -50.1% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 3 < 18.1) baseline S=6.83 (INCL)      86962   pF270 realS (centre)      26028   raw ratio 3.341 (+181.3 sigma)   shape ratio 3.302 (+179.9 sigma)
+     core       (E_m stage 3 in 18.1 .. 35.8) baseline S=6.83 (INCL)      48955   pF270 realS (centre)      90155   raw ratio 0.543 (-110.5 sigma)   shape ratio 0.537 (-112.4 sigma)
+     right tail (E_m stage 3 > 35.8) baseline S=6.83 (INCL)       5157   pF270 realS (centre)      23260   raw ratio 0.222 (-107.4 sigma)   shape ratio 0.219 (-108.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: baseline S=6.83 (INCL) is +1.2% relative to pF270 realS (centre) (+3.1 sigma)
+     * rigid shift: every quantile of baseline S=6.83 (INCL) sits about -9.1 (-9.10 bin widths) from pF270 realS (centre) while the width is unchanged (std ratio 1.004); baseline S=6.83 (INCL) is at lower E_m stage 3
+     * pull pattern + then - across the peak: baseline S=6.83 (INCL) is displaced to lower E_m stage 3 relative to pF270 realS (centre)
+     * left tail: baseline S=6.83 (INCL) has +230% relative to pF270 realS (centre) after normalization (+179.9 sigma)
+     * right tail: baseline S=6.83 (INCL) has -78% relative to pF270 realS (centre) after normalization (-108.0 sigma)
+== 1D compare  baseline S=6.83 (INCL) vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  baseline S=6.83 (INCL) 76283 ± 276   pF270 realS (centre) 76031 ± 276   ratio baseline S=6.83 (INCL)/pF270 realS (centre) = 1.0033 ± 0.0051  (+0.6 sigma from 1)
+   shape baseline S=6.83 (INCL) |      ............@@%#*+==--::::.............................|
+   shape pF270 realS (centre)   |    ..............@@%#*+==---:::.............................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   26.47 vs 26.57   diff -0.1029 ± 0.056  (-0.10 median bin widths, -1.8 sigma)
+   std    10.81 vs 10.99   ratio 0.983     skew +2.39 vs +2.42
+   peak   E_m stage 4 = 17 (bin 37) vs E_m stage 4 = 17 (bin 37)   shift +0 bins     FWHM 8.522 vs 8.097 (ratio 1.053)
+   quantiles baseline S=6.83 (INCL) minus pF270 realS (centre):  5%: -0.0211   16%: -0.0315   50%: -0.0447   84%: -0.264   95%: -0.259
+   chi2/ndf   raw 121.6/112 (p = 0.251)   shape, after scaling pF270 realS (centre) by 1.0033: 121.2/111 (p = 0.239)
+   KS   max |CDF diff| = 0.0058 at E_m stage 4 = 34.5  (baseline S=6.83 (INCL) has relatively more entries below that x)   p = 0.154
+   per bin, low x -> high x   (|pull| > 2:  + baseline S=6.83 (INCL) above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |        . .........................-....................-.-+..............................................-..............|
+     pull shape  |        . .........................-....................-.-+..............................................-..............|
+     ratio shape |        v vv!vv=^v^v-v+=+=+-++-=+=-v=======================+=========-+=+=-==--==+-+--++--++v+v+=+^++=-=++v=--==-==--=-==|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   no run of bins deviates by more than 2 sigma after scaling to equal integrals
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 4 < 17.7) baseline S=6.83 (INCL)      11365   pF270 realS (centre)      11154   raw ratio 1.019 (+1.4 sigma)   shape ratio 1.016 (+1.2 sigma)
+     core       (E_m stage 4 in 17.7 .. 35.4) baseline S=6.83 (INCL)      53219   pF270 realS (centre)      52876   raw ratio 1.006 (+1.1 sigma)   shape ratio 1.003 (+0.5 sigma)
+     right tail (E_m stage 4 > 35.4) baseline S=6.83 (INCL)      11699   pF270 realS (centre)      12001   raw ratio 0.975 (-2.0 sigma)   shape ratio 0.972 (-2.2 sigma)
+   hints (heuristic; check them against the numbers above):
+     * after scaling to equal integrals the shapes agree within statistics
+== 1D compare  baseline S=6.83 (INCL) vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  baseline S=6.83 (INCL) 141074 ± 376   pF270 realS (centre) 139443 ± 373   ratio baseline S=6.83 (INCL)/pF270 realS (centre) = 1.0117 ± 0.0038  (+3.1 sigma from 1)
+   shape baseline S=6.83 (INCL) |..::--===++***#*####%%%%%%%@@@@@@@@@@@@@@@%%###**+==--::....                    |
+   shape pF270 realS (centre)   |..::--==++++***####%#%%%@@@@@@@@@@@@@@@@@%%%%##**++==--::....                   |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   149.1 vs 150.9   diff -1.754 ± 0.25  (-0.35 median bin widths, -7.1 sigma)
+   std    64.85 vs 65.24   ratio 0.994     skew -0.11 vs -0.08
+   peak   |p_m| stage 3 = 167.5 (bin 33) vs |p_m| stage 3 = 187.5 (bin 37)   shift -4 bins     FWHM 199.3 vs 201.8 (ratio 0.988)
+   quantiles baseline S=6.83 (INCL) minus pF270 realS (centre):  5%: -1.5   16%: -1.46   50%: -1.28   84%: -2.06   95%: -3.24
+   chi2/ndf   raw 376.6/61 (p = 5.23e-47)   shape, after scaling pF270 realS (centre) by 1.0117: 366.4/60 (p = 1.54e-45)
+   KS   max |CDF diff| = 0.0095 at |p_m| stage 3 = 185  (baseline S=6.83 (INCL) has relatively more entries below that x)   p = 5.55e-06
+   per bin, low x -> high x   (|pull| > 2:  + baseline S=6.83 (INCL) above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |++++..........+.+...+............+...................--------                   |
+     pull shape  |+++.................+.................-..............--------                   |
+     ratio shape |^^+==================================================---vvvvv                   |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 0..1, |p_m| stage 3 in [0, 20)   baseline S=6.83 (INCL) minus scaled pF270 realS (centre) = +383.6  (+6.7 sigma combined, +27.1% of pF270 realS (centre) there)
+     * -  bins 26..30, |p_m| stage 3 in [260, 310)   baseline S=6.83 (INCL) minus scaled pF270 realS (centre) = -1001  (-10.4 sigma combined, -19.7% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 3 < 77.7) baseline S=6.83 (INCL)      24498   pF270 realS (centre)      23512   raw ratio 1.042 (+4.5 sigma)   shape ratio 1.030 (+3.2 sigma)
+     core       (|p_m| stage 3 in 77.7 .. 221) baseline S=6.83 (INCL)      94406   pF270 realS (centre)      92776   raw ratio 1.018 (+3.8 sigma)   shape ratio 1.006 (+1.3 sigma)
+     right tail (|p_m| stage 3 > 221) baseline S=6.83 (INCL)      22170   pF270 realS (centre)      23155   raw ratio 0.957 (-4.6 sigma)   shape ratio 0.946 (-5.9 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: baseline S=6.83 (INCL) is +1.2% relative to pF270 realS (centre) (+3.1 sigma)
+     * location: the mean of baseline S=6.83 (INCL) is -1.75 (-7.1 sigma, -0.35 bin widths) from pF270 realS (centre); quantile shifts 16%: -1.46, 50%: -1.28, 84%: -2.06 (not a rigid shift)
+     * pull pattern + then - across the peak: baseline S=6.83 (INCL) is displaced to lower |p_m| stage 3 relative to pF270 realS (centre)
+== 1D compare  baseline S=6.83 (INCL) vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  baseline S=6.83 (INCL) 75986 ± 276   pF270 realS (centre) 75812 ± 275   ratio baseline S=6.83 (INCL)/pF270 realS (centre) = 1.0023 ± 0.0051  (+0.4 sigma from 1)
+   shape baseline S=6.83 (INCL) |..:-=++***##%%%%@%@@@@@@@@@@@@@@@@@@%%%%####**++===---:::.......................|
+   shape pF270 realS (centre)   |..:-==+****##%%%%%@@@@@@@@@@@@@@@@@@%@%%%###***+===---:::.......................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   144.5 vs 145.2   diff -0.7368 ± 0.37  (-0.15 median bin widths, -2.0 sigma)
+   std    72.67 vs 72.87   ratio 0.997     skew +0.46 vs +0.47
+   peak   |p_m| stage 4 = 132.5 (bin 26) vs |p_m| stage 4 = 147.5 (bin 29)   shift -3 bins     FWHM 207.9 vs 207.4 (ratio 1.002)
+   quantiles baseline S=6.83 (INCL) minus pF270 realS (centre):  5%: -0.331   16%: -0.793   50%: -0.735   84%: -0.611   95%: -0.511
+   chi2/ndf   raw 75.6/80 (p = 0.619)   shape, after scaling pF270 realS (centre) by 1.0023: 75.4/79 (p = 0.594)
+   KS   max |CDF diff| = 0.0053 at |p_m| stage 4 = 90  (baseline S=6.83 (INCL) has relatively more entries below that x)   p = 0.238
+   per bin, low x -> high x   (|pull| > 2:  + baseline S=6.83 (INCL) above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |.......................................................................-........|
+     pull shape  |......................-................................................-........|
+     ratio shape |-+====================================================+===+=--==-==-===--==+=--=|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   no run of bins deviates by more than 2 sigma after scaling to equal integrals
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 4 < 68.1) baseline S=6.83 (INCL)      12977   pF270 realS (centre)      12708   raw ratio 1.021 (+1.7 sigma)   shape ratio 1.019 (+1.5 sigma)
+     core       (|p_m| stage 4 in 68.1 .. 218) baseline S=6.83 (INCL)      51509   pF270 realS (centre)      51477   raw ratio 1.001 (+0.1 sigma)   shape ratio 0.998 (-0.3 sigma)
+     right tail (|p_m| stage 4 > 218) baseline S=6.83 (INCL)      11500   pF270 realS (centre)      11627   raw ratio 0.989 (-0.8 sigma)   shape ratio 0.987 (-1.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * after scaling to equal integrals the shapes agree within statistics
+== 1D compare  pF239 realS vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  pF239 realS 139500 ± 373   pF270 realS (centre) 139443 ± 373   ratio pF239 realS/pF270 realS (centre) = 1.0004 ± 0.0038  (+0.1 sigma from 1)
+   shape pF239 realS          |                  @@%#*++=--::....                           |
+   shape pF270 realS (centre) |                  @@%#**++==--:::.....                       |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   24.31 vs 26.53   diff -2.221 ± 0.029  (-2.22 median bin widths, -77.7 sigma)
+   std    6.602 vs 8.396   ratio 0.786     skew +0.78 vs +0.80
+   peak   E_m stage 3 = 17 (bin 37) vs E_m stage 3 = 17 (bin 37)   shift +0 bins     FWHM 9.315 vs 10.9 (ratio 0.855)
+   quantiles pF239 realS minus pF270 realS (centre):  5%: -0.183   16%: -0.45   50%: -1.77   84%: -4.22   95%: -5.78
+   chi2/ndf   raw 8585.5/39 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0004: 8583.2/38 (p = 0)
+   KS   max |CDF diff| = 0.1010 at E_m stage 3 = 29.5  (pF239 realS has relatively more entries below that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + pF239 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |                                    ++++++++++++.+..-----------------------                                              |
+     pull shape  |                                    ++++++++++++.+..-----------------------                                              |
+     ratio shape |                                    ++++++++++========-----vvvvvvvvvvvvvvvv                                              |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 9..11, E_m stage 3 in [15.5, 27.5)   pF239 realS minus scaled pF270 realS (centre) = +1.373e+04  (+31.9 sigma combined, +16.0% of pF270 realS (centre) there)
+     * -  bins 13..18, E_m stage 3 in [31.5, 55.5)   pF239 realS minus scaled pF270 realS (centre) = -1.388e+04  (-57.0 sigma combined, -37.9% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 3 < 18.1) pF239 realS      31762   pF270 realS (centre)      26028   raw ratio 1.220 (+23.9 sigma)   shape ratio 1.220 (+23.8 sigma)
+     core       (E_m stage 3 in 18.1 .. 35.8) pF239 realS      97037   pF270 realS (centre)      90155   raw ratio 1.076 (+15.9 sigma)   shape ratio 1.076 (+15.8 sigma)
+     right tail (E_m stage 3 > 35.8) pF239 realS      10701   pF270 realS (centre)      23260   raw ratio 0.460 (-68.1 sigma)   shape ratio 0.460 (-68.2 sigma)
+   hints (heuristic; check them against the numbers above):
+     * location: the mean of pF239 realS is -2.22 (-77.7 sigma, -2.22 bin widths) from pF270 realS (centre); quantile shifts 16%: -0.45, 50%: -1.77, 84%: -4.22 (not a rigid shift)
+     * width: pF239 realS is narrower than pF270 realS (centre) (std ratio 0.786, 68% interval ratio 0.788, FWHM ratio 0.855)
+     *   excess of pF239 realS for E_m stage 3 in [15.5, 27.5): +16.0% (+31.9 sigma)
+     *   deficit of pF239 realS for E_m stage 3 in [31.5, 55.5): -37.9% (-57.0 sigma)
+     * left tail: pF239 realS has +22% relative to pF270 realS (centre) after normalization (+23.8 sigma)
+     * right tail: pF239 realS has -54% relative to pF270 realS (centre) after normalization (-68.2 sigma)
+== 1D compare  pF239 realS vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  pF239 realS 78688 ± 281   pF270 realS (centre) 76031 ± 276   ratio pF239 realS/pF270 realS (centre) = 1.0349 ± 0.0053  (+6.6 sigma from 1)
+   shape pF239 realS          |        ..........@@#*+==--::................................|
+   shape pF270 realS (centre) |    ..............@@%#*+==---:::.............................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   24.73 vs 26.57   diff -1.842 ± 0.053  (-1.84 median bin widths, -34.5 sigma)
+   std    9.981 vs 10.99   ratio 0.908     skew +3.24 vs +2.42
+   peak   E_m stage 4 = 17 (bin 37) vs E_m stage 4 = 17 (bin 37)   shift +0 bins     FWHM 7.163 vs 8.097 (ratio 0.885)
+   quantiles pF239 realS minus pF270 realS (centre):  5%: -0.113   16%: -0.314   50%: -1.52   84%: -3.97   95%: -5.63
+   chi2/ndf   raw 3071.6/111 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0349: 2985.3/110 (p = 0)
+   KS   max |CDF diff| = 0.0860 at E_m stage 4 = 27.5  (pF239 realS has relatively more entries below that x)   p = 2.7e-249
+   per bin, low x -> high x   (|pull| > 2:  + pF239 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |        . .. ......-.......-........++++++++++++...--.--------------------...-....................+......................|
+     pull shape  |        . .. ......-.......-........+++++++++++....-----------------------...-....................+.........-............|
+     ratio shape |        v vv vvv=vvvvvvv--vv---v=---++++++++=======--=----vvvvvvvvvvvvvvvv--=v-=+--=++-+--+^-=++=+^=-=-+^==-v-=+--=v=--=-|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 2..7, E_m stage 4 in [-12.5, 11.5)   pF239 realS minus scaled pF270 realS (centre) = -114.6  (-5.7 sigma combined, -45.2% of pF270 realS (centre) there)
+     * +  bins 9..11, E_m stage 4 in [15.5, 27.5)   pF239 realS minus scaled pF270 realS (centre) = +6906  (+20.8 sigma combined, +13.7% of pF270 realS (centre) there)
+     * -  bins 12..18, E_m stage 4 in [27.5, 55.5)   pF239 realS minus scaled pF270 realS (centre) = -6702  (-31.1 sigma combined, -25.7% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 4 < 17.7) pF239 realS      13638   pF270 realS (centre)      11154   raw ratio 1.223 (+15.8 sigma)   shape ratio 1.181 (+13.1 sigma)
+     core       (E_m stage 4 in 17.7 .. 35.4) pF239 realS      58120   pF270 realS (centre)      52876   raw ratio 1.099 (+15.7 sigma)   shape ratio 1.062 (+10.0 sigma)
+     right tail (E_m stage 4 > 35.4) pF239 realS       6930   pF270 realS (centre)      12001   raw ratio 0.577 (-36.9 sigma)   shape ratio 0.558 (-39.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: pF239 realS is +3.5% relative to pF270 realS (centre) (+6.6 sigma)
+     * location: the mean of pF239 realS is -1.84 (-34.5 sigma, -1.84 bin widths) from pF270 realS (centre); quantile shifts 16%: -0.314, 50%: -1.52, 84%: -3.97 (not a rigid shift)
+     * width: pF239 realS is narrower than pF270 realS (centre) (std ratio 0.908, 68% interval ratio 0.794, FWHM ratio 0.885)
+     * pull pattern - + - (core vs both tails): pF239 realS is narrower than pF270 realS (centre)
+     * left tail: pF239 realS has +18% relative to pF270 realS (centre) after normalization (+13.1 sigma)
+     * right tail: pF239 realS has -44% relative to pF270 realS (centre) after normalization (-39.0 sigma)
+== 1D compare  pF239 realS vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  pF239 realS 139500 ± 373   pF270 realS (centre) 139443 ± 373   ratio pF239 realS/pF270 realS (centre) = 1.0004 ± 0.0038  (+0.1 sigma from 1)
+   shape pF239 realS          |..:--==+++***###%%%%%%@@@@@@@@@@@@@@@%%%##*++==-::....                          |
+   shape pF270 realS (centre) |..::--==++++***####%#%%%@@@@@@@@@@@@@@@@@%%%%##**++==--::....                   |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   133.1 vs 150.9   diff -17.8 ± 0.23  (-3.56 median bin widths, -76.4 sigma)
+   std    57.51 vs 65.24   ratio 0.881     skew -0.08 vs -0.08
+   peak   |p_m| stage 3 = 157.5 (bin 31) vs |p_m| stage 3 = 187.5 (bin 37)   shift -6 bins     FWHM 178.1 vs 201.8 (ratio 0.882)
+   quantiles pF239 realS minus pF270 realS (centre):  5%: -4.72   16%: -9.17   50%: -18.1   84%: -26.2   95%: -29.7
+   chi2/ndf   raw 10851.7/61 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0004: 10849.1/60 (p = 0)
+   KS   max |CDF diff| = 0.1250 at |p_m| stage 3 = 185  (pF239 realS has relatively more entries below that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + pF239 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |.++++++++++++++++++++++++++++++++++++.-.---------------------                   |
+     pull shape  |.++++++++++++++++++++++++++++++++++++.-.---------------------                   |
+     ratio shape |-^+++++++++++++++++++++++++++++++=++=====---vvvvvvvvvvvvvvvvv                   |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 0..17, |p_m| stage 3 in [0, 180)   pF239 realS minus scaled pF270 realS (centre) = +1.724e+04  (+39.0 sigma combined, +19.4% of pF270 realS (centre) there)
+     * -  bins 19..30, |p_m| stage 3 in [190, 310)   pF239 realS minus scaled pF270 realS (centre) = -1.736e+04  (-65.9 sigma combined, -40.1% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 3 < 77.7) pF239 realS      29137   pF270 realS (centre)      23512   raw ratio 1.239 (+24.5 sigma)   shape ratio 1.239 (+24.5 sigma)
+     core       (|p_m| stage 3 in 77.7 .. 221) pF239 realS 1.0184e+05   pF270 realS (centre)      92776   raw ratio 1.098 (+20.5 sigma)   shape ratio 1.097 (+20.4 sigma)
+     right tail (|p_m| stage 3 > 221) pF239 realS       8527   pF270 realS (centre)      23155   raw ratio 0.368 (-82.2 sigma)   shape ratio 0.368 (-82.2 sigma)
+   hints (heuristic; check them against the numbers above):
+     * multiplicative scale: the 16/50/84% quantiles of pF239 realS are 0.882, 0.882, 0.882 times those of pF270 realS (centre), i.e. pF239 realS ~ 0.882 x pF270 realS (centre) (a -11.8% scale difference)
+     * width: pF239 realS is narrower than pF270 realS (centre) (std ratio 0.881, 68% interval ratio 0.882, FWHM ratio 0.882)
+     * pull pattern + then - across the peak: pF239 realS is displaced to lower |p_m| stage 3 relative to pF270 realS (centre)
+     * left tail: pF239 realS has +24% relative to pF270 realS (centre) after normalization (+24.5 sigma)
+     * right tail: pF239 realS has -63% relative to pF270 realS (centre) after normalization (-82.2 sigma)
+== 1D compare  pF239 realS vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  pF239 realS 78692 ± 281   pF270 realS (centre) 75812 ± 275   ratio pF239 realS/pF270 realS (centre) = 1.0380 ± 0.0053  (+7.2 sigma from 1)
+   shape pF239 realS          |..:-=++***##%%%%@%@@@@@@@@@@@@%@%%%%##***++==--:::..............................|
+   shape pF270 realS (centre) |..:-==+****##%%%%%@@@@@@@@@@@@@@@@@@%@%%%###***+===---:::.......................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   130.3 vs 145.2   diff -14.93 ± 0.36  (-2.99 median bin widths, -41.6 sigma)
+   std    67.91 vs 72.87   ratio 0.932     skew +0.76 vs +0.47
+   peak   |p_m| stage 4 = 122.5 (bin 24) vs |p_m| stage 4 = 147.5 (bin 29)   shift -5 bins     FWHM 179.3 vs 207.4 (ratio 0.865)
+   quantiles pF239 realS minus pF270 realS (centre):  5%: -3.84   16%: -7.62   50%: -15.7   84%: -24.3   95%: -27.2
+   chi2/ndf   raw 3415.4/80 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0380: 3317.9/79 (p = 0)
+   KS   max |CDF diff| = 0.0988 at |p_m| stage 4 = 180  (pF239 realS has relatively more entries below that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + pF239 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |.++++++++++++++++++++++++++++++++.+..----------------------.....................|
+     pull shape  |.++++++++++++++++++++++++++++++++....-----------------------....................|
+     ratio shape |=^+++++++++++++++++++==+++++++=+=====-------vvvvvvvvvvvvvvv-=-===-===-=-=--+==-+|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 0..16, |p_m| stage 4 in [0, 170)   pF239 realS minus scaled pF270 realS (centre) = +7664  (+23.1 sigma combined, +15.2% of pF270 realS (centre) there)
+     * -  bins 18..29, |p_m| stage 4 in [180, 300)   pF239 realS minus scaled pF270 realS (centre) = -7656  (-38.7 sigma combined, -33.4% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 4 < 68.1) pF239 realS      16075   pF270 realS (centre)      12708   raw ratio 1.265 (+19.8 sigma)   shape ratio 1.219 (+16.7 sigma)
+     core       (|p_m| stage 4 in 68.1 .. 218) pF239 realS      56355   pF270 realS (centre)      51477   raw ratio 1.095 (+14.9 sigma)   shape ratio 1.055 (+8.7 sigma)
+     right tail (|p_m| stage 4 > 218) pF239 realS       6262   pF270 realS (centre)      11627   raw ratio 0.539 (-40.1 sigma)   shape ratio 0.519 (-42.4 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: pF239 realS is +3.8% relative to pF270 realS (centre) (+7.2 sigma)
+     * multiplicative scale: the 16/50/84% quantiles of pF239 realS are 0.888, 0.889, 0.889 times those of pF270 realS (centre), i.e. pF239 realS ~ 0.889 x pF270 realS (centre) (a -11.1% scale difference)
+     * width: pF239 realS is narrower than pF270 realS (centre) (std ratio 0.932, 68% interval ratio 0.889, FWHM ratio 0.865)
+     *   excess of pF239 realS for |p_m| stage 4 in [0, 170): +15.2% (+23.1 sigma)
+     *   deficit of pF239 realS for |p_m| stage 4 in [180, 300): -33.4% (-38.7 sigma)
+     * left tail: pF239 realS has +22% relative to pF270 realS (centre) after normalization (+16.7 sigma)
+     * right tail: pF239 realS has -48% relative to pF270 realS (centre) after normalization (-42.4 sigma)
+== 1D compare  pF297 realS vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  pF297 realS 139763 ± 374   pF270 realS (centre) 139443 ± 373   ratio pF297 realS/pF270 realS (centre) = 1.0023 ± 0.0038  (+0.6 sigma from 1)
+   shape pF297 realS          |                  @@%%#**++===--::::......                   |
+   shape pF270 realS (centre) |                  @@%#**++==--:::.....                       |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   28.68 vs 26.53   diff +2.152 ± 0.035  (+2.15 median bin widths, +61.2 sigma)
+   std    10.09 vs 8.396   ratio 1.202     skew +0.80 vs +0.80
+   peak   E_m stage 3 = 17 (bin 37) vs E_m stage 3 = 17 (bin 37)   shift +0 bins     FWHM 12.15 vs 10.9 (ratio 1.115)
+   quantiles pF297 realS minus pF270 realS (centre):  5%: +0.131   16%: +0.421   50%: +1.75   84%: +3.97   95%: +5.55
+   chi2/ndf   raw 5766.0/47 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0023: 5774.0/46 (p = 0)
+   KS   max |CDF diff| = 0.0780 at E_m stage 3 = 31.5  (pF297 realS has relatively more entries above that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + pF297 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |                                    -------------.-...+..+++++++++++++++++++++++++.                                      |
+     pull shape  |                                    -------------.-...+...++++++++++++++++++++++++.                                      |
+     ratio shape |                                    -------================+++++++^^^^^^^^^!!!!!!!!                                      |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 9..12, E_m stage 3 in [15.5, 31.5)   pF297 realS minus scaled pF270 realS (centre) = -1.09e+04  (-24.7 sigma combined, -10.6% of pF270 realS (centre) there)
+     * +  bins 14..20, E_m stage 3 in [35.5, 63.5)   pF297 realS minus scaled pF270 realS (centre) = +1.058e+04  (+44.2 sigma combined, +45.4% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 3 < 18.1) pF297 realS      22253   pF270 realS (centre)      26028   raw ratio 0.855 (-17.2 sigma)   shape ratio 0.853 (-17.4 sigma)
+     core       (E_m stage 3 in 18.1 .. 35.8) pF297 realS      83620   pF270 realS (centre)      90155   raw ratio 0.928 (-15.7 sigma)   shape ratio 0.925 (-16.2 sigma)
+     right tail (E_m stage 3 > 35.8) pF297 realS      33890   pF270 realS (centre)      23260   raw ratio 1.457 (+44.5 sigma)   shape ratio 1.454 (+44.2 sigma)
+   hints (heuristic; check them against the numbers above):
+     * location: the mean of pF297 realS is +2.15 (+61.2 sigma, +2.15 bin widths) from pF270 realS (centre); quantile shifts 16%: +0.421, 50%: +1.75, 84%: +3.97 (not a rigid shift)
+     * width: pF297 realS is broader than pF270 realS (centre) (std ratio 1.202, 68% interval ratio 1.200, FWHM ratio 1.115)
+     *   deficit of pF297 realS for E_m stage 3 in [15.5, 31.5): -10.6% (-24.7 sigma)
+     *   excess of pF297 realS for E_m stage 3 in [35.5, 63.5): +45.4% (+44.2 sigma)
+     * left tail: pF297 realS has -15% relative to pF270 realS (centre) after normalization (-17.4 sigma)
+     * right tail: pF297 realS has +45% relative to pF270 realS (centre) after normalization (+44.2 sigma)
+== 1D compare  pF297 realS vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  pF297 realS 73906 ± 272   pF270 realS (centre) 76031 ± 276   ratio pF297 realS/pF270 realS (centre) = 0.9721 ± 0.0050  (-5.6 sigma from 1)
+   shape pF297 realS          |.  ...............@@%#*++==---::::...........................|
+   shape pF270 realS (centre) |    ..............@@%#*+==---:::.............................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   28.33 vs 26.57   diff +1.755 ± 0.06  (+1.76 median bin widths, +29.3 sigma)
+   std    12.14 vs 10.99   ratio 1.104     skew +1.86 vs +2.42
+   peak   E_m stage 4 = 17 (bin 37) vs E_m stage 4 = 17 (bin 37)   shift +0 bins     FWHM 9.108 vs 8.097 (ratio 1.125)
+   quantiles pF297 realS minus pF270 realS (centre):  5%: +0.132   16%: +0.303   50%: +1.38   84%: +3.59   95%: +5.53
+   chi2/ndf   raw 1786.6/116 (p = 4.79e-297)   shape, after scaling pF270 realS (centre) by 0.9721: 1739.9/115 (p = 3.75e-288)
+   KS   max |CDF diff| = 0.0647 at E_m stage 4 = 28.5  (pF297 realS has relatively more entries above that x)   p = 5.61e-137
+   per bin, low x -> high x   (|pull| > 2:  + pF297 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    | .    ..................+....+......--------.-.--.....+....++++++++++++++++++++++.................+......................|
+     pull shape  | .    ..................+....+......--------.-.--.....+..+.+++++++++++++++++++++++........+.......+......................|
+     ratio shape | !    !!^!^v!v^-^^=v++^^^^===^++=+-+------============+==+=+++++++^^^^^^^^^^^^^^^^=+++++++^+-==+^+^^^+-++=++=+-+-==--==--|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 9..11, E_m stage 4 in [15.5, 27.5)   pF297 realS minus scaled pF270 realS (centre) = -4690  (-15.7 sigma combined, -9.9% of pF270 realS (centre) there)
+     * +  bins 13..24, E_m stage 4 in [31.5, 79.5)   pF297 realS minus scaled pF270 realS (centre) = +4670  (+23.8 sigma combined, +27.3% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 4 < 17.7) pF297 realS       9529   pF270 realS (centre)      11154   raw ratio 0.854 (-11.3 sigma)   shape ratio 0.879 (-9.3 sigma)
+     core       (E_m stage 4 in 17.7 .. 35.4) pF297 realS      48353   pF270 realS (centre)      52876   raw ratio 0.914 (-14.2 sigma)   shape ratio 0.941 (-9.7 sigma)
+     right tail (E_m stage 4 > 35.4) pF297 realS      16024   pF270 realS (centre)      12001   raw ratio 1.335 (+24.0 sigma)   shape ratio 1.374 (+26.3 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: pF297 realS is -2.8% relative to pF270 realS (centre) (-5.6 sigma)
+     * location: the mean of pF297 realS is +1.76 (+29.3 sigma, +1.76 bin widths) from pF270 realS (centre); quantile shifts 16%: +0.303, 50%: +1.38, 84%: +3.59 (not a rigid shift)
+     * width: pF297 realS is broader than pF270 realS (centre) (std ratio 1.104, 68% interval ratio 1.186, FWHM ratio 1.125)
+     *   deficit of pF297 realS for E_m stage 4 in [15.5, 27.5): -9.9% (-15.7 sigma)
+     *   excess of pF297 realS for E_m stage 4 in [31.5, 79.5): +27.3% (+23.8 sigma)
+     * left tail: pF297 realS has -12% relative to pF270 realS (centre) after normalization (-9.3 sigma)
+     * right tail: pF297 realS has +37% relative to pF270 realS (centre) after normalization (+26.3 sigma)
+== 1D compare  pF297 realS vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  pF297 realS 139763 ± 374   pF270 realS (centre) 139443 ± 373   ratio pF297 realS/pF270 realS (centre) = 1.0023 ± 0.0038  (+0.6 sigma from 1)
+   shape pF297 realS          |...:---==+++****###%%%%%%%%%@@@@@@@@@@@@@@@@@%%%%%#***++==--:::....             |
+   shape pF270 realS (centre) |..::--==++++***####%#%%%@@@@@@@@@@@@@@@@@%%%%##**++==--::....                   |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   165.4 vs 150.9   diff +14.53 ± 0.26  (+2.91 median bin widths, +56.1 sigma)
+   std    71.49 vs 65.24   ratio 1.096     skew -0.07 vs -0.08
+   peak   |p_m| stage 3 = 192.5 (bin 38) vs |p_m| stage 3 = 187.5 (bin 37)   shift +1 bins     FWHM 221.9 vs 201.8 (ratio 1.100)
+   quantiles pF297 realS minus pF270 realS (centre):  5%: +4.64   16%: +7.97   50%: +14.5   84%: +21.5   95%: +25
+   chi2/ndf   raw 6647.3/67 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0023: 6655.8/66 (p = 0)
+   KS   max |CDF diff| = 0.0893 at |p_m| stage 3 = 220  (pF297 realS has relatively more entries above that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + pF297 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |..-------------------------------------.-..-..+++++++++++++++++++++             |
+     pull shape  |..-------------------------------------.-..-..+++++++++++++++++++++             |
+     ratio shape |-=----------=-------=---------=--=============++++++^^^^^^^^^!!!!!!             |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 1..19, |p_m| stage 3 in [10, 200)   pF297 realS minus scaled pF270 realS (centre) = -1.211e+04  (-27.5 sigma combined, -11.7% of pF270 realS (centre) there)
+     * +  bins 22..33, |p_m| stage 3 in [220, 340)   pF297 realS minus scaled pF270 realS (centre) = +1.247e+04  (+51.4 sigma combined, +53.7% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 3 < 77.7) pF297 realS      19760   pF270 realS (centre)      23512   raw ratio 0.840 (-18.0 sigma)   shape ratio 0.838 (-18.3 sigma)
+     core       (|p_m| stage 3 in 77.7 .. 221) pF297 realS      84321   pF270 realS (centre)      92776   raw ratio 0.909 (-20.1 sigma)   shape ratio 0.907 (-20.6 sigma)
+     right tail (|p_m| stage 3 > 221) pF297 realS      35682   pF270 realS (centre)      23155   raw ratio 1.541 (+51.6 sigma)   shape ratio 1.537 (+51.4 sigma)
+   hints (heuristic; check them against the numbers above):
+     * multiplicative scale: the 16/50/84% quantiles of pF297 realS are 1.103, 1.095, 1.097 times those of pF270 realS (centre), i.e. pF297 realS ~ 1.098 x pF270 realS (centre) (a +9.8% scale difference)
+     * width: pF297 realS is broader than pF270 realS (centre) (std ratio 1.096, 68% interval ratio 1.094, FWHM ratio 1.100)
+     *   deficit of pF297 realS for |p_m| stage 3 in [10, 200): -11.7% (-27.5 sigma)
+     *   excess of pF297 realS for |p_m| stage 3 in [220, 340): +53.7% (+51.4 sigma)
+     * left tail: pF297 realS has -16% relative to pF270 realS (centre) after normalization (-18.3 sigma)
+     * right tail: pF297 realS has +54% relative to pF270 realS (centre) after normalization (+51.4 sigma)
+== 1D compare  pF297 realS vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  pF297 realS 73340 ± 271   pF270 realS (centre) 75812 ± 275   ratio pF297 realS/pF270 realS (centre) = 0.9674 ± 0.0050  (-6.5 sigma from 1)
+   shape pF297 realS          |..:--=++**#####%%%@@@@@@@@@@@@@@@@@@@@@@%%%#%##*#**++====--::::.................|
+   shape pF270 realS (centre) |..:-==+****##%%%%%@@@@@@@@@@@@@@@@@@%@%%%###***+===---:::.......................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   157.2 vs 145.2   diff +12.02 ± 0.39  (+2.40 median bin widths, +30.9 sigma)
+   std    77 vs 72.87   ratio 1.057     skew +0.31 vs +0.47
+   peak   |p_m| stage 4 = 152.5 (bin 30) vs |p_m| stage 4 = 147.5 (bin 29)   shift +1 bins     FWHM 226.8 vs 207.4 (ratio 1.094)
+   quantiles pF297 realS minus pF270 realS (centre):  5%: +3.55   16%: +6.51   50%: +12.7   84%: +19.7   95%: +21.1
+   chi2/ndf   raw 1890.1/80 (p = 0)   shape, after scaling pF270 realS (centre) by 0.9674: 1832.3/79 (p = 0)
+   KS   max |CDF diff| = 0.0700 at |p_m| stage 4 = 195  (pF297 realS has relatively more entries above that x)   p = 1.67e-159
+   per bin, low x -> high x   (|pull| > 2:  + pF297 realS above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |..----------------------------.-----.--...+...+++++++++++++++++++...+..-........|
+     pull shape  |..--------.--------..---------............+..++++++++++++++++++++...+...........|
+     ratio shape |==--------==---======-----===-============+===+++++^^^^^^^^^^^^^++=++=+-=-===-==|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 1..17, |p_m| stage 4 in [10, 180)   pF297 realS minus scaled pF270 realS (centre) = -5035  (-16.5 sigma combined, -10.1% of pF270 realS (centre) there)
+     * +  bins 21..32, |p_m| stage 4 in [210, 330)   pF297 realS minus scaled pF270 realS (centre) = +5019  (+29.0 sigma combined, +39.7% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 4 < 68.1) pF297 realS      10533   pF270 realS (centre)      12708   raw ratio 0.829 (-14.3 sigma)   shape ratio 0.857 (-11.8 sigma)
+     core       (|p_m| stage 4 in 68.1 .. 218) pF297 realS      46697   pF270 realS (centre)      51477   raw ratio 0.907 (-15.3 sigma)   shape ratio 0.938 (-10.1 sigma)
+     right tail (|p_m| stage 4 > 218) pF297 realS      16110   pF270 realS (centre)      11627   raw ratio 1.386 (+26.9 sigma)   shape ratio 1.432 (+29.6 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: pF297 realS is -3.3% relative to pF270 realS (centre) (-6.5 sigma)
+     * multiplicative scale: the 16/50/84% quantiles of pF297 realS are 1.096, 1.090, 1.090 times those of pF270 realS (centre), i.e. pF297 realS ~ 1.092 x pF270 realS (centre) (a +9.2% scale difference)
+     * width: pF297 realS is broader than pF270 realS (centre) (std ratio 1.057, 68% interval ratio 1.088, FWHM ratio 1.094)
+     *   deficit of pF297 realS for |p_m| stage 4 in [10, 180): -10.1% (-16.5 sigma)
+     *   excess of pF297 realS for |p_m| stage 4 in [210, 330): +39.7% (+29.0 sigma)
+     * left tail: pF297 realS has -14% relative to pF270 realS (centre) after normalization (-11.8 sigma)
+     * right tail: pF297 realS has +43% relative to pF270 realS (centre) after normalization (+29.6 sigma)
+== 1D compare  Sp10 pF270 vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  Sp10 pF270 140814 ± 375   pF270 realS (centre) 139443 ± 373   ratio Sp10 pF270/pF270 realS (centre) = 1.0098 ± 0.0038  (+2.6 sigma from 1)
+   shape Sp10 pF270           |               @@%##*++==--:::.....                          |
+   shape pF270 realS (centre) |                  @@%#**++==--:::.....                       |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   20.55 vs 26.53   diff -5.98 ± 0.032  (-5.98 median bin widths, -188.5 sigma)
+   std    8.399 vs 8.396   ratio 1.000     skew +0.80 vs +0.80
+   peak   E_m stage 3 = 11 (bin 31) vs E_m stage 3 = 17 (bin 37)   shift -6 bins     FWHM 10.54 vs 10.9 (ratio 0.967)
+   quantiles Sp10 pF270 minus pF270 realS (centre):  5%: -5.97   16%: -6   50%: -5.99   84%: -6.01   95%: -5.94
+   chi2/ndf   raw 63987.8/45 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0098: 64411.1/44 (p = 0)
+   KS   max |CDF diff| = 0.3588 at E_m stage 3 = 16.5  (Sp10 pF270 has relatively more entries below that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + Sp10 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |                              +++++++--------------------------------------                                              |
+     pull shape  |                              +++++++--------------------------------------                                              |
+     ratio shape |                              !!!!!!=vv------v----vvvvvvvvvvvvvvvvvvvvvvvvv                                              |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 7..8, E_m stage 3 in [7.5, 15.5)   Sp10 pF270 minus scaled pF270 realS (centre) = +5.004e+04  (+223.7 sigma combined, +nan% of pF270 realS (centre) there)
+     * -  bins 9..18, E_m stage 3 in [15.5, 55.5)   Sp10 pF270 minus scaled pF270 realS (centre) = -5.004e+04  (-103.7 sigma combined, -35.5% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 3 < 18.1) Sp10 pF270      69916   pF270 realS (centre)      26028   raw ratio 2.686 (+141.7 sigma)   shape ratio 2.660 (+140.5 sigma)
+     core       (E_m stage 3 in 18.1 .. 35.8) Sp10 pF270      61241   pF270 realS (centre)      90155   raw ratio 0.679 (-74.3 sigma)   shape ratio 0.673 (-76.1 sigma)
+     right tail (E_m stage 3 > 35.8) Sp10 pF270       9657   pF270 realS (centre)      23260   raw ratio 0.415 (-75.0 sigma)   shape ratio 0.411 (-75.7 sigma)
+   hints (heuristic; check them against the numbers above):
+     * rigid shift: every quantile of Sp10 pF270 sits about -5.99 (-5.99 bin widths) from pF270 realS (centre) while the width is unchanged (std ratio 1.000); Sp10 pF270 is at lower E_m stage 3
+     * pull pattern + then - across the peak: Sp10 pF270 is displaced to lower E_m stage 3 relative to pF270 realS (centre)
+     * left tail: Sp10 pF270 has +166% relative to pF270 realS (centre) after normalization (+140.5 sigma)
+     * right tail: Sp10 pF270 has -59% relative to pF270 realS (centre) after normalization (-75.7 sigma)
+== 1D compare  Sp10 pF270 vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  Sp10 pF270 80265 ± 283   pF270 realS (centre) 76031 ± 276   ratio Sp10 pF270/pF270 realS (centre) = 1.0557 ± 0.0053  (+10.4 sigma from 1)
+   shape Sp10 pF270           |...............@@%#*+==---:::................................|
+   shape pF270 realS (centre) |    ..............@@%#*+==---:::.............................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   20.8 vs 26.57   diff -5.769 ± 0.057  (-5.77 median bin widths, -101.8 sigma)
+   std    11.42 vs 10.99   ratio 1.039     skew +2.59 vs +2.42
+   peak   E_m stage 4 = 11 (bin 31) vs E_m stage 4 = 17 (bin 37)   shift -6 bins     FWHM 7.997 vs 8.097 (ratio 0.988)
+   quantiles Sp10 pF270 minus pF270 realS (centre):  5%: -5.93   16%: -5.96   50%: -5.9   84%: -5.77   95%: -5.52
+   chi2/ndf   raw 37372.6/118 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0557: 38728.4/117 (p = 0)
+   KS   max |CDF diff| = 0.3872 at E_m stage 4 = 15.5  (Sp10 pF270 has relatively more entries below that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + Sp10 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |.  .. ...+..+...+.+....++...++++++++-------------------------------------.-.........................................-....|
+     pull shape  |.  .. ...+..+...+.......+....+++++++-------------------------------------.-..-..............-.......................-....|
+     ratio shape |!  !! !!v!vv!^^^^^^^^^^^^+^+^^^^^^^^-vvvvvvvvvvvvv-vvvvvvvvvvvvvvvvvvvvvv-v=-v-===-+==-=-v++v-++v====--=+=-=-==v--+vv--+-|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 3..8, E_m stage 4 in [-8.5, 15.5)   Sp10 pF270 minus scaled pF270 realS (centre) = +3.107e+04  (+173.7 sigma combined, +7057.3% of pF270 realS (centre) there)
+     * -  bins 9..19, E_m stage 4 in [15.5, 59.5)   Sp10 pF270 minus scaled pF270 realS (centre) = -3.095e+04  (-85.8 sigma combined, -39.5% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 4 < 17.7) Sp10 pF270      39318   pF270 realS (centre)      11154   raw ratio 3.525 (+125.4 sigma)   shape ratio 3.339 (+121.1 sigma)
+     core       (E_m stage 4 in 17.7 .. 35.4) Sp10 pF270      34566   pF270 realS (centre)      52876   raw ratio 0.654 (-61.9 sigma)   shape ratio 0.619 (-69.5 sigma)
+     right tail (E_m stage 4 > 35.4) Sp10 pF270       6381   pF270 realS (centre)      12001   raw ratio 0.532 (-41.5 sigma)   shape ratio 0.504 (-44.7 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: Sp10 pF270 is +5.6% relative to pF270 realS (centre) (+10.4 sigma)
+     * rigid shift: every quantile of Sp10 pF270 sits about -5.9 (-5.90 bin widths) from pF270 realS (centre) while the width is unchanged (std ratio 1.039); Sp10 pF270 is at lower E_m stage 4
+     * pull pattern + then - across the peak: Sp10 pF270 is displaced to lower E_m stage 4 relative to pF270 realS (centre)
+     * left tail: Sp10 pF270 has +234% relative to pF270 realS (centre) after normalization (+121.1 sigma)
+     * right tail: Sp10 pF270 has -50% relative to pF270 realS (centre) after normalization (-44.7 sigma)
+== 1D compare  Sp10 pF270 vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  Sp10 pF270 140814 ± 375   pF270 realS (centre) 139443 ± 373   ratio Sp10 pF270/pF270 realS (centre) = 1.0098 ± 0.0038  (+2.6 sigma from 1)
+   shape Sp10 pF270           |..:--===++++***####%%%%%@@@@@@@@@@@@@@@@@%%%%##**++=--::....                    |
+   shape pF270 realS (centre) |..::--==++++***####%#%%%@@@@@@@@@@@@@@@@@%%%%##**++==--::....                   |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   149.7 vs 150.9   diff -1.207 ± 0.25  (-0.24 median bin widths, -4.9 sigma)
+   std    64.89 vs 65.24   ratio 0.995     skew -0.10 vs -0.08
+   peak   |p_m| stage 3 = 167.5 (bin 33) vs |p_m| stage 3 = 187.5 (bin 37)   shift -4 bins     FWHM 201.5 vs 201.8 (ratio 0.999)
+   quantiles Sp10 pF270 minus pF270 realS (centre):  5%: -0.917   16%: -0.906   50%: -0.79   84%: -1.45   95%: -2.19
+   chi2/ndf   raw 204.8/61 (p = 2e-17)   shape, after scaling pF270 realS (centre) by 1.0098: 197.7/60 (p = 1.33e-16)
+   KS   max |CDF diff| = 0.0075 at |p_m| stage 3 = 185  (Sp10 pF270 has relatively more entries below that x)   p = 0.000684
+   per bin, low x -> high x   (|pull| > 2:  + Sp10 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |.+++.+......+.................+.....................-..------                   |
+     pull shape  |.+++.+........................+.....................-..------                   |
+     ratio shape |+^++===================================================---vvv                   |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 0..2, |p_m| stage 3 in [0, 30)   Sp10 pF270 minus scaled pF270 realS (centre) = +453.2  (+5.2 sigma combined, +12.7% of pF270 realS (centre) there)
+     * -  bins 26..30, |p_m| stage 3 in [260, 310)   Sp10 pF270 minus scaled pF270 realS (centre) = -727.4  (-7.5 sigma combined, -14.3% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 3 < 77.7) Sp10 pF270      24192   pF270 realS (centre)      23512   raw ratio 1.029 (+3.1 sigma)   shape ratio 1.019 (+2.0 sigma)
+     core       (|p_m| stage 3 in 77.7 .. 221) Sp10 pF270      94104   pF270 realS (centre)      92776   raw ratio 1.014 (+3.1 sigma)   shape ratio 1.004 (+1.0 sigma)
+     right tail (|p_m| stage 3 > 221) Sp10 pF270      22518   pF270 realS (centre)      23155   raw ratio 0.972 (-3.0 sigma)   shape ratio 0.963 (-4.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * pull pattern + then - across the peak: Sp10 pF270 is displaced to lower |p_m| stage 3 relative to pF270 realS (centre)
+== 1D compare  Sp10 pF270 vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  Sp10 pF270 79781 ± 282   pF270 realS (centre) 75812 ± 275   ratio Sp10 pF270/pF270 realS (centre) = 1.0524 ± 0.0053  (+9.8 sigma from 1)
+   shape Sp10 pF270           |..--=+++*####%%%%%@@@@@@@@@@@@@@@@@%%%%%%####**++==---::........................|
+   shape pF270 realS (centre) |..:-==+****##%%%%%@@@@@@@@@@@@@@@@@@%@%%%###***+===---:::.......................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   144.1 vs 145.2   diff -1.076 ± 0.37  (-0.22 median bin widths, -2.9 sigma)
+   std    72.51 vs 72.87   ratio 0.995     skew +0.46 vs +0.47
+   peak   |p_m| stage 4 = 162.5 (bin 32) vs |p_m| stage 4 = 147.5 (bin 29)   shift +3 bins     FWHM 204.9 vs 207.4 (ratio 0.988)
+   quantiles Sp10 pF270 minus pF270 realS (centre):  5%: -1.1   16%: -1.06   50%: -0.293   84%: -1.36   95%: -3.29
+   chi2/ndf   raw 216.8/80 (p = 1.47e-14)   shape, after scaling pF270 realS (centre) by 1.0524: 115.6/79 (p = 0.00459)
+   KS   max |CDF diff| = 0.0059 at |p_m| stage 4 = 175  (Sp10 pF270 has relatively more entries below that x)   p = 0.137
+   per bin, low x -> high x   (|pull| > 2:  + Sp10 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |.+++.+...++.+.......+.......+.++++.....++...+...........-....-.................+|
+     pull shape  |.++.............................+...................-...-....-..................|
+     ratio shape |+^+=================================================-===v--==-===-=-+-=-===--==+|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * +  bins 0..1, |p_m| stage 4 in [0, 20)   Sp10 pF270 minus scaled pF270 realS (centre) = +214.7  (+4.3 sigma combined, +19.3% of pF270 realS (centre) there)
+     * -  bins 28..28, |p_m| stage 4 in [280, 290)   Sp10 pF270 minus scaled pF270 realS (centre) = -133.9  (-4.5 sigma combined, -26.8% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 4 < 68.1) Sp10 pF270      13714   pF270 realS (centre)      12708   raw ratio 1.079 (+6.2 sigma)   shape ratio 1.025 (+2.0 sigma)
+     core       (|p_m| stage 4 in 68.1 .. 218) Sp10 pF270      54175   pF270 realS (centre)      51477   raw ratio 1.052 (+8.3 sigma)   shape ratio 1.000 (+0.0 sigma)
+     right tail (|p_m| stage 4 > 218) Sp10 pF270      11892   pF270 realS (centre)      11627   raw ratio 1.023 (+1.7 sigma)   shape ratio 0.972 (-2.2 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: Sp10 pF270 is +5.2% relative to pF270 realS (centre) (+9.8 sigma)
+     * pull pattern + then - across the peak: Sp10 pF270 is displaced to lower |p_m| stage 4 relative to pF270 realS (centre)
+== 1D compare  Sp22 pF270 vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  Sp22 pF270 141418 ± 376   pF270 realS (centre) 139443 ± 373   ratio Sp22 pF270/pF270 realS (centre) = 1.0142 ± 0.0038  (+3.7 sigma from 1)
+   shape Sp22 pF270           |                     @@%#**++==--:::.....                    |
+   shape pF270 realS (centre) |                  @@%#**++==--:::.....                       |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   32.59 vs 26.53   diff +6.06 ± 0.032  (+6.06 median bin widths, +191.1 sigma)
+   std    8.413 vs 8.396   ratio 1.002     skew +0.80 vs +0.80
+   peak   E_m stage 3 = 23 (bin 43) vs E_m stage 3 = 17 (bin 37)   shift +6 bins     FWHM 10.91 vs 10.9 (ratio 1.001)
+   quantiles Sp22 pF270 minus pF270 realS (centre):  5%: +6.04   16%: +6.03   50%: +6.05   84%: +6.07   95%: +6.08
+   chi2/ndf   raw 65601.3/45 (p = 0)   shape, after scaling pF270 realS (centre) by 1.0142: 64971.0/44 (p = 0)
+   KS   max |CDF diff| = 0.3643 at E_m stage 3 = 22.5  (Sp22 pF270 has relatively more entries above that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + Sp22 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |                                    -------++++++++++++++++++++++++++++++++++++++                                        |
+     pull shape  |                                    -------++++++++++++++++++++++++++++++++++++++                                        |
+     ratio shape |                                    vvvvvv-^^+++++++^+^+++^^^^^^^^^^^^^^^^^!!!!!!                                        |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 9..10, E_m stage 3 in [15.5, 23.5)   Sp22 pF270 minus scaled pF270 realS (centre) = -4.752e+04  (-166.1 sigma combined, -74.0% of pF270 realS (centre) there)
+     * +  bins 11..20, E_m stage 3 in [23.5, 63.5)   Sp22 pF270 minus scaled pF270 realS (centre) = +4.752e+04  (+105.5 sigma combined, +61.6% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 3 < 18.1) Sp22 pF270          0   pF270 realS (centre)      26028   raw ratio 0.000 (-161.3 sigma)   shape ratio 0.000 (-161.3 sigma)
+     core       (E_m stage 3 in 18.1 .. 35.8) Sp22 pF270      95908   pF270 realS (centre)      90155   raw ratio 1.064 (+13.3 sigma)   shape ratio 1.049 (+10.3 sigma)
+     right tail (E_m stage 3 > 35.8) Sp22 pF270      45510   pF270 realS (centre)      23260   raw ratio 1.957 (+84.8 sigma)   shape ratio 1.929 (+83.2 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: Sp22 pF270 is +1.4% relative to pF270 realS (centre) (+3.7 sigma)
+     * rigid shift: every quantile of Sp22 pF270 sits about +6.05 (+6.05 bin widths) from pF270 realS (centre) while the width is unchanged (std ratio 1.002); Sp22 pF270 is at higher E_m stage 3
+     *   deficit of Sp22 pF270 for E_m stage 3 in [15.5, 23.5): -74.0% (-166.1 sigma)
+     *   excess of Sp22 pF270 for E_m stage 3 in [23.5, 63.5): +61.6% (+105.5 sigma)
+     * left tail: Sp22 pF270 has -100% relative to pF270 realS (centre) after normalization (-161.3 sigma)
+     * right tail: Sp22 pF270 has +93% relative to pF270 realS (centre) after normalization (+83.2 sigma)
+== 1D compare  Sp22 pF270 vs pF270 realS (centre): 121 bins on [-20.5, 100.5]   (pF270 realS (centre) is the reference)
+   integrals  Sp22 pF270 72074 ± 268   pF270 realS (centre) 76031 ± 276   ratio Sp22 pF270/pF270 realS (centre) = 0.9480 ± 0.0049  (-10.6 sigma from 1)
+   shape Sp22 pF270           |      .. ............@@%#*+==---:::..........................|
+   shape pF270 realS (centre) |    ..............@@%#*+==---:::.............................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   32.49 vs 26.57   diff +5.914 ± 0.056  (+5.91 median bin widths, +104.8 sigma)
+   std    10.71 vs 10.99   ratio 0.975     skew +2.20 vs +2.42
+   peak   E_m stage 4 = 23 (bin 43) vs E_m stage 4 = 17 (bin 37)   shift +6 bins     FWHM 8.043 vs 8.097 (ratio 0.993)
+   quantiles Sp22 pF270 minus pF270 realS (centre):  5%: +6.04   16%: +6.01   50%: +5.91   84%: +5.9   95%: +6.13
+   chi2/ndf   raw 36163.6/112 (p = 0)   shape, after scaling pF270 realS (centre) by 0.9480: 37448.0/111 (p = 0)
+   KS   max |CDF diff| = 0.3936 at E_m stage 4 = 21.5  (Sp22 pF270 has relatively more entries above that x)   p = 0
+   per bin, low x -> high x   (|pull| > 2:  + Sp22 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |        . .......-.---....---.------------.++++++++++++++++++++++++++++++++++++++....+.........+..++.....................|
+     pull shape  |        . .......-.---....---.--..--------+++++++++++++++++++++++++++++++++++++++....+.+...+...+..++..............+......|
+     ratio shape |        v vv!vvvvvvvvvvv-vvvvvvvvvvvvvvvvv=^^^^^^^^^^^^^+^^^^^^^^^^^^^^^^^^^^^^^^++++^=^==^^=+^^^+^^++-+^+=+==-+==^-=+=^=|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 4 to 31 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 2..10, E_m stage 4 in [-12.5, 23.5)   Sp22 pF270 minus scaled pF270 realS (centre) = -2.513e+04  (-119.4 sigma combined, -70.5% of pF270 realS (centre) there)
+     * +  bins 11..24, E_m stage 4 in [23.5, 79.5)   Sp22 pF270 minus scaled pF270 realS (centre) = +2.505e+04  (+81.3 sigma combined, +69.8% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (E_m stage 4 < 17.7) Sp22 pF270        238   pF270 realS (centre)      11154   raw ratio 0.021 (-102.3 sigma)   shape ratio 0.023 (-102.0 sigma)
+     core       (E_m stage 4 in 17.7 .. 35.4) Sp22 pF270      50999   pF270 realS (centre)      52876   raw ratio 0.965 (-5.8 sigma)   shape ratio 1.017 (+2.8 sigma)
+     right tail (E_m stage 4 > 35.4) Sp22 pF270      20837   pF270 realS (centre)      12001   raw ratio 1.736 (+48.8 sigma)   shape ratio 1.832 (+53.2 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: Sp22 pF270 is -5.2% relative to pF270 realS (centre) (-10.6 sigma)
+     * rigid shift: every quantile of Sp22 pF270 sits about +5.91 (+5.91 bin widths) from pF270 realS (centre) while the width is unchanged (std ratio 0.975); Sp22 pF270 is at higher E_m stage 4
+     *   deficit of Sp22 pF270 for E_m stage 4 in [-12.5, 23.5): -70.5% (-119.4 sigma)
+     *   excess of Sp22 pF270 for E_m stage 4 in [23.5, 79.5): +69.8% (+81.3 sigma)
+     * left tail: Sp22 pF270 has -98% relative to pF270 realS (centre) after normalization (-102.0 sigma)
+     * right tail: Sp22 pF270 has +83% relative to pF270 realS (centre) after normalization (+53.2 sigma)
+== 1D compare  Sp22 pF270 vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  Sp22 pF270 141418 ± 376   pF270 realS (centre) 139443 ± 373   ratio Sp22 pF270/pF270 realS (centre) = 1.0142 ± 0.0038  (+3.7 sigma from 1)
+   shape Sp22 pF270           |...:--==+++***####%%%%%%@@@@@@@@@@@@@@@@@%%%%##**++==--::....                   |
+   shape pF270 realS (centre) |..::--==++++***####%#%%%@@@@@@@@@@@@@@@@@%%%%##**++==--::....                   |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   150.9 vs 150.9   diff +0.07359 ± 0.25  (+0.01 median bin widths, +0.3 sigma)
+   std    65.34 vs 65.24   ratio 1.001     skew -0.05 vs -0.08
+   peak   |p_m| stage 3 = 177.5 (bin 35) vs |p_m| stage 3 = 187.5 (bin 37)   shift -2 bins     FWHM 202.8 vs 201.8 (ratio 1.005)
+   quantiles Sp22 pF270 minus pF270 realS (centre):  5%: +0.993   16%: +0.0633   50%: -0.579   84%: +0.223   95%: +1.59
+   chi2/ndf   raw 174.2/61 (p = 7.98e-13)   shape, after scaling pF270 realS (centre) by 1.0142: 160.5/60 (p = 4.17e-11)
+   KS   max |CDF diff| = 0.0043 at |p_m| stage 3 = 250  (Sp22 pF270 has relatively more entries above that x)   p = 0.149
+   per bin, low x -> high x   (|pull| > 2:  + Sp22 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |-.-.......+.....+...+.........+....+..................+.+++++                   |
+     pull shape  |-.--.................................--....-..........+.+++++                   |
+     ratio shape |v---==================================================+=+++^^                   |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 1..1, |p_m| stage 3 in [10, 20)   Sp22 pF270 minus scaled pF270 realS (centre) = -216.2  (-4.5 sigma combined, -17.6% of pF270 realS (centre) there)
+     * +  bins 27..30, |p_m| stage 3 in [270, 310)   Sp22 pF270 minus scaled pF270 realS (centre) = +419.8  (+5.5 sigma combined, +15.8% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 3 < 77.7) Sp22 pF270      23829   pF270 realS (centre)      23512   raw ratio 1.013 (+1.5 sigma)   shape ratio 0.999 (-0.1 sigma)
+     core       (|p_m| stage 3 in 77.7 .. 221) Sp22 pF270      94000   pF270 realS (centre)      92776   raw ratio 1.013 (+2.8 sigma)   shape ratio 0.999 (-0.2 sigma)
+     right tail (|p_m| stage 3 > 221) Sp22 pF270      23589   pF270 realS (centre)      23155   raw ratio 1.019 (+2.0 sigma)   shape ratio 1.005 (+0.5 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: Sp22 pF270 is +1.4% relative to pF270 realS (centre) (+3.7 sigma)
+     * pull pattern - then + across the peak: Sp22 pF270 is displaced to higher |p_m| stage 3 relative to pF270 realS (centre)
+== 1D compare  Sp22 pF270 vs pF270 realS (centre): 80 bins on [0, 400]   (pF270 realS (centre) is the reference)
+   integrals  Sp22 pF270 71954 ± 268   pF270 realS (centre) 75812 ± 275   ratio Sp22 pF270/pF270 realS (centre) = 0.9491 ± 0.0049  (-10.3 sigma from 1)
+   shape Sp22 pF270           |..:-==+***###%%%%%@@@@@@@@@@@@@@%@@@%%%####**+*+===---::::......................|
+   shape pF270 realS (centre) |..:-==+****##%%%%%@@@@@@@@@@@@@@@@@@%@%%%###***+===---:::.......................|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   145 vs 145.2   diff -0.2444 ± 0.38  (-0.05 median bin widths, -0.6 sigma)
+   std    73.24 vs 72.87   ratio 1.005     skew +0.50 vs +0.47
+   peak   |p_m| stage 4 = 127.5 (bin 25) vs |p_m| stage 4 = 147.5 (bin 29)   shift -4 bins     FWHM 205.1 vs 207.4 (ratio 0.989)
+   quantiles Sp22 pF270 minus pF270 realS (centre):  5%: +0.36   16%: -0.375   50%: -0.977   84%: +0.241   95%: +1.92
+   chi2/ndf   raw 187.1/80 (p = 1.44e-10)   shape, after scaling pF270 realS (centre) by 0.9491: 86.6/79 (p = 0.262)
+   KS   max |CDF diff| = 0.0054 at |p_m| stage 4 = 105  (Sp22 pF270 has relatively more entries below that x)   p = 0.235
+   per bin, low x -> high x   (|pull| > 2:  + Sp22 pF270 above pF270 realS (centre),  - below,  . within,  blank both empty)
+     pull raw    |..--.................--.-...--..-....---...---..................................|
+     pull shape  |..-..................................--.........................................|
+     ratio shape |v=-===================================================+==++++--==-++++-=+++=====|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! pF270 realS (centre) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 1..1, |p_m| stage 4 in [10, 20)   Sp22 pF270 minus scaled pF270 realS (centre) = -133.4  (-3.4 sigma combined, -15.3% of pF270 realS (centre) there)
+   regions from the 16% and 84% quantiles of pF270 realS (centre):
+     left tail  (|p_m| stage 4 < 68.1) Sp22 pF270      12187   pF270 realS (centre)      12708   raw ratio 0.959 (-3.3 sigma)   shape ratio 1.010 (+0.8 sigma)
+     core       (|p_m| stage 4 in 68.1 .. 218) Sp22 pF270      48652   pF270 realS (centre)      51477   raw ratio 0.945 (-8.9 sigma)   shape ratio 0.996 (-0.7 sigma)
+     right tail (|p_m| stage 4 > 218) Sp22 pF270      11115   pF270 realS (centre)      11627   raw ratio 0.956 (-3.4 sigma)   shape ratio 1.007 (+0.5 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: Sp22 pF270 is -5.1% relative to pF270 realS (centre) (-10.3 sigma)
+     * after scaling to equal integrals the shapes agree within statistics: a normalization only difference

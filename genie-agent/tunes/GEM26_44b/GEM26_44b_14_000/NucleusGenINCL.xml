@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+Configuration for the Nucleus Gen
+
+Configurable Parameters:
+.............................................................................................................
+Name                          Type    Optional   Comment                                           Default
+inclxx-data-dir               string  yes        data files of INCL model                          ${INCLXX_DATA_DIR}/data
+inclxx-ablaxx-dir             string  yes        data files of ablaxx model                        ${INCLXX_DATA_DIR}/data
+inclxx-abla07-dir             string  yes        data files of abla07 model                        ${INCLXX_DATA_DIR}/data
+inclxx-geminixx-dir           string  yes        data files of geminixx model                      ${INCLXX_DATA_DIR}/data
+inclxx-de-excitation          string  yes        options for deexcitation model                    ABLA07
+                                                 - ABLA07
+                                                 - ABLAXX
+                                                 - GEMINIXX
+inclxx-potential              string  yes        options for potential energy                      IsospinEnergyPotential
+                                                 - IsospinEnergyPotential 
+                                                 - IsospinEnergySmoothPotential 
+                                                 - IsospinPotential 
+                                                 - ConstantPotential 
+inclxx-pauli-block            string  yes        options for pauli blocking                        StrictStatisticalPauli
+                                                 - StrictStatisticalPauli 
+                                                 - StatisticalPauli 
+                                                 - StrictPauli 
+                                                 - GlobalPauli
+                                                 - NoPauli
+local-energy-BB               string  yes        options for local energy baryon-baryon            first-collision
+                                                 - always          (vertex + every cascade NN collision)
+                                                 - never           (vertex off: the scattering uses INCL's ball
+                                                                    nucleon as it is; cascade off)
+                                                 - first-collision (vertex on: the scattering is computed with
+                                                                    the struck nucleon in INCL's local-energy
+                                                                    frame, E - T_loc(r); the QE vertex is the
+                                                                    first collision, cascade NN collisions off)
+                                                 In every mode the energy balance is INCL's E - V of the global
+                                                 struck nucleon (the products are rescaled to it, as in INCL's
+                                                 InteractionAvatar), the record holds that global nucleon with
+                                                 E - V, and the resampling keeps the ground-state floor T > T_loc(r).
+local-energy-pi               string  yes        options for local energy pi-N collision           first-collision
+                                                 - always
+                                                 - never
+                                                 - first-collision
+hadronizationTime             double  yes        Hadronization time, in fm/c. Particles            0.0
+                                                 emerging from collisions are forbidden
+                                                 to recollide within this time.
+cluster-algorithm             string  yes        cluster-algorithm                                 intercomparison
+                                                 - intercomparison
+                                                 - none 
+inclxx-fermi-momentum         double  yes        constant Fermi momentum p_F [MeV/c] passed to     -1.0
+                                                 G4INCL::Config::setFermiMomentum; a value <= 0
+                                                 keeps INCL's constant 1.37 hbar c = 270.34 MeV/c
+                                                 (T_F = 38.17 MeV); the Fermi-momentum type stays
+                                                 constant. Changes V0 = T_F + S, the Fermi ball,
+                                                 the r-p floor p_min(r), the local energy and
+                                                 Pauli blocking, so each value needs its own spline.
+inclxx-separation-energies    string  yes        INCL separation-energy scheme; the well depth      INCL
+                                                 V0 = T_F + S and the emission Q-value both follow it
+                                                 - INCL        constant S = 6.83 MeV
+                                                 - real        S from walletlifetime.dat in inclxx-data-dir
+                                                               (C12: S_p = 15.96, S_n = 18.72 MeV)
+                                                 - real-light  real for light nuclei, INCL otherwise
+                                                 The QE cross section does not depend on it.
+
+
+.............................................................................................................
+-->
+
+<alg_conf>
+  <param_set name="Default">
+    <param type="string" name="inclxx-data-dir"    >   ${INCLXX_DATA_DIR}/data-Sp10 </param>
+    <param type="string" name="inclxx-ablaxx-dir"  >   ${INCLXX_DATA_DIR}/de-excitation/ablaxx/upstream/data/G4ABLA3.0/ </param>
+    <param type="string" name="inclxx-abla07-dir"  >   ${INCLXX_DATA_DIR}/de-excitation/abla07/upstream/tables/ </param>
+    <param type="string" name="inclxx-geminixx-dir">   ${INCLXX_DATA_DIR}/de-excitation/geminixx/upstream/ </param>
+    <param type="string" name="inclxx-de-excitation" > ABLAXX </param>
+    <param type="string" name="inclxx-potential" > IsospinEnergyPotential </param>
+    <param type="string" name="inclxx-pauli-block" > StrictStatisticalPauli </param>
+    <param type="string" name="local-energy-BB" > first-collision </param>
+    <param type="string" name="local-energy-pi" > first-collision </param>
+    <param type="double" name="hadronizationTime" > 0.0 </param>
+    <param type="string" name="cluster-algorithm" > intercomparison </param>
+    <param type="double" name="inclxx-fermi-momentum" > -1.0 </param>
+    <param type="string" name="inclxx-separation-energies" > real </param>
+  </param_set>
+
+  <!-- complete set (GENIE param_sets do not inherit from Default): local energy
+       off at the QE vertex and in the cascade -->
+  <param_set name="NoLocalEnergy">
+    <param type="string" name="inclxx-data-dir"    >   ${INCLXX_DATA_DIR}/data </param>
+    <param type="string" name="inclxx-ablaxx-dir"  >   ${INCLXX_DATA_DIR}/de-excitation/ablaxx/upstream/data/G4ABLA3.0/ </param>
+    <param type="string" name="inclxx-abla07-dir"  >   ${INCLXX_DATA_DIR}/de-excitation/abla07/upstream/tables/ </param>
+    <param type="string" name="inclxx-geminixx-dir">   ${INCLXX_DATA_DIR}/de-excitation/geminixx/upstream/ </param>
+    <param type="string" name="inclxx-de-excitation" > ABLAXX </param>
+    <param type="string" name="inclxx-potential" > IsospinEnergyPotential </param>
+    <param type="string" name="inclxx-pauli-block" > StrictStatisticalPauli </param>
+    <param type="string" name="local-energy-BB" > never </param>
+    <param type="string" name="local-energy-pi" > never </param>
+    <param type="double" name="hadronizationTime" > 0.0 </param>
+    <param type="string" name="cluster-algorithm" > intercomparison </param>
+    <param type="double" name="inclxx-fermi-momentum" > -1.0 </param>
+    <param type="string" name="inclxx-separation-energies" > INCL </param>
+  </param_set>
+
+  <param_set name="Never">
+    <param type="string" name="local-energy-BB" > never </param>
+    <param type="string" name="local-energy-pi" > never </param>
+  </param_set>
+
+  <param_set name="Always">
+    <param type="string" name="local-energy-BB" > always </param>
+    <param type="string" name="local-energy-pi" > always </param>
+  </param_set>
+
+  <param_set name="clusterNone">
+    <param type="string" name="local-energy-BB" > first-collision </param>
+    <param type="string" name="local-energy-pi" > first-collision </param>
+    <param type="string" name="cluster-algorithm" > none </param>
+  </param_set>
+
+
+
+
+</alg_conf>

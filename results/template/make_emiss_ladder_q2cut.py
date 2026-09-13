@@ -93,6 +93,13 @@ TUNE_GS = {
     # (p_ball, E_ball - V0)); 200k local events each on their own spline
     "GEM26_44b_05_000_lfon":    (False, "INCL-scheme vertex, locE ON"),
     "GEM26_44b_05_000_lfnever": (False, "INCL-scheme vertex, never"),
+    # p_F / S_p scan sub-tunes (2026-09-12, fork commit 71b1675fa; INCL real separation
+    # energies so V0 = T_F + S_p; genie-agent/tunes/GEM26_44b/README.md): 200k local events each
+    "GEM26_44b_11_000": (False, "INCL p_F 239 (T_F 30), S_p 15.96"),
+    "GEM26_44b_12_000": (False, "INCL p_F 270 (T_F 38.2), S_p 15.96"),
+    "GEM26_44b_13_000": (False, "INCL p_F 297 (T_F 46), S_p 15.96"),
+    "GEM26_44b_14_000": (False, "INCL p_F 270, S_p 10"),
+    "GEM26_44b_15_000": (False, "INCL p_F 270, S_p 22"),
 }
 
 
@@ -163,6 +170,11 @@ TGT = {
                    "GEM26_44b_05_000_locEon": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135725-84c.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135727-8b5.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135727-a11.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135728-d90.gst.root"],
                    "GEM26_44b_05_000_lfon": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170929-740.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170930-58d.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170930-0b5.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-170931-b2b.gst.root"],
                    "GEM26_44b_05_000_lfnever": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-ad8.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-15a.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-6f2.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-171310-ff5.gst.root"],
+                   "GEM26_44b_11_000": "genie-agent/genie-runs/GEM26_44b_11_000-2026-09-12/eminus_C12_*.gst.root",
+                   "GEM26_44b_12_000": "genie-agent/genie-runs/GEM26_44b_12_000-2026-09-12/eminus_C12_*.gst.root",
+                   "GEM26_44b_13_000": "genie-agent/genie-runs/GEM26_44b_13_000-2026-09-12/eminus_C12_*.gst.root",
+                   "GEM26_44b_14_000": "genie-agent/genie-runs/GEM26_44b_14_000-2026-09-12/eminus_C12_*.gst.root",
+                   "GEM26_44b_15_000": "genie-agent/genie-runs/GEM26_44b_15_000-2026-09-12/eminus_C12_*.gst.root",
                    "GEM26_44b_05_000_locEnever": ["genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135728-089.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-135728-a87.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-143137-3cd.gst.root", "genie-agent/genie-runs/GEM26_44b_05_000-2026-09-04/eminus_C12_20260904-143137-546.gst.root"]},
         incl_note=("INCL record: $E=v_{{loc}}-T_i$, no $S_p$ floor\n"
                    "— mostly $<0$, off scale left\n(median {med:.1f} MeV)"),
