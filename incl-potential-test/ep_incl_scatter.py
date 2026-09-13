@@ -30,9 +30,21 @@ commit 6bd7803d6):
                           E_miss = V0 - T_ball - V(T_p')      (= V0 - T_ball for fast protons)
                           p_miss = p_red (on) / p_ball (never), modulo the local-energy
                                    fixed point of slow outgoing protons.
+  5. surface exit      INCL's TransmissionChannel takes the proton from the well to a free
+                       particle (SurfaceAvatar, default no refraction): T_out = T_p' - V(T_p') + dQ,
+                       dQ = emission Q-value correction from the real mass table (-9.13 MeV for
+                       p from C12: real S_p = 15.96 vs INCL's S = 6.83); T_out <= 0 cannot leave;
+                       momentum rescaled along p_hat, table mass. Free-proton missing energy:
+                          E_miss = omega - T_out = V0 - T_ball - dQ = T_F + S_p - T_ball
+                                 in [S_p, T_F + S_p] = [15.96, 54.13]  for every exiting proton
+                          p_miss = p_free - q,  |p_free| = sqrt((T_out + m_t)^2 - m_t^2)
 
 Pure phase space, no cross section weight: the aim is the bookkeeping of the potential
 and the local energy, not a physics spectrum. Kinematics in MeV.
+
+`run_chain()` performs steps 1-5 for a given INCLNucleus and returns every array
+(ep_incl_scan.py reuses it with modified T_F / S_p); `main()` adds the histograms, the
+histdiag readouts, the npz cache and the figure.
 
 Usage:
     pixi run python incl-potential-test/ep_incl_scatter.py --local-energy on
@@ -62,7 +74,7 @@ def incl_energy_balance(nuc, r, k_lab, kp, pp, beta, old_total, local_energy,
 
     kp, pp: lepton and proton lab 4-vectors from the scattering (n,4); beta: the avatar's
     boost vector (n,3) = (k + p_loc)/(E_lep + E_loc); old_total: E_lep + E_ball - V(ball).
-    Returns alpha (n,), kp_final (n,4), pp_final (n,4), V_final (n,), ok (n,) bool.
+    Returns alpha (n,), kp_final (n,4), pp_final (n,4), V_final (n,), ok (n,) bool, deltaE.
     """
     m = nuc.m
     me2 = mass2(kp)
@@ -119,6 +131,90 @@ def incl_energy_balance(nuc, r, k_lab, kp, pp, beta, old_total, local_energy,
     return alpha, kp_f, pp_f, V_f, ok, deltaE
 
 
+def run_chain(nuc, n, ebeam_gev, seed, local_on, resample, m_e, verbose=True):
+    """Steps 1-5 of the chain for one INCLNucleus. Returns a dict of per-event arrays."""
+    m = nuc.m
+    rng = np.random.default_rng(seed)
+    say = print if verbose else (lambda *a, **k: None)
+
+    # ---- 1. ground state -----------------------------------------------------------
+    nucs = nuc.sample(n, rng)
+    if resample:
+        nucs = nuc.resample_at_r(nucs.r_vec, rng)
+    r, p_ball, E_ball, T_ball = nucs.r, nucs.p, nucs.E, nucs.T
+    V_ball = nuc.potential_energy(T_ball)          # = V0 for every ball nucleon (T <= T_F)
+    floor = nuc.pF * nuc.min_p_from_r(r)
+    say(f"ground state: <r> = {r.mean():.3f} fm, rms r = {np.sqrt((r**2).mean()):.3f}, <p> = {p_ball.mean():.2f} MeV/c, "
+        f"max p = {p_ball.max():.2f}, corr(p, r) = {np.corrcoef(p_ball, r)[0, 1]:+.3f}, "
+        f"below strict floor: {(p_ball < floor).mean():.4f}, V(ball) = {V_ball.min():.3f}..{V_ball.max():.3f} MeV")
+
+    # ---- 2. scattering on the local-frame nucleon -------------------------------------
+    if local_on:
+        E_loc, p_loc, vloc = nuc.local_frame(r, nucs.p_vec, nucs.p_refl)
+    else:
+        E_loc, p_loc, vloc = E_ball, nucs.p_vec, np.zeros(n)
+    p_red = np.linalg.norm(p_loc, axis=1)
+    say(f"local energy v_loc: mean {vloc.mean():.3f} MeV, max {vloc.max():.3f}; scattering nucleon <|p|> = {p_red.mean():.2f} MeV/c, "
+        f"corr(|p|, r) = {np.corrcoef(p_red, r)[0, 1]:+.3f}, (E - m) mean = {(E_loc - m).mean():.3f} MeV")
+    Ebeam = ebeam_gev * 1e3
+    k = np.zeros((n, 4)); k[:, 0] = Ebeam; k[:, 3] = np.sqrt(Ebeam**2 - m_e**2)
+    P = np.column_stack([E_loc, p_loc])
+    kp0, pp0 = scatter(k, P, (m_e, m), rng)
+    mis0 = missing(k, kp0, pp0, m)                  # scattering-frame E_miss/p_miss (before the balance)
+
+    # ---- 3. INCL energy balance ------------------------------------------------------
+    old_total = Ebeam + E_ball - V_ball             # preInteraction: E_lep + E1 - V1
+    beta = (k[:, 1:] + p_loc) / (Ebeam + E_loc)[:, None]
+    alpha, kp, pp, V_out, ok, dE = incl_energy_balance(nuc, r, k, kp0, pp0, beta, old_total, local_on)
+    say(f"balance: alpha mean {alpha[ok].mean():.5f}, range [{alpha[ok].min():.5f}, {alpha[ok].max():.5f}], "
+        f"failures {int((~ok).sum())}, max |dE| = {np.abs(dE[ok]).max():.2e} MeV; "
+        f"V(T_p') > 0 for {(V_out > 0).mean() * 100:.1f} % of events")
+
+    # ---- 4. record: E_miss, p_miss ---------------------------------------------------
+    mis = missing(k, kp, pp, m)
+    Em, pm = mis["Em"], mis["pm"]
+    Em_expect = nuc.V0 - T_ball - V_out
+    pm_ref = p_red                                   # p_red (on) or p_ball (never)
+    fast = V_out == 0
+    say(f"E_miss (record): mean {Em.mean():.3f} MeV, range [{Em.min():.3f}, {Em.max():.3f}]; "
+        f"fast protons (V = 0): mean {Em[fast].mean():.3f}, range [{Em[fast].min():.3f}, {Em[fast].max():.3f}] "
+        f"(V0 = {nuc.V0:.3f}, S = {nuc.S})")
+    say(f"  max |E_miss - (V0 - T_ball - V(T_p'))| = {np.abs(Em - Em_expect)[ok].max():.2e} MeV")
+    say(f"|p_miss| (record): mean {pm.mean():.2f} MeV/c, corr(|p_miss|, r) = {np.corrcoef(pm, r)[0, 1]:+.3f}; "
+        f"ratio to {'p_red' if local_on else 'p_ball'}: mean {(pm / pm_ref)[ok].mean():.4f}, "
+        f"fast-proton max |diff| = {np.abs(pm - pm_ref)[ok & fast].max():.2e} MeV/c")
+    dp = mis["pm_vec"] - p_loc      # INCL's CM rescaling changes the lab total momentum by gamma*beta*dE*
+    say(f"  INCL rescaling shifts the final-state total momentum (the remnant absorbs it): "
+        f"|p_miss_vec - {'p_red' if local_on else 'p_ball'}_vec| mean {np.linalg.norm(dp, axis=1).mean():.2f} MeV/c, "
+        f"mean z component {dp[:, 2].mean():+.2f} MeV/c, fast-proton max {np.linalg.norm(dp, axis=1)[fast].max():.2f}")
+
+    # ---- 5. INCL surface exit: from the well to a free proton -------------------------
+    ex = nuc.surface_exit(pp)
+    exits = ex["exits"]
+    Em_free = mis["omega"] - ex["T_out"]                    # omega - T_out
+    pm_free_vec = ex["p_free"] - mis["q"]
+    pm_free = np.linalg.norm(pm_free_vec, axis=1)
+    S_real = nuc.S - ex["dQ"]
+    Em_free_expect = nuc.V0 - T_ball - ex["dQ"]             # V(T_p') cancels
+    pfree_mag = np.linalg.norm(ex["p_free"], axis=1); pin_mag = np.linalg.norm(pp[:, 1:], axis=1)
+    say(f"surface exit: dQ = {ex['dQ']:.3f} MeV (real S_p = {S_real:.3f}, INCL S = {nuc.S}), Coulomb barrier {ex['barrier']:.3f} MeV; "
+        f"exits (T_out > 0): {exits.mean() * 100:.2f} %, trapped {int((~exits).sum())}; "
+        f"<P_T> over exiting = {ex['P_T'][exits].mean():.4f}, P_T < 0.99 for {(ex['P_T'][exits] < 0.99).mean() * 100:.2f} % of them")
+    say(f"E_miss (free proton): mean {Em_free[exits].mean():.3f} MeV, range [{Em_free[exits].min():.3f}, {Em_free[exits].max():.3f}] "
+        f"(expected [S_p, T_F + S_p] = [{S_real:.3f}, {nuc.TF + S_real:.3f}]); "
+        f"max |E_miss_free - (V0 - T_ball - dQ)| = {np.abs(Em_free - Em_free_expect)[exits & ok].max():.2e} MeV")
+    say(f"|p_miss| (free proton): mean {pm_free[exits].mean():.2f} MeV/c vs inside {pm[exits].mean():.2f}; "
+        f"|p_free| - |p'| mean {(pfree_mag - pin_mag)[exits].mean():.2f} MeV/c, range [{(pfree_mag - pin_mag)[exits].min():.2f}, {(pfree_mag - pin_mag)[exits].max():.2f}]")
+    say(f"scattering frame (before balance): E_miss mean {mis0['Em'].mean():.3f} MeV (= m - E_loc), "
+        f"|p_miss| mean {mis0['pm'].mean():.2f} MeV/c")
+
+    return dict(nucs=nucs, r=r, p_ball=p_ball, E_ball=E_ball, T_ball=T_ball, V_ball=V_ball, vloc=vloc,
+                E_loc=E_loc, p_loc=p_loc, p_red=p_red, k=k, kp0=kp0, pp0=pp0, mis0=mis0, alpha=alpha,
+                kp=kp, pp=pp, V_out=V_out, ok=ok, dE=dE, mis=mis, Em=Em, pm=pm, Em_expect=Em_expect,
+                pm_ref=pm_ref, fast=fast, ex=ex, exits=exits, Em_free=Em_free, pm_free=pm_free,
+                pm_free_vec=pm_free_vec, Em_free_expect=Em_free_expect, S_real=S_real)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("-n", "--nevents", type=int, default=200_000)
@@ -142,7 +238,6 @@ def main(argv=None):
 
     m_e_gev, _, msrc = load_masses()
     m_e = m_e_gev * 1e3
-    rng = np.random.default_rng(args.seed)
     n = args.nevents
     nuc = INCLNucleus(A=args.A, Z=args.Z, species="proton", rp_coefficient=args.rp_coefficient)
     m = nuc.m
@@ -150,58 +245,13 @@ def main(argv=None):
     print(f"electron mass {m_e:.6f} MeV from {msrc}; E_beam = {args.ebeam} GeV; N = {n}; seed = {args.seed}; "
           f"local energy = {args.local_energy}; resample = {args.resample}")
 
-    # ---- 1. ground state -----------------------------------------------------------
-    nucs = nuc.sample(n, rng)
-    if args.resample:
-        nucs = nuc.resample_at_r(nucs.r_vec, rng)
-    r, p_ball, E_ball, T_ball = nucs.r, nucs.p, nucs.E, nucs.T
-    V_ball = nuc.potential_energy(T_ball)          # = V0 for every ball nucleon (T <= T_F)
-    floor = nuc.pF * nuc.min_p_from_r(r)
-    print(f"ground state: <r> = {r.mean():.3f} fm, rms r = {np.sqrt((r**2).mean()):.3f}, <p> = {p_ball.mean():.2f} MeV/c, "
-          f"max p = {p_ball.max():.2f}, corr(p, r) = {np.corrcoef(p_ball, r)[0, 1]:+.3f}, "
-          f"below strict floor: {(p_ball < floor).mean():.4f}, V(ball) = {V_ball.min():.3f}..{V_ball.max():.3f} MeV")
-
-    # ---- 2. scattering on the local-frame nucleon -------------------------------------
-    if local_on:
-        E_loc, p_loc, vloc = nuc.local_frame(r, nucs.p_vec, nucs.p_refl)
-    else:
-        E_loc, p_loc, vloc = E_ball, nucs.p_vec, np.zeros(n)
-    p_red = np.linalg.norm(p_loc, axis=1)
-    print(f"local energy v_loc: mean {vloc.mean():.3f} MeV, max {vloc.max():.3f}; scattering nucleon <|p|> = {p_red.mean():.2f} MeV/c, "
-          f"corr(|p|, r) = {np.corrcoef(p_red, r)[0, 1]:+.3f}, (E - m) mean = {(E_loc - m).mean():.3f} MeV")
-    Ebeam = args.ebeam * 1e3
-    k = np.zeros((n, 4)); k[:, 0] = Ebeam; k[:, 3] = np.sqrt(Ebeam**2 - m_e**2)
-    P = np.column_stack([E_loc, p_loc])
-    kp0, pp0 = scatter(k, P, (m_e, m), rng)
-    mis0 = missing(k, kp0, pp0, m)                  # scattering-frame E_miss/p_miss (before the balance)
-
-    # ---- 3. INCL energy balance ------------------------------------------------------
-    old_total = Ebeam + E_ball - V_ball             # preInteraction: E_lep + E1 - V1
-    beta = (k[:, 1:] + p_loc) / (Ebeam + E_loc)[:, None]
-    alpha, kp, pp, V_out, ok, dE = incl_energy_balance(nuc, r, k, kp0, pp0, beta, old_total, local_on)
-    print(f"balance: alpha mean {alpha[ok].mean():.5f}, range [{alpha[ok].min():.5f}, {alpha[ok].max():.5f}], "
-          f"failures {int((~ok).sum())}, max |dE| = {np.abs(dE[ok]).max():.2e} MeV; "
-          f"V(T_p') > 0 for {(V_out > 0).mean() * 100:.1f} % of events")
-
-    # ---- 4. record: E_miss, p_miss ---------------------------------------------------
-    mis = missing(k, kp, pp, m)
-    Em, pm = mis["Em"], mis["pm"]
-    Em_expect = nuc.V0 - T_ball - V_out
-    pm_ref = p_red                                   # p_red (on) or p_ball (never)
-    fast = V_out == 0
-    print(f"E_miss (record): mean {Em.mean():.3f} MeV, range [{Em.min():.3f}, {Em.max():.3f}]; "
-          f"fast protons (V = 0): mean {Em[fast].mean():.3f}, range [{Em[fast].min():.3f}, {Em[fast].max():.3f}] "
-          f"(V0 = {nuc.V0:.3f}, S = {nuc.S})")
-    print(f"  max |E_miss - (V0 - T_ball - V(T_p'))| = {np.abs(Em - Em_expect)[ok].max():.2e} MeV")
-    print(f"|p_miss| (record): mean {pm.mean():.2f} MeV/c, corr(|p_miss|, r) = {np.corrcoef(pm, r)[0, 1]:+.3f}; "
-          f"ratio to {'p_red' if local_on else 'p_ball'}: mean {(pm / pm_ref)[ok].mean():.4f}, "
-          f"fast-proton max |diff| = {np.abs(pm - pm_ref)[ok & fast].max():.2e} MeV/c")
-    dp = mis["pm_vec"] - p_loc      # INCL's CM rescaling changes the lab total momentum by gamma*beta*dE*
-    print(f"  INCL rescaling shifts the final-state total momentum (the remnant absorbs it): "
-          f"|p_miss_vec - {'p_red' if local_on else 'p_ball'}_vec| mean {np.linalg.norm(dp, axis=1).mean():.2f} MeV/c, "
-          f"mean z component {dp[:, 2].mean():+.2f} MeV/c, fast-proton max {np.linalg.norm(dp, axis=1)[fast].max():.2f}")
-    print(f"scattering frame (before balance): E_miss mean {mis0['Em'].mean():.3f} MeV (= m - E_loc), "
-          f"|p_miss| mean {mis0['pm'].mean():.2f} MeV/c")
+    R = run_chain(nuc, n, args.ebeam, args.seed, local_on, args.resample, m_e)
+    nucs, r, p_ball, T_ball = R["nucs"], R["r"], R["p_ball"], R["T_ball"]
+    vloc, E_loc, p_loc, k, kp0, pp0, mis0 = R["vloc"], R["E_loc"], R["p_loc"], R["k"], R["kp0"], R["pp0"], R["mis0"]
+    alpha, kp, pp, V_out, ok, mis = R["alpha"], R["kp"], R["pp"], R["V_out"], R["ok"], R["mis"]
+    Em, pm, Em_expect, pm_ref = R["Em"], R["pm"], R["Em_expect"], R["pm_ref"]
+    ex, exits, Em_free, pm_free, pm_free_vec, Em_free_expect, S_real = (
+        R["ex"], R["exits"], R["Em_free"], R["pm_free"], R["pm_free_vec"], R["Em_free_expect"], R["S_real"])
 
     # ---- histograms + readouts --------------------------------------------------------
     r_edges = np.linspace(0.0, nuc.r_max, 24)
@@ -211,6 +261,8 @@ def main(argv=None):
     H, _, _ = np.histogram2d(r, p_ball, bins=[r_edges, p_edges])
     cE, _ = np.histogram(Em, e_edges); cEx, _ = np.histogram(Em_expect, e_edges); cE0, _ = np.histogram(mis0["Em"], e_edges)
     cP, _ = np.histogram(pm, pm_edges); cPx, _ = np.histogram(pm_ref, pm_edges); cP0, _ = np.histogram(mis0["pm"], pm_edges)
+    cEf, _ = np.histogram(Em_free[exits], e_edges); cEfx, _ = np.histogram(Em_free_expect[exits], e_edges)
+    cPf, _ = np.histogram(pm_free[exits], pm_edges)
 
     args.outdir.mkdir(parents=True, exist_ok=True)
     stem = args.outdir / stem_name
@@ -224,12 +276,18 @@ def main(argv=None):
                      xname="E_miss [MeV]", table=False, quiet=True, save=fh)
         hd.compare1d(cP, cPx, pm_edges, labels=("|p_miss| record", "p_red" if local_on else "p_ball"),
                      xname="|p_miss| [MeV/c]", table=False, quiet=True, save=fh)
+        hd.compare1d(cEf, cEfx, e_edges, labels=("E_miss free proton", "V0 - T_ball - dQ"),
+                     xname="E_miss [MeV]", table=False, quiet=True, save=fh)
+        hd.compare1d(cPf, cP, pm_edges, labels=("|p_miss| free proton", "|p_miss| record (inside)"),
+                     xname="|p_miss| [MeV/c]", table=False, quiet=True, save=fh)
         hd.describe1d(cE0, e_edges, name="E_miss scattering frame (before balance) [MeV]", quiet=True, save=fh)
         hd.describe1d(cP0, pm_edges, name="|p_miss| scattering frame (before balance) [MeV/c]", quiet=True, save=fh)
     np.savez_compressed(stem.with_suffix(".npz"), r_vec=nucs.r_vec, p_ball_vec=nucs.p_vec, p_refl=nucs.p_refl,
                         vloc=vloc, E_loc=E_loc, p_loc=p_loc, k=k, kp0=kp0, pp0=pp0, kp=kp, pp=pp, alpha=alpha,
                         ok=ok, V_out=V_out, Em=Em, pm=pm, pm_vec=mis["pm_vec"], Em_expect=Em_expect,
                         Em0=mis0["Em"], pm0=mis0["pm"], V0=nuc.V0, S=nuc.S, TF=nuc.TF, pF=nuc.pF, m=m,
+                        Em_free=Em_free, pm_free=pm_free, pm_free_vec=pm_free_vec, T_out=ex["T_out"], exits=exits,
+                        P_T=ex["P_T"], p_free=ex["p_free"], dQ=ex["dQ"], m_free=ex["m_free"],
                         ebeam=args.ebeam, seed=args.seed, local_energy=args.local_energy, resample=args.resample)
 
     # ---- figure ------------------------------------------------------------------------
@@ -267,9 +325,11 @@ def main(argv=None):
     a.stairs(cE, e_edges, fill=True, color="C0", alpha=0.75, label="record (after INCL balance)")
     a.stairs(cEx, e_edges, color="k", lw=1.2, ls="--", label=r"$V_0 - T_{\rm ball} - V(T_{p'})$")
     a.stairs(cE0, e_edges, color="C2", lw=1.0, label="scattering frame (before balance)")
-    a.axvline(nuc.S, color="C3", ls=":", lw=1); a.axvline(nuc.V0, color="C3", ls=":", lw=1)
-    a.text(nuc.S, 0.98 * a.get_ylim()[1], " S", color="C3", va="top", fontsize=8)
-    a.text(nuc.V0, 0.98 * a.get_ylim()[1], r" $V_0$", color="C3", va="top", fontsize=8)
+    a.stairs(cEf, e_edges, color="C3", lw=1.6, label="free proton (after INCL surface exit)")
+    a.stairs(cEfx, e_edges, color="C3", lw=1.0, ls="--", label=r"$V_0 - T_{\rm ball} - \Delta Q$")
+    for xv, lab in ((nuc.S, " S"), (nuc.V0, r" $V_0$"), (S_real, r" $S_p$"), (nuc.TF + S_real, r" $T_F+S_p$")):
+        a.axvline(xv, color="0.4", ls=":", lw=0.8)
+        a.text(xv, 0.98 * a.get_ylim()[1], lab, color="0.3", va="top", fontsize=7)
     a.set_xlabel(r"$E_{\rm miss} = \omega - T_{p'}$  [MeV]"); a.set_ylabel("events / 1 MeV")
     a.legend(loc="upper left", fontsize=8, frameon=False)
 
@@ -277,6 +337,7 @@ def main(argv=None):
     a.stairs(cP, pm_edges, fill=True, color="C1", alpha=0.75, label="record (after INCL balance)")
     a.stairs(cPx, pm_edges, color="k", lw=1.2, ls="--", label=r"$p_{\rm red}$" if local_on else r"$p_{\rm ball}$")
     a.stairs(cP0, pm_edges, color="C2", lw=1.0, label="scattering frame (before balance)")
+    a.stairs(cPf, pm_edges, color="C3", lw=1.6, label="free proton (after INCL surface exit)")
     a.set_xlabel(r"$|\vec p_{\rm miss}| = |\vec p_{p'} - \vec q|$  [MeV/c]"); a.set_ylabel("events / 5 MeV/c")
     a.legend(loc="upper right", fontsize=8, frameon=False)
     for a in ax.flat:

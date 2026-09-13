@@ -189,7 +189,30 @@ omega = E_e - E',   vec q = vec k - vec k',   E_miss = omega - T_p',
 vec p_miss = vec p' - vec q = vec k' + vec p' - vec k
 ```
 
-## 5. Closed forms
+## 5. Surface exit: from the well to a free proton
+
+When the proton reaches the surface, `SurfaceAvatar` decides between transmission and
+reflection and `TransmissionChannel::particleLeaves` turns it into a free particle
+(default `refraction = false`):
+
+```
+dQ    = [M_t(A,Z) - M_t(A-1,Z-1) - m_t] - [M_i(A,Z) - M_i(A-1,Z-1) - m]     Particle::getEmissionQValueCorrection
+        M_t = A amu + excess - Z m_e  (real masses, walletlifetime.dat: excess(C12) = 0, excess(B11) = 8.6679)
+        M_i = Z (m - S) + (A - Z)(m - S)  (INCL masses),  m_t = 938.27203 (table proton mass)
+      = -S_p(real) + S = -15.957 + 6.83 = -9.127 MeV                        (proton from C12 -> B11)
+T_out = T_p' - V(T_p') + dQ                                                 TransmissionChannel::initializeKineticEnergyOutside
+exits : T_out > 0          (otherwise reflection; T_p' below ~50 MeV here)
+P_T   = 4 p_in p_out / (p_in + p_out)^2,   p_out = sqrt(T_out (T_out + 2m))        (step)
+      -> P_T exp(-2 L)  for T_out < B = e^2 (Z - 1) / (R_p + 0.88 fm) = 2.15 MeV    (Coulomb barrier, Gamow)
+        L = (Z - 1)/137.03 * sqrt(2m / T_out / (1 + T_out/2m)) * [arccos(x) - x sqrt(1 - x^2)],  x = sqrt(T_out/B)
+free  : mass -> m_t,  E_free = T_out + m_t,  vec p_free = p_hat' sqrt(E_free^2 - m_t^2)      (no refraction)
+```
+
+A reflection only delays the exit (the particle bounces and tries again), so the toy takes
+every `T_out > 0` proton out: 98 % of the phase-space protons; `<P_T> = 0.997`, `P_T < 0.99`
+for 3 % of them. The real separation energy replaces INCL's constant `S` at emission.
+
+## 6. Closed forms
 
 **Energy.** Insert the balance condition into `omega - T_p'`:
 
@@ -220,13 +243,32 @@ For slow protons with local energy on the fixed point `E_p' <- E_p' + v_loc` re-
 `|p'|` after the boost and the closed form no longer applies (deviations up to 236 MeV/c,
 mean 18, for the 9 % of phase-space events with `V(T_p') > 0`).
 
-## 6. Summary of the two settings
+**Free proton.** With `omega` unchanged by the exit,
+
+```
+E_miss_free     = omega - T_out = V0 - T_ball - dQ = T_F + S_p(real) - T_ball
+                  in [S_p, T_F + S_p] = [15.96, 54.13] MeV        every exiting proton, every setting
+vec p_miss_free = vec p_free - vec q = vec p_miss + (|p_free| - |p'|) p_hat'
+```
+
+`V(T_p')` cancels: whatever potential the proton still carries inside is paid at the wall,
+so the negative tail of the record's `E_miss` disappears and the floor moves from INCL's
+`S = 6.83` to the real `S_p = 15.96` MeV. Verified: `<= 2.0e-12 MeV` in all four runs; mean
+31.1 MeV (fuzzy ground state) or 26.6 (`--resample`). The momentum loses `|dQ|/beta_p'`,
+9.6-17 MeV/c along `p_hat'` for fast protons, and `<|p_miss|>` moves by 1-2 MeV/c.
+
+## 7. Summary of the two settings
 
 | | scattering nucleon `P` | scattering frame `E_miss_0`, `vec p_miss_0` | record `E_miss` | record `vec p_miss` (fast p') |
 |---|---|---|---|---|
 | on | `(E_ball - v_loc, vec p_red)` | `-T_red`, `vec p_red` | `V0 - T_ball - V(T_p')` | `vec p_red - vec beta (V0 - v_loc)` |
 | never | `(E_ball, vec p_ball)` | `-T_ball`, `vec p_ball` | `V0 - T_ball - V(T_p')` | `vec p_ball - vec beta V0` |
 
+| | free proton `E_miss` | free proton `vec p_miss` |
+|---|---|---|
+| on and never | `T_F + S_p(real) - T_ball` | `vec p_miss + (\|p_free\| - \|p'\|) p_hat'` |
+
 Numbers (200k events, 2.445 GeV, seed 1, `--resample`): <|p_red|> 147.8 MeV/c with
 corr(p_red, r) = -0.66 (on) vs <|p_ball|> 225.5, +0.47 (never); `E_miss` of fast protons
-mean 17.46 in [6.83, 44.80] in both; <|p_miss|> 148.4 (on) / 224.2 (never).
+mean 17.46 in [6.83, 44.80] in both; <|p_miss|> 148.4 (on) / 224.2 (never); free proton
+`E_miss` mean 26.6 in [15.96, 53.9] in both, 98 % of the protons exit.

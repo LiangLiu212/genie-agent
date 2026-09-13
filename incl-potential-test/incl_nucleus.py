@@ -24,6 +24,11 @@ local frame               local_frame(r, p_vec)  transformToLocalEnergyFrame (:3
                                                  momentum rescaled on-shell along p_hat
 truncated-ball redraw     resample_at_r(r, rng)  the fork's INCLNucleus::ResamplingHitNucleon: |p|^3 uniform on
                                                  [p_min(r)^3, p_F^3] at fixed r (what GENIE's event loop does)
+surface exit              surface_exit(p4)       SurfaceAvatar::getTransmissionProbability + TransmissionChannel
+                                                 (G4INCLSurfaceAvatar.cc:166-238, G4INCLTransmissionChannel.cc:31-63):
+                                                 T_out = T - V(T) + dQ with the real-mass-table Q-value correction
+                                                 (Particle::getEmissionQValueCorrection), step + Coulomb transmission
+                                                 probability, free particle with the table mass, no refraction
 
 The model (C12 defaults, 6 < A <= 19 only -- the modified harmonic oscillator branch)
 ------------------------------------------------------------------------------------
@@ -89,6 +94,16 @@ MEDIUM_MHO = {  # (mediumDiffuseness[A-1], mediumRadius[A-1]), ParticleTable.cc:
 }
 LOCE_ACCURACY = 1e-4   # InteractionAvatar::locEAccuracy (MeV) -- fixed-point tolerance
 LOCE_MAX_ITER = 50     # InteractionAvatar::maxIterLocE
+# ---- surface exit: TransmissionChannel / SurfaceAvatar ----
+REAL_PROTON_MASS = 938.27203      # utils/src/G4INCLParticleTable.cc:66  (table mass of a free proton)
+REAL_NEUTRON_MASS = 939.56536     # :67
+AMU = 931.494061                  # utils/src/G4INCLNuclearMassTable.cc:26
+ELECTRON_MASS_TABLE = 0.5109988   # :27
+MASS_EXCESS = {(12, 6): 0.0000, (11, 5): 8.6679}   # data/walletlifetime.dat (atomic mass excess, MeV)
+E_SQUARED = 1.439964              # utils/include/G4INCLGlobals.hh:27 [MeV fm]
+PROTON_RADIUS = 0.88              # incl_physics/src/G4INCLNuclearDensity.cc:133 [fm]
+POSITION_RMS = {(12, 6): 2.47}    # ParticleTable positionRMS[6][12] = getNuclearRadius(Proton, 12, 6) [fm]
+FINE_STRUCTURE_INV = 137.03       # G4INCLSurfaceAvatar.cc:230
 
 
 # ---- INCL Random helpers, vectorised ------------------------------------------
@@ -147,7 +162,10 @@ class INCLNucleus:
     """INCL++ ground state for one nucleon species of nucleus (A, Z), 6 < A <= 19."""
 
     def __init__(self, A=12, Z=6, species="proton", rp_coefficient=None, mho=None,
-                 n_nodes=RP_TABLE_NODES):
+                 n_nodes=RP_TABLE_NODES, pF=None, S_p_real=None):
+        """pF: override INCL's Fermi momentum [MeV/c] (moves T_F, V0 = T_F + S, the ball and the local
+        energy). S_p_real: override the real proton separation energy [MeV] used by the surface exit
+        (dQ = -S_p_real + S) instead of the mass-table value. Both are scan knobs, not INCL options."""
         if not (6 < A <= 19):
             raise NotImplementedError("only the modified-harmonic-oscillator branch (6 < A <= 19) is ported")
         if species not in ("proton", "neutron"):
@@ -158,7 +176,8 @@ class INCLNucleus:
         self.m = INCL_NUCLEON_MASS
         self.S = INCL_SEPARATION_ENERGY
         frac = 2.0 * Z / A if species == "proton" else 2.0 * (1.0 - Z / A)
-        self.pF = PF_CONSTANT * np.cbrt(frac)            # NuclearPotentialIsospin::initialize
+        self.pF = PF_CONSTANT * np.cbrt(frac) if pF is None else float(pF)   # NuclearPotentialIsospin::initialize
+        self.S_p_real = S_p_real
         self.TF = np.sqrt(self.pF**2 + self.m**2) - self.m
         self.V0 = self.TF + self.S                        # vProton / vNeutron
         # MHO parameters: HFB table when the correlation is fuzzy, medium tables when strict
@@ -293,9 +312,86 @@ class INCLNucleus:
         scale = np.where(p > 0.0, pred / np.where(p > 0.0, p, 1.0), 1.0)
         return Eloc, p_vec * scale[:, None], vloc
 
+    # ---- surface exit: from the well to a free nucleon ----------------------------------
+    def table_mass(self, A, Z):
+        """ParticleTable::getRealMass(A, Z): free nucleon masses for A = 1, else the atomic mass excess
+        table data/walletlifetime.dat as A*amu + excess - Z*m_e (NuclearMassTable.cc:131)."""
+        if A == 1:
+            return REAL_PROTON_MASS if Z == 1 else REAL_NEUTRON_MASS
+        try:
+            return A * AMU + MASS_EXCESS[(A, Z)] - Z * ELECTRON_MASS_TABLE
+        except KeyError as e:
+            raise NotImplementedError(f"no mass excess stored for A={A} Z={Z}; add it to MASS_EXCESS") from e
+
+    def incl_mass(self, A, Z):
+        """ParticleTable::getINCLMass(A, Z): Z (m - S) + (A - Z)(m - S) for A > 1, m for a nucleon."""
+        if A == 1:
+            return self.m
+        return Z * (self.m - self.S) + (A - Z) * (self.m - self.S)
+
+    def emission_qvalue_correction(self):
+        """Particle::getEmissionQValueCorrection(A, Z) for this species leaving (A, Z):
+        [M_t(A,Z) - M_t(A-1,Z') - m_t] - [M_i(A,Z) - M_i(A-1,Z') - m_i], Z' = Z-1 (proton) or Z (neutron).
+        Proton from C12: -15.957 - (-6.83) = -9.127 MeV -- the real separation energy replaces INCL's S."""
+        dZ = 1 if self.species == "proton" else 0
+        m_t = REAL_PROTON_MASS if self.species == "proton" else REAL_NEUTRON_MASS
+        q_table = (self.table_mass(self.A, self.Z) - self.table_mass(self.A - 1, self.Z - dZ) - m_t
+                   if self.S_p_real is None else -float(self.S_p_real))
+        q_incl = self.incl_mass(self.A, self.Z) - self.incl_mass(self.A - 1, self.Z - dZ) - self.m
+        return q_table - q_incl
+
+    def transmission_barrier(self):
+        """Nucleus::getTransmissionBarrier for this species: e^2 (Z - z) z / (R_p + 0.88 fm), z = charge."""
+        z = 1 if self.species == "proton" else 0
+        try:
+            R = POSITION_RMS[(self.A, self.Z)]
+        except KeyError as e:
+            raise NotImplementedError(f"no positionRMS stored for A={self.A} Z={self.Z}") from e
+        return E_SQUARED * (self.Z - z) * z / (R + PROTON_RADIUS)
+
+    def surface_exit(self, p4):
+        """INCL's surface transmission of the outgoing nucleon, SurfaceAvatar::getTransmissionProbability
+        + TransmissionChannel::particleLeaves with the default refraction = false. p4 = (E, p_vec) (n,4)
+        inside the well with the INCL mass.
+            T_out = T - V(T) + dQ           TransmissionChannel::initializeKineticEnergyOutside
+            exits = T_out > 0               otherwise no transmission (reflection; kept as 'trapped' here)
+            P_T   = 4 p_in p_out/(p_in + p_out)^2, times the Coulomb penetration factor below the barrier
+            free  : mass -> table mass, E = T_out + m_t, momentum rescaled along p_hat
+        Returns dict(T_out, exits, P_T, V, E_free, p_free (n,3), dQ, m_free, barrier)."""
+        E = p4[:, 0]
+        p3 = p4[:, 1:]
+        m = self.m
+        T = E - m
+        V = self.potential_energy(T)
+        dQ = self.emission_qvalue_correction()
+        T_out = T - V + dQ                       # TMinusV, with particleTOut = T + correction
+        exits = T_out > 0.0
+        Tp = np.where(exits, T_out, 1.0)
+        p_in = np.linalg.norm(p3, axis=1)
+        p_out = np.sqrt(2.0 * m * Tp + Tp**2)    # particlePOut with the INCL mass
+        P = 4.0 * p_in * p_out / (p_in + p_out)**2
+        z = 1 if self.species == "proton" else 0
+        barrier = 0.0
+        if 0 < z < self.Z:
+            barrier = self.transmission_barrier()
+            below = exits & (Tp < barrier)
+            px = np.sqrt(np.clip(Tp / barrier, 0.0, 1.0))
+            L = (z * (self.Z - z) / FINE_STRUCTURE_INV
+                 * np.sqrt(2.0 * m / Tp / (1.0 + Tp / (2.0 * m)))
+                 * (np.arccos(px) - px * np.sqrt(1.0 - px**2)))
+            P = np.where(below, np.where(L > 35.0, 0.0, P * np.exp(-2.0 * L)), P)
+        P = np.where(exits, P, 0.0)
+        m_t = REAL_PROTON_MASS if self.species == "proton" else REAL_NEUTRON_MASS
+        E_free = np.where(exits, T_out + m_t, np.nan)
+        p_free_mag = np.sqrt(np.maximum(E_free**2 - m_t**2, 0.0))
+        p_hat = p3 / np.where(p_in > 0.0, p_in, 1.0)[:, None]
+        return dict(T_out=T_out, exits=exits, P_T=P, V=V, E_free=E_free, p_free=p_hat * p_free_mag[:, None],
+                    dQ=dQ, m_free=m_t, barrier=barrier)
+
     def describe(self):
         return (f"INCLNucleus A={self.A} Z={self.Z} {self.species}: pF = {self.pF:.3f} MeV/c, "
                 f"m = {self.m} MeV, T_F = {self.TF:.3f} MeV, S = {self.S} MeV, V0 = {self.V0:.3f} MeV; "
+                f"{'' if self.S_p_real is None else f'S_p_real override = {self.S_p_real} MeV; '}"
                 f"MHO a = {self.a} fm, alpha = {self.alpha} ({self.mho_source}), R_max = {self.r_max:.3f} fm; "
                 f"r-p coefficient = {self.rp_coefficient} ({'strict' if self.rp_coefficient > 0.99999 else 'fuzzy'}); "
                 f"table nodes = {self._r_nodes.size}")

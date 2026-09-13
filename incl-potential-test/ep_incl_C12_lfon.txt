@@ -120,6 +120,52 @@
    hints (heuristic; check them against the numbers above):
      * location: the mean of |p_miss| record is +1.59 (+8.6 sigma, +0.32 bin widths) from p_red; quantile shifts 16%: +1.74, 50%: +1.09, 84%: +0.99 (not a rigid shift)
      * pull pattern - then + across the peak: |p_miss| record is displaced to higher |p_miss| [MeV/c] relative to p_red
+== 1D compare  E_miss free proton vs V0 - T_ball - dQ: 141 bins on [-60.5, 80.5]   (V0 - T_ball - dQ is the reference)
+   integrals  E_miss free proton 196612 ± 443   V0 - T_ball - dQ 196612 ± 443   ratio E_miss free proton/V0 - T_ball - dQ = 1.0000 ± 0.0032  (+0.0 sigma from 1)
+   shape E_miss free proton |                                      %@@@@@%%###***++=-:.             |
+   shape V0 - T_ball - dQ   |                                      %@@@@@%%###***++=-:.             |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   31.1 vs 31.1   diff +0 ± 0.032  (+0.00 median bin widths, +0.0 sigma)
+   std    9.966 vs 9.966   ratio 1.000     skew +0.35 vs +0.35
+   peak   E_miss [MeV] = 17 (bin 77) vs E_miss [MeV] = 17 (bin 77)   shift +0 bins     FWHM 28.17 vs 28.17 (ratio 1.000)
+   quantiles E_miss free proton minus V0 - T_ball - dQ:  5%: +0   16%: +0   50%: +0   84%: +0   95%: +0
+   chi2/ndf   raw 0.0/39 (p = 1)   shape, after scaling V0 - T_ball - dQ by 1.0000: 0.0/38 (p = 1)
+   KS   max |CDF diff| = 0.0000 at E_miss [MeV] = -59.5  (E_miss free proton has relatively more entries above that x)   p = 1
+   per bin, low x -> high x   (|pull| > 2:  + E_miss free proton above V0 - T_ball - dQ,  - below,  . within,  blank both empty)
+     pull raw    |                                                                            .......................................                          |
+     pull shape  |                                                                            .......................................                          |
+     ratio shape |                                                                            =======================================                          |   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! V0 - T_ball - dQ empty)
+   no run of bins deviates by more than 2 sigma after scaling to equal integrals
+   regions from the 16% and 84% quantiles of V0 - T_ball - dQ:
+     left tail  (E_miss [MeV] < 20.1) E_miss free proton      34427   V0 - T_ball - dQ      34427   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+     core       (E_miss [MeV] in 20.1 .. 42.7) E_miss free proton 1.2984e+05   V0 - T_ball - dQ 1.2984e+05   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+     right tail (E_miss [MeV] > 42.7) E_miss free proton      32349   V0 - T_ball - dQ      32349   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * after scaling to equal integrals the shapes agree within statistics
+== 1D compare  |p_miss| free proton vs |p_miss| record (inside): 80 bins on [0, 400]   (|p_miss| record (inside) is the reference)
+   integrals  |p_miss| free proton 196601 ± 443   |p_miss| record (inside) 200000 ± 447   ratio |p_miss| free proton/|p_miss| record (inside) = 0.9830 ± 0.0031  (-5.4 sigma from 1)
+   shape |p_miss| free proton     |..:-==+*##%%%%@@@@@@@@@@@@@@%%%%##****++====---::::......................... ...|
+   shape |p_miss| record (inside) |..:-=+**##%%%@@@@@@@@@@@@@@@%%%%###***+++===---:::..........      .             |   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   121.3 vs 119.4   diff +1.909 ± 0.19  (+0.38 median bin widths, +10.2 sigma)
+   std    59.17 vs 58.34   ratio 1.014     skew +0.37 vs +0.28
+   peak   |p_miss| [MeV/c] = 87.5 (bin 17) vs |p_miss| [MeV/c] = 112.5 (bin 22)   shift -5 bins     FWHM 166.1 vs 170.7 (ratio 0.973)
+   quantiles |p_miss| free proton minus |p_miss| record (inside):  5%: +2.38   16%: +1.6   50%: +1.16   84%: +1.74   95%: +3.95
+   chi2/ndf   raw 912.6/79 (p = 5.35e-142)   shape, after scaling |p_miss| record (inside) by 0.9830: 878.0/78 (p = 1.2e-135)
+   KS   max |CDF diff| = 0.0093 at |p_miss| [MeV/c] = 45  (|p_miss| free proton has relatively more entries above that x)   p = 8.43e-08
+   per bin, low x -> high x   (|pull| > 2:  + |p_miss| free proton above |p_miss| record (inside),  - below,  . within,  blank both empty)
+     pull raw    |------.-....-.............-.............-.......+..++++++++++++++++++++++++. ...|
+     pull shape  |------...........+.......+......................++.++++++++++++++++++++++++. ...|
+     ratio shape |vv--=-==========================================++++++^^^^^^!!!!!!^!!!!!!!!! !!!|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! |p_miss| record (inside) empty)
+   runs of same sign shape deviations (rebinned by 2 to 40 bins; bins beyond 2 sigma, merged across gaps of <= 2 bins, lone bins under 3 sigma dropped; * = combined |sigma| >= 3):
+     * -  bins 0..3, |p_miss| [MeV/c] in [0, 40)   |p_miss| free proton minus scaled |p_miss| record (inside) = -1816  (-10.4 sigma combined, -11.2% of |p_miss| record (inside) there)
+     * +  bins 24..37, |p_miss| [MeV/c] in [240, 380)   |p_miss| free proton minus scaled |p_miss| record (inside) = +1472  (+15.1 sigma combined, +36.2% of |p_miss| record (inside) there)
+   regions from the 16% and 84% quantiles of |p_miss| record (inside):
+     left tail  (|p_miss| [MeV/c] < 56.7) |p_miss| free proton      28115   |p_miss| record (inside)      30240   raw ratio 0.930 (-8.8 sigma)   shape ratio 0.946 (-6.7 sigma)
+     core       (|p_miss| [MeV/c] in 56.7 .. 183) |p_miss| free proton 1.3708e+05   |p_miss| record (inside) 1.3916e+05   raw ratio 0.985 (-3.9 sigma)   shape ratio 1.002 (+0.6 sigma)
+     right tail (|p_miss| [MeV/c] > 183) |p_miss| free proton      31402   |p_miss| record (inside)      30602   raw ratio 1.026 (+3.2 sigma)   shape ratio 1.044 (+5.3 sigma)
+   hints (heuristic; check them against the numbers above):
+     * normalization: |p_miss| free proton is -1.7% relative to |p_miss| record (inside) (-5.4 sigma)
+     * location: the mean of |p_miss| free proton is +1.91 (+10.2 sigma, +0.38 bin widths) from |p_miss| record (inside); quantile shifts 16%: +1.6, 50%: +1.16, 84%: +1.74 (not a rigid shift)
+     * pull pattern - then + across the peak: |p_miss| free proton is displaced to higher |p_miss| [MeV/c] relative to |p_miss| record (inside)
 == 1D  E_miss scattering frame (before balance) [MeV]: 141 bins on [-60.5, 80.5], integral 200000
    shape   |           .......:::---=++*#@-                                        |   (one char per bin, low x -> high x, scaled to the max bin)
    mean -9.13   std 7.898   skew -1.02   excess kurtosis 0.388

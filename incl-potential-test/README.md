@@ -41,6 +41,13 @@ cd incl-potential-test && pixi run --manifest-path /exp/dune/data/users/liangliu
    V(T) = V0 − 0.287 (T − T_F) (0 above ≈195 MeV) and, with local energy on, the v_loc
    fixed point. Bisection to |ΔE| < 1e-12 MeV.
 4. **record** — initial nucleon (p_ball, E_ball − V0); E_miss = ω − T_p′, p_miss = p_p′ − q.
+5. **surface exit** — INCL's `TransmissionChannel` turns the proton into a free particle:
+   T_out = T_p′ − V(T_p′) + ΔQ with the emission Q-value correction ΔQ = −9.13 MeV
+   (real mass table: S_p(C12) = 15.96 MeV replaces INCL's S = 6.83), T_out ≤ 0 cannot
+   leave, momentum rescaled along p̂′ (default no refraction), table proton mass. The
+   transmission probability (step + Coulomb barrier 2.15 MeV) is computed and reported;
+   a reflection only delays the exit, so every T_out > 0 proton is taken out.
+   E_miss(free) = ω − T_out, p_miss(free) = p_free − q.
 
 ## Results (200k events each; fork validation numbers from `docs/incl-vertex-local-energy-option-plan.md` in brackets)
 
@@ -51,11 +58,28 @@ cd incl-potential-test && pixi run --manifest-path /exp/dune/data/users/liangliu
 | on + resample | 225.5, +0.467 [225.6, +0.466] | 147.8, −0.664 [148.3, −0.668] | 17.46, [6.83, 44.80] [17.46, [6.83, 44.67]] | 148.4, 1.027 [1.02] |
 | never + resample | 225.5, +0.467 [225.5, +0.466] | 225.5, +0.467 [225.8, +0.468] | 17.45, [6.83, 44.80] [17.50] | 224.2, 0.995 [1.007] |
 
-- **E_miss identity is exact**: E_miss = V0 − T_ball − V(T_p′) to 2e-12 MeV in every setting.
-  Fast protons (V = 0, 91 % of phase-space events) sit in [S, V0] = [6.83, 45.0]; the local
-  energy never enters E_miss (it only moves the scattering nucleon and the lepton).
-- **Slow outgoing protons** (T_p′ ≲ 195 MeV, 9 % here because phase space is flat in Q²)
-  keep a potential V(T_p′) > 0, so their E_miss = V0 − T_ball − V(T_p′) runs down to −38 MeV.
+- **E_miss identity of the record (proton still inside the well) is exact**:
+  E_miss = V0 − T_ball − V(T_p′) to 2e-12 MeV in every setting. Fast protons (V = 0, 91 % of
+  phase-space events) sit in [S, V0] = [6.83, 45.0]; the local energy never enters E_miss
+  (it only moves the scattering nucleon and the lepton). Slow outgoing protons
+  (T_p′ ≲ 195 MeV, 9 % here because phase space is flat in Q²) keep V(T_p′) > 0 and run
+  down to −38 MeV.
+- **The surface exit moves the E_miss floor to the real S_p = 15.96 MeV.** INCL pays the
+  remaining potential at the wall and adds ΔQ = −9.13 MeV from the real mass table, so
+  E_miss(free) = ω − T_out = V0 − T_ball − ΔQ = T_F + S_p − T_ball ∈ [15.96, 54.13] MeV for
+  every exiting proton, independent of V(T_p′) and of the local-energy setting (verified to
+  2e-12 MeV). The negative tail is gone: slow protons either pay their potential or, below
+  T_p′ ≈ 50 MeV, cannot leave (2 % of phase-space events).
+
+  | setting | exits | E_miss free: mean, range | ⟨\|p_miss\|⟩ free (inside) |
+  |---|---|---|---|
+  | on | 98.3 % | 31.10, [15.96, 54.10] | 121.4 (118.9) |
+  | never | 97.9 % | 31.10, [15.96, 54.10] | 202.9 (202.0) |
+  | on + resample | 98.4 % | 26.58, [15.96, 53.92] | 149.3 (147.9) |
+  | never + resample | 98.0 % | 26.59, [15.96, 53.92] | 224.6 (224.2) |
+
+  ⟨P_T⟩ = 0.997 over the exiting protons (below 0.99 for 3 %); |p_free| = |p′| − 9.6 to
+  17 MeV/c along p̂′ for fast protons, so ⟨|p_miss|⟩ moves by only 1–2 MeV/c.
 - **INCL's rescaling does not conserve 3-momentum**: scaling the CM momenta changes the lab
   total by γβ ΔE* along the beam — mean −21 MeV/c (on) / −31 MeV/c (never), up to 36 MeV/c
   — so |p_miss| ≠ p_red exactly (review item 3, "the remnant absorbs it").

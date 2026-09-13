@@ -1,0 +1,44 @@
+# ball: analytic normalisation 1.000000; <T> sampled 23.038 MeV, analytic 23.032; Poisson chi2/ndf = 0.99, max |pull| = 2.52
+== 1D compare  sampled ball vs analytic: 40 bins on [0, 38.17]   (analytic is the reference)
+   integrals  sampled ball 400000 ± 632   analytic 400000 ± 632   ratio sampled ball/analytic = 1.0000 ± 0.0022  (+0.0 sigma from 1)
+   shape sampled ball |.:---====++++*****#######%%%%%%%@@@@@@@@|
+   shape analytic     |.:---===+++++*****#######%%%%%%%@@@@@@@@|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   23.03 vs 23.03   diff +0.005805 ± 0.022  (+0.01 median bin widths, +0.3 sigma)
+   std    9.978 vs 9.971   ratio 1.001     skew -0.36 vs -0.36
+   peak   T_ball [MeV] = 37.69 (bin 39) vs T_ball [MeV] = 37.69 (bin 39)   shift +0 bins     FWHM 28.26 vs 28.04 (ratio 1.008)
+   quantiles sampled ball minus analytic:  5%: -0.0437   16%: +0.00376   50%: +0.0101   84%: +0.00294   95%: -0.00383
+   chi2/ndf   raw 19.8/40 (p = 0.997)   shape, after scaling analytic by 1.0000: 19.8/39 (p = 0.996)
+   KS   max |CDF diff| = 0.0012 at T_ball [MeV] = 30.54  (sampled ball has relatively more entries above that x)   p = 0.922
+   per bin, low x -> high x   (|pull| > 2:  + sampled ball above analytic,  - below,  . within,  blank both empty)
+     pull raw    |........................................|
+     pull shape  |........................................|
+     ratio shape |========================================|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! analytic empty)
+   no run of bins deviates by more than 2 sigma after scaling to equal integrals
+   regions from the 16% and 84% quantiles of analytic:
+     left tail  (T_ball [MeV] < 11.4) sampled ball      64326   analytic      64356   raw ratio 1.000 (-0.1 sigma)   shape ratio 1.000 (-0.1 sigma)
+     core       (T_ball [MeV] in 11.4 .. 34.1) sampled ball 2.7618e+05   analytic 2.7615e+05   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+     right tail (T_ball [MeV] > 34.1) sampled ball      59496   analytic      59495   raw ratio 1.000 (+0.0 sigma)   shape ratio 1.000 (+0.0 sigma)
+   hints (heuristic; check them against the numbers above):
+     * after scaling to equal integrals the shapes agree within statistics
+# truncated ball (resample): analytic normalisation 1.000000; <T> sampled 27.553 MeV, analytic 27.545; Poisson chi2/ndf = 0.88, max |pull| = 2.02
+== 1D compare  sampled truncated ball (resample) vs analytic: 40 bins on [0, 38.17]   (analytic is the reference)
+   integrals  sampled truncated ball (resample) 400000 ± 632   analytic 400000 ± 632   ratio sampled truncated ball (resample)/analytic = 1.0000 ± 0.0022  (-0.0 sigma from 1)
+   shape sampled truncated ball (resample) |..........::::::::------====++++***##%%@|
+   shape analytic                          |..........::::::::------====++++***##%%@|   (one char per bin, low x -> high x, each scaled to its own max)
+   mean   27.55 vs 27.54   diff +0.007591 ± 0.019  (+0.01 median bin widths, +0.4 sigma)
+   std    8.385 vs 8.396   ratio 0.999     skew -0.80 vs -0.80
+   peak   T_ball [MeV] = 37.69 (bin 39) vs T_ball [MeV] = 37.69 (bin 39)   shift +0 bins     FWHM 9.261 vs 9.126 (ratio 1.015)
+   quantiles sampled truncated ball (resample) minus analytic:  5%: +0.0199   16%: +0.0214   50%: +0.00191   84%: -0.00721   95%: -0.000879
+   chi2/ndf   raw 17.6/40 (p = 0.999)   shape, after scaling analytic by 1.0000: 17.6/39 (p = 0.999)
+   KS   max |CDF diff| = 0.0009 at T_ball [MeV] = 24.81  (sampled truncated ball (resample) has relatively more entries above that x)   p = 0.994
+   per bin, low x -> high x   (|pull| > 2:  + sampled truncated ball (resample) above analytic,  - below,  . within,  blank both empty)
+     pull raw    |........................................|
+     pull shape  |........................................|
+     ratio shape |========================================|   (^ >1.5   + 1.1..1.5   = 0.9..1.1   - 0.67..0.9   v <0.67   ! analytic empty)
+   no run of bins deviates by more than 2 sigma after scaling to equal integrals
+   regions from the 16% and 84% quantiles of analytic:
+     left tail  (T_ball [MeV] < 18.3) sampled truncated ball (resample)      62762   analytic      62937   raw ratio 0.997 (-0.5 sigma)   shape ratio 0.997 (-0.5 sigma)
+     core       (T_ball [MeV] in 18.3 .. 36) sampled truncated ball (resample) 2.7942e+05   analytic 2.7908e+05   raw ratio 1.001 (+0.5 sigma)   shape ratio 1.001 (+0.5 sigma)
+     right tail (T_ball [MeV] > 36) sampled truncated ball (resample)      57820   analytic      57985   raw ratio 0.997 (-0.5 sigma)   shape ratio 0.997 (-0.5 sigma)
+   hints (heuristic; check them against the numbers above):
+     * after scaling to equal integrals the shapes agree within statistics

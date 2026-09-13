@@ -222,6 +222,38 @@ lepton $k'$, pre-FSI proton $p'$. Then
 \vv p_\miss=\vv p'-\vv q=\vv k'+\vv p'-\vv k .
 \end{equation*}
 
+\section{Surface exit: from the well to a free proton}\label{sec:exit}
+
+When the proton reaches the surface, \code{SurfaceAvatar} decides between transmission
+and reflection and \code{TransmissionChannel::particleLeaves} turns it into a free
+particle (default \code{refraction = false}). The kinetic energy outside is
+\begin{align*}
+T_{\mathrm{out}} &= T_{p'}-V(T_{p'})+\Delta Q,\\
+\Delta Q &= \big[M_t(A,Z)-M_t(A-1,Z-1)-m_t\big]-\big[M_i(A,Z)-M_i(A-1,Z-1)-m\big]\\
+&= -S_p^{\mathrm{real}}+S=-15.957+6.83=-9.127~\text{MeV},
+\end{align*}
+where $M_t$ are the real masses, $A\,\mathrm{amu}+\Delta-Z\,m_e$ from
+\code{walletlifetime.dat} ($\Delta(^{12}\mathrm{C})=0$, $\Delta(^{11}\mathrm{B})=8.6679$~MeV),
+$m_t=938.27203$~MeV the table proton mass, and $M_i=Z(m-S)+(A-Z)(m-S)$ the INCL masses
+(\code{Particle::getEmissionQValueCorrection}): the real separation energy replaces
+INCL's constant $S$ at emission. Then
+\begin{align*}
+\text{exits:}\quad & T_{\mathrm{out}}>0
+\quad(\text{otherwise reflection; } T_{p'}\lesssim 50~\text{MeV here}),\\
+P_T &= \frac{4\,p_{\mathrm{in}}\,p_{\mathrm{out}}}{(p_{\mathrm{in}}+p_{\mathrm{out}})^2}\times
+\begin{cases}1, & T_{\mathrm{out}}\ge B,\\ e^{-2L}, & T_{\mathrm{out}}<B,\end{cases}
+\qquad p_{\mathrm{out}}=\sqrt{T_{\mathrm{out}}\,(T_{\mathrm{out}}+2m)},\\
+B &= \frac{e^2\,(Z-1)}{R_p+0.88~\mathrm{fm}}=2.15~\text{MeV}\quad\text{(Coulomb barrier)},\\
+L &= \frac{Z-1}{137.03}\sqrt{\frac{2m}{T_{\mathrm{out}}\,(1+T_{\mathrm{out}}/2m)}}
+\,\big[\arccos x-x\sqrt{1-x^2}\,\big],\qquad x=\sqrt{T_{\mathrm{out}}/B}
+\quad\text{(Gamow factor)},\\
+\text{free:}\quad & E_{\mathrm{free}}=T_{\mathrm{out}}+m_t,\qquad
+\vv p_{\mathrm{free}}=\hat{p}'\,\sqrt{E_{\mathrm{free}}^2-m_t^2}\qquad(\text{no refraction}).
+\end{align*}
+A reflection only delays the exit (the particle bounces and tries again), so the toy
+takes every $T_{\mathrm{out}}>0$ proton out: 98\,\% of the phase-space protons;
+$\langle P_T\rangle=0.997$, $P_T<0.99$ for 3\,\% of them.
+
 \section{Closed forms}
 
 \paragraph{Energy.} Inserting the balance condition into $\omega-T_{p'}$:
@@ -253,6 +285,20 @@ re-adjusts $|\vv p'|$ after the boost and the closed form no longer applies
 (deviations up to 236~MeV/c, mean 18, for the 9\,\% of phase-space events with
 $V(T_{p'})>0$).
 
+\paragraph{Free proton.} With $\omega$ unchanged by the exit,
+\begin{align*}
+E^{\mathrm{free}}_\miss&=\omega-T_{\mathrm{out}}=\Vz-T_\ball-\Delta Q=\TF+S_p^{\mathrm{real}}-T_\ball
+\in[S_p^{\mathrm{real}},\,\TF+S_p^{\mathrm{real}}]=[15.96,\,54.13]~\text{MeV},\\
+\vv p^{\mathrm{free}}_\miss&=\vv p_{\mathrm{free}}-\vv q=\vv p_\miss+\big(|\vv p_{\mathrm{free}}|-|\vv p'|\big)\,\hat{p}' .
+\end{align*}
+$V(T_{p'})$ cancels: whatever potential the proton still carries inside is paid at the
+wall, so the negative tail of the record's $E_\miss$ disappears and the floor moves from
+INCL's $S=6.83$ to the real $S_p=15.96$~MeV, for every setting and every exiting proton
+(verified: $\le2.0\times10^{-12}$~MeV in all four runs; mean 31.1~MeV with the fuzzy
+ground state, 26.6 with \code{--resample}). The momentum loses $|\Delta Q|/\beta_{p'}$,
+i.e.\ 9.6--17~MeV/c along $\hat{p}'$ for fast protons, and $\langle|\vv p_\miss|\rangle$
+moves by 1--2~MeV/c.
+
 \section{Summary of the two settings}
 \begin{center}
 \begin{tabular}{lllll}
@@ -264,10 +310,20 @@ never & $(E_\ball,\ \vv p_\ball)$ & $-T_\ball$, $\vv p_\ball$ & $\Vz-T_\ball-V(T
 \bottomrule
 \end{tabular}
 \end{center}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+ & free-proton $E_\miss$ & free-proton $\vv p_\miss$ \\
+\midrule
+on and never & $\TF+S_p^{\mathrm{real}}-T_\ball$ & $\vv p_\miss+(|\vv p_{\mathrm{free}}|-|\vv p'|)\,\hat{p}'$ \\
+\bottomrule
+\end{tabular}
+\end{center}
 Numbers (200k events, 2.445~GeV, seed 1, \code{--resample}):
 $\langle|\vv p_\red|\rangle=147.8$~MeV/c with $\mathrm{corr}(p_\red,r)=-0.66$ (on)
 vs $\langle|\vv p_\ball|\rangle=225.5$, $+0.47$ (never); $E_\miss$ of fast protons:
 mean 17.46 in $[6.83,\,44.80]$ in both; $\langle|\vv p_\miss|\rangle=148.4$ (on) /
-224.2 (never).
+224.2 (never); free-proton $E_\miss$ mean 26.6 in $[15.96,\,53.9]$ in both, 98\,\% of the
+protons exit.
 
 \end{document}
